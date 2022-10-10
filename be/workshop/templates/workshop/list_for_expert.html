@@ -1,0 +1,58 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+{% block content %}
+
+    <div class="w-100 d-md-flex justify-content-md-center">
+            {% comment %} <p>Click 'view' and add your comment about workshop</p> {% endcomment %}
+        <span class="d-block mt-2 text-center">Expert Page</span>
+        <table class="table table-hover table-dark mt-5 ws-notif-table">
+            <thead>
+                <tr>
+                    <th class="col-md-1"></th>
+                    <th class="col-md-5">Title</th>
+                    <th class="col-md-3">Date</th>
+                    <th class="col-md-3">Handle</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for comment in comments%}
+            {% comment %} {% for acc in accept_reject %}
+                {% if acc.workshop.id is comment.workshop.id %}
+                    {% if acc.is_edited is True %} {% endcomment %}
+                <tr>
+                    <th class="col-md-1">{{i}}</th>
+                    <td class="col-md-5">{{comment.workshop.title}}</td>
+                    <td class="col-md-3">{{comment.workshop.date}}</td>
+                    <td><a href="{% url 'comment-expert' comment.id %}">view</a></td>
+                </tr>
+                    {% comment %} {% endif %}
+                {% endif %}
+            {% endfor %} {% endcomment %}
+            {%endfor%}
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+{% endblock content %}

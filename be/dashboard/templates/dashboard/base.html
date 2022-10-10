@@ -1,0 +1,272 @@
+{% load static %}
+{% load humanize %}
+{% load gtm_tags %}
+{% load dashboard_filter %}
+{% load seo_filter %}
+{% load industrial_manager_filter %}
+{% load blog_filter %}
+{% load collaborate_filter %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% gtm_head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="canonical" href="https://tecvico.com{{request.path}}"/>
+    {% if request.path|has_meta_index %}
+    {% with request.path|get_meta_index as meta_index %}
+    <meta name="robots" content="{{meta_index.index}}, {{meta_index.follow}}">
+    {% endwith %}
+    {% else %}
+    <meta name="robots" content="noindex, nofollow">
+    {% endif %}
+
+    {% if request.path|has_title_and_description %}
+    {% with request.path|get_title_and_description as meta_title_description %}
+    {% if meta_title_description.title %}
+    <title>{{meta_title_description.title}}</title>
+    {% else %}
+    <title>{{user.first_name}} Dashboard</title>
+    {% endif %}
+    {% if meta_title_description.description %}
+    <meta name="description" content="{{meta_title_description.description}}">
+    {% endif %}
+    {% endwith %}
+    {% else %}
+    <title>{{user.first_name}} Dashboard</title>
+    {% endif %}
+
+    <!--<link rel="stylesheet" href="{% static 'industry/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'industry/css/research.css' %}">-->
+
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon-v2.ico' %}"/>
+    <link rel="stylesheet" href="{% static 'dashboard/css/all.min.css' %}?version=2">
+    <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}?version=22">
+    <link rel="stylesheet" href="{% static 'dashboard/css/sidebar.css' %}?version=2">
+    <link rel="stylesheet" href="{% static 'dashboard/css/colors.css' %}?version=3">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css"/>
+    {% block css %}{% endblock %}
+    <script src="{% static 'dashboard/js/jquery.min.js' %}"></script>
+    <script src="{% static 'dashboard/js/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'dashboard/js/infinite.min.js' %}"></script>
+    <script src="{% static 'dashboard/js/Sortable.min.js' %}"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    {% if user.is_superuser %}
+    <script src="{% static 'dashboard/js/Chart.min.js' %}"></script>
+    {% endif %}
+    <script src="{% static 'dashboard/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'dashboard/js/bootstrap-select.min.js' %}"></script>
+    <script src="{% static 'dashboard/js/popper.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'dashboard/css/jquery.datetimepicker.min.css' %}"/>
+    <script src="{%static 'dashboard/js/jquery.datetimepicker.full.min.js' %}"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script>
+            // $(document).ready(function () {
+            // $("#btn-add").click(function () {
+            // var ele = [];
+            // $("input:checkbox[name=user]:checked").each(function () {
+            // ele.push($(this).val());
+            // document.getElementById("user-list").innerHTML = ele;
+            // });
+            // });
+            // });
+            function addText(event) {
+                var targ = event.target || event.srcElement;
+                document.getElementById("user-list").value += targ.textContent + ",";
+            }
+        </script>
+        
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MV42WCDPR9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-MV42WCDPR9');
+    </script>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+{% gtm_body %}
+    <div class="dark-overlay d-none" ></div>
+    <button class="header-menu-burger-btn" onclick="showMenu()"><i class="fa fa-bars"></i></button>
+    <nav class="main-menu"   >
+        <ul class="header-menu" id="menu" style="background:#000 !important;" >
+            </li>
+
+            <li class="header-menu-item">
+                <img style="border-radius: 100px; width: 26px; margin-left: 20px" src="{{request.user.memberprofile.image.url}}" class="img-fluid" alt="">
+                <span class="nav-text ml-4" style="color: White">
+                    {{request.user.first_name}}
+                </span>
+
+            </li>
+
+            <li class="header-menu-item">
+                <a href="{% url 'home-page' %}">
+                    <i class="fa fa-home icon"></i>
+                    <span class="nav-text">
+                        TECVICO
+                    </span>
+                </a>
+
+            </li>
+            <li class="header-menu-item {% if request.path == '/dashboard/' %}active{%endif%}">
+                <a href="{% url 'dashboard-page' %}">
+                    <i class="fa fa-laptop icon"></i>
+                    <span class="nav-text">
+                        Dashboard
+                    </span>
+                </a>
+
+            </li>
+            <li class="header-menu-item {% if '/dashboard/projects/' in request.path  %}active{%endif%}">
+                <a href="{% url 'dashboard-projects-page' %}">
+                    <i class="fa fa-list icon"></i>
+                    <span class="nav-text">
+                        Projects
+                    </span>
+                </a>
+            </li>
+            <li class="header-menu-item {% if request.path == '/workshop/' %}active{%endif%}">
+                <a href="{% url 'show-workshops-to-users' %}">
+                    <i class="fa fa-th icon"></i>
+                    <span class="nav-text">
+                        Workshops
+                    </span>
+                </a>
+            </li>
+            <li class="header-menu-item {% if request.path == '/dashboard/notifications' %}active{%endif%}">
+                <a href="{% url 'notification-page' %}"><i class="fa fa-fw fa-bell icon"></i>
+                    <span class="notif-count-outer">
+                        <span class="notif-count">{{notifications.count}}</span>
+                    </span>
+                    <span class="nav-text">
+                        Notifications
+                    </span>
+                </a>
+            </li>
+
+            <li class="header-menu-item">
+                <a href="{% url 'profile-page' %}">
+                    <i class="fa fa-user-circle icon"></i>
+                    <span class="nav-text">
+                        Profile
+                    </span>
+                </a>
+            </li>
+
+            {% if user|is_blog_manager %}
+            <li class="header-menu-item {% if '/seo/' in request.path  %}active{%endif%}">
+                <a href="javascript:void(0);" class="dropdown-btn"> <i class="fa fa-cogs icon"></i>
+                    <span class="nav-text">
+                        SEO
+                    </span>
+                    <i class="fa fa-caret-down"></i>
+                </a>
+                <div class="dropdown-container">
+                    <ul>
+                        <li><a class="dropdown-item p-0" href="{% url 'meta-robots-page' %}"><i class="fa fa-code drop-icon"></i>Rebots Meta</a></li>
+                        <li><a class="dropdown-item p-0" href="{% url 'metatag-page' %}"><i class="fa fa-code drop-icon"></i>Title and
+                            Description Meta</a></li>
+                    </ul>
+                </div>
+            </li>
+            {% endif %}
+
+            {% if user|is_industrial_manager %}
+            <li class="header-menu-item">
+                <a href="{% url 'industrial-email-page' %}">
+                    <i class="fa fa-envelope-square icon"></i>
+                    <span class="nav-text">
+                        Industrial Email
+                    </span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if user|is_blog_manager %}
+            <li class="header-menu-item">
+                <a href="{% url 'blog:blog-manager-page' %}">
+                    <i class="fa fa-blog icon"></i>
+                    <span class="nav-text">
+                        Blog
+                    </span>
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="header-menu-item">
+                <a href="{% url 'logout' %}">
+                    <i class="fa fa-power-off icon"></i>
+                    <span class="nav-text">
+                        Logout
+                    </span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="content-container">
+        <div class="content-container--inner">
+            {% block content %}{% endblock %}
+        </div>
+        <!-- FOOTER -->
+        <footer id="main-footer" class="bg-dark text-white p-1 ">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <!--<p class="lead text-center my-0">Copyright &copy; 2021 Tecvico</p>
+                        <p class="lead text-center small my-0">Icons made by <a class="text-white" href="https://www.freepik.com" title="Freepik">Freepik</a> from <a class="text-white" href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></p>-->
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+
+<!-- NAVBAR SCRIPT -->
+<script>
+
+        function showMenu() {
+            var menu = document.getElementById("menu");
+            if (menu.className === "header-menu") {
+                menu.className += " show";
+                $('.dark-overlay').removeClass('d-none')
+            } else {
+                menu.className = "header-menu";
+                $('.dark-overlay').addClass('d-none')
+            }
+        }
+
+        var dropdown = document.getElementsByClassName("dropdown-btn");
+        var i;
+
+        for (i = 0; i < dropdown.length; i++) {
+            dropdown[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var dropdownContent = this.nextElementSibling;
+                if (dropdownContent.style.display === "block") {
+                    dropdownContent.style.display = "none";
+                } else {
+                    dropdownContent.style.display = "block";
+                }
+            });
+        }
+</script>
+
+<script>
+    $('[data-toggle="tooltip"]').tooltip();
+    $(".delete-announcement").click(function () {
+        var clicked_element = $(this);
+        var data_pk = clicked_element.attr('data-pk');
+        $('.input_pk').val(data_pk);
+    });
+</script>
+{% block script %}{% endblock %}
+</html>

@@ -1,0 +1,431 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+<style>
+  body {
+    background: #e2e1e0;
+  }
+  .selected_box{
+    border: 1px solid #17a2b8;
+    margin: 5px;
+    border-radius: 10px;
+    padding: 5px;
+    width: 200px;
+  }
+  
+
+  </style>
+
+<div class="m-auto col-md-11">
+  
+  <div  style="padding:25px" class="m-auto filtering card card-1">
+    <form method='POST'>
+      {%csrf_token%}
+      <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Recent history</th>
+            <th scope="col">Type</th>
+            <th scope="col">Including</th>
+            <th scope="col">All requests</th>
+            <th scope="col">User</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <select name="section-date" class="form-control" type="checkbox">
+                <option value="last-day">Last day</option>
+                <option value="last-week">Last week</option>
+                <option value="last-month">Last month</option>
+              </select> 
+              <button type="button" class="m-2 btn btn-info" data-toggle="modal" data-target="#custom_time">Custom date</button>
+              <span class="start_date" style="display:none" >From:</span>
+              <span class="end_date" style="display:none" >Until:</span>
+            </td>
+            <td>
+            <input class="only_pay" type="checkbox">
+            <input value=0 id="only_pay" name="only_pay" type="hidden">
+            <label for="only-pay"> Only pays</label></br>
+            <input class="only_reject" type="checkbox">
+            <input value=0 id="only_reject" name="only_reject" type="hidden">
+            <label for="only-reject"> Only rejects</label></br>
+            </td>
+            <td>
+            <input class="all_projects" type="checkbox">
+            <input value=0 id="all_projects" name="all_projects" type="hidden">
+            <label for="projects">All projects</label></br>
+            <input class="all_workshops" type="checkbox">
+            <input value=0 id="all_workshops" name="all_workshops" type="hidden">
+            <label for="workshops">All workshops</label></br>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#show_workshops">Workshops</button>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#show_projects">Projects</button></br>
+            <ul id="workshop_list" style="display:none" class="workshop_list"></ul>
+            <ul id="project_list" style="display:none" class="project_list"></ul>
+
+            </td>
+            <td>
+            <input class="badge_request"  type="checkbox">
+            <input value=0 id="badge_request" name="badge_request" type="hidden">
+            <label for="badge_request"> badge </label></br>
+            <input class="supervisor_request" type="checkbox">
+            <input value=0 id="supervisor_request" name="supervisor_request" type="hidden">
+            <label for="supervisor_request"> supervisor </label></br>
+            <input class="workshop_request" type="checkbox">
+            <input value=0 id="workshop_request" name="workshop_request" type="hidden">
+            <label for="workshop_request"> workshop </label></br>
+            </td>
+            <td>
+              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#show_users">Select users</button>
+              <ul id="user_list" style="display:none" class="user_list"></ul>
+            </td> 
+          </tr>
+          <tr>
+          </tr>
+        </tbody>
+      </table>
+     
+
+                  <!--  ModalWorkshops -->
+                  <div class="modal fade" id="show_workshops" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Select workshops</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                          
+                        </div>
+                        <input style="top:5px" class="form-control col-md-10 m-auto" type="text" id="sworkshop" placeholder="Type somthings...">
+                        <div id="modal-body-whorkshops" class="modal-body">
+                          {%for w in workshops%}
+                          <li>
+                            <input title="{{w.unique_id}}" class="workshops_id" id="{{w.id}}" name="workshops"type="checkbox">
+                            <label>{{w.unique_id}}</label></br>
+                            <span style="font-size:10px;position:relative;top:-20px">{{w.title}}</span>
+                          </li>
+                          {%endfor%}
+                          <input value=0 id="workshops_list" name="workshop_list" type="hidden">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- ModalProjects -->
+                  <div class="modal fade" id="show_projects" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Select projects</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <input style="top:5px" class="form-control col-md-10 m-auto" type="text" id="sproject" placeholder="Type somthings...">
+                        <div id="modal-body-projects" class="modal-body">
+                          {%for p in projects%}
+                          <li>
+                            <input title="{{p.id_project}}"  class="projects_id" id="{{p.id}}" name="projects"type="checkbox">
+                            <label>{{p.id_project}}</label></br>
+                            <span style="font-size:10px;position:relative;top:-20px">{{p.title}}</span>
+                          </li>
+                          {%endfor%}
+                          <input value=0 id="projects_list" name="project_list" type="hidden">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                   <!-- Show users -->
+                   <div class="modal fade" id="show_users" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Select users</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <input style="top:5px" class="form-control col-md-10 m-auto" type="text" id="susers" placeholder="Type somthings...">
+                        <div id="modal-body-users" class="modal-body">
+                          {%for u in users%}
+                          <li>
+                            <input title="{{u.get_full_name}}" class="user_id" id="{{u.id}}" name="users"type="checkbox">
+                            <label>{{u.get_full_name}}</label></br>
+                            <span style="font-size:10px;position:relative;top:-20px">{{u.email}}</span>
+                          </li>
+                          {%endfor%}
+                          <input value=0 id="users_list" name="user_list" type="hidden">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- CustomTime -->
+                  <div class="modal fade" id="custom_time" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Choose your time period</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div style="overflow-y:visible;height:155px" class="modal-body">
+                          <label for="start-date">From
+                          <input value="" id="start_date" class="form-control" type="datetime-local" name="start_date">
+                          <label for="end-date">Until
+                          <input id="end_date" class="form-control" type="datetime-local" name="end_date">
+                        </div>
+                        <div class="modal-footer">
+                          <button id="cancel" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                          <button id="save_time" type="button" class="btn btn-secondary" data-dismiss="modal">Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+        <button type="submit" class="btn btn-danger">Report</button>
+    </form>
+    <form method="POST" action="{% url 'accounting:reporting-exel' %}">
+      {%csrf_token%}
+      <input id="exel_ids" type="hidden" name="ids" >
+  
+      <button style="margin-top:-40px;float: right;" type="submit" id="exell_download" class="btn btn-warning">Create exel<i class="fa-solid fas fa-file-excel"></i></button>
+    </form>
+  </div>
+  
+
+<!--result-->
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th>Total amount</th>
+      <th>Total reject</th>
+      <th>Total discount</th>
+      <th>Total receipt</th>
+    </tr>
+  </thead>
+  <tbody  style="background:#dc3545;color: #fff;">
+    <td class="total_amount">$</td>
+    <td class="total_reject">$</td>
+    <td class="total_discount">$</td>
+    <td class="total_receipt">$</td>
+  </tbody>
+</table>
+
+
+
+
+
+  <!--Datatables-->
+  <table id="example" class="table table-striped table-bordered" style="width:100%">
+      <thead class="thead-dark">
+          <tr>
+              <th>Invoice number</th>
+              <th>User</th>
+              <th>Pay date</th>
+              <th>Reason</th>
+              <th>Discount</th>
+              <th>Amount</th>
+              <th>Action</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for w in f_workshops %}
+          <tr class="tr">
+              <td class="i-id" value="{{w.id}}">TEC-00{{w.id}}</td>
+              <td>{{w.user.email}}</td>
+              <td>{{w.pay_date}}</td>
+              <td >{{w.service.workshop.unique_id}} | <span class=" badge badge-{%if w.service.action == 'reject' %}danger{%else%}info{%endif%} " >{{w.service.action}}</span></td>
+              <td class="discount" value="{{w.discount}}">${{w.discount}}</td>
+              <td class="{%if w.service.action == 'reject' %} reject {%else%} amount {%endif%} " value="{{w.amount}}">${{w.amount}}</td>
+              <td class="btn btn-info"><a terget="_blank" href="{% url 'accounting:invoice-detail' pk=w.id %}">View</a></td>
+          </tr>
+        {% endfor %}
+        {% for p in f_projects %}
+          <tr class="tr">
+              <td class="i-id" value="{{p.id}}">TEC-00{{p.id}}</td>
+              <td>{{p.user.email}}</td>
+              <td>{{p.pay_date}}</td>
+              <td>{{p.service.project.id_project}} | <span class=" badge badge-{%if p.service.action == 'reject' %}danger{%else%}info{%endif%} " >{{p.service.action}}</span></td>
+              <td class="discount" value="{{p.discount}}">${{p.discount}}</td>
+              <td class="{%if p.service.action == 'reject' %} reject {%else%} amount {%endif%} " value="{{p.amount}}">${{p.amount}}</td>
+              <td class="btn btn-info"><a href="{% url 'accounting:invoice-detail' pk=p.id %}">View</a></td>
+          </tr>
+        {% endfor %}
+        {% for br in f_badge_request %}
+          <tr class="tr">
+              <td class="i-id" value="{{br.id}}">TEC-00{{br.id}}</td>
+              <td>{{br.user.email}}</td>
+              <td>{{br.pay_date}}</td>
+              <td>{{br.service.badge.skills}} | <span class=" badge badge-{%if br.service.action == 'reject' %}danger{%else%}info{%endif%} " >{{br.service.action}}</span></td>
+              <td class="discount" value="{{br.discount}}">${{br.discount}}</td>
+              <td class="{%if br.service.action == 'reject' %} reject {%else%} amount {%endif%}" value="{{br.amount}}">${{br.amount}}</td>
+              <td class="btn btn-info"><a href="{% url 'accounting:invoice-detail' pk=br.id %}">View</a></td>
+          </tr>
+        {% endfor %}
+        {% for sr in f_supervisor_request %}
+          <tr class="tr">
+              <td class="i-id" value="{{sr.id}}">TEC-00{{sr.id}}</td>
+              <td>{{sr.user.email}}</td>
+              <td>{{sr.pay_date}}</td>
+              <td> supervisor  | <span class=" badge badge-{%if sr.service.action == 'reject' %}danger{%else%}info{%endif%} " >{{sr.service.action}}</span></td>
+              <td class="discount" value="{{sr.discount}}">${{sr.discount}}</td>
+              <td class="{%if sr.service.action == 'reject' %} reject {%else%} amount {%endif%}" value="{{sr.amount}}">${{sr.amount}}</td>
+              <td class="btn btn-info"><a href="{% url 'accounting:invoice-detail' pk=sr.id %}">View</a></td>
+          </tr>
+        {% endfor %}
+        {% for wr in f_workshop_request %}
+          <tr class="tr">
+              <td class="i-id" value="{{wr.id}}">TEC-00{{wr.id}}</td>
+              <td>{{wr.user.email}}</td>
+              <td>{{wr.pay_date}}</td>
+              <td>workshop | <span class=" badge badge-{%if wr.service.action == 'reject' %}danger{%else%}info{%endif%} " >{{wr.service.action}}</span></td>
+              <td class="discount" value="{{wr.discount}}">${{wr.discount}}</td>
+              <td class="{%if wr.service.action == 'reject' %} reject {%else%} amount {%endif%}" value="{{wr.amount}}">${{wr.amount}}</td>
+              <td class="btn btn-info"><a href="{% url 'accounting:invoice-detail' pk=wr.id %}">View</a></td>
+          </tr>
+        {% endfor %}
+        </tboady>
+    </table>
+
+ 
+
+
+</div>
+
+<script>
+$(document).ready(function() {
+
+
+//--------------------------------------------------------------------------------------
+//search in input                                                                     //
+$("#sworkshop").on("keyup", function() {                                              //
+    var value = $(this).val().toLowerCase();                                          //
+    $("#modal-body-whorkshops li").filter(function() {                                //
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)                //
+    });                                                                               //
+  });                                                                                 //
+                                                                                      //
+  $("#sproject").on("keyup", function() {                                             //
+    var value = $(this).val().toLowerCase();                                          //
+    $("#modal-body-projects li").filter(function() {                                  //
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)                //
+    });                                                                               //
+  });                                                                                 //
+                                                                                      //  
+  $("#susers").on("keyup", function() {                                               //
+    var value = $(this).val().toLowerCase();                                          //
+    $("#modal-body-users li").filter(function() {                                     //
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)                //
+    });                                                                               //
+  });                                                                                 //
+//--------------------------------------------------------------------------------------
+
+
+$('.badge_request').click(function(){check_checkboxes(this,badge_request)})
+$('.supervisor_request').click(function(){check_checkboxes(this,supervisor_request)})
+$('.workshop_request').click(function(){check_checkboxes(this,workshop_request)})
+$('.only_pay').click(function(){check_checkboxes(this,only_pay)})
+$('.only_reject').click(function(){check_checkboxes(this,only_reject)})
+$('.all_projects').click(function(){check_checkboxes(this,all_projects)})
+$('.all_workshops').click(function(){check_checkboxes(this,all_workshops)})
+$('.both').click(function(){check_checkboxes(this,both)})
+$('.projects_id').click(function(){let projects_list=add_to_list('.projects_id');$('#projects_list').val(projects_list);title_add_to_list('.projects_id','project_list');})
+$('.workshops_id').click(function(){let workshops_list=add_to_list('.workshops_id');$('#workshops_list').val(workshops_list);title_add_to_list('.workshops_id','workshop_list');})
+$('.user_id').click(function(){let users_list=add_to_list('.user_id');$('#users_list').val(users_list);title_add_to_list('.user_id','user_list');})
+$(document).ready(function() {$('#example').DataTable();});
+$('.total_amount').html('$'+total_amount)
+$('.total_reject').html('$'+total_reject)
+$('.total_discount').html('$'+total_discount)
+$('.total_receipt').html('$'+total_receipt)
+
+$('#save_time').click(function(){
+  $('.start_date').html('From:'+document.getElementById("start_date").value);
+  $('.end_date').html('Until:'+document.getElementById("end_date").value);
+  $('.start_date').css('display','block')
+  $('.end_date').css('display','block')
+})
+$('#cancel').click(function(){
+document.getElementById("start_date").value=''
+document.getElementById("end_date").value=''
+$('.start_date').css('display','none')
+$('.end_date').css('display','none')
+
+})
+
+var invoice_ids = $(".i-id").map(function() {
+  return $(this).attr('value');
+}).get();
+$('#exel_ids').val(invoice_ids)
+
+
+})
+
+
+var amount = $(".amount");
+let total_amount=0
+for (var obj of amount) {
+  total_amount=total_amount + parseInt($(obj).attr('value'))
+
+  }
+var reject = $(".reject");
+let total_reject=0
+for (var obj of reject) {
+  total_reject=total_reject + parseInt($(obj).attr('value'))
+
+  }
+var discount = $(".discount");
+let total_discount=0
+for (var obj of discount) {
+  total_discount=total_discount + Math.abs(parseInt($(obj).attr('value')))
+
+  }
+let total_receipt=total_amount - total_discount + total_reject
+
+function add_to_list(target){
+  let ids=document.querySelectorAll('input[type=checkbox]'+target+':checked');
+  let list_ids=[]
+  for(let i=ids.length-1;i>=0;i--){
+    list_ids.push(ids[i].id)
+}
+  return list_ids
+}
+
+function title_add_to_list(target,classname){ 
+  let ids=document.querySelectorAll('input[type=checkbox]'+target+':checked');
+  let titles=''
+  $('.'+classname).html('')
+  for(let i=ids.length-1;i>=0;i--){
+    titles+='<li>'+ids[i].title+'</li>'
+  $('.'+classname).html(titles)
+  }
+  if(ids.length == 0){
+    $('.'+classname).css('display','none')
+    $('#'+classname).css('display','none')
+  }
+  else{
+    $('.'+classname).css('display','block')
+    $('#'+classname).css('display','block')
+
+  }
+}
+
+function check_checkboxes(element,inputid){
+  if($(element)[0].checked == true){
+    $(inputid).val('1')
+  }
+  else{
+    $(inputid).val('0')
+  }
+}
+</script>
+{% endblock %}

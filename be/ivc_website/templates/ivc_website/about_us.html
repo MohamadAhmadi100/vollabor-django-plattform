@@ -1,0 +1,1105 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<!--<!DOCTYPE html>
+<html lang="en">-->
+{% block css %}
+<!--<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'ivc_website/about_us/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/about_us/css/bootstrap.min.css' %}">-->
+<!--<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />-->
+<!--<link rel="stylesheet" href="{% static 'ivc_website/about_us/css/owl.carousel.min.css' %}">
+<link rel="stylesheet" href="{% static 'ivc_website/about_us/css/owl.theme.default.min.css' %}">-->
+<link rel="stylesheet" href="{% static 'ivc_website/about_us/css/style.css' %}">
+<!--<link rel="stylesheet" href="{% static 'ivc_website/about_us/css/Members.css' %}">-->
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>-->
+
+<!--</head>-->
+{% endblock %}
+
+{% block content %}
+<!--<body>
+<main>-->
+<div class="t-header">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-lg-6 mx-3 d-flex justify-content-center">
+            <div class="desc-header">
+                <h1 class="text" style="color: #00262b">About TECVICO</h1>
+                <p class="text" style="color: #00262b">
+                    TECVICO aims to build an easier life through the expansion of virtual collaborations which are organized by international research and industrial groups. It supports a wide range of fields such as medicine, electrical, mechanical, medical physics, and others. To this end, our research and industry teams are developing advanced designs to accomplish the projects. All groups are provided with experienced advisors and members and the progress of the projects is recorded by the company’s experts. The company leads the teams to succeed. The company obtains some new instruments including a powerful GPU, Cloud, new large datasets, prepared packages, and others for the groups. The company also observes a fair share of financial and spiritual benefits from the projects for members.
+                    </p>
+
+                <!--<div class="btn-group mt-4">
+                    <a class="btn1 btn  " href="#">Learn More</a>
+                    <a class="btn2 btn  mx-3" href="#">Discover Feature</a>
+                </div>-->
+            </div>
+        </div>
+        <div class="col-lg-5 d-lg-block d-none ">
+            <img class="img-fluid" src="{% static 'ivc_website/about_us/img/head_img.svg' %}" alt="">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid about-me pt-5 p-0" style="background-color:#f9f9f9!important;">
+    <section class="rest d-flex justify-content-center align-items-center flex-column" >
+        <div class="container title_sc ">
+        <div class="mx-3 my-3 text-center">
+            <h2 class="title" style="color:#00262b">TECVICO <span style="color:#cd9527">sections</span></h2>
+            <p class="line_sample my-2"></p>
+            <!--<h5>TECVICO is divided into four sections:</h5> -->
+        </div>
+        </div>
+        <div class="row part-res" style="color:#00262b">
+            <div class="col-md-6 py-3">
+                <div class="desc-res">
+                    <h3 class="fw-bold">Project</h3>
+                    <p class="mt-3">
+                        TECVICO is an international company that aims to facilitate the connection
+                        between researchers worldwide. Thus, it obtains an international platform
+                        to define the research project. Experienced researchers, university professors,
+                        industrial companies, laboratories, and others can define and fund the project
+                        on this platform, and other researchers<span id="dots2">...</span><span id="more2" style="display:none"> are able to observe and participate in
+                            the projects. Moreover, all levels of scientists (beginner, intermediate,
+                            or advanced) can join TECVICO and undertake a part of projects. Company experts
+                            and research director first evaluate all projects. These projects are sent to
+                            at least two reviewers for final evaluation. An expert is associated with each
+                            research project and follows it to accomplish. The company provides the projects
+                            with services such as GPU, Powerful database, algorithms, programs, and others.
+                            TECVICO evaluates researchers and determines some badges for them. Each researcher
+                            with a higher badge has more chance to be accepted via the project's main supervisor.
+                            In short, TECVICO provides experts with international projects as well as industrial
+                            projects with international experts. Moreover, it facilitates and accelerates finding
+                            appropriate international collaborators for research projects that need teammates.
+                            At least two reviewers will evaluate the projects before submitting them to journals
+                            and conferences or delivering them to the clients. Thus, quality assurance checks
+                            enable the production of high-quality products.</span>
+                    </p>
+                    <div class="row ">
+                        <div class="col">
+                            <button type="button" class="btn btn-dark" onclick="myFunction2()" id="myBtn2">Read more</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6 d-flex justify-content-center ">
+                <img class="img-fluid" src="/static/ivc_website/about_us/img/research.jpg" alt="">
+            </div>
+        </div>
+        
+            <div class="col-md-6 d-flex justify-content-center ">
+
+                <!--<img class="img-fluid" src="/static/ivc_website/about_us/img/industry.jpg" alt="">-->
+            </div>
+        
+        <div class="row part-res active " style="color:#00262b">
+            <div class="col-md-6 d-flex justify-content-center">
+                <img  class="img-fluid" src="/static/ivc_website/about_us/img/workshop_img.png" alt="">
+            </div>
+            <div class="col-md-6 py-3">
+                <div class="desc-res">
+                    <h3 class="fw-bold ">Workshop</h3>
+                    <p class="mt-3">
+                        TECVICO obtains an international platform to hold or participate scientific,
+                        business, and practical workshops. Furthermore, it aims at supporting new workshop
+                        holders to expand their business. It also plans to facilitate holding workshops
+                        for experienced researchers and business people. Thus, it tries to advertise the
+                        workshop to absorb members from different countries internationally.<span id="dots">...</span><span id="more" style="display:none">  TECVICO provides
+                            all students and scientists with some discounts. Moreover, providing TECVICO membership
+                            can help the interested people to have cheaper orders. All workshops are first evaluated
+                            by experts and professional reviewers to have valuable content and logical cost and a
+                            specific expert follows each workshop to accomplish successfully. All members and
+                            workshop presenters are provided with the international TECVICO certificate.</span>
+                    </p>
+                    <div class="row">
+                        <div class="col">
+                            <button type="button" class="btn btn-dark" onclick="myFunction()" id="myBtn">Read more</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div class="container-fluid about-me p-0" style="background-color:#00262b!important;">
+    <section class="container mission_vision mb-3" >
+        <div class="mission" style="background-image:url('{% static 'ivc_website/about_us/img/vision_item.png'%}')" >
+            <h2> Our mission statement</h2>
+            <p>Establishment and facilitation of international virtual collaboration among the  researchers and industry.</p>
+        </div>
+        <div class="mission" style="background-image:url('{% static 'ivc_website/about_us/img/vision_item.png'%}')" >
+            <h2>Vision</h2>
+            <p>Our vision is to become one of the largest platforms for offering collaboration between industry and researchers.</p>
+        </div>
+
+    </section>
+</div>
+<div class="container-fluid about-me p-0" style="background-color:#f9f9f9!important;">
+    
+    <section class="p-5" style="color:#00262b">
+        <div  class="p-5" style="border-left:2px solid #00262b" >
+            <div class="row px-5 py-5" style="border-bottom:2px solid #00262b">
+                <h2 style="font-size:85px!important;">Services</h2>
+            </div>
+            <div class="row px-5 py-5">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-3" >
+                    <div>
+                        <h4>1</h4>
+                        <p>Develop well-organized networks to connect academic researchers with industry.</p>
+                        
+                    </div>
+                    
+                    
+                    
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-3" style="border-left:2px solid #00262b" >
+                    <div >
+                        <h4>2</h4>
+                        <p>Identify motivated and talented researchers from various scientific or technological fields and organize them into active teams.</p>
+                        
+                    </div>
+                    
+                    
+                    
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-3"  style="border-left:2px solid #00262b">
+                    <div>
+                        <h4>3</h4>
+                        <p>Cover industrial projects worldwide.</p>
+                        
+                    </div>
+                    
+                    
+                    
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-3" style="border-left:2px solid #00262b" >
+                    <div>
+                        <h4>4</h4>
+                        <p>Educate and organize new researchers in the corresponding specialized groups.</p>
+                        
+                    </div>
+                    
+                    
+                    
+                </div>
+                
+                
+            </div>
+            
+            
+            <div class="row px-5 py-5">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-3" >
+                    <div>
+                        <h4>5</h4>
+                        <p>Professional management service on the cooperation of our network members in carrying out scientific and industrial projects.</p>
+                        
+                    </div>
+                    
+                    
+                    
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-3" style="border-left:2px solid #00262b" >
+                    <div >
+                        <h4>6</h4>
+                        <p>High standard quality assurance of scientific and industrial projects.</p>
+                        
+                    </div>
+                    
+                    
+                    
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-3"  style="border-left:2px solid #00262b">
+                    <div>
+                        <h4>7</h4>
+                        <p>Publication of scientific articles resulting from the research projects.</p>
+                        
+                    </div>
+                    
+                    
+                    
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-3" style="border-left:2px solid #00262b" >
+                    <div>
+                        <h4>8</h4>
+                        <p>Design and development of commercial, industrial, and software products and their support</p>
+                        
+                    </div>
+                    
+                    
+                    
+                </div>
+                
+                
+            </div>
+            
+            <div class="row px-5 py-5">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-3" >
+                    <div>
+                        <h4>9</h4>
+                        <p>Assure direct advantage of members from financial and legal benefits of the projects.</p>
+                        
+                    </div>
+                    
+                    
+                    
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-3" style="border-left:2px solid #00262b" >
+                    <div >
+                        <h4>10</h4>
+                        <p>Holding specialized workshops and scientific courses by qualified internal and international instructors for the network members.</p>
+                        
+                    </div>
+                    
+                    
+                    
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-3"  style="border-left:2px solid #00262b">
+                    <div>
+                        <h4>11</h4>
+                        <p>Obtain an efficient platform for effective internal and international collaboration of the researchers.</p>
+                        
+                    </div>
+                    
+                    
+                    
+                </div>
+                
+                
+                
+            </div>
+        
+            
+            
+        </div>
+        
+        
+        
+        
+        
+    </section>
+    
+    
+    
+    
+    
+    
+    
+    
+    <!--<section class=" position-relative service_sec">
+        <div class="container-fluid title_sc py-3">
+        <div class="mx-3 my-3 text-center">
+            <h2 class="title" style="color:#00262b">TECVICO <span style="color:#cd9527">services</span></h2>
+            <p class="line_sample my-2" style="background:#02b16d"></p>
+           
+        </div>
+        </div>
+
+         <div class="container">
+      <div class="timeline d-flex flex-column">
+         <div class="timeline-item">
+          <div class="card bg-base text-white border-0">
+            <div class="card-header py-2 bg-main rounded-0 border-0">
+              <span class="box">1</span>
+              <span>Develop well-organized networks to connect academic researchers with industry.  </span>
+            </div>
+            
+          </div>
+        </div>
+         <div class="timeline-item">
+          <div class="card bg-base text-white border-0">
+            <div class="card-header py-2 bg-main rounded-0 border-0">
+              <span class="box">2</span>
+              <span>Identify motivated and talented researchers from various scientific or technological fields and organize them into active teams.  </span>
+            </div>
+           
+          </div>
+        </div>
+         <div class="timeline-item">
+          <div class="card bg-base text-white border-0">
+            <div class="card-header py-2 bg-main rounded-0 border-0">
+              <span class="box">3</span>
+              <span>Cover industrial projects worldwide.</span>
+            </div>
+           
+          </div>
+        </div>
+         <div class="timeline-item">
+          <div class="card bg-base text-white border-0">
+            <div class="card-header py-2 bg-main rounded-0 border-0">
+              <span class="box">4</span>
+              <span>Educate and organize new researchers in the corresponding specialized groups.</span>
+            </div>
+           
+          </div>
+        </div>
+         <div class="timeline-item">
+          <div class="card bg-base text-white border-0">
+            <div class="card-header py-2 bg-main rounded-0 border-0">
+              <span class="box">5</span>
+              <span>Professional management service on the cooperation of our network members in carrying out scientific and industrial projects.</span>
+            </div>
+            
+          </div>
+        </div>
+         <div class="timeline-item">
+          <div class="card bg-base text-white border-0">
+            <div class="card-header py-2 bg-main rounded-0 border-0">
+              <span class="box">6</span>
+              <span>High standard quality assurance of scientific and industrial projects.</span>
+            </div>
+           
+          </div>
+        </div>
+         <div class="timeline-item">
+          <div class="card bg-base text-white border-0">
+            <div class="card-header py-2 bg-main rounded-0 border-0">
+              <span class="box">7</span>
+              <span>Publication of scientific articles resulting from the research projects.</span>
+            </div>
+           
+          </div>
+        </div>
+         <div class="timeline-item">
+          <div class="card bg-base text-white border-0">
+            <div class="card-header py-2 bg-main rounded-0 border-0">
+              <span class="box">8</span>
+              <span>Design and development of commercial, industrial, and software products and their support</span>
+            </div>
+            
+          </div>
+        </div>
+         <div class="timeline-item">
+          <div class="card bg-base text-white border-0">
+            <div class="card-header py-2 bg-main rounded-0 border-0">
+              <span class="box">9</span>
+              <span>Assure direct advantage of members from financial and legal benefits of the projects.</span>
+            </div>
+           
+          </div>
+        </div>
+         <div class="timeline-item">
+         <div class="card bg-base text-white border-0">
+            <div class="card-header py-2 bg-main rounded-0 border-0">
+              <span class="box">10</span>
+              <span> Holding specialized workshops and scientific courses by qualified internal and international instructors for the network members.</span>
+            </div>
+            
+          </div>
+        </div>
+         <div class="timeline-item">
+         <div class="card bg-base text-white border-0">
+            <div class="card-header py-2 bg-main rounded-0 border-0">
+              <span class="box">11</span>
+              <span> Obtain an efficient platform for effective internal and international collaboration of the researchers.</span>
+            </div>
+            
+          </div>
+        </div>
+
+      </div>
+    </div>
+    </section>-->
+    
+    
+    <!--<section class="container-fluid p-0 mb-5 mt-3 company_member">-->
+         
+    <!--     <h2 class="title  text-center my-3 ">TECVICO <span class="text-warning">members</span></h2>-->
+    <!--      <p class="line_sample my-2"></p>-->
+    <!--    <div class="row p-2 ceo_row ">-->
+            <!--<div class="col-lg-8 col-md-12">-->
+                <!--<h2>Meet Global Leaders</h2>-->
+                <!--<p class="">The TECVICO Team integrates seamlessly into the client’s-->
+                <!--work processes. Our team becomes part of the client’s own team members -->
+                <!--and not “some outsider vendor”. With this mutual trust and we share our goals,-->
+                <!--experiences, and beliefs, giving us a more clear vision about the project-->
+                <!--with the future in mind. This level of cooperation avoids many potential-->
+                <!--obstacles in the development process.-->
+                <!--</p>-->
+            <!--</div>-->
+    <!--        <div class="col-lg-4 col-md-12 ">-->
+    <!--        </div>-->
+    <!--        <div class="col-lg-4 col-md-12 member_item img-fluid ">-->
+    <!--            <img src="{% static 'ivc_website/about_us/img/new_member/1.png' %}" >-->
+    <!--            <h6 class="w-100 my-2">Mohammad R. </h6>-->
+    <!--            <h6>Salmanpour, Ph.D.</h6>-->
+    <!--            <p>CEO</p>-->
+    <!--        </div>-->
+    <!--         <div class="col-lg-4 col-md-12 ">-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <!--    <div class="row justify-content-center align-items-center p-2">-->
+            <!--<div class="col-lg-3 col-sm-6 col-12 member_item">-->
+    <!--            <img src="{% static 'ivc_website/about_us/img/new_member/4.png' %}" >-->
+    <!--            <h6 class="w-100 my-2">Mohammad Ghaemi, Ph.D.</h6>-->
+    <!--            <p>Technical Manager</p>-->
+    <!--        </div>-->
+    <!--        <div class="col-lg-3 col-sm-6 col-12 member_item">-->
+    <!--            <img src="{% static 'ivc_website/about_us/img/new_member/3.png' %}" >-->
+    <!--            <h6 class="w-100 my-2">Fatima Ghazipour, MSc</h6>-->
+    <!--            <p>Human Resource Director</p>-->
+    <!--        </div>-->
+            
+            
+            
+    <!--    </div>-->
+    <!--    <div class="row justify-content-center align-items-center p-2">-->
+            
+            
+            
+    <!--        <div class="col-lg-3 col-sm-6 col-12 member_item">-->
+    <!--            <img src="{% static 'ivc_website/about_us/img/new_member/gharanjik.jpeg' %}" >-->
+    <!--            <h6 class="w-100 my-2">AzizMohammad Gharanjik, Ph.D.</h6>-->
+    <!--            <p>Website Manager</p>-->
+    <!--        </div>-->
+            
+           
+    <!--        <div class="col-lg-3 col-sm-6 col-12 member_item">-->
+    <!--            <img src="{% static 'ivc_website/about_us/img/new_member/6.jpeg' %}" >-->
+    <!--            <h6 class="w-100 my-2">Mohammad Taghi Emadi, MSc</h6>-->
+    <!--            <p>Germany Agency Manager</p>-->
+    <!--        </div>-->
+    <!--    </div>-->
+            
+        
+        
+    <!--</section>-->
+    
+    
+    <!--<section class="container-fluid p-0 mb-3 mt-5 company_member">
+         
+         <h2 class="title  text-center my-3 ">TECVICO <span class="text-warning">supervisors</span></h2>
+          <p class="line_sample my-2"></p>
+        
+        <div class="row justify-content-center align-items-center p-2">
+            <div class="col-lg-3 col-sm-6 col-12 member_item">
+                <img src="{% static 'ivc_website/about_us/img/new_member/4.jpeg' %}" >
+                <h6 class="w-100 my-2">Fariborz Forouhandeh, Ph.D.</h6>
+                <p>Ph.D. in Mechanical engineering, Manufacturing. Department of Mechanical Engineering, IIT-BHU(Varanasi)</p>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12 member_item">
+                <img src="{% static 'ivc_website/about_us/img/new_member/3.jpeg' %}" >
+                <h6 class="w-100 my-2">Ehsan Zahedi, Ph.D.</h6>
+                <p>Associate professor in Physical Chemistry</p>
+            </div>
+            
+            <div class="col-lg-3 col-sm-6 col-12 member_item">
+                <img src="{% static 'ivc_website/about_us/img/new_member/m.jpeg' %}" >
+                 <h6 class="w-100 my-2">Mohammad Mohammadiun, Ph.D.</h6>
+                <p>Associate professor of Mechanical engineering</p>
+            </div>
+            
+            <div class="col-lg-3 col-sm-6 col-12 member_item">
+                <img src="{% static 'ivc_website/about_us/img/new_member/h.jpeg' %}" >
+                 <h6 class="w-100 my-2">Hamid Mohammadiun, Ph.D.</h6>
+                <p>Associate professor of mechanical engineering (Ph.D , Energy conversion)</p>
+            </div>
+            
+        </div>
+       
+            
+        
+        
+    </section>-->
+
+</div>
+<div class="modal fade" id="supervisor_1" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+     tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered section_sup">
+        <div class="modal-content">
+            <div class="close_btn">
+                <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center">
+                <div class=" owl-carousel owl-theme modal_slider">
+                    <div class="card_guideline mx-3 d-flex text-center flex-column">
+                        <div class="d-flex flex-column mt-2">
+                            <h4 class="title my-3 ">About TECVICO</h4>
+                            <p class="desc ">
+                                TECVICO aims to build an easier life through the expansion of virtual collaborations which are organized by international research and industrial groups. It supports a wide range of  various fields such as medicine, electrical, mechanical, medical physics, and others. To this end, our research and industry teams are developing advanced designs to accomplish the projects. All groups are provided with experienced advisors and members and the progress of the projects is recorded by the company’s experts. The company leads the teams to succeed. The company obtains some new instruments including a powerful GPU, Cloud, new large datasets, prepared packages, and others for the groups. The company also observes a fair share of financial and spiritual benefits from the projects for members.
+                            </p>
+                        </div>
+                        <div class="d-flex flex-column mt-2">
+                            <h4 class="title my-3 ">Vision</h4>
+                            <p class="desc ">
+                                Our Vision is to become one of the largest platforms for offering
+                            </p>
+                        </div>
+                        <div class="d-flex flex-column mt-2">
+                            <h4 class="title  ">About TECVICO</h4>
+                            <p class="desc ">
+                                Establishment and facilitation of international virtual collaboration among the
+                                researchers and industry.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card_guideline mx-3 d-flex text-center flex-column">
+                        <h4 class="title text-center my-3">Objectives </h4>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Facilitating the communication of international professors and students in order to
+                            collaborate in research or industrial projects.
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Speeding up the process of finding and applying for the industrial projects for
+                            university professors.
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Supporting young and recently employed assistant professors by adding knowledgeable
+                            and motivated members to their team.
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Providing a friendly environment for collaboration of international students and
+                            professors by holding workshops etc.
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Assuring the accomplishment of the project to meet the quality and timing requirements
+                            of the target industry.
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Assuring the accomplishment of the project to meet the quality and timing requirements
+                            of the target industry.
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Supplying the executive teams with international specialists to accomplish the
+                            corresponding projects.
+
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Training and involving talented students in industrial projects and real world
+                            problems
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Comprehension of the client’s goals, challenges, and unique work environments.
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Facilitating the process of money transfer/distribution among the executive and
+                            technical team
+                        </p>
+
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">Services </h4>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Providing the industry with the progress feedback and report, upon their request,
+                            during the execution of the project to constantly keep them in the technical progress
+                            loop if required.
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Summative and formative evaluation of the project by a professional quality assurance
+                            team consisting of experts in the corresponding field
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Holding technical workshops by our professional teams for training avid students and
+                            members around the world, which also provides a friendly environment for efficient
+                            collaboration among the members of our company.
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Identifying the most compatible and knowledgeable supervisor(s), for every targeted
+                            industrial project, by our management team to collaborate on developing a suitable
+                            proposal. The collaboration ensures that all the required resources are provided for
+                            executing the project.
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Providing the supervisor(s) of every project with suitable specialists and talented
+                            students from out of members if required.
+                        </p>
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">Services </h4>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Providing legal contracts to ensure all the expected benefits for all stakeholders
+                            involved in the ownership, management, and execution of every project. (may require a
+                            professional lawyer)
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Consulting projects by our experts. Some projects suggested our company
+
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Our platform for applying the industrial projects creates the environment for
+                            supporting young and recently employed assistant professors. Any technical team
+                            possesses at least one supervisor who are scientist and industrial celebrities and some
+                            experts who have recently employed as assistant professors.
+                        </p>
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">What researchers can apply for TECVICO? </h4>
+                        <p class="desc  d-flex align-items-center">
+                            All levels of researchers (beginner, intermediate, and advance) can join TECVICO and
+                            apply for projects. The current projects are mainly defined in the fields of Artificial
+                            Intelligence, Image Processing, Machine Learning, and Deep Learning. In addition,
+                            TECVICO is interested in working on other fields, such as Cryptography, Electrical,
+                            Mechanical, Internet of Things (IoT), Cloud Computing, etc
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            There are three components to each project:
+                            <br>
+                            • Responsibility coin
+                            <br>
+                            • Knowledge coin
+
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            It contains various aspects, such as attending all weekly meetings, being on-time to
+                            deliver a task, being responsible for his/her words and behavior, etc. Depending on the
+                            responsibility of supervisors in different projects, they are assigned points by the
+                            company. These points are convert-able to Responsiveness Coins. These coins have
+                            financial value and can be bought/sold.
+                            The applicants basically need responsibility and knowledge coins to apply for these
+                            projects. There are 3 ways to obtain responsibility coins as follows: i) initial fee ($)
+                            to buy the coins, ii) work in some sections of thecompany and responsibility coins will
+                            be paid the applicant as his/her wage, and iii) corporate in projects and receive the
+                            coins as reward toward accomplishing the project. In fact, this kind of coin evaluate
+                            and motivate members attend in all weekly meetings, be on-time to do assigned tasks, be
+                            responsible for his/her words and behavior etc. The applicants will be provided with
+                            knowledge coins via i) scientific interview, and ii) accomplishing and promoting his/her
+                            knowledge in the project.
+                        </p>
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">TECVICO sections </h4>
+                        <p class="desc">
+                            <strong>Research section:</strong> research projects are basically referred to this
+                            section. Some time,
+                            small industrial project will also be associated with this section. To join TECVICO, all
+                            applicants must apply for some projects in this section unless they are able to receive
+                            minimum knowledge coin via interview process. After passing this section and qualified
+                            (obtaining responsibility and knowledge coins), applicants can join other sections.
+                            TECVICO invites the international laboratories, university professors, industry
+                            companies, governments, factories etc. to give the project to us. Especially, we will
+                            provide the university professors and lab supervisors with experts. As it is obvious,
+                            the professors are undertaking some big projects form industries or governments. They
+                            divide the project into smaller parts and then hire some students and researchers to do
+                            it. The divisions most often include various fields or interdisciplinary projects, and
+                            the lab members might not be expert in some fields. In this case, the supervisor can
+                            give a section of project to TECVICO. Thus, TECVICO promises to provide the project with
+                            experts and lead it to be accomplished. Some time, a project is assigned a
+                            researcher/student and s/he is not able to accomplish it. In this case, TECVICO can
+                            collaborate with the lab and provide the group with a professional teammate. After being
+                            accomplished the project, the members will be provided with i) responsibility coins, ii)
+                            knowledge coins, and iii) wage ($) (if the project was already funded). If the project
+                            also results in an article, the members will be considered as the authors based on their
+                            effort and supervisor’s/company’s rule.
+                        </p>
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">TECVICO sections </h4>
+                        <p class="desc">
+                            <strong>Competition section:</strong> This section is focusing on
+                            participating in prestigious world competitions such as Kaggle, HECTOR etc. To apply to
+                            some competitions in this section, members need to obtain knowledge coins unless they
+                            are able to receive minimum knowledge coin via interview process. Furthermore, they also
+                            need requested responsibility coins to apply for a competition. Each member will benefit
+                            from the coopetition if the team win in it. If the competition results in an article,
+                            the members will be considered as the authors based on their effort and
+                            supervisor’s/company’s rule. After being successfully accomplished the competition, the
+                            members will be provided with i) responsibility coins, ii) knowledge coins.
+                        </p>
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">TECVICO sections </h4>
+                        <p class="desc">
+                            <strong>Industry section:</strong> Industrial projects with high
+                            cost are directly associated with this section. To enter this section, the applicants
+                            need a considerable number of responsibility and knowledge coins. Experienced professors
+                            and professional companies such as consulting companies etc. are allowed to
+                            undertake these projects. Each professor or company must hire at least half of the
+                            members from our experienced international scientists, who have enough knowledge and
+                            responsibility coins. The members will benefit from responsibility, knowledge coins and
+                            wage ($). If the project results in an article, the members will be considered as the
+                            authors based on their effort and supervisor’s/company’s rule.
+                        </p>
+                        <h4 class="title text-center my-3">Who can be a supervisor? </h4>
+                        <p class="desc">
+                            Experienced scientists with high academic degree can be considered supervisor.
+                            Supervisors must hire and lead the members to accomplish the projects. They must also
+                            present a proposal to get the project or define a research project. TECVICO will invite
+                            these supervisors to review proposals, the papers, reports, etc
+                        </p>
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">Which supervisors/members can undertake a project? </h4>
+                        <p class="desc">
+                            TECVICO considers an experienced supervisor as a contractor. Supervisors can define some
+                            projects in research section. These supervisors must present a proposal and then TECVICO
+                            will evaluate the proposal. If the result of evaluation is positive, the supervisor can
+                            start the project via spending some responsibility and knowledge coins. Applicants can
+                            also apply for these projects via spending their mentioned coins. Some research projects
+                            can be funded via some industrial companies, hospitals etc. at the beginning of the
+                            project or during doing the project. Thus, these
+                            projects are called funded projects. Small industrial projects are associated with
+                            research section. Supervisors can also apply for these projects via presenting proposal.
+                            Finally, supervisor is able to undertake the project via company’s approval. Meanwhile,
+                            the new projects will be noticed via member dashboard or news section or social media.
+                        </p>
+                        <h4 class="title text-center my-3">How to Join TECVICO? </h4>
+                        <p class="desc">
+                            If you would like to join TECVICO, click on http://TECVICO.com.
+                            At the top-right corner of the home page, click on "Join Us" and fill the form out,
+                            upload your resume, and then click on "Register".
+                        </p>
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-2">Apply to Industry Projects</h4>
+                        <p class="desc">
+                            The project has first been approved by the Technical Manager and its research areas have
+                            been identified. Each professor/company can apply for this project in accordance with
+                            their field and experience/knowledge. professors/companies need a valid warranty before
+                            undertaking the project. Although, multiple professors/companies might apply for the
+                            project, the company selects the best Supervisor/company among the competitors.
+                        </p>
+                        <h4 class="title text-center ">Structure of members in a project </h4>
+                        <p class="desc">
+                            <strong>Each project includes 4 categories as follows:</strong>
+                            <br>
+                            1) Supervisors/advisors
+                            <br>
+                            2) Mentor
+                            <br>
+                            3) Member
+                            <br>
+                            4) Learner
+                            <br>
+                            <br>
+                            Each project includes at least a supervisor. Multiple advisors can apply for this
+                            project. At the end, the first supervisor will select the best advisors and supervisors.
+                            Also, multiple members, mentors and learners can request to project to join in. Thus,
+                            the first supervisor will select the individuals based on their knowledge and
+                            responsibility. The supervisor and advisors lead the mentors, members and learners to
+                            accomplish the project.
+                            Note: It is good to know that an increase in the number of individuals resulted in less
+                            percentage of benefits for the supervisor.
+
+                        </p>
+
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">Projects management by supervisor </h4>
+                        <p class="desc">
+                            During the project, The supervisor must update the company from progression in the
+                            project. Also, the supervisor commits to accomplish the project on time. If the
+                            supervisor needs more time to carry the project out, he must request the company.
+                        </p>
+                        <h4 class="title text-center my-3">How to Suggest Research Project </h4>
+                        <p class="desc">
+                            Supervisors can define their own projects in the company. To do this, they should go to
+                            the “Suggest Research Project” section through their dashboard. This section includes a
+                            form to define a project. The form consists of different parts: relevant title,
+                            description of the project including start date, end date, project supervisors,
+                            requirements and support. After the company accepted the proposal, project status will
+                            be change to new project and everybody can observe and request it in their dashboard.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="supervisor_2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+     tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered section_sup">
+        <div class="modal-content">
+            <div class="close_btn">
+                <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center">
+                <div class=" owl-carousel owl-theme modal_slider">
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">What sector do we start from? </h4>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            The entrance gate is the research sector. After working in this sector and being
+                            qualified by gaining enough Responsiveness Fee and Badges, researchers can join other
+                            sectors.
+                        </p>
+                        <h4 class="title text-center my-3">Apply to industry projects </h4>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            By working in the research sector and acquiring enough Responsiveness Fee and Badges, a
+                            researcher will be eligible to join the industrial sector and projects. Obviously, the
+                            requirement Res Fee for project members would be different in a way that higher level
+                            members need more Res Fees.
+                        </p>
+                        <h4 class="title text-center my-3">Money is sweeter than honey!Money is sweeter than
+                            honey! </h4>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            Payments and bonuses are proportional to a member's contribution for completion of a
+                            project. There's a Chinese proverb that says, "If you try, you'll be rewarded!!
+
+                        </p>
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">Entry permissions </h4>
+                        <p class="desc  d-flex align-items-center">
+                            Now, we reached the interesting part of TECVICO, Entry permissions!!
+                            Entry permissions are entry permits for projects. They are divided into two main
+                            classes:
+
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            1. Responsiveness Fee (Res Fee): This indicates how much a member was responsible for
+                            projects that he/she already attended. It contains various aspects, such as attending
+                            all weekly meetings, being on-time to deliver a task, being responsible for his/her
+                            words and behavior, etc. Depending on the responsibility of researchers in different
+                            projects, they are assigned points by projects' supervisors. These points are
+                            convert-able to Responsiveness Fee. If a researcher cannot afford to pay Responsiveness
+                            Fee, he/she can work for TECVICO as an intern or a trial member for a while and after
+                            gaining enough points, he/she can join a project.
+
+                        </p>
+                        <p class="desc  d-flex align-items-center">
+                            <i class="fas fa-check me-3"></i>
+                            2. Badges: This Badges shows how much a member knows a subject and how much he/she is
+                            skilled in programming, using tools and software. Depending on how much members were
+                            successful to use their skills and knowledge to proceed on a project, they are given
+                            points. These points are given by supervisors. Based on these points, researchers are
+                            awarded Badges. These Badges cannot be traded, and are only acquired through projects.
+                            They play a crucial role in getting into Competition and Industry projects. If a member
+                            wants more Res Fee to join projects with more funds, it is recommended to choose
+                            projects that suit his/her abilities and complete them in the best possible way.
+                        </p>
+                        More effort, More (Res Fee)!
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">Apply for a Project </h4>
+                        <p class="desc  d-flex align-items-center">
+                            Payments and bonuses are proportional to a member's contribution for completion of a
+                            project. There's a Chinese proverb that says, "If you try, you'll be rewarded!!
+                        </p>
+                        <h4 class="title text-center my-3">Joining TECVICO </h4>
+                        <p class="desc  d-flex align-items-center">
+                            If you want to be a member of TECVICO, click on http://TECVICO.com.
+                            At the top-right corner of the Home page, click on "Join Us" and insert your
+                            information, upload your resume, and then click on "Register".
+                            Be careful! To complete the information, after registration you need to enter the
+                            profile section and insert the required information.
+
+                        </p>
+                        <h4 class="title text-center my-3">Project Members </h4>
+                        <p class="desc  d-flex align-items-center">
+                            Each project includes a "Supervisor" as a project manager, a "Mentor" as an advisor, a
+                            "Member" as a project member, and a "Learner" as an intern. Required (Res Fee) to join a
+                            project are different for each role, and higher roles need more (Res Fee). You can join
+                            a project as a learner and earn (Res Fee) by proceeding on that project, but unlike
+                            other roles, you would not get other project's benefits, such as publication benefits.
+
+                        </p>
+                    </div>
+                    <div class="card_guideline mx-3 d-flex  flex-column">
+                        <h4 class="title text-center my-3">How to Apply for Projects </h4>
+                        <p class="desc">
+                            After registering on TECVICO website, a section called "Projects" will be shown in your
+                            dashboard, and by selecting that, you will enter the projects page. On this page, you
+                            can choose the type of projects you want from "Research", "Competition", and "Industry"
+                            sectors. Finally, by clicking on the "New" tab, you can see all the newly defined
+                            projects, along with their information, including their names,
+                            abstracts/requirements/support of the project, start and end dates, their collaborators,
+                            and the required (Res Fee) to join them.
+                            To apply for any of these projects, you must have the minimum required (Res Fee) to join
+                            that project.
+                            Be careful in choosing projects since by choosing a project that is not suitable for
+                            you, you might lose all of your initial (Res Fee). So, choose projects that fit your
+                            skills, abilities, and interests.
+                        </p>
+                    </div>
+                    <div class="card_guideline mx-3 d-flex   flex-column">
+                        <h4 class="title text-center my-3">What are Projects' Benefits? </h4>
+                        <p class="desc  fw-bold">
+                            Projects' benefits are different and are only given after completing projects. They can
+                            be:
+                        </p>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="desc">
+                                    1. Financial benefits (money) based on your contributions in a project. </p>
+                                <p class="desc">
+                                    2. Scientific and Publication benefits (having your names in scientific
+                                    publications). </p>
+
+                            </div>
+                            <div>
+                                <p class="desc">
+                                    3. Having work experience in an international company and adding that to your
+                                    resume. </p>
+                                <p class="desc">
+                                    4. Receiving a certificate (after confirmation) from TECVICO.
+                                </p>
+                            </div>
+                        </div>
+                        <h4 class="title text-center my-3">TECVICO Progress = Your Progress</h4>
+                        <p class="desc">
+                            The whole company and its members are like the organs of a body and have common goals.
+                            To achieve these goals, TECVICO and its members are aligned and need each other to move
+                            forward. The progress and loss of TECVICO directly affect the progress and loss of the
+                            members, and vice versa.
+                        </p>
+                        <h4 class="title text-center my-3">Future plans and directions of TECVICO</h4>
+                        <p class="desc">
+                            TECVICO aims to continue the course of development in different fields and grant
+                            branches in different countries around the world.
+                        </p>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--</main>
+</body>-->
+<!--<script src="{% static 'ivc_website/about_us/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'ivc_website/about_us/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'ivc_website/about_us/js/owl.carousel.min.js' %}"></script>-->
+<!--<script src="{% static 'ivc_website/about_us/js/main.js' %}"></script>-->
+<!--</html>-->
+<script>
+    $(document).ready(function () {
+
+        var cardAll = document.querySelectorAll('.cardlink');
+        for(var i=0; i<cardAll.length;i++){
+            cardAll[i].addEventListener('click',function(){
+                cardID = $(this).attr('id');
+                var infoText = document.getElementById(cardID+"Me").innerHTML;
+                var name = document.getElementById(cardID+"N").innerHTML;
+                var MemberEmail = document.getElementById(cardID+"E").innerHTML;
+                document.getElementById("MemberInfoModalLabel").innerHTML = name;
+                document.getElementById("aboutMeLoc").innerHTML = infoText;
+                document.getElementById("email").innerHTML = MemberEmail;
+                $("#MemberInfoModal").modal('show');
+
+            });
+
+        }
+        $('.slider_super').owlCarousel({
+            loop: true,
+            nav: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 1
+                },
+                1000: {
+                    items: 1
+                }
+            }
+        })
+        $('.guide_slider').owlCarousel({
+            center: true,
+            loop: true,
+            margin: 10,
+            items: 4,
+            autoplay: true,
+            autoplayTimeout: 3000,
+            autoplayHoverPause: true,
+
+            responsive: {
+                600: {
+                    items: 3
+                }
+            }
+        });
+        $('.modal_slider').owlCarousel({
+            loop: true,
+            nav: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 1
+                },
+                1000: {
+                    items: 1
+                }
+            }
+        })
+
+    })
+    function myFunction() {
+        var dots = document.getElementById("dots");
+        var moreText = document.getElementById("more");
+        var btnText = document.getElementById("myBtn");
+
+        if (dots.style.display === "none") {
+            dots.style.display = "inline";
+            btnText.innerHTML = "Read more";
+            moreText.style.display = "none";
+        } else {
+            dots.style.display = "none";
+            btnText.innerHTML = "Read less";
+            moreText.style.display = "inline";
+        }
+        //===============================================
+    }
+    function myFunction2() {
+        var dots2 = document.getElementById("dots2");
+        var moreText2 = document.getElementById("more2");
+        var btnText2 = document.getElementById("myBtn2");
+
+        if (dots2.style.display === "none") {
+            dots2.style.display = "inline";
+            btnText2.innerHTML = "Read more";
+            moreText2.style.display = "none";
+        } else {
+            dots2.style.display = "none";
+            btnText2.innerHTML = "Read less";
+            moreText2.style.display = "inline";
+        }
+
+
+    }
+    function myFunction3() {
+        var dots3 = document.getElementById("dots3");
+        var moreText3 = document.getElementById("more3");
+        var btnText3 = document.getElementById("myBtn3");
+
+        if (dots3.style.display === "none") {
+            dots3.style.display = "inline";
+            btnText3.innerHTML = "Read more";
+            moreText3.style.display = "none";
+        } else {
+            dots3.style.display = "none";
+            btnText3.innerHTML = "Read less";
+            moreText3.style.display = "inline";
+        }
+
+
+    }
+</script>
+
+{% endblock content %}

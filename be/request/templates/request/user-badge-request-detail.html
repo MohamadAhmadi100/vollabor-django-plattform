@@ -1,0 +1,222 @@
+{% extends 'request/base.html' %}
+
+{% block content %}
+<div class="request-details" style="width:100%">
+     <div class="detail-title pt-4 pl-4" style="width:100%;height:100px">
+        <h2 style="margin-top: 5px;">Badge request</h2>
+    </div>
+    <hr>
+    <div class="container-fluid " style="width:100%">
+         <div class="col">
+             
+            <div class="row pt-0">
+                <div class="col-md-3 text-secondary">
+                    <h6>Badge:</h6>
+                </div>
+                <div class="col-md-9 text-secondary" >
+                    <p>{{badge.skills}}</p>
+                </div>
+            </div>
+
+
+
+            {% if badge.status == 'Reject-badge-manager' or badge.status == 'Reject-badge-expert' %}
+
+            <div class="row " id="expert-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Status:</h6>
+                </div>
+                <div class="col-md-9 text-secondary">
+                    <h6>Rejected</h6>
+                </div>
+            </div>
+            <div class="row " id="expert-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Rejected date:</h6>
+                </div>
+                <div class="col-md-9 text-secondary">
+                    <h6>{{obj_expert.badge.rejected_date}}</h6>
+                </div>
+            </div>
+               
+           
+            {% endif %}
+           
+            {% if badge.status == 'Accept' or badge.status == 'Accept-manager' %}
+            <div class="row" id="expert-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Status:</h6>
+                </div>
+                <div class="col-md-9 text-secondary">
+                    <p>Accepted</p>
+                </div>
+            </div>
+            <div class="row" id="expert-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Accepted date:</h6>
+                </div>
+                <div class="col-md-9 text-secondary" >
+                    <p>{{badge.accepted_date}}</p>
+                </div>
+            </div>
+            {% elif badge.status == 'Interview' %}
+            <div class="row" id="view-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Meeting link:</h6>
+                </div>
+                <div class="col-md-9 text-secondary">
+                    <a href="{{obj_session.meeting_link.url}}" class="badge badge-primary">Click</a>
+                </div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Interview date:</h6>
+                </div>
+                <div class="col-md-9 text-secondary">
+                    <h6>{{obj_session.start_at}}</h6>
+                </div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Timezone:</h6>
+                </div>
+                <div class="col-md-9 text-secondary">
+                    <h6>{{obj_session.time_zone}}</h6>
+                </div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Status:</h6>
+                </div>
+                <div class="col-md-9 text-secondary">
+                    <p>Under process/<span style="font-size: 13px">Interview</span></p>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="row" id="view-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Submission date:</h6>
+                </div>
+                <div class="col-md-9 text-secondary">
+                    <h6>{{badge.created.date}}</h6>
+                </div>
+            </div>
+            {% if badge.status == 'Accept' or badge.status == 'Accept-manager' or badge.status == 'Reject-badge-manager' or badge.status == 'Reject-badge-expert' %}
+            <div class="row " id="expert-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Contact:</h6>
+                </div>
+                <div class="col-md-9 text-secondary">
+                    <h6>request@tecvico.com</h6>
+                </div>
+            </div>
+            {% else %}
+            <div class="row " id="expert-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Contact:</h6>
+                </div>
+                <div class="col-md-9 text-secondary">
+                    <h6>{{obj_expert.user.email}}</h6>
+                </div>
+            </div>
+            {% endif %}
+
+
+            {% if badge.status == 'Interview' %}
+            <div class="row mt-3" id="expert-box">
+                <div class="col-md-3 text-secondary">
+                    <h6>Description:</h6>
+                </div>
+                
+            </div>
+            <div class="row" id="expert-box">
+                
+                <div class="col-md-9 text-secondary">
+                    <textarea class="form-control" disabled rows="3">{{obj_session.description}}</textarea>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if badge.status == 'Reject-badge-manager' or badge.status == 'Reject-badge-expert' %}
+
+            <div class="row mt-2" id="expert-box">
+                <div class="col-3 text-secondary"><h6>Rejection reason:</h6></div>
+            </div>
+            <div class="row">
+                 <div class="col-9 text-secondary">
+                    <textarea class="form-control" disabled rows="3">{{badge.reason_reject}}</textarea>
+                </div>
+            </div>
+               
+           
+            {% endif %}
+            <a class="btn btn-warning mt-4" href="{% url 'request:request' %}">Back</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+
+        $(".skillList").change(function () {
+           
+            const Value = $(this).val();
+             
+            if (Value == "0"){
+                $('#OtherSection').removeClass('d-none');
+            }
+            else {
+                $('#OtherSection').addClass('d-none');
+            };
+        });
+        
+        
+        document.getElementById("subBtn").addEventListener("click",function(){
+              
+            var skillvalue=document.getElementById("skills").value;
+            if(skillvalue=="0"){
+                var otherSkill = document.getElementById("OtherSection").value;
+                if(otherSkill==""){
+                    document.getElementById("OtherSection_error").innerHTML="Error: please enter the your skill."
+                }else{
+                    document.getElementById('skillform').submit();
+                    document.getElementById('subBtn').disabled = true;
+                }
+            }else{
+                document.getElementById('skillform').submit();
+                document.getElementById('subBtn').disabled = true;
+            }
+          
+        });
+        
+        
+        
+    
+    });
+
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+}
+
+
+ /*   let others = document.querySelector('.others');
+
+    function show(skill) {
+        document.querySelector('.textBox').value = skill
+        if (skill == "Others"){
+            others.classList.add('active')
+        }
+        else{
+            others.classList.remove('active')
+        }
+    }
+
+    let dropdown = document.querySelector('.dropdown');
+    dropdown.onclick = function(){
+        dropdown.classList.toggle('active')
+    }*/
+</script>
+{% endblock %}

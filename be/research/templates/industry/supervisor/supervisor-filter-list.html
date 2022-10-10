@@ -1,0 +1,188 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-street-view"></i> Project supervisor </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="industry-director">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-3 text-center">
+                {% if request.GET.filter == "filter_funded" %}
+                <a href="" class="btn btn-dark">
+                {% else %}
+                <a href="?filter=filter_funded" class="btn btn-outline-dark">
+                {% endif %}
+                    Funded
+                    <span class="badge badge-danger">{{count_filter_fund}}</span>
+                </a>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mt-2">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content mb-5" style="overflow-x:auto;">
+
+                          {% if request.GET.filter == "filter_funded" %}
+                            <table class="table table-striped table-hover p-table">
+                                <thead>
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Title</th>
+                                    <th>Fund</th>
+                                    <th>Submission date</th>
+                                    <th>Suggested start date</th>
+                                    <th>Suggested end date</th>
+                                    <!--<th>Owner</th>-->
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in object_list %}
+                                            <tr>
+                                                <td class="p-name">
+                                                    {{project.client_form.formclint.id_project}}
+                                                </td>
+                                                <td class="p-name">
+                                                    <p style="">{{project.client_form.formclint.title|truncatechars:50}}</p>
+                                                </td>
+                                                <td class="p-name">
+                                                    ${{project.client_form.formclint.fund}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.client_form.formclint.created}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.client_form.formclint.start_date}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.client_form.formclint.end_date}}
+                                                </td>
+                                                <!--<td class="p-name">
+                                                    {{project.client_form.formclint.user.get_full_name}}
+                                                </td>-->
+                                                 <td class="text-right">
+                                                     <a href="{% url 'industry:industry-supervisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                         <i class="fa fa-eye"></i> View
+                                                     </a>
+                                                 </td>
+                                            </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                          {% endif %}
+
+                          {% if request.GET.filter == "filter_notfunded" %}
+                            <table class="table table-hover table-striped p-table">
+                                <thead>
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Title</th>
+                                    <th>Fund</th>
+                                    <th>Submission date</th>
+                                    <th>Suggested start date</th>
+                                    <th>Suggested end date</th>
+                                    <!--<th>Owner</th>-->
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in filter_not_fund %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.client_form.formclint.created}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.client_form.formclint.start_date}}
+                                            </td>
+        <td class="p-name">
+                                                {{project.client_form.formclint.end_date}}
+                                            </td>
+                                            <!--<td class="p-name">
+                                                {{project.client_form.formclint.user.get_full_name}}
+                                            </td>-->
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:industry-supervisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                          {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selectedItem = $(this).val();
+        let itemClasses = {
+            "Golden": "bg-warning text-dark",
+            "Silver": "bg-secondary text-white",
+            "Bronze": "bg-danger text-white",
+            "Normal": "bg-dark text-white",
+        };
+        $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+        $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+    });
+</script>
+
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $("[name='project-value']").keypress(function (evt) {
+        let entered_value = evt.originalEvent.key;
+        let current_value = $(evt.currentTarget).val();
+        if (isNumeric(entered_value) || (entered_value === '.' && !(current_value.includes('.')))) {
+            // let input be entered
+        }
+        else {
+            evt.preventDefault();
+        }
+    });
+</script>
+{% endblock script %}

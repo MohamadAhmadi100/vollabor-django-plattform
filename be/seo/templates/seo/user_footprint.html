@@ -1,0 +1,162 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-5 pt-5">
+        {% if request.GET.filter == "user" %}
+        <a href="?filter=user" class="btn btn-success mr-1">User</a>  
+        {% else %}
+        <a href="?filter=user" class="btn btn-success mr-1">User</a>               
+        {% endif %}
+
+        {% if request.GET.filter == "url" %}
+        <a href="?filter=url" class="btn btn-primary mr-1">URL</a>  
+        {% else %}
+        <a href="?filter=url" class="btn btn-primary mr-1">URL</a>               
+        {% endif %}
+
+        {% if request.GET.filter == "project" %}
+        <a href="?filter=project" class="btn btn-primary mr-1">Project</a>  
+        {% else %}
+        <a href="?filter=project" class="btn btn-primary mr-1">Project</a>               
+        {% endif %}
+
+        {% if request.GET.filter == "register" %}
+        <a href="?filter=register" class="btn btn-primary mr-1">Register</a>  
+        {% else %}
+        <a href="?filter=register" class="btn btn-primary mr-1">Register</a>               
+        {% endif %}
+
+        {% if request.GET.filter == "user" %}
+            <div class="col-12">
+               <label>User</label>
+                <select class="form-control" name="expert" id="select_box" onchange="SelectExpert();">
+                    <option value="0">--------</option>
+                    {% for i in users %}
+                            <option value={{i.id}}>{{i.get_full_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <input type="hidden" name="position" id="position" value="select_user"  onchange="SelectExpert();">
+
+            <br>
+            <div class="col-6">
+                <label>To</label>
+                <input type="date" class="form-control" name="start_date" id="id_start_date" onchange="SelectExpert();">
+            </div>
+            <div class="col-6">
+                <label>From</label>
+                <input type="date" class="form-control" name="end_date" id="id_end_date" onchange="SelectExpert();">
+            </div>
+        {% endif %}
+
+        {% if request.GET.filter == "register" %}
+            <input type="hidden" name="select_box" id="select_box" value=""  onchange="SelectExpert();">
+            <input type="hidden" name="position" id="position" value="register"  onchange="SelectExpert();">
+
+            <br>
+            <div class="col-12">
+                <label>To</label>
+                <input type="date" class="form-control" name="start_date" id="id_start_date" onchange="SelectExpert();">
+            </div>
+            <div class="col-12">
+                <label>From</label>
+                <input type="date" class="form-control" name="end_date" id="id_end_date" onchange="SelectExpert();">
+            </div>
+        {% endif %}
+
+        {% if request.GET.filter == "project" %}
+            <div class="col-12">
+               <label>Projects</label>
+                <select class="form-control" name="expert" id="select_box" onchange="SelectExpert();">
+                    <option value="0">--------</option>
+                    {% for i in projects %}
+                            <option value={{i.id}}>{{i.project.client_form.formclint.title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="hidden" name="select_box" id="select_box" value=""  onchange="SelectExpert();">
+            <input type="hidden" name="position" id="position" value="project"  onchange="SelectExpert();">
+
+            <br>
+            <div class="col-6">
+                <label>To</label>
+                <input type="date" class="form-control" name="start_date" id="id_start_date" onchange="SelectExpert();">
+            </div>
+            <div class="col-6">
+                <label>From</label>
+                <input type="date" class="form-control" name="end_date" id="id_end_date" onchange="SelectExpert();">
+            </div>
+        {% endif %}
+
+
+        {% if request.GET.filter == "url" %}
+            <div class="col-12">
+               <label>URL</label>
+                <select class="form-control" name="expert" id="select_box" onchange="SelectExpert();">
+                    <option value="0">--------</option>
+                        <option value="/">Home</option>
+                        <option value="/about-us">About us</option>
+                        <option value="/guideline">Guidelines</option>
+                        <option value="/news/">News</option>
+                        <option value="/videos/">Videos</option>
+                        <option value="/blog/">Blog</option>
+                        <option value="/forum/">Forum</option>
+                        <option value="/FAQ/">FAQ</option>
+                        <option value="/projects/">Project list home</option>
+                        <option value="/dashboard/projects">Project list dashboard</option>
+                        <option value="/workshop/list-for-all/">Workshop list home</option>
+                        <option value="/contact-us/">Contact us</option>
+                </select>
+            </div>
+
+            <input type="hidden" name="position" id="position" value="select_url"  onchange="SelectExpert();">
+
+            <br>
+            <div class="col-6">
+                <label>To</label>
+                <input type="date" class="form-control" name="start_date" id="id_start_date" onchange="SelectExpert();">
+            </div>
+            <div class="col-6">
+                <label>From</label>
+                <input type="date" class="form-control" name="end_date" id="id_end_date" onchange="SelectExpert();">
+            </div>
+        {% endif %}
+
+    </div>
+    <hr class="mb-3">
+    <div class="" id='information'>
+    </div>
+
+</div>
+<script>
+
+    function SelectExpert(){
+        var select_box = document.getElementById("select_box").value;
+        var start_date = document.getElementById("id_start_date").value;
+        var end_date = document.getElementById("id_end_date").value;
+        var position = document.getElementById("position").value;
+         $.ajax({
+                    type: 'POST',
+                    url: "{% url 'user-footprint-ajax' %}",
+                    data: {
+                        'select_box': select_box, 'start_date': start_date, 'end_date': end_date, 'position': position,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(data){
+                      $('#information').html(data)
+                    },
+                    error: function (request, errors) {
+                    alert(errors.responseText);
+                    }
+                })
+        
+    }    
+        
+
+</script>
+
+
+{% endblock %}

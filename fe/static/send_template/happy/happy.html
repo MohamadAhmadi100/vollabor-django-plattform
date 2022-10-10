@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto|Gothic+A1|Kaushan+Script|Libre+Baskerville|Lobster');
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        a{
+            text-decoration: none;
+            color: #000;
+        }
+        body {
+            font-family: 'Gothic A1', sans-serif;
+            background-color: #F9F9F9;
+        }
+
+        .description {
+            max-width: 50%;
+            margin: 0 auto;
+            background-color: #FFFFFF;
+            padding-top: 2rem;
+        }
+
+        .img_header img {
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 600px;
+            border-radius: 5px;
+        }
+
+        .description h1 {
+            margin-bottom: 1rem;
+            color: #0a53be;
+            padding: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .description p {
+            padding-left: 1rem;
+            padding-top: 8px;
+            font-size: 20px;
+            width: 90%;
+        }
+        .description p a:hover{
+            color: #0a53be;
+        }
+
+        .goal {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+        }
+
+        .goal img {
+            width: 30px;
+            height: 25px;
+        }
+        .social {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .social h3 {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .icon_social{
+            margin-top: 1rem;
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            height: auto;
+        }
+        .icon_social  a {
+           padding: 8px;
+            transition: all 0.3s;
+        }
+        .icon_social img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+        }
+
+        .icon_social a:hover img{
+            animation: rotate 0.5s normal linear ;
+
+        }
+
+        .footer {
+            text-align: center;
+        }
+        .footer p {
+            font-size: 14px;
+        }
+
+        .btn{
+            width: max-content;
+            color: #FFFFFF;
+            height: 25px;
+            padding: 8px;
+            background: linear-gradient(89.5deg, #1E95E9 26.09%, rgba(63, 155, 184, 0.354688) 136.41%);
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover{
+            transform: scale(1.1);
+        }
+
+
+        @keyframes rotate {
+            0% {
+                -webkit-transform: rotate3d(0, 0, 1, 0deg);
+                transform: rotate3d(0, 0, 1, 0deg);
+            }
+            25% {
+                -webkit-transform: rotate3d(0, 0, 1, 90deg);
+                transform: rotate3d(0, 0, 1, 90deg);
+            }
+            50% {
+                -webkit-transform: rotate3d(0, 0, 1, 180deg);
+                transform: rotate3d(0, 0, 1, 180deg);
+            }
+            75% {
+                -webkit-transform: rotate3d(0, 0, 1, 270deg);
+                transform: rotate3d(0, 0, 1, 270deg);
+            }
+            100% {
+                -webkit-transform: rotate3d(0, 0, 1, 360deg);
+                transform: rotate3d(0, 0, 1, 360deg);
+            }
+        }
+
+
+
+    </style>
+</head>
+<body>
+<div class="description ">
+    <div class="img_header">
+        <img src="Group_17.png" alt="">
+    </div>
+
+    <h1>Happy New Year Tecvico!</h1>
+    <p class="goal">Wishing all our clients a happy new year. Thanks for trusting TECVICO Corp. <img
+            src="download-removebg-preview%20(3).png"
+            alt=""></p>
+    <p style="margin-top: 2rem; display: flex; justify-content: center ; flex-direction: column;align-items: center">
+        TECVICO plans to spread its services in 2022. For more information, you can visit the website :
+
+        <a class="btn" href="https://tecvico.com/" style="display: block;text-align: center" >www.Tecvico.com</a>
+    </p>
+
+    <hr style="margin-top: 1rem ; margin-bottom: 1rem;">
+
+    <div class="social">
+        <h3>Stay connected with us :</h3>
+        <div class="icon_social">
+            <div>
+                <a href="https://www.instagram.com/tecvico/"><img src="instagram.png" alt=""></a>
+                <a href="https://www.linkedin.com/company/tecvico/mycompany"><img src="linkedin.png" alt=""></a>
+                <a href="https://www.facebook.com/tecvico/"><img src="facebook.png" alt=""></a>
+            </div>
+
+            <div style="display: flex;justify-content: center">
+                <a href="https://twitter.com/tecvico/"><img src="twiiter.png" alt=""></a>
+                <a href="https://t.me/tecvico"><img src="telegram.png" alt=""></a>
+            </div>
+
+        </div>
+    </div>
+    <hr style="margin-top: 1rem ;">
+    <div class="footer">
+        <p>© Copyright 2021 Tecvico Group - All Rights Reserved.</p>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,335 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-paper-plane"></i>Project evaluation form</h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="w-100 d-flex rs-box">
+                <div class="container">
+                    <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+                        <form action="" id="sform" class="w-100" method="POST">{% csrf_token %}
+                            <div class="w-100 mt-5">
+                                <h3 class=" w-100  py-3 ps-2">Understanding the problem</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4">Understanding of the work to be performed and all its associated tasks.</p>
+                                   
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal1" style="cursor: pointer;" > Help  </a>
+                                    
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required class="scores" oninput="ClearErr('id_score')" name="score" id="id_score" min="0" max="100">
+                                     <div id="id_score_error"  style="color:red"></div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps- 2">Timing and management</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4">
+                                        Feasibility to be done the indicated project
+
+                                    </p>
+                                
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal2" style="cursor: pointer;" > Help  </a>
+
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required oninput="ClearErr('id_score_1')" class="scores" name="score_1" id="id_score_1" min="0" max="100">
+                                     <div id="id_score_1_error" style="color:red"></div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps-2">Availability/Quality of data</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4">
+                                    Size of data, capability of reproducing the study, quality of data, and diversify data
+                                    Number of datapoints
+                                    Kinds of data accessibility 
+                                    Preprocessing effort.
+                                    Diversity of datapoints
+                                    Anticipation of setbacks
+
+                                    </p>
+                                  
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal3" style="cursor: pointer;" > Help  </a>
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required class="scores" oninput="ClearErr('id_score_2')" name="score_2" id="id_score_2" min="0" max="100">
+                                     <div id="id_score_2_error" style="color:red"></div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps-2"> Sufficient Fund</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4">
+                                    Sufficient related fund to be successfully accomplished the project in the allocated time:
+                                    Sufficient budget to do the project
+
+                                    </p>
+                              
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal4" style="cursor: pointer;" > Help  </a>
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required class="scores" name="score_3" oninput="ClearErr('id_score_3')" id="id_score_3" min="0" max="100">
+                                      <div id="id_score_3_error" style="color:red"></div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group col-md-12 mb-0">
+                                <div id="div_id_status" class="form-group">
+                                    <input type="hidden" name="status" id="id_status" value="e" >
+                                </div>
+                            </div>
+                             
+                            <div class="d-block w-100 text-end">
+                                <button type="button" id="submitBtn" class="btn-primary btn-lg my-5">Submit</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- --------------- Help ------------- -->
+
+            <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Understanding the problem</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                        The suggested project demonstrates a clear and detailed understanding of all aspects of the work to be performed.
+                        <br>
+                        <b>90 to 100 points</b>
+                        <hr>
+
+                        The suggested project demonstrates a good understanding of the work to be performed.
+                        <br>
+                        <b>70 to 89 points</b>
+                        <hr>
+
+                        The suggested project demonstrates only a general understanding of  the work to be performed.
+                        <br>
+                        <b>50 to 69 points</b>
+                        <hr>
+
+                        The suggested project demonstrates a lack of understanding of significant aspects of the work to be performed.
+                        <br>
+                        <b>0 to 49 points</b>
+                        <hr>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Timing and management</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+
+                        It is feasible to do it and all tasks can be successfully accomplished within the time frame allocated; and adequately anticipates minor setbacks. 
+                        <br>
+                        <b>90 to 100 points </b>
+                        <hr>
+
+                        It is feasible to do it and all tasks might be successfully accomplished within the time frame allocated; and might adequately anticipate minor setbacks.
+                        <br>
+                        <b>70 to 89 points </b>
+                        <hr>
+
+                        It may be feasible to do it and all tasks might be successfully accomplished within further time frame allocated; and might adequately anticipate minor setbacks. 
+                        <br>
+                        <b>50 to 69 points </b>
+                        <hr>
+
+                        It is not feasible to do and all tasks definitely needs further time to be successfully accomplished; and might adequately anticipate major setbacks. 
+                        <br>
+                        <b>0 to 49 points </b>
+                        <hr>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Availability/Quality of data</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+
+                        The project is provided with an appropriate dataset or the project doesn’t need any datasets. 
+                        <br>
+                        <b>90 to 100 points </b>
+                        <hr>
+
+                        The project needs datasets. and there is an access to public large-scale, Not Preprocessed, not Multicenter dataset.
+                        <br>
+                        <b>70 to 89 points </b>
+                        <hr>
+
+                        The project needs datasets and there is an access to private small-scale, Not Preprocessed, not Multicenter dataset.
+                        <br>
+                        <b>50 to 69 points </b>
+                        <hr>
+
+                        The project needs large/small datasets and there is no access to private, public or appropriate large/small-scale. 
+                        <br>
+                        <b>0 to 49 points </b>
+                        <hr>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Sufficient Fund</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+
+                        Sufficient budget to do the project.
+                        <br>
+                        <b>90 to 100 points </b>
+                        <hr>
+
+                        It may tackle minimum cost to accomplish the project.
+                        <br>
+                        <b>70 to 89 points </b>
+                        <hr>
+
+                        It needs a little more budget to do the project
+                        <br>
+                        <b>50 to 69 points </b>
+                        <hr>
+
+                        It is not feasible with the allocated fund and definitely needs so more budget to be accomplished.
+                        <br>
+                        <b>0 to 49 points </b>
+                        <hr>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+
+<script>
+    $(document).ready(function () {
+        
+         document.getElementById("submitBtn").addEventListener("click",function(){
+             
+            var scores = document.getElementsByClassName("scores");
+            //alert(scores.length);
+            var count = 0;
+            for(var i=0;i< scores.length;i++){
+               var scoreID =scores[i].id;
+               var scoreVal = document.getElementById(scoreID).value;
+               if(scoreVal==""){
+                   document.getElementById(scoreID + "_error").innerHTML="Error: please complete the field.";
+                   count++;
+                   
+               }
+               if(scoreVal >100 || scoreVal <0){
+                   document.getElementById(scoreID + "_error").innerHTML="Error: score entered outside the allowed range.";
+                   count++;
+               }
+              
+            }
+            if(count==0){
+                document.getElementById('sform').submit();
+                document.getElementById('submitBtn').disabled = true;
+            }
+          
+        });
+        
+        
+        
+    });
+    
+    
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+  
+}
+
+    
+</script>
+
+
+
+
+{% endblock script %}

@@ -1,0 +1,438 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+<!DOCTYPE html>
+<html lang="en">
+{% block css %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	
+	<link rel="stylesheet" href="{% static 'ivc_website/css/owl.carousel.min.css' %}">
+	<link rel="stylesheet" href="{% static 'ivc_website/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'project/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'project/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'project/css/workshop.css' %}">
+    <title>Project- {{object.project.client_form.formclint.title}}</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon-v2.ico' %}"/>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MV42WCDPR9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-MV42WCDPR9');
+    </script>
+    
+    <style>
+        
+        .project_item .item .bg-logo {
+    background-color: black;
+    height: 50px;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+
+}
+
+.project_item .item .bg-logo img {
+    width: 150px;
+    height: 30px;
+    position: relative;
+    left: 14px;
+}
+
+.project_item .item .bg-logo span {
+    font-size:18;
+    font-weight:bold;
+    margin:0 2rem;
+}
+
+        
+        
+        
+    </style>
+    
+    
+    
+    
+</head>
+{% endblock css %}
+{% block content %}
+<body>
+
+    {% if messages %}
+        {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                    <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+        {% endfor %}
+    {% endif %}
+
+    <div class="ws-content d-md-flex">
+        <div class="workshop">
+            <div class="bc">
+                <a href="{% url 'dashboard-projects-page' %}" class="text-capitalize">Projects</a>
+                <span class="bc-icon"> / </span>
+                <span class=""> View project page</span>
+            </div>
+            <div class="view-page">
+                <div class="view-page-box">
+                    <div class="view-page-title">
+                        <h1 class="view-page-head text-xl-center text-lg-center text-md-center text-sm-start">
+                            Title : {{object.project.client_form.formclint.title}}
+                        </h1>
+                    </div>
+                    <div class="view-page-list">
+                        <div class="view-page-list-box">
+                            <div class="row justify-content-between view-page-row mb-3">
+                                <div class="col-md-6">
+                                    <i class="far fa-check-circle me-3"></i>
+                                    <span class="vw-user-section">Project ID: </span>
+                                    <span class="vw-user-name">{{object.project.client_form.formclint.id_project}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                            
+                            
+                    <div class="view-page-list">
+                        <div class="view-page-list-box">
+                            <div class="row justify-content-between view-page-row mb-3">
+                                <div class="col-md-6 my-2">
+                                    <div class="row my-2">
+                                        <div>
+                                            <i class="far fa-check-circle me-3"></i>
+                                            <span class="vw-user-section">Main Supervisor: </span>
+                                            <span class="vw-user-name mx-1"> {{object.main_supervisor}}</span>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="row my-2">
+                                        <div>
+                                            <i class="far fa-check-circle me-3"></i>
+                                            <span class="vw-user-section">Start Date : </span>
+                                            <span class="vw-user-name mx-1">{{object.project.client_form.formclint.start_date}}</span>
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                    <div class="row my-2">
+                                        <div>
+                                            <i class="far fa-check-circle me-3"></i>
+                                            <span class="vw-user-section">End Date : </span>
+                                            <span class="vw-user-name mx-1">{{object.project.client_form.formclint.end_date}}</span>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="row my-2">
+                                        <div>
+                                            <i class="far fa-check-circle me-3"></i>
+                                            <span class="vw-user-section">Status : </span>
+                                            <span class="vw-user-status mx-1">{{object.status}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 my-2">
+                                    {% if supervisor %}
+                                    <div class="vw-user d-flex justify-content-between my-2">
+                                        <div>
+                                            <i class="far fa-check-circle me-3"></i>
+                                            <span class="vw-user-section"> Advisor : </span>
+                                        </div>
+                                        <ul class="vw-user-list">
+                                            {% for i in supervisor %}
+                                                <li>
+                                                    <figure>
+                                                        <img style="border-radius: 100px" src="{{i.user.memberprofile.image.url}}" alt="profile-logo">
+                                                    </figure>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    
+                                    {% if Mentor %}
+                                    <div class="vw-user d-flex justify-content-between my-2">
+                                        <div>
+                                            <i class="far fa-check-circle me-3"></i>
+                                            <span class="vw-user-section">Mentor : </span>
+                                        </div>
+                                        <ul class="vw-user-list">
+                                            {% for i in Mentor %}
+                                                <li>
+                                                    <figure>
+                                                        <img style="border-radius: 100px" src="{{i.user.memberprofile.image.url}}" alt="profile-logo">
+                                                    </figure>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if Member %}
+                                    <div class="vw-user d-flex justify-content-between my-2">
+                                        <div>
+                                            <i class="far fa-check-circle me-3"></i>
+                                            <span class="vw-user-section">Member : </span>
+                                        </div>
+                                        <ul class="vw-user-list">
+                                            {% for i in Member %}
+                                                <li>
+                                                    <figure>
+                                                        <img style="border-radius: 100px" src="{{i.user.memberprofile.image.url}}" alt="profile-logo">
+                                                    </figure>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if Lerner %}
+                                     <div class="vw-user d-flex justify-content-between my-2">
+                                        <div>
+                                            <i class="far fa-check-circle me-3"></i>
+                                            <span class="vw-user-section">Learner: </span>
+                                        </div>
+                                        <ul class="vw-user-list">
+                                            {% for i in Lerner %}
+                                                <li>
+                                                    <figure>
+                                                        <img style="border-radius: 100px" src="{{i.user.memberprofile.image.url}}" alt="profile-logo">
+                                                    </figure>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                    
+                                </div>
+                            </div>
+                            <div class="row justify-content-between view-page-row mb-3">
+                                <div class="col-md-6">
+                                    
+                                </div>
+                                <div class="col-md-6">
+                                    
+                                </div>
+                            </div>
+                            <div class="row justify-content-between view-page-row mb-3">
+                                <div class="col-md-6">
+                                    
+                                </div>
+                                <div class="col-md-6">
+                                    
+                                </div>
+                            </div>
+                            <div class="row justify-content-between view-page-row mb-3">
+                                <div class="col-md-6">
+                                    
+                                </div>
+                                <div class="col-md-6">
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="view-page-description">
+                        <div class="vw-text">
+                            <i class="far fa-check-circle me-3"></i>
+                            <span class="vw-user-section">Description: </span>
+                            <p> {{object.project.client_form.formclint.abstrack}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="view-page-description">
+                        <div class="vw-text">
+                            <i class="far fa-check-circle me-3"></i>
+                            <span class="vw-user-section">Equipment: </span>
+                            <p> {{object.project.client_form.formclint.equipment}}
+                            </p>
+                        </div>
+                    </div>
+                     <div class="view-page-description">
+                        <div class="vw-text">
+                            <i class="far fa-check-circle me-3"></i>
+                            <span class="vw-user-section">Requirement: </span>
+                            <p> {{object.project.client_form.formclint.requirement}}
+                            </p>
+                        </div>
+                    </div>'
+
+
+                    <div class="my-5">
+                        <div class="container-fluid project_item news_item owl-carousel owl-theme owl-loaded owl-drag">
+                            <h6></h6>
+                            {% for i in products %}
+                                <div class="item">
+                                   <div class="py-3 px-3">
+                                        <p class="fw-bold">
+                                           {{i.question_1}}
+                                        </p>
+                                        <p>1
+                                          {{i.question_2}}
+                                        </p>
+                                        <a target="_blank" href="{% url 'industry:project-upload-paper' i.pk %}" class="btn btn-primary">Read more</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+
+        
+        
+        
+        
+
+                    <section id="top_prj" class="my-5" data-animate-in="fadeIn" data-animate-in-delay="100">
+                        <div class="container-fluid title_sc ">
+                            <div class="mx-3 my-3 text-center text-light">
+                                <h2 class="title">Similar projects </h2>
+                                <p class="line_sample mt-3"></p>
+                     
+                                 <!--<h5>TECVICO is holding new workshops.</h5> -->
+                            </div>
+                        </div>
+                        <div class="tab-content" id="myTabContent">
+                            <!--res-->
+                                    <!--new-->
+                             <div  id="project_item" class="container-fluid project_item owl-carousel owl-theme">
+                             {% for i in simila_projects %}
+                             <div class="item">
+                                 <!--{% static 'ivc_website/img/project/prj_1.webp' %}-->
+                                <img class="img-fluid img-top" src="{{i.project.upload_pictures.url}}" alt="">
+                                <div class="bg-logo">
+                                    <img src="{% static 'ivc_website/img/logo_project_section.png' %}" alt="">
+                                    <span class="prj-new text-white" >
+                                        {{i.status|title}}
+                                    </span>
+                                    
+                                </div>
+                                <div class="py-3 px-3 bg-secondary">
+                                    <p class="fw-bold text-light">
+                                        {{i.project.client_form.formclint.title|truncatechars:80}}
+                                      
+                                    </p>
+                                    <p class="text-light">
+                                    {{i.project.client_form.formclint.abstrack|truncatechars:90 }}
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{% url 'project-detail-research' i.pk %}" class="btn btn-primary read_more">Read more</a>
+                                        {% if i.status == 'new' %}
+                                        <a href="{% url 'industry:industry-project-apply' i.pk %}" class="btn btn-success apply_btn">Apply</a>
+                                        {% endif %}
+                                    </div>
+            
+                                </div>
+                            </div>
+                             {% endfor %}
+                             </div>
+                        </div>
+                    </section>
+                
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+                    <form method="POST" class="border p-3">{% csrf_token %}
+                        <div class="row">
+                            <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
+                                <label class="form-label text-white">Comment<span style="color:red">*</span></label>
+                                <textarea name="comment" id="comment" class="form-control" rows="3"></textarea>
+                                <div id="comment_error" style="color:red"></div>
+                            </div>
+                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row">
+                                     <label class="form-label text-white">Email<span style="color:red">*</span></label>
+                                    <input type="email" class="form-control" name="email" id="email">
+                                    <div id="email_error" style="color:red"></div>
+                                </div>
+                                <input type="hidden" class="form-control" name="id_project" id="id_project" value="{{object.pk}}">
+                                <div class="row mt-2">
+                                    {% if user.is_authenticated %}
+                                    <button type="submit" class="btn btn-primary" >Send</button>
+                                    {% else %}
+                                    <button type="submit" disabled class="btn btn-primary" >Send</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+        
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-white">User</th>
+                                        <th class="text-white">Comment</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in comments %}
+                                        <tr>
+                                            <td class="text-white">
+                                                {{i.user.get_full_name}}
+                                            </td>
+                                            <td class="text-white">
+                                                {{i.comment}}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <script src="{% static 'project/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'project/js/popper.min.js' %}"></script>
+    <script src="{% static 'project/js/bootstrap.min.js' %}"></script>
+    <!--<script src="{% static 'project/js/workshop.js' %}"></script>-->
+    <script src="{% static 'project/js/myjs.js' %}"></script>
+    <script src="{% static 'project/js/projectlist.js' %}"></script>
+    
+    
+    
+   
+
+<script src="{% static 'ivc_website/js/bootstrap.bundle.min.js' %}"></script>
+
+<script src="{% static 'ivc_website/js/owl.carousel.min.js' %}"></script>
+
+
+<script src="{% static 'ivc_website/js/owl.js' %}"></script>
+<!--<script src="{% static 'ivc_website/js/homePage.js' %}"></script>
+<script src="{% static 'ivc_website/js/main2.js' %}"></script>-->
+    
+    
+    
+
+{% endblock content %} 
+</body>
+
+</html>

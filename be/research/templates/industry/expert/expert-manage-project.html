@@ -1,0 +1,551 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+{% load base %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-user-tie"></i> Expert's management panel</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="industry-director">
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+         
+            <div class="col-12 mt-3 text-center">
+                <div class="card-page">
+                    <div class="row justify-content-center align-items-center">
+                        {% if request.GET.filter == "applicants" %}
+                        <div class="col gold active">
+                            <a href="" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">Applicant's contract</h4>
+                                <p class="number ">{{applicant_cart_count}}</p>
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="col green ">
+                            <a href="?filter=applicants" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">Applicant's contract</h4>
+                                <p class="number ">{{applicant_cart_count}}</p>
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        {% if request.GET.filter == "remove_applicant" %}
+                        <div class="col gold active">
+                            <a href="" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">Applicant removal request</h4>
+                                <p class="number ">{{applicant_remove_cart_count}}</p>
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="col green ">
+                            <a href="?filter=remove_applicant" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">Applicant removal request</h4>
+                                <p class="number ">{{applicant_remove_cart_count}}</p>
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        {% if request.GET.filter == "manage_project" %}
+                        <div class="col gold active">
+                            <a href="" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">Project status change</h4>
+                                <p class="number ">{{count_project_change_status}}</p>
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="col green ">
+                            <a href="?filter=manage_project" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">Project status change</h4>
+                                <p class="number ">{{count_project_change_status}}</p>
+                            </a>
+                        </div>
+                        {% endif %}
+    
+                        {% if request.GET.filter == "report_project" %}
+                        <div class="col green active">
+                            <a href="" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">Project report</h4>
+                                <p class="number ">{{count_report_projects_object}}</p>
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="col green ">
+                            <a href="?filter=report_project" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">Project report</h4>
+                                <p class="number ">{{count_report_projects_object}}</p>
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        {% if request.GET.filter == "temporal_history" %}
+                        <div class="col green">
+                            <a href="" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">Temporal history </h4>
+                                <p class="number ">{{temporal_history_count}}</p>
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="col pink">
+                            <a href="?filter=temporal_history" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">Temporal history </h4>
+                                <p class="number ">{{temporal_history_count}}</p>
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        {% if request.GET.filter == "history" %}
+                        <div class="col green">
+                            <a href="" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">History </h4>
+                                <p class="number "></p>
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="col pink">
+                            <a href="?filter=history" class="text-center text-white">
+                                <i class="fa fa-check-circle"></i>
+                                <h4 class="text-white titlestyle">History </h4>
+                                <p class="number "></p>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 mt-2">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="">
+                        <div class=" mb-5" style="overflow-x:auto;">
+                          {% if request.GET.filter == "applicants" %}
+                            <table class="table table-dark table-striped table-hover p-table">
+                                <thead>
+                                     <tr>
+                                         <th>Project ID</th>
+                                         <th>Main supervisor</th>
+                                         <th>Title</th>
+                                         <th>Fund</th>
+                                         <th>Submission date</th>
+                                         <th>Suggested start date</th>
+                                         <th>Suggested end date</th>
+
+                                         <th>Owner</th>
+                                         <th>Status</th>
+                                         <th></th>
+                                     </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in applicant_list %}
+                                         <tr>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; width: 150px">{{project.project.client_form.formclint.id_project}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; ">{{project.project.supervisor.get_full_name}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; width: 180px">{{project.project.client_form.formclint.title|truncatechars:50}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 ${{project.project.client_form.formclint.fund}}
+                                             </td>
+                                             <td class="p-name">
+                                                 {{project.project.client_form.formclint.created|date:'m-d-Y'}}
+                                             </td>
+                                             <td class="p-name">
+                                                {{project.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project.client_form.formclint.end_date}}
+                                            </td>
+                                             <td class="p-name">
+                                                 {{project.project.client_form.formclint.user.get_full_name}}
+                                             </td>
+                                             <td class="p-name">
+                                                {% if project.status == 'on_going' %}
+                                                    Ongoing
+                                                {% elif project.status == 'on_hold' %}
+                                                    Onhold
+                                                {% else %}
+                                                    {{project.status|title}}
+                                                {% endif %}
+                                             </td>
+                                             <td class="text-right">
+                                                 <a href="
+                                                    {% url 'industry:manageproject-applicant-detail' project.pk %}
+                                                 " class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View
+                                                 </a>
+                                             </td>
+                                         </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                          {% endif %}
+
+                          {% if request.GET.filter == "remove_applicant" %}
+                            <table class="table table-dark table-striped table-hover p-table">
+                                <thead>
+                                     <tr>
+                                         <th>Project ID</th>
+                                         <th>Main supervisor</th>
+                                         <th>Title</th>
+                                         <th>Fund</th>
+                                         <th>Submission date</th>
+                                         <th>Suggested start date</th>
+                                         <th>Suggested end date</th>
+
+                                         <th>Owner</th>
+                                         <th>Status</th>
+                                         <th></th>
+                                     </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in applicant_remove_list %}
+                                         <tr>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; width: 150px">{{project.project.client_form.formclint.id_project}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; ">{{project.project.supervisor.get_full_name}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; width: 180px">{{project.project.client_form.formclint.title|truncatechars:50}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 ${{project.project.client_form.formclint.fund}}
+                                             </td>
+                                             <td class="p-name">
+                                                 {{project.project.client_form.formclint.created|date:'m-d-Y'}}
+                                             </td>
+                                             <td class="p-name">
+                                                {{project.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project.client_form.formclint.end_date}}
+                                            </td>
+                                             <td class="p-name">
+                                                 {{project.project.client_form.formclint.user.get_full_name}}
+                                             </td>
+                                             <td class="p-name">
+                                            {% if project.status == 'on_going' %}
+                                                Ongoing
+                                            {% elif project.status == 'on_hold' %}
+                                                Onhold
+                                            {% else %}
+                                                {{project.status|title}}
+                                            {% endif %}
+                                             </td>
+                                             <td class="text-right">
+                                                 <a href="
+                                                    {% url 'industry:manageproject-applicant-remove' project.pk %}
+                                                 " class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View
+                                                 </a>
+                                             </td>
+                                         </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                          {% endif %}
+
+                          {% if request.GET.filter == "report_project" %}
+                            <table class="table table-dark table-striped table-hover p-table">
+                                <thead>
+                                     <tr>
+                                         <th>Project ID</th>
+                                         <th>Main supervisor</th>
+                                         <th>Title</th>
+                                         <th>Fund</th>
+                                         <th>Submission date</th>
+                                         <th>Suggested start date</th>
+                                         <th>Suggested end date</th>
+
+                                         <th>Owner</th>
+                                         <th>Status</th>
+                                         <th></th>
+                                     </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in object_list %}
+                                         <tr>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; width: 150px">{{project.project.client_form.formclint.id_project}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; width: 150px">{{project.project.supervisor.get_full_name}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; width: 200px">{{project.project.client_form.formclint.title|truncatechars:50}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 ${{project.project.client_form.formclint.fund}}
+                                             </td>
+                                             <td class="p-name">
+                                                 {{project.project.client_form.formclint.created|date:'m-d-Y'}}
+                                             </td>
+                                             <td class="p-name">
+                                                {{project.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project.client_form.formclint.end_date}}
+                                            </td>
+                                             <td class="p-name">
+                                                 {{project.project.client_form.formclint.user.get_full_name}}
+                                             </td>
+                                             <td class="p-name">
+                                                {% if project.status == 'on_going' %}
+                                                    Ongoing
+                                                {% elif project.status == 'on_hold' %}
+                                                    Onhold
+                                                {% else %}
+                                                    {{project.status|title}}
+                                                {% endif %}
+                                             </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:research-expert-detail-report' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View <span class="badge badge-danger" style="background-color: white; color: #41cac0">{{project.project.time_programmins.all.count}} /{{project.project.time_programmins.Active.count}}</span>
+                                                 </a>
+                                             </td>
+                                         </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                          {% endif %}
+
+
+                          {% if request.GET.filter == "manage_project" %}
+                            <table class="table table-dark table-striped table-hover p-table">
+                                <thead>
+                                     <tr>
+                                         <th>Project ID</th>
+                                         <th>Main supervisor</th>
+                                         <th>Title</th>
+                                         <th>Fund</th>
+                                         <th>Submission date</th>
+                                         <th>Suggested start date</th>
+                                         <th>Suggested end date</th>
+
+                                         <th>Owner</th>
+                                         <th></th>
+                                     </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in project_change_status %}
+                                         <tr>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; width: 150px">{{project.project.client_form.formclint.id_project}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; width: 150px">{{project.project.client_form.formclint.user.get_full_name}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 <p style="overflow: hidden; width: 200px">{{project.project.client_form.formclint.title|truncatechars:50}}</p>
+                                             </td>
+                                             <td class="p-name">
+                                                 ${{project.project.client_form.formclint.fund}}
+                                             </td>
+                                             <td class="p-name">
+                                                 {{project.project.client_form.formclint.created|date:'m-d-Y'}}
+                                             </td>
+                                             <td class="p-name">
+                                                {{project.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project.client_form.formclint.end_date}}
+                                            </td>
+                                             <td class="p-name">
+                                                 {{project.project.client_form.formclint.user.get_full_name}}
+                                             </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:research-manage-change-status' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View
+                                                 </a>
+                                             </td>
+                                         </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                          {% endif %}
+
+
+                         <!-- t2 -->
+                        {% if request.GET.filter == "temporal_history" %}
+                         <table class="table table-hover table-striped table-dark table-striped">
+                             <thead>
+                             <tr>
+                                 <th>Project ID</th>
+                                 <th>Main supervisor</th>
+                                 <th>Title</th>
+                                 <th>Fund</th>
+                                 <th>Submission date</th>
+                                 <th>Suggested start date</th>
+                                 <th>Suggested end date</th>
+                                 <th>Owner</th>
+                                 <th>Status</th>
+                             </tr>
+                             </thead>
+                             <tbody>
+                                {% for project in temporal_history_list %}
+                                     <tr>
+                                         <td class="p-name">
+                                             <p style="overflow: hidden; width: 150px">{{project.project.client_form.formclint.id_project}}</p>
+                                         </td>
+                                         <td class="p-name">
+                                             <p style="overflow: hidden;">{{project.project.supervisor.get_full_name}}</p>
+                                         </td>
+                                         <td class="p-name">
+                                             <p style="overflow: hidden; width: 200px">{{project.project.client_form.formclint.title|truncatechars:50}}</p>
+                                         </td>
+                                         <td class="p-name">
+                                             ${{project.project.client_form.formclint.fund}}
+                                         </td>
+                                         <td class="p-name">
+                                             {{project.project.client_form.formclint.created|date:'m-d-Y'}}
+                                         </td>
+                                         <td class="p-name">
+                                            {{project.project.client_form.formclint.start_date}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.project.client_form.formclint.end_date}}
+                                        </td>
+                                         <td class="p-name">
+                                             {{project.project.client_form.formclint.user.get_full_name}}
+                                         </td>
+                                         <td class="p-name">
+                                                {% if project.status == 'on_going' %}
+                                                    Ongoing
+                                                {% elif project.status == 'on_hold' %}
+                                                    Onhold
+                                                {% else %}
+                                                    {{project.status|title}}
+                                                {% endif %}
+                                         </td>
+                                          <td class="text-right">
+                                              <a href="{% url 'industry:project-expert-history-created-detail' project.pk %}" class="btn btn-secondary btn-xs mb-1">
+                                                  <i class="fa fa-eye"></i> View
+                                              </a>
+                                          </td>
+                                     </tr>
+                                {% endfor %}
+                             </tbody>
+                         </table>
+                        {% endif %}
+
+
+                         <!-- t2 -->
+                        {% if request.GET.filter == "history" %}
+                         <table class="table table-hover table-striped table-dark table-striped">
+                             <thead>
+                             <tr>
+                                 <th>Project ID</th>
+                                 <th>Main supervisor</th>
+                                 <th>Title</th>
+                                 <th>Fund</th>
+                                 <th>Submission date</th>
+                                 <th>Suggested start date</th>
+                                 <th>Suggested end date</th>
+                                 <th>Owner</th>
+                                 <th>Status</th>
+                             </tr>
+                             </thead>
+                             <tbody>
+                                {% for project in history_list %}
+                                     <tr>
+                                         <td class="p-name">
+                                             <p style="overflow: hidden; width: 150px">{{project.project.client_form.formclint.id_project}}</p>
+                                         </td>
+                                         <td class="p-name">
+                                             <p style="overflow: hidden;">{{project.project.supervisor.get_full_name}}</p>
+                                         </td>
+                                         <td class="p-name">
+                                             <p style="overflow: hidden; width: 200px">{{project.project.client_form.formclint.title|truncatechars:50}}</p>
+                                         </td>
+                                         <td class="p-name">
+                                             ${{project.project.client_form.formclint.fund}}
+                                         </td>
+                                         <td class="p-name">
+                                             {{project.project.client_form.formclint.created|date:'m-d-Y'}}
+                                         </td>
+                                         <td class="p-name">
+                                            {{project.project.client_form.formclint.start_date}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.project.client_form.formclint.end_date}}
+                                        </td>
+                                         <td class="p-name">
+                                             {{project.project.client_form.formclint.user.get_full_name}}
+                                         </td>
+                                         <td class="p-name">
+                                                {% if project.status == 'on_going' %}
+                                                    Ongoing
+                                                {% elif project.status == 'on_hold' %}
+                                                    Onhold
+                                                {% else %}
+                                                    {{project.status|title}}
+                                                {% endif %}
+                                         </td>
+                                          <td class="text-right">
+                                              <a href="{% url 'industry:project-expert-history-created-detail' project.pk %}" class="btn btn-secondary btn-xs mb-1">
+                                                  <i class="fa fa-eye"></i> View
+                                              </a>
+                                          </td>
+                                     </tr>
+                                {% endfor %}
+                             </tbody>
+                         </table>
+                        {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+{% endblock script %}

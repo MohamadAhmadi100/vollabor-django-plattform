@@ -1,0 +1,343 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.background-design {
+    width: 100%;
+    height: 850px;
+    background: linear-gradient(239.32deg,
+            rgba(168, 43, 188, 0.89) -7.77%,
+            rgba(43, 16, 152, 0.82) 19.29%,
+            rgba(45, 41, 180, 0.723057) 64.3%,
+            rgba(34, 96, 188, 0.73) 98.87%);
+    position: relative;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+span {
+    display: inline-block;
+}
+
+a {
+    display: inline-block;
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+    display: inline-block;
+}
+
+.gradient1 {
+    position: absolute;
+    width: 403px;
+    height: 371px;
+    background: radial-gradient(82.08% 84.47% at -30.02% 31.13%, rgba(206, 83, 217, 0.86) 0%, rgba(87, 77, 194, 0) 100%);
+    right: 20px;
+    top: 0px;
+    border-radius: 50%;
+    opacity: 20%;
+    overflow: hidden;
+}
+
+.gradient2 {
+    position: absolute;
+    width: 288px;
+    height: 275px;
+    right: 80px;
+    top: 51px;
+    background: radial-gradient(82.08% 84.47% at -30.02% 31.13%, rgba(206, 83, 217, 0.86) 0%, rgba(87, 77, 194, 0) 100%);
+    border-radius: 50%;
+    opacity: 20%;
+    overflow: hidden;
+}
+
+.gradient3 {
+    position: absolute;
+    width: 707.78px;
+    height: 537.13px;
+    left: -180px;
+    bottom: -180px;
+    background: linear-gradient(238.45deg, rgba(196, 196, 196, 0.14) 1.59%, rgba(196, 196, 196, 0.1106) 69.55%);
+    transform: rotate(-21.38deg);
+    border-radius: 50%;
+    opacity: 50%;
+    overflow: hidden;
+}
+
+.nvb {
+    width: 100%;
+    background-color: transparent;
+    padding: 40px 0;
+}
+
+.nvb nav ul {
+    margin-bottom: 0;
+}
+
+.nvb nav ul li a {
+    color: rgba(255, 255, 255, 0.671);
+    font-weight: 700;
+    transition: all 0.6s;
+    position: relative;
+    padding: 10px 22px;
+}
+
+.nvb nav ul li .link:hover {
+    color: rgba(255, 255, 255, 0.925);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.925);
+}
+
+.dropbtn-archv {
+    background-color: transparent!important;
+    border: none!important;
+    box-shadow: none!important;
+    outline: 0!important;
+}
+
+.dropdown-menu {
+    background-color: rgba(255, 255, 255, 0.705)!important;
+    padding: 0!important;
+}
+
+.dropdown-menu li {
+    width: 100%!important;
+}
+
+.dropdown-menu li a {
+    color: #35260d!important;
+    font-size: 14px!important;
+    width: 100%!important;
+    padding: 10px 16px!important;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #EEAE3F;
+}
+
+.nvb::before {
+    content: '';
+    display: inline-block;
+    width: 100%;
+    height: 3px;
+    background-color: #CC9428;
+    position: absolute;
+    top: 32px;
+    left: 0;
+}
+
+.nvb::after {
+    content: '';
+    display: inline-block;
+    width: 100%;
+    height: 1px;
+    background-color: #fff;
+    position: absolute;
+    top: 33px;
+    left: 0;
+}
+
+.nvb nav ul li.active2 .link {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.925);
+}
+
+/* .nvb nav ul li.active2 .link::after {
+    content: '';
+    display: inline-block;
+    width: 80px;
+    height: 3px;
+    position: absolute;
+    background-color: #fff;
+    border-radius: 30px;
+    box-shadow: 0 0 5px #fff;
+    opacity: 80%;
+    top: -8px;
+    left: 15px;
+} */
+
+.payment-section {
+    width: 65%;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 18px;
+    margin: 0 auto;
+}
+
+.payment-info {
+    width: 30%;
+    background: rgba(41, 58, 211, 0.76);
+    border-radius: 18px 180px 2px 18px;
+    padding: 25px 0;
+    position: relative;
+    z-index: 400;
+}
+
+.payment-info-head {
+    width: 90%;
+    margin: 70px auto;
+    text-align: center;
+    color: #fff;
+}
+
+.payment-info-head-text {
+    font-size: 14px;
+    font-weight: 700;
+    width: 80%;
+    margin: 40px auto;
+    line-height: 25px;
+    text-align:justify;
+    display: none;
+}
+
+.payment-text-irn {
+    display: block!important;
+}
+
+/*.payment-content {
+    width: 58%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 80px 35px;
+}*/
+
+.payment-table {
+    margin-top: 50px;
+    background-color: #fff;
+    border-radius: 10px;
+
+}
+
+.payment-table tbody {
+    font-size: 14px;
+}
+
+.payment-table tbody img {
+    width: 80px;
+    height: 65px;
+}
+
+.payment-table tbody tr td {
+    padding: 30px 0;
+}
+
+/*.payment-content form {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}*/
+
+/*.pay-btn {
+    display: inline-block;
+    padding: 5px 50px;
+    border-radius: 7px;
+    border: 0;
+    outline: 0;
+    background: linear-gradient(157.09deg, #EEAE3F 42.52%, rgba(228, 195, 129, 0.31) 127.12%);
+    color: #fff;
+    transition: all 0.9s;
+}*/
+
+.pay-btn:hover {
+    background-color: #ac7d2d;
+}
+
+.discount {
+    font-size: 14px;
+    font-weight: 700;
+    width: 158px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    text-align: center;
+    padding-top: 7px;
+    color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.discount span {
+    color: rgba(236, 176, 73, 1);
+    font-size: 18px;
+}
+
+#discount {
+    font-size: 14px;
+    font-weight: 700;
+    width: 158px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    text-align: center;
+    padding-top: 2px;
+    color: rgba(0, 0, 0, 0.555);
+    outline: 0;
+    border: 0;
+    opacity: 0;
+}
+
+.pay-radio {
+    width: 140px;
+    height: 42px;
+    background-color: rgba(219, 219, 219, 0.445);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.pay-radio img {
+    margin: 7px 17px;
+}
+
+.p-radio input:checked~.pay-radio {
+    background-color: rgba(255, 255, 255, 1);
+    opacity: 1;
+    box-shadow: 0 2px 6px rgb(71, 71, 71);
+}
+
+.p-radio input {
+    opacity: 0;
+    position: absolute;
+}
+
+#country {
+    background-color: rgba(255, 255, 255, 0.863);
+    outline: 0;
+    border: 0;
+    border-radius: 10px;
+    padding: 8px;
+}
+
+.iranopt {
+    display: none;
+}
+
+#opt {
+    display: none;
+}
+
+.iranopt {
+    display: block!important;
+}
+
+.iranopt2 {
+    display: none;
+}
+
+.select-label {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+}
+
+.nvb a:hover {
+    text-decoration: none!important;
+}
+
+.coin-quantity-text {
+    line-height: 25px;
+}

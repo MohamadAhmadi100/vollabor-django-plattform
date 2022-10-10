@@ -1,0 +1,99 @@
+{% extends 'emails/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %} Detail workshop {% endblock %}
+{% block main %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12">
+            <div class="card card-primary">
+                <div class="card-header" >
+                    <div class="row">
+                    <h4 class="col-8">Emails</h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                        <ul>            
+                    {% for i in Users_Workshops %}
+                        
+                        <li class="my-2" style="list-style-type: none;">
+                            <span class="">{{i.user.email}}</span>
+                            <a data-bs-toggle="modal" href="#InfoModal{{i.pk}}" style="float: right;" id="{{ i.pk }}" class="d-inline-block mx-3 info"><i class="fas fa-info-circle"></i></i></a>
+                        </li>
+
+
+						<div class="modal fade"  id="InfoModal{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+							<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+								<div class="modal-content">
+									<div class="modal-header modal-colored-header bg-secondary text-white">
+									  <h5 class="modal-title text-white" id="InfoModalLabel">Information</h5>
+									  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<ul class="list-group list-group-flush">
+											<li class="list-group-item">Full name: <span class="text-secondary">{{i.user.get_full_name}}</span></li>
+
+
+											<li class="list-group-item">Position: <span class="text-secondary">{{i.user.memberprofile.position}}</span></li>
+
+											<li class="list-group-item">Degree: <span class="text-secondary">{{i.user.memberprofile.degree}}</span></li>
+
+											<li class="list-group-item">Gender: <span class="text-secondary">{{i.user.memberprofile.gender}}</span></li>
+
+											<li class="list-group-item">Email address: <span class="text-secondary">{{i.user.email}}</span></li>
+
+
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12">
+            <div class="card card-success">
+                <div class="card-header" >
+                    <h4>Details</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Speakers name : <span class="text-secondary">
+
+                        {% for speaker in speakers %}
+                            <div class="fw-bold">{{speaker}}</div>
+                        {% endfor %}                    
+                        
+                        <li class="list-group-item">Title : <span class="text-secondary">{{object.title}}</span></li>
+                        <li class="list-group-item">Helding date : <span class="text-secondary">{{object.helding_date}}</span></li>
+                        <li class="list-group-item">Helding time : <span class="text-secondary">{{object.helding_time}}</span></li>
+                        <li class="list-group-item">Cost : <span class="text-secondary">{{object.cost}}</span></li>
+                        <li class="list-group-item">Country : <span class="text-secondary">{{object.country.title}}</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    
+    $(document).ready(function () {
+        
+       
+        
+        
+        
+        
+    });
+    
+    
+</script>
+
+
+
+{% endblock %}

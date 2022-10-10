@@ -1,0 +1,120 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block content %}
+<!-- HEADER SECTION -->
+<header id="cv-header-section">
+    <div class="dark-overlay">
+        <div class="cv-header-inner">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">Project Requests</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="cv-list-section" class="bg-light text-dark py-5 px-3">
+    <div class="container">
+            {% if project_request_items %}
+                <table class="table table-sm table-hover border border-dark">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>CV</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project_request_item in project_request_items %}
+                            <tr>
+                                <td>{{ project_request_item.applicant.user.first_name }}</td>
+                                <td>{{ project_request_item.applicant.user.last_name }}</td>
+                                <td><a href="mailto:{{ project_request_item.applicant.user.email }}">
+                                    {{ project_request_item.applicant.user.email }}</a>
+                                </td>
+                                <td>
+                                    <a href="{{ project_request_item.applicant.cv_file.url }}"
+                                       class="btn btn-primary btn-sm"
+                                        target="_blank">
+                                    Download PDF
+                                    </a>
+                                </td>
+                                <td>
+                                    <i class="fa fa-check-circle accept-applicant"
+                                       data-toggle="modal" data-target="#acceptModal"
+                                       data-pk="{{project_request_item.pk}}"></i>
+                                    <i class="fa fa-times-circle delete-applicant"
+                                        data-toggle="modal" data-target="#rejectModal"
+                                       data-pk="{{project_request_item.pk}}"></i>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <h3 class="text-muted text-center">There's no project request..</h3>
+            {% endif %}
+    </div>
+</section>
+
+<!-- ACCEPT MODAL -->
+<div class="modal" id="acceptModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+        Are you sure you want to accept this applicant?
+      </div>
+      <div class="modal-footer">
+        <form method="post">
+              {% csrf_token %}
+              <input type="text" class="input_accept_pk d-none" name="data-accept-pk">
+              <button class="btn btn-success" type="submit">Yes</button>
+          </form>
+        <button class="btn btn-danger" data-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REJECT MODAL -->
+<div class="modal" id="rejectModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+        Are you sure you want to reject this applicant?
+      </div>
+      <div class="modal-footer">
+          <form method="post">
+              {% csrf_token %}
+              <input type="text" class="input_reject_pk d-none" name="data-reject-pk">
+              <button class="btn btn-success" type="submit">Yes</button>
+          </form>
+          <button class="btn btn-danger" data-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    $(".fa-times-circle").click(function() {
+        var clicked_element = $(this);
+        var data_pk = clicked_element.attr('data-pk');
+        $('.input_reject_pk').val(data_pk);
+    });
+    $(".fa-check-circle").click(function() {
+        var clicked_element = $(this);
+        var data_pk = clicked_element.attr('data-pk');
+        $('.input_accept_pk').val(data_pk);
+    });
+</script>
+{% endblock content %}

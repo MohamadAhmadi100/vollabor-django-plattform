@@ -1,0 +1,378 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% load dashboard_filter %}
+{% load crispy_forms_tags %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'ivc_website/css/intlTelInput.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+{% endblock css %}
+
+{% block content %}
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1><i class="fa fa-plus"></i> Create a project schedule</h1>
+            </div>
+            <div class="col-md-6 text-right">
+                    <h5 class="btn btn-secondary fw-bold mb-1" style="font-weight:bold; color:#1AE8F9 ">
+                       Balance: ${{user.memberprofile.balance}}
+                        <br/>
+                        <a class="btn btn-warning btn-sm text-dark fw-bold px-4 my-1 mx-2" href="{% url 'create-checkout-session' %}"> 
+                            <i class="fas fa-money-check-alt text-dark" style='font-size:14px'></i> Charge
+                        </a>
+                    </h5>
+                    
+                </div>
+        </div>
+    </div>
+</header>
+
+<form method="post" enctype="multipart/form-data" id="define-project-form">
+    {% csrf_token %}
+    <!-- ACTIONS -->
+    
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    
+    <!-- PROJECTS -->
+    <section id="projects">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="content mb-5 text-white">
+                        <div class="card-header">
+                            <div class="row">
+                                 <h6 style="color:orange; margin-left: 14px">Please create time table carefully.<span style="margin-left: 445px; color:white">Suggested strat date: <span>{{form_client.client_form.formclint.start_date}} </span></h6>
+                                 <input type="hidden" id="Sdate" value="{{form_client.client_form.formclint.start_date|date:'Y-m-d'}} ">
+                                 <br>
+                            </div>
+                             <h6 style="color:orange">Note: At least 3 timetables must be set.<spa style="margin-left: 400px; color:white">Suggested end date: <span>{{form_client.client_form.formclint.end_date}} </span></h6>
+                            <input type="hidden" id="Edate" value="{{form_client.client_form.formclint.end_date|date:'Y-m-d'}} ">
+                        </div>
+                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                            <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="form-group col-xl-6 col-md-6 col-sm-12">
+                                            <label class="form-control-label">Section<span style="color:red">*</span></label>
+                                            <input type="text" name="topic" class="form-control"  id="id_topic" oninput="ClearErr('id_topic')">
+                                             <div id="id_topic_error" style="color:red;font-size: small;"></div>
+                                        </div>
+                                        <div class="form-group col-xl-3 col-md-3 col-sm-12">
+                                            <label class="form-control-label">From<span style="color:red">*</span></label>
+                                            <input type="date" name="start_date" required class="date form-control disInp"  id="id_start_date" oninput="ClearErr('start')">
+                                             <div id="start_error" style="color:red;font-size: small;"></div>
+                                        </div>
+                                        <div class="form-group col-xl-3 col-md-3 col-sm-12">
+                                            <label class="form-control-label">To<span style="color:red">*</span></label>
+                                            <input type="date" name="end_date" required class="date form-control disInp"    id="id_end_date" oninput="ClearErr('end')">
+                                            <div id="end_error" style="color:red;font-size: small;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row my-2">
+                                <div class="col text-center">
+                                     <button type="button" class="btn btn-success" id="SaveBtn"><i class="fa fa-check"></i> Add</button>
+                                     <a href="{% url 'industry:industry-supervisor-contract-list' %}" class="btn btn-danger">Close</a>
+                                </div>
+                                
+                            </div>
+
+                            
+                        </form>
+                        <table class="table  table striped" id="WBStbl">
+                            <thead class="text-dark" style="background-color:#ADD8E6">
+                                <tr>
+                                    <th>
+                                        Section
+                                    </th>
+                                    <th>From
+                                    </th>
+                                    <th>To
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                    
+                                    
+                                </tr>
+                                
+                            </thead>
+                            
+                            
+                            <tbody class=" table-dark">
+                                {% for i in prog %}
+                            <tr>
+                                <td>
+                                     {{i.topic}}
+                                </td>
+                               
+                                <td>
+                                    {{i.start_date}}
+                                    
+                                </td>
+                                
+                                <td>
+                                     {{i.end_date}}
+                                </td>
+                                <td>
+                                    <a href="{% url 'industry:industry-delete-time-programming' i.pk %}"class="btn btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                           
+                            
+                            
+                        {% endfor %}
+                                
+                                
+                                
+                            </tbody>
+                            
+                            
+                        </table>
+                        
+                        {% if prog_count >= 3 %}
+                        
+                            <div class="row my-2">
+                                <div class="col text-center">
+                                    <a href="{% url 'industry:industry-supervisor-send-contract' form_client.pk %}">
+                                    <h6 class="btn btn-success"><i class="fa fa-check"></i> Next</h6></a>
+                                </div>
+                                
+                            </div>
+
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+
+
+
+
+
+{% endblock content %}
+
+
+{% block script %}
+<script src="{% static 'ivc_website/js/jquery.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/bootstrap.min.js' %}"></script>
+<script>
+
+$(document).ready(function(){
+    setsetting();
+    
+    
+    document.getElementById("SaveBtn").addEventListener("click", CheckForm);
+
+
+
+});
+
+
+function setsetting(){
+    var WBS_tablee = document.getElementById("WBStbl");
+    var tbodyRowCountt = WBS_tablee.tBodies[0].rows.length;
+    var startDate_project =document.getElementById("Sdate").value;
+    var EndDate_project =document.getElementById("Edate").value;
+    var Edate = formatDate(EndDate_project);
+    document.getElementById("id_end_date").setAttribute("max", Edate);
+     document.getElementById("id_start_date").setAttribute("max", Edate);
+    document.getElementById("id_end_date").value = Edate;
+    if(tbodyRowCountt>0){
+        var date_beforee=WBS_tablee.tBodies[0].rows[tbodyRowCountt-1].cells.item(2).innerHTML;
+        var rawNewStart = new Date(date_beforee);
+        var NewStartt = rawNewStart.setDate(rawNewStart.getDate()+1);
+        var NewStart =formatDate(NewStartt);
+        document.getElementById("id_start_date").value = NewStart;
+        document.getElementById("id_start_date").setAttribute("min", NewStart);
+        document.getElementById("id_end_date").setAttribute("min", NewStart);
+        
+    }else{
+        
+        var Sdate = formatDate(startDate_project);
+        document.getElementById("id_start_date").setAttribute("min", Sdate);
+        document.getElementById("id_end_date").setAttribute("min", Sdate);
+        document.getElementById("id_start_date").value = Sdate;
+        
+        
+    }
+    
+    
+}
+
+function formatDate(mdate){
+    var rawDate = new Date(mdate);
+    var year = rawDate.getFullYear();
+    var rawMonth = rawDate.getMonth()+1;
+    var rawDay = rawDate.getDate();
+   
+    if(rawMonth <10){
+        var Month = "0"+rawMonth;
+        
+    }else{
+        var Month = rawMonth;
+    }
+    
+    if(rawDay <10){
+        var Day = "0"+rawDay;
+    }else{
+        var Day = rawDay;
+    }
+    
+    var fdate = year +"-" + Month +"-" + Day;
+    
+    return fdate;
+}
+function CheckForm(){
+    var focus_status = false;
+    var title = document.getElementById("id_topic").value;
+    if(title.length ==0){
+       // alert("title");
+       document.getElementById("id_topic_error").innerHTML = "Error: please enter the section.";
+       if(focus_status == false){
+            document.getElementById("id_topic_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    var start_date = document.getElementById("id_start_date").value;
+    if(start_date.length ==0){
+       // alert("title");
+       document.getElementById("start_error").innerHTML = "Error: please enter the start date.";
+       if(focus_status == false){
+            document.getElementById("start_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    var end_date = document.getElementById("id_end_date").value;
+    if(end_date.length ==0){
+       // alert("title");
+       document.getElementById("end_error").innerHTML = "Error: please enter the end date.";
+       if(focus_status == false){
+            document.getElementById("end_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    
+    
+    
+    
+    if(focus_status == true){
+        return;
+    }
+    const strt = new Date(start_date);
+    const end = new Date(end_date);
+    if(end.getTime() < strt.getTime()){
+        document.getElementById("end_error").innerHTML = "Error: please select the correct end date.";
+       if(focus_status == false){
+            document.getElementById("end_error").focus();
+            focus_status = true;
+       }
+        return;
+    }
+    
+    var WBS_table = document.getElementById("WBStbl");
+        var tbodyRowCount = WBS_table.tBodies[0].rows.length;
+        
+        if(tbodyRowCount >0){
+            //var end_date_before=WBS_table.tBodies[0].rows[tbodyRowCount-1].cells.item(2).innerHTML;
+            var date_before=WBS_table.tBodies[0].rows[tbodyRowCount-1].cells.item(2).innerHTML;
+            
+            var date_new = start_date;
+            var d1 = new Date(start_date);
+            var d2 = new Date(date_before); 
+            if(d1.getTime() < d2.getTime()){
+                document.getElementById("start_error").innerHTML = "Error: the date must be longer than the previous date.";
+                if(focus_status == false){
+                    document.getElementById("start_error").focus();
+                    focus_status = true;
+                }
+                
+                
+            }
+            
+            var topic_before=WBS_table.tBodies[0].rows[tbodyRowCount-1].cells.item(0).innerHTML;
+            
+            if(title==topic_before.trim()){
+                document.getElementById("id_topic_error").innerHTML = "Error: the title of the section should not be the same as the previous section.";
+               if(focus_status == false){
+                    document.getElementById("id_topic_error").focus();
+                    focus_status = true;
+               }
+                
+            }
+            
+            
+            
+        }
+
+
+    if(focus_status ==false){
+        //alert(start_date);
+        $.ajax({
+                type: "POST",
+                url: "{% url 'industry:industry-time-programming' form_client.pk %}",
+                data:  {"title":title,"start_date":start_date,"end_date":end_date,csrfmiddlewaretoken:'{{ csrf_token }}'},
+                
+                success: function(output){
+                    
+                    location.reload();
+                    
+                    
+                    if(output!= null){
+                      
+                    
+                    }
+                }, error: function (output){
+                    //alert("NotOk");
+                    //alert(output);
+                        
+                }, complete: function(output){
+                    
+                        
+                }
+                        
+                
+        });    
+
+    }
+
+}
+
+function ClearErr(id){
+    
+    document.getElementById(id+"_error").innerHTML="";
+   
+    focus_status = false;
+}
+    
+    
+</script>
+    
+{% endblock script %}
+

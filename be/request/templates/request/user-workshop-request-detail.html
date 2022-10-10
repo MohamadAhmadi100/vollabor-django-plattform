@@ -1,0 +1,119 @@
+{% extends 'request/base.html' %}
+
+{% block content %}
+<div class="request-details" style="width:100%">
+    <div class="detail-title pt-5" style="width:100%;height:100px">
+        <h2 style="margin-top: 5px;">Workshop presenter's request</h2>
+        
+    </div>
+    <hr>
+    <div class="container-fluid py-2 " style="width:100%">
+        <div class="col">
+
+
+
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Applicant:</h6></div>
+                <div class="col-9">{{workshop.user.get_full_name}}</div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Email:</h6></div>
+                <div class="col-9">{{workshop.user.email}}</div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Submission date:</h6></div>
+                <div class="col-9">{{workshop.created.date}}</div>
+            </div>
+            {% if workshop.status == 'accepted_by_manager' or workshop.status == 'accepted_by_expert' %}
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Status:</h6></div>
+                <div class="col-9">Accepted</div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Accepted date:</h6></div>
+                <div class="col-9">{{workshop.accepted_date}}</div>
+            </div>
+            {% elif workshop.status == 'rejected_by_manager' or workshop.status == 'rejected_by_expert' %}
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Status:</h6></div>
+                <div class="col-9">Rejected</div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Rejection date:</h6></div>
+                <div class="col-9">{{workshop.rejected_date}}</div>
+            </div>
+
+            <div class="row mt-2" id="view-box">
+                <div class="col-3 "><h6>Rejection resaon:</h6></div>
+                 
+            </div>
+            <div class="row mb-2" id="view-box">
+               
+                 <div class="col-9 "><textarea class="form-control" disabled rows="3">{{workshop.comment}}</textarea></div>
+            </div>
+            {% else %}
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Status:</h6></div>
+                <div class="col-9">Under process</div>
+            </div>
+            
+            {% endif %}
+            
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Latest degree document:</h6></div>
+                <div class="col-9"><a class="badge badge-primary" href="{{workshop.latest_degree.url}}" target="_blank">Download</a></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Identification card:</h6></div>
+                <div class="col-9"><a class="badge badge-primary" href="{{workshop.identification.url}}" target="_blank">Download</a></div>
+            </div>
+<!--             <div class="row" id="view-box">
+                <div class="col-3"><h6>Previous workshop experience\certificate:</h6></div>
+                <div class="col-9"><a class="badge badge-primary" href="{{workshop.certificate.url}}">Download</a></div>
+            </div> -->
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Recommendation letter:</h6></div>
+                <div class="col-9"><a class="badge badge-primary" href="{{workshop.recommendation_letter.url}}" target="_blank">Download</a></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Job letter:</h6></div>
+                <div class="col-9"><a class="badge badge-primary" href="{{workshop.valid_evidence.url}}" target="_blank">Download</a></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Latest resume:</h6></div>
+                <div class="col-9"><a class="badge badge-primary" href="{{workshop.latest_resume.url}}" target="_blank">Download</a></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>State of purpose(SOP):</h6></div>
+                
+            </div>
+            <div class="row mb-2">
+                <div class="col-9"><textarea class="form-control" disabled rows="3">{{workshop.state_of_purpose}}</textarea></div>
+            </div>
+
+
+
+
+
+            
+
+            {% if workshop.status == 'accepted_by_manager' or workshop.status == 'accepted_by_expert' or workshop.status == 'rejected_by_manager' or workshop.status == 'rejected_by_expert' %}
+            <div class="row mt-2" id="view-box">
+                <div class="col-3"><h6>Contact:</h6></div>
+                 <div class="col-9">request@tecvico.com</div>
+            </div>
+            {% else %}
+            <div class="row mt-2" id="view-box">
+                <div class="col-3"><h6>Contact:</h6></div>
+                 <div class="col-9">{{workshop.expert.researchrole.expert_email_address}}</div>
+            </div>
+            {% endif %}
+            
+            <a href="{% url 'request:request' %}" class="btn btn-warning mt-3">Back</a>
+        </div>
+        
+        
+    </div>
+   
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block content %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!-- HEADER SECTION -->
+<header id="courses-header-section">
+    <div class="dark-overlay">
+        <div class="courses-header-inner">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">{% trans "Courses" %}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- COURSES SECTION -->
+<section id="courses-section" class="bg-light text-dark py-5 px-3">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="list-group flex-md-row mx-auto" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action text-center active"
+                href="#list-schedule" id="list-schedule-list"
+                 data-toggle="list">{% trans "Schedules" %}</a>
+                <a class="list-group-item list-group-item-action text-center"
+                href="#list-archive" id="list-archive-list"
+                 data-toggle="list">{% trans "Archive" %}</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="tab-content mx-auto" id="nav-tabContent">
+                <div class="tab-pane fade show active"
+                        id="list-schedule" role="tabpanel">
+                    {% for schedule_course in schedule_courses %}
+                       <div class="row schedule">
+                           <div class="col-8 mx-auto my-4 text-center pt-3">
+                                <div class="card card-blue w-100">
+                                    <p class="card-question pt-5">{{schedule_course.title}}</p>
+                                    <div class="card-separator my-2"></div>
+                                    <p><strong>Start time:</strong> {{schedule_course.time}}</p>
+                                    <p class="px-4" style="text-align:justify;">{{schedule_course.description}}
+                                    </p>
+                                    <a href="{% url 'course-item-page' course_id=schedule_course.pk %}" class="text-muted mb-1">See More</a>
+                                    <div class="card-separator mb-5"></div>
+                                </div>
+                           </div>
+                       </div>
+                    {% endfor %}
+                </div>
+                <div class="tab-pane fade"
+                    id="list-archive" role="tabpanel">
+                    {% for archive_course_row in archive_courses %}
+                        <div class="row">
+                            {% for archive_course in archive_course_row %}
+                                {% if archive_course_row|length < 2 %}
+                                    <div class="card col-md-6 mx-auto m-3">
+                                {% else %}
+                                    <div class="card col-md-3 mx-auto m-3">
+                                {% endif %}
+                                <img class="card-img-top img-fluid" src="{{ archive_course.image.url }}">
+                                <div class="card-body">
+                                    <h4 class="card-title">{{archive_course.title}}</h4>
+                                    <p class="card-text">{{archive_course.description|truncatewords:20}}</p>
+                                    <a
+                                        href=""
+                                        class="video play-option"
+                                        data-video="{{archive_course.youtube_url}}"
+                                        data-toggle="modal"
+                                        data-target="#videoModal">
+                                        <i class="fa fa-play-circle"></i> Play now
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- VIDEO MODAL -->
+<div class="modal fade" id="videoModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button class="close" data-dismiss="modal"><span>&times;</span></button>
+                <iframe src="" height="350px" width="100%" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

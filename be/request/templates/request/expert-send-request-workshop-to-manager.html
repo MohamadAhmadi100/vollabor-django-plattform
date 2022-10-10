@@ -1,0 +1,327 @@
+{% extends "request/base.html" %}
+{% block content %}
+<!-- table -->
+<section>
+    <div class="container">
+       
+        <div class="mt-5 pt-5">
+                <h3 class="table-info p-3">Workshop request form</h3>
+                
+                <div class="row mt-3">
+                    <div class="col-3"><h6>Applicant:</h6></div>
+                    <div class="col-9"><h6>{{user.get_full_name}}</h6></div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><h6>Latest degree document:</h6></div>
+                    <div class="col-9"><h6><a class="badge badge-primary" href="{{obj_expert.latest_degree.url}}">Download</a></h6></div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><h6>Identification card: </h6></div>
+                    <div class="col-9"><h6><a class="badge badge-primary" href="{{obj_expert.identification.url}}">Download</a></h6></div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><h6>Recommendation letter:</h6></div>
+                    <div class="col-9"><h6><a class="badge badge-primary" href="{{obj_expert.recommendation_letter.url}}">Download</a></h6></div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><h6>Job letter: </h6></div>
+                    <div class="col-9"><h6><a class="badge badge-primary" href="{{obj_expert.valid_evidence.url}}">Download</a></h6></div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><h6>Latest resume: </h6></div>
+                    <div class="col-9"><h6><a class="badge badge-primary" href="{{obj_expert.latest_resume.url}}">Download</a></h6></div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><h6>State of purpose(SOP): </h6></div>
+                    
+                </div>
+                <div class="row">
+                    <div class="col-9"><textarea class="form-control" disabled rows="3">{{obj_expert.state_of_purpose}}</textarea></div>
+                </div>
+                
+                
+            </div>
+     
+        <div class="">
+            <h5 class="table-warning p-3" style="margin-top: 10px;">Assesment</h5>
+            <div class="row px-3 mb-3">
+                <p class="mt-2 mr-5">Averaged score: {{obj_reviewer.score}}</p>
+                <br>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#test1" id="testBtn">Subscores</button>
+
+                <div class="modal fade" id="test1" tabindex="-1" aria-labelledby="test1Label" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="test1Label">Subscores</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row mb-0 py-0">
+                                    <div class="col-9"><p>Related education/training (degree/certification, coursework):</p></div>
+                                    <div class="col-3">{{obj_reviewer.score_1}}</div>
+                                </div>
+                            
+                            
+                                <div class="row mb-0 py-0">
+                                    <div class="col-9"><p>Related experience (work history and patents/publications):</p></div>
+                                    <div class="col-3">{{obj_reviewer.score_2}}</div>
+                                </div>
+                                
+                                <div class="row mb-0 py-0">
+                                    <div class="col-9"> <p>Collaborative experience (teamwork, and international collaboration):</p></div>
+                                    <div class="col-3">{{obj_reviewer.score_3}}</div>
+                                </div>
+                                
+                                <div class="row mb-0 py-0">
+                                    <div class="col-9">  <p>Technical & Management skills (software skills and how much s/he is expert in each software?):</p></div>
+                                    <div class="col-3">{{obj_reviewer.score_4}}</div>
+                                </div>
+                                
+                                <div class="row mb-0 py-0">
+                                    <div class="col-9">  <p>Communication (clarity of ideas, direct answers, comprehension):</p></div>
+                                    <div class="col-3">{{obj_reviewer.score_5}}</div>
+                                </div>
+                                
+                                <div class="row mb-0 py-0">
+                                    <div class="col-9">  <p>Initiative skill:</p></div>
+                                    <div class="col-3">{{obj_reviewer.score_6}}</div>
+                                </div>
+                                
+                                <div class="row mb-0 py-0">
+                                    <div class="col-9">   <p>Innovative skill:</p></div>
+                                    <div class="col-3">{{obj_reviewer.score_7}}</div>
+                                </div>
+                                
+                                <div class="row mb-0 py-0">
+                                    <div class="col-9"> <p>Candidate interest (motivation and reason to apply for the job):</p></div>
+                                    <div class="col-3">{{obj_reviewer.score_8}}</div>
+                                </div>
+                                
+                                <div class="row mb-0 py-0">
+                                    <div class="col-9">  <p>Time management:</p></div>
+                                    <div class="col-3">{{obj_reviewer.score_9}}</div>
+                                </div>
+                                
+                                <div class="row mb-0 py-0">
+                                    <div class="col-9"> <p>Personal score of interviewer:</p></div>
+                                    <div class="col-3">{{obj_reviewer.score_10}}</div>
+                                </div>
+                            
+                            
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+                <div class="row">
+                <div class="col-3"><h6>Reviewer's comment:</h6></div>
+                
+                </div>
+                <div class="row">
+                    <div class="col-9"><textarea class="form-control" disabled rows="3">{{obj_reviewer.comment}}</textarea></div>
+                    
+                </div>
+            {% if obj_expert.access_accept_reject == True %}
+                <div class="mt-3 mb-3">
+                    <div class="">
+                        <button type="button" class="btn btn-primary" value="declined" data-bs-toggle="modal" data-bs-target="#accept">Approve</button>
+                        <button type="button" class="btn btn-danger ml-1" value="declined" data-bs-toggle="modal" data-bs-target="#reject">Reject</button>
+                        <button type="button" class="btn btn-warning" value="declined" data-bs-toggle="modal" data-bs-target="#revise">Revise</button>
+                    </div>
+                </div>
+            {% else %}
+                <form method="post" id="ddform">
+                    {% csrf_token %}
+                    <div class="formBox">
+                        
+                        <div class="inputBox w100 mt-2">
+
+                            <div id="id_comment_error"></div>
+                        </div>
+                        <div class="inputBox mt-3 mb-3 w100">
+                            <input type="number" class="d-none" name="form_id" value="{{form.id}}">
+                            <button type="button" class="btn btn-primary" value="declined" data-bs-toggle="modal" data-bs-target="#send_to_manager">Send to the manager</button>
+                            <button type="button" class="btn btn-warning" value="declined" data-bs-toggle="modal" data-bs-target="#revise">Revise</button>
+                        </div>
+
+                        
+
+
+                    </div>
+                </form>
+                
+                
+                <div class="modal fade text-black" style="color:black" id="send_to_manager" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <form method="POST" id="accform">{% csrf_token %}
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                        <label>Comment <span style="color: red">*</span></label>
+                                        <textarea class="form-control" rows="5" name="comment" id="sndcomment" placeholder="Write your comment here" oninput="ClearErr('sndcomment')"></textarea>
+                                        <div id="sndcomment_error" style="color:red"></div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" id="accClsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <input type="button" id="sndBtn" class="btn btn-success" value="Send">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                
+                
+            {% endif %}
+        </div>
+        
+    
+        <!-- accepted -->
+        <div class="modal fade text-black" style="color:black" id="accept" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <form method="POST" id="appform">{% csrf_token %}
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <input type="hidden" name="approve" id="id_approve" value="approve">
+                            <h6>Are you sure?</h6>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="appClsBtn" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                            <button type="submit" class="btn btn-success" >Yes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- rejected -->
+        <div class="modal fade text-black" style="color:black" id="reject" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <form action="{% url 'request:workshop-reject' %}" method="POST">{% csrf_token %}
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <input type="hidden" name="id_request" value="{{obj_expert.pk}}">
+                            <input type="hidden" name="position" value="expert">
+                            <label>Rejection reason<span style="color:red">*</span></label>
+                            <textarea class="w-100 form-control" name="comment" id="comment" required oninput="ClearErr('decline_reason')" style="width: 350px;"></textarea>
+                            <div id="decline_reason_error" class="text-danger"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Reject</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal fade text-black" style="color:black" id="revise" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <form action="{% url 'request:workshop-revise' %}" id="revform" method="POST">{% csrf_token %}
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <input type="hidden" name="id_request" value="{{obj_expert.pk}}">
+                            <input type="hidden" name="position" value="expert">
+                            <label>Revision reason<span style="color:red">*</span></label>
+                            <textarea class="w-100 form-control" name="comment" id="revcomment" required oninput="ClearErr('revcomment')" style="width: 350px;"></textarea>
+                            <div id="revcomment_error" class="text-danger"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="revClsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" id="revBtn" class="btn btn-danger" >Revise</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+<script>
+$(document).ready(function() {
+    
+    
+     if(document.getElementById("sndBtn")){
+    document.getElementById("sndBtn").addEventListener("click",function(){
+              
+            var sndcomment=document.getElementById("sndcomment").value;
+            
+            
+            if(sndcomment=="" || sndcomment.length==0){
+                    document.getElementById("sndcomment_error").innerHTML="Error: please enter the comment.";
+            }else{
+                document.getElementById('accform').submit();
+                document.getElementById('sndBtn').disabled = true;
+            }
+          
+        });
+        
+    }
+    
+    
+    if(document.getElementById("revBtn")){
+    document.getElementById("revBtn").addEventListener("click",function(){
+              
+            var rrcomment=document.getElementById("revcomment").value;
+            
+            
+            if(rrcomment=="" || rrcomment.length==0){
+                    document.getElementById("revcomment_error").innerHTML="Error: please enter the comment.";
+            }else{
+                document.getElementById('revform').submit();
+                document.getElementById('revBtn').disabled = true;
+                document.getElementById('revClsBtn').disabled = true;
+            }
+          
+        });
+        
+    }
+    
+    
+    
+    
+       if(document.getElementById("decBtn")){
+    document.getElementById("decBtn").addEventListener("click",function(){
+              
+        var declineReason=document.getElementById("id_reject_reason").value;
+        if(declineReason.length==0){
+            document.getElementById("id_reject_reason_error").innerHTML="Error: please enter the rejection reason."
+        }else{
+            document.getElementById('decform').submit();
+            document.getElementById('decBtn').disabled = true;
+             document.getElementById('clsBtn').disabled = true;
+        }
+          
+    }); 
+       }
+       
+       if(document.getElementById("appBtn")){
+    document.getElementById("appBtn").addEventListener("click",function(){
+        document.getElementById('appform').submit();
+        document.getElementById('appBtn').disabled = true; 
+        document.getElementById('appClsBtn').disabled = true;
+         
+    });
+     
+     
+       }
+     
+     
+ });
+ 
+ 
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+}
+    
+
+
+
+</script>
+{% endblock %}

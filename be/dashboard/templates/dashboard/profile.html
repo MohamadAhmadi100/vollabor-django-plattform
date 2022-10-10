@@ -1,0 +1,601 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/star.css' %}?version=13">
+<link rel="stylesheet" href="{% static 'dashboard/css/company-collaborations' %}">
+{% endblock css %}
+
+{% block content %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-color10 text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-user-circle"></i> Profile</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- PROFILE -->
+<section id="profile">
+    <div class="container">
+        <div id="user-profile-2">
+            <div>
+              <ul class="nav">
+                <li class="ml-auto">
+                  <a data-toggle="tab" href="#home" class="bg-dark text-light h6 p-2 active show">
+                    <i class="green fa fa-user"></i>
+                    Details
+                  </a>
+                </li>
+                <li>
+                  <a data-toggle="tab" href="#Collaborations" class="bg-dark text-light h6 p-2">
+                    <i class="text-warning fa fa-handshake-o"></i>
+                    Collaborations
+                  </a>
+                </li>
+                <li class="mr-auto">
+                  <a data-toggle="tab" href="#Collaborators" class="bg-dark text-light h6 p-2">
+                    <i class="blue fa fa-users"></i>
+                    Collaborated Projects
+                  </a>
+                </li>
+              </ul>
+
+              <div class="tab-content no-border padding-24">
+                <div id="home" class="tab-pane in active">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-3 center">
+                      <span class="profile-picture mb-2">
+                        <img class="profile-image" alt="Avatar" id="avatar2" src="{% if profile|is_member_profile %}{{profile.memberprofile.image.url}}{% else %}{{profile.legalprofile.image.url}}{% endif %}">
+                      </span>
+                        {% if profile|is_member_profile %}
+
+                        <div>
+                            <span><span class="text-color6 bold">Balance:</span> <span id="
+                            responsibility-coin">{{profile.memberprofile.balance}}</span></span>
+                        </div>
+                        {% if profile.memberprofile.cv_file %}
+                        <a href="{{profile.memberprofile.cv_file.url}}" target="_blank" class="btn btn-sm btn-block btn-primary mb-3">
+                            <i class="ace-icon fa fa-download bigger-110 pr-1"></i>
+                            <span class="bigger-110">Download CV</span>
+                        </a>
+                        {% endif %}
+                        {% endif %}
+                      <div class="space space-4"></div>
+
+
+                    </div><!-- /.col -->
+                    <div class="ml-5 col-md-4 mb-3">
+                        <h4 class="blue">
+                            <span class="middle">{% if profile|is_member_profile %}{{profile.first_name}} {{profile.last_name}}{% else %}{{profile.legalprofile.company_name}}{% endif %}</span>
+                        </h4>
+
+                        {% if profile|is_member_profile %}
+                        <!-- Profile info -->
+                        <div class="profile-user-info">
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> ID </div>
+
+                                <div class="profile-info-value">
+                                    <span>{{profile.id|stringformat:"04d"}}</span>
+                                </div>
+                            </div>
+                            {% if profile.memberprofile.city or profile.memberprofile.country %}
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Location </div>
+
+                                <div class="profile-info-value d-inline">
+                                    <i class="fa fa-map-marker light-orange bigger-110"></i>
+                                    {% if profile.memberprofile.city %}
+                                        <span>{{profile.memberprofile.city}}</span>
+                                    {% endif %}
+                                    {% if profile.memberprofile.country %}
+                                        <span>{{profile.memberprofile.country}}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Birthday </div>
+
+                                <div class="profile-info-value">
+                                    <span>{{profile.memberprofile.birthday}}</span>
+                                </div>
+                            </div>
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Field of study </div>
+
+                                <div class="profile-info-value">
+                                    <span>{{profile.memberprofile.field_of_study}}</span>
+                                </div>
+                            </div>
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Status </div>
+
+                                <div class="profile-info-value">
+                                    <span>{{profile.memberprofile.status}}</span>
+                                </div>
+                            </div>
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Degree </div>
+
+                                <div class="profile-info-value">
+                                    <span>{{profile.memberprofile.degree}}</span>
+                                </div>
+                            </div>
+                            {% if profile.time_can_spend_per_day %}
+                            <div class="profile-info-row">
+                                <div class="profile-info-name text-center"> Time can spend per day </div>
+
+                                <div class="profile-info-value">
+                                    <span>{{profile.memberprofile.time_can_spend_per_day}} Hours</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <!-- Legal Profile info -->
+                        <div class="profile-user-info">
+                            {% if profile.legalprofile.city or profile.legalprofile.country %}
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Location </div>
+
+                                <div class="profile-info-value d-inline">
+                                    <i class="fa fa-map-marker light-orange bigger-110"></i>
+                                        <span>{{profile.legalprofile.country}}, {{profile.legalprofile.city}}, {{profile.legalprofile.street}}, {{profile.legalprofile.zip_code}}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Work Area </div>
+
+                                <div class="profile-info-value">
+                                    <span>{{profile.legalprofile.work_area}}</span>
+                                </div>
+                            </div>
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Agent </div>
+
+                                <div class="profile-info-value">
+                                    <span>{{profile.first_name}} {{profile.last_name}}</span>
+                                </div>
+                            </div>
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Registration Number </div>
+
+                                <div class="profile-info-value">
+                                    <span>{{profile.legalprofile.registration_number}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="hr hr-8 dotted"></div>
+                    </div><!-- /.col -->
+                      <div class="ml-5 col-md-2 mt-2 mb-3">
+                          <div class="profile-info-row">
+                                <div class="profile-info-name"> Email </div>
+
+                                <div class="profile-info-value">
+                                    <a href="mailto:{{profile.email}}">{{profile.email}}</a>
+                                </div>
+                          </div>
+                          <div class="profile-info-row">
+                                <div class="profile-info-name"> Phone </div>
+                                {% if profile|is_member_profile %}
+                                <div class="profile-info-value">
+                                    <a href="tel:{{profile.memberprofile.phone}}">{{profile.memberprofile.phone}}</a>
+                                </div>
+                                {% else %}
+                              <div class="profile-info-value">
+                                    <a href="tel:{{profile.legalprofile.phone}}">{{profile.legalprofile.phone}}</a>
+                                </div>
+                                {% endif %}
+                          </div>
+                          {% if profile|is_member_profile %}
+                              <div class="profile-info-row">
+                                    <div class="profile-info-name"> Position </div>
+
+                                    <div class="profile-info-value">
+                                       <span><span id="profile-position">{{profile.memberprofile.position}}</span> {% if profile.memberprofile.is_guest%} (Guest) {% endif %}</span>
+                                    </div>
+                              </div>
+                              {% if profile.legalprofile.skype %}
+                              <div class="profile-info-row">
+                                    <div class="profile-info-name"> Skype: </div>
+
+                                    <div class="profile-info-value">
+                                       <span>{{profile.legalprofile.skype}}</span>
+                                    </div>
+                              </div>
+                              {% endif %}
+                              {% if user.is_superuser %}
+                              <div class="profile-info-row">
+                                    <div class="profile-info-name"> Change position </div>
+
+                                    <div class="profile-info-value">
+                                       <select class="selectpicker" id="supervisor-user" name="supervisor-user"
+                                               data-style="btn-primary">
+                                        <option {% if profile.memberprofile.position == "Supervisor" %} selected {% endif %}>Supervisor</option>
+                                        <option {% if profile.memberprofile.position == "Mentor" %} selected {% endif %}>Mentor</option>
+                                        <option {% if profile.memberprofile.position == "Member" %} selected {% endif %}>Member</option>
+                                        <option {% if profile.memberprofile.position == "Learner" %} selected {% endif %}>Learner</option>
+                                        </select>
+                                    </div>
+                              </div>
+                              {% endif %}
+                              {% if experience_badges %}
+                              <div class="profile-info-row">
+                                  <div class="profile-info-name">Badges</div>
+                                      {% for experience_badge in experience_badges %}
+                                      {% if experience_badge.score < 25 %}
+                                      <span data-toggle='tooltip' data-placement='top' title="{{experience_badge.badge.title}} - {{experience_badge.score}}" class="badge bg-danger m-1"><img src="{{experience_badge.badge.icon.url}}"  width="30"></span>
+                                      {% elif experience_badge.score < 50 %}
+                                      <span data-toggle='tooltip' data-placement='top' title="{{experience_badge.badge.title}} - {{experience_badge.score}}" class="badge bg-bronze m-1"><img src="{{experience_badge.badge.icon.url}}"  width="30"></span>
+                                      {% elif experience_badge.score < 75 %}
+                                      <span data-toggle='tooltip' data-placement='top' title="{{experience_badge.badge.title}} - {{experience_badge.score}}" class="badge bg-silver m-1"><img src="{{experience_badge.badge.icon.url}}"  width="30"></span>
+                                      {% else %}
+                                      <span data-toggle='tooltip' data-placement='top' title="{{experience_badge.badge.title}} - {{experience_badge.score}}" class="badge bg-gold m-1"><img src="{{experience_badge.badge.icon.url}}"  width="30"></span>
+                                      {% endif %}
+                                      {% endfor %}
+                              </div>
+                              {% endif %}
+                          {% else %}
+                              <div class="profile-info-row">
+                                    <div class="profile-info-name"> Contact Preference </div>
+
+                                    <div class="profile-info-value">
+                                       <span>{{profile.legalprofile.contact_preference}}</span>
+                                    </div>
+                              </div>
+                              {% if profile.legalprofile.skype %}
+                              <div class="profile-info-row">
+                                    <div class="profile-info-name"> Skype: </div>
+
+                                    <div class="profile-info-value">
+                                       <span>{{profile.legalprofile.skype}}</span>
+                                    </div>
+                              </div>
+                              {% endif %}
+                          {% endif %}
+                      </div>
+                  </div><!-- /.row -->
+
+                  <div class="space-20"></div>
+                  <div class="row my-2">
+                      <div class="col-12 ml-2">
+                          {% if expertises %}
+                          <span class="bold">Area of expertise:</span>
+                          {% for expertise in expertises %}
+                            <span class="badge badge-success">{{expertise.area}}</span>
+                          {% endfor %}
+                          {% endif %}
+                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 mb-5">
+                      <div class="widget-box transparent">
+                        <div class="widget-header widget-header-small">
+                          <h4 class="widget-title smaller">
+                            <i class="ace-icon fa fa-check-square-o bigger-110"></i>
+                            About
+                          </h4>
+                        </div>
+
+                        <div class="widget-body">
+                          <div class="widget-main">
+                            <div class="data">
+                                {% if profile|is_member_profile %}
+                                {{ profile.memberprofile.about_me }}
+                                {% else %}
+                                {{ profile.legalprofile.about_company }}
+                                {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div><!-- /#home -->
+
+                <div id="Collaborations" class="tab-pane">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>Company Collaborations</h3>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 check-list">
+                                {% if company_collaborations %}
+                                <ul>
+                                    {% for collaboration in company_collaborations %}
+                                    <li>{{collaboration.content}}<br><span class="text-muted ml-5"><b>Date:</b> {{collaboration.date_added}}</span></li>
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                <h6 class="ml-5">EMPTY...</h6>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if user.is_superuser %}
+                        <div class="row">
+                            <div class="col-12">
+                                <form action="">
+                                    <input type="text" name="title" placeholder="title" required class="w-50 d-block my-3 p-1 form-control" >
+                                    <input list="task-section" name="section" placeholder="section" required class="w-50 d-block p-1 form-control">
+                                    <datalist id="task-section">
+                                      <option value="Advertising">
+                                      <option value="Website">
+                                      <option value="SEO">
+                                    </datalist>
+                                    <textarea name="send-content" rows="3" class="form-control w-50 mt-3 p-1" placeholder="Type new content..." required maxlength="100"></textarea>
+                                    <button class="btn btn-success mt-2 submit-button">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <hr>
+                    <div class="container">
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <h3>Project scores</h3>
+                                <ol>
+                                    {% for project in total_projects_collaborated %}
+                                    <li><b>{{project.title}}</b><br>
+                                        {% if project.main_supervisor == user and profile != user and project|get_rating_number:profile == 0%}
+
+                                        {% with ''|center:5 as range %}
+                                        <div class="d-inline" project_pk="{{project.pk}}">
+                                        {% for _ in range %}
+                                            <i class="fa fa-star text-secondary  rate-item" rating="{{ forloop.counter0 }}"></i>
+                                        {% endfor %}
+                                        </div>
+                                        {% endwith %}
+
+                                        {% else %}
+
+                                        {% with project|get_rating:profile as project_rating %}
+                                        {% with ''|center:5 as range %}
+                                        {% for _ in range %}
+                                        {% if forloop.counter <= project_rating %}
+                                        <i class="fa fa-star star-positive"></i>
+                                        {% else %}
+                                        <i class="fa fa-star text-secondary"></i>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% endwith %}
+                                        {% endwith %}
+
+                                        {% endif %}
+                                    </li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Collaborators" class="tab-pane">
+                    <table class="table table-hover p-table mb-5">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th class="text-center">Project Name</th>
+                            <th colspan="4" class="text-center">Collaborators</th>
+                            <th class="text-center">Project Status</th>
+                            <th class="text-center"></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th class='h6'>Supervisors</th>
+                            <th class='h6'>Mentors</th>
+                            <th class='h6'>Members</th>
+                            <th class='h6'>Learners</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody class="infinite-container">
+                        {% for project in projects_collaborated %}
+                            <tr class="infinite-item">
+                                <td>
+                                    {{forloop.counter|calculate_id:projects_collaborated.number}}.
+                                </td>
+                                <td class="p-name">
+                                    {{project.title}} </br>
+                                    <small class="text-muted">Created {{project.start_date}}</small>
+                                </td>
+                                <td class="p-team" style="width: 150px;">
+                                {% for collaborator in project|get_project_supervisors|slice:":5" %}
+                                    <a data-toggle='tooltip' data-placement='top' title='{{collaborator.first_name}} {{collaborator.last_name}}'>
+                                        {% if collaborator|is_member_profile %}
+                                        <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                        {% else %}
+                                        <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                        {% endif %}
+                                    </a>
+                                {% endfor %}
+                            </td>
+                            <td class="p-team" style="width: 120px;">
+                                {% for collaborator in project|get_project_mentors|slice:":5" %}
+                                    <a data-toggle='tooltip' data-placement='top' title='{{collaborator.first_name}} {{collaborator.last_name}}'>
+                                        {% if collaborator|is_member_profile %}
+                                        <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                        {% else %}
+                                        <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                        {% endif %}
+                                    </a>
+                                {% endfor %}
+                            </td>
+                            <td class="p-team" style="width: 120px;">
+                                {% for collaborator in project|get_project_members|slice:":5" %}
+                                    <a data-toggle='tooltip' data-placement='top' title='{{collaborator.first_name}} {{collaborator.last_name}}'>
+                                        {% if collaborator|is_member_profile %}
+                                        <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                        {% else %}
+                                        <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                        {% endif %}
+                                    </a>
+                                {% endfor %}
+                            </td>
+                            <td class="p-team" style="width: 120px;">
+                                {% for collaborator in project|get_project_learners|slice:":5" %}
+                                    <a data-toggle='tooltip' data-placement='top' title='{{collaborator.first_name}} {{collaborator.last_name}}'>
+                                        {% if collaborator|is_member_profile %}
+                                        <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                        {% else %}
+                                        <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                        {% endif %}
+                                    </a>
+                                {% endfor %}
+                            </td>
+                                <td>
+                                    {% if project.status == 'New' %}
+                                        <span class="label text-secondary"><strong>New</strong></span>
+                                    {% elif project.status == 'Ongoing' %}
+                                        <span class="label text-primary"><strong>Ongoing</strong></span>
+                                    {% elif project.status == 'Pending' %}
+                                        <span class="label text-info"><strong>Pending</strong></span>
+                                    {% elif project.status == 'On Hold' %}
+                                        <span class="label text-danger"><strong>On Hold</strong></span>
+                                    {% else %}
+                                        <span class="label text-success"><strong>Done</strong></span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="loading display-4" style="display: none; margin-bottom: 100px">
+                        Loading...
+                    </div>
+                </div><!-- /#Collaborators -->
+              </div>
+            </div>
+          </div>
+        </div>
+</section>
+{% if projects_collaborated.has_next %}
+    <div>
+        {% if request.GET|length > 0 %}
+        <a class="infinite-more-link" href="{{request.get_full_path}}&page={{ projects_collaborated.next_page_number }}"></a>
+        {% else %}
+        <a class="infinite-more-link" href="?page={{ projects_collaborated.next_page_number }}"></a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock content %}
+
+{% block script %}
+    {% if user.is_superuser %}
+    <script>
+        $('.submit-button').on("click", function (){
+            let content_text = $('textarea[name="send-content"]').val();
+            let title_text = $('input[name="title"]').val();
+            let section_text = $('input[name="section"]').val();
+            if (content_text != "") {
+                $.ajax({
+                type: "POST",
+                data: {
+                    'assign-new-collaboration': 1,
+                    'title': title_text,
+                    'content': content_text,
+                    'section': section_text,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    if (data['success'])
+                        if ($('.check-list ul').length)
+                            $('.check-list ul').append($('<li>' + content_text + title_text + section_text + '<br><span class="text-muted ml-5"><b>Date:</b> NOW </span></li>'));
+                        else {
+                            $('.check-list').empty()
+                            $('.check-list').append($('<ul><li>' + content_text + title_text + section_text + '<br><span class="text-muted ml-5"><b>Date:</b> NOW </span></li></ul>'));
+                        }
+
+
+                }
+        });
+            }
+        })
+
+    $('.rate-item').on('mouseover', function () {
+        let element_rating = $(this).attr('rating');
+
+        $(this).parent().children().each(function(e) {
+            if (e <= element_rating)
+                $(this).addClass('star-hover');
+        })
+    }).on("mouseout", function () {
+        $(this).parent().children().each(function(e) {
+            $(this).removeClass('star-hover')
+        })
+    }).on('click', function () {
+        let element_rating = parseInt($(this).attr('rating'));
+        let project_pk = $(this).parent().attr('project_pk')
+        let clicked_element = $(this);
+
+        $.ajax({
+                type: "POST",
+                data: {
+                    'rating': element_rating + 1,
+                    'project-pk': project_pk,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data['success']) {
+                        clicked_element.parent().children().each(function(e) {
+                            if (e <= element_rating)
+                                $(this).addClass('star-positive');
+                            $(this).off();
+                         })
+                        clicked_element.parent().append("<i class='fa fa-check text-success'></i>");
+                    }
+                }
+        });
+    })
+
+        const infinite = new Waypoint.Infinite({
+            element: $('.infinite-container')[0],
+            onBeforePageLoad: function () {
+                $('.loading').show();
+            },
+            onAfterPageLoad: function ($items) {
+                $('.loading').hide();
+                $('[data-toggle="tooltip"]').tooltip();
+            }
+        });
+    </script>
+    {% endif %}
+
+    {% if user.is_superuser %}
+    <script>
+
+        $("select").on("changed.bs.select", function () {
+            var new_position = this.value
+            $.ajax({
+                type: "POST",
+                data: {
+                    'new-position': new_position,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data['success']) {
+                       $('#profile-position').html(new_position);
+                    }
+                }
+            });
+        });
+    </script>
+    {% endif %}
+{% endblock script %}

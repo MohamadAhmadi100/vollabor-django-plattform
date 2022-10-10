@@ -1,0 +1,11 @@
+<div class="nav">
+    <div class="container">
+        <ul>
+            <li><a href="{% url 'forum:category' %}" class="{% if request.resolver_match.url_name == 'category' %}active{% endif %}"><i class="fa fa-fw fa-list"></i><span> categories </span></a></li>
+            <li><a href="{% url 'forum:post-recent' %}" class="{% if request.resolver_match.url_name == 'post-recent' %}active{% endif %}"><i class="fa fa-fw fa-clock"></i><span> recent </span></a></li>
+            <li><a href="{% url 'forum:post-popular' %}" class="{% if request.resolver_match.url_name == 'post-popular' %}active{% endif %}"><i class="fa fa-fw fa-fire"></i><span> popular </span></a></li>
+            <li><a href="{% url 'forum:post-history' %}" class="{% if request.resolver_match.url_name == 'post-history' %}active{% endif %}"><i class="fas fa-history"></i><span> History </span></a></li>
+            <li><a href="{% url 'home-page' %}" class="{% if request.resolver_match.url_name == 'post-history' %}active{% endif %}"><i class="fas fa-history"></i><span> Home </span></a></li>
+        </ul>
+    </div>
+</div>

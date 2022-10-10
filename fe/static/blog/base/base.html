@@ -1,0 +1,254 @@
+{% load static %}
+{% load gtm_tags %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load calendar_convertor %}
+{% load seo_filter %}
+
+
+<html lang="en">
+<head>
+     {% gtm_head %}
+     <meta charset="UTF-8">
+    <link rel="canonical" href="https://tecvico.com{{request.path}}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if request.path|has_meta_index %}
+    {% with request.path|get_meta_index as meta_index %}
+    <meta name="robots" content="{{meta_index.index}}, {{meta_index.follow}}">
+    {% endwith %}
+    {% else %}
+    <meta name="robots" content="noindex, nofollow">
+    {% endif %}
+
+    {% if request.path|has_title_and_description %}
+        {% with request.path|get_title_and_description as meta_title_description %}
+        {% if meta_title_description.title %}
+        <title>{{meta_title_description.title}}</title>
+        {% else %}
+        <title>Tecvico</title>
+        {% endif %}
+        {% if meta_title_description.description %}
+        <meta name="description" content="{{meta_title_description.description}}">
+        {% endif %}
+        {% endwith %}
+    {% else %}
+    <title>Tecvico</title>
+    {% endif %}
+
+	
+	<link href="{% static 'ivc_website/css/normalize.css' %}" rel="stylesheet">
+	<link href="{% static 'ivc_website/css/bootstrap.min.css' %}" rel="stylesheet" id="bootstrap-css">
+	<link href="{% static 'ivc_website/css/base.css' %}" rel="stylesheet">
+	<link href="{% static 'ivc_website/css/font-awesome.min.css' %}" rel="stylesheet" >
+	<!--<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" >-->
+	<link rel="shortcut icon" type="image/png" href="{% static 'favicon-v2.ico' %}"/>
+	
+	{% block css %}{% endblock %}
+	<script src="{% static 'ivc_website/js/jquery.min.js' %}"></script>
+	<script src="{% static 'ivc_website/js/popper.min.js' %}"></script>
+	<script src="{% static 'ivc_website/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'ivc_website/js/bootstrap.bundle.min.js' %}"></script>
+	<script src="{% static 'ivc_website/js/base.js' %}"></script>
+
+	 {% block style %}{% endblock %}
+
+</head>
+
+<body>
+ {% gtm_body %}
+<header id="main_header">
+<nav class="navbar navbar-expand-md navbar-dark fixed-top shrink" id="banner">
+	<div class="container-fluid">
+	
+		<div class="col" >
+			
+			<div class="row" id="mainDiv">
+				<!-- Toggler/collapsibe Button -->
+				
+					<button class="navbar-toggler col col-1 p-0 my-auto" style="height:50%" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+				
+
+			  <!-- Navbar links -->
+				
+				<div class="collapse navbar-collapse col col-6 collapseDiv" id="collapsibleNavbar">
+					
+						<ul class="navbar-nav navbarUL">
+							<li class="nav-item">
+								<a class="nav-link" href="{% url 'home-page' %}">Home</a>
+							</li>
+							<li class="nav-item" >
+								<a class="nav-link" href="{% url 'projects-page' %}">Projects</a>
+							</li>
+					   
+							<!-- Dropdown -->
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+								Education
+								</a>
+								<div class="dropdown-menu">
+									<a class="dropdown-item" href="{% url 'list-for-all' %}">Workshops</a>
+									<a class="dropdown-item" href="{% url 'documents-page' %}">Documents</a>
+									<a class="dropdown-item" href="{% url 'videos-page' %}">Videos</a>
+								</div>
+							</li>
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+								Company
+								</a>
+								<div class="dropdown-menu">
+									<a class="dropdown-item" href="{% url 'about-us' %}">About-us</a>
+									<a class="dropdown-item" href="{% url 'members-page' %}">Members</a>
+									<a class="dropdown-item" href="{% url 'blog-page' %}">Blog</a>
+									<a class="dropdown-item" href="{% url 'forum:category' %}">Forum</a>
+									<a class="dropdown-item" href="{% url 'news-page' %}">News</a>
+									<a class="dropdown-item" href="{% url 'event-page' %}">Events</a>
+									<a class="dropdown-item" href="#">Discover</a>
+									<a class="dropdown-item" href="{% url 'FAQ-page' %}">FAQ</a>
+								</div>
+							</li>
+					
+							
+					
+						</ul>
+					
+				</div>
+			
+				   
+				        
+				    
+						
+					{% if user.is_authenticated %}
+						<div class="col col-md-5 col-sm-12" id="LogDiv">
+						    <div class="row py-0">
+				            <div class="col col-3 logpan text-center">
+        				        <a class="logpanLink fa fa-envelope" id="MailLink" href="https://webmail.tecvico.com" style="color:#fff;"><span class="hidden-xs"> Mail</span> </a>
+								
+						   </div>
+				        
+				            <div class="col col-5 logpan text-center">
+				                <a class="logpanLink fa fa-th" id="MydLink" href="{% url 'dashboard-page' %}" style="color:#fff;"><span class="hidden-xs"> My Dashboard</span></a>
+				            </div>
+				            <div class="col col-4 logpan text-center">
+				                <a class="logpanLink fa fa-sign-out" id="lgotLink" href="{% url 'logout' %}" style="color:#fff;"><span class="hidden-xs">Log Out </span></a>
+				            </div>
+				        </div>
+				    </div>
+				            
+				    {% else %}
+				        <div class="col col-md-3 col-sm-12" id="LogDiv">
+						    <div class="row py-0">
+				    
+				            <div class="col col-5 logpan pr-0 mx-0 text-right">
+        				        <a class="logpanLink fa fa-envelope" id="MailLink" href="https://webmail.tecvico.com" style="color:#fff;"><span class="hidden-xs">  Mail</span> </a>
+								
+						   </div>
+				            <div class="col col-7 logpan mx-0 text-center">
+				                <a class="logpanLink fa fa-sign-in" id="lgnLink" href="{% url 'login' %}" style="color:#fff;"><span class="hidden-xs">  Register/Login </span></a>
+				            </div>
+				    
+				    {% endif %}
+				        </div>
+				   
+    				
+				</div>
+				
+			</div>
+		</div>
+	<!--/////////////////////////////////////////////////////////////////////////////////////-->
+	
+		
+	</div>
+</nav>
+</header>
+<main>
+
+ {% block content %}{% endblock %}
+ 
+</main>
+
+
+<footer class="section-footer pt-3" role="contentinfo">
+
+  <div>
+  <div>
+    <div class="row mx-2">
+      <div class="col-md-3 col-sm-6">
+        <!--Column1-->
+        <div class="footer-pad">
+         <div>
+			<a class="navbar-brand" href="#"><span><img src="{% static 'ivc_website/img/teclogo.png' %}"></span></a>
+		  </div>
+		  <div>
+			<p style="color:#fff"><i class="fa fa-envelope" aria-hidden="true"></i> pr@tecvico.com</p>
+		  </div>
+        </div>
+      </div>
+      <div class="col-md-2 col-sm-6">
+        <!--Column1-->
+        <div class="footer-pad">
+          <h4 style="color:#fff">Company</h4>
+          <ul class="list-unstyled">
+            <li><a href="{% url 'home-page' %}" >Home</a></li>
+            <li><a href="#" >Discover</a></li>
+            <li><a href="{% url 'cv-upload-page' %}" >join us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-2 col-sm-6">
+        <!--Column1-->
+        <div class="footer-pad">
+          <h4 style="color:#fff">About</h4>
+          <ul class="list-unstyled">
+            <li><a href="{% url 'about-us' %}" >About-us</a></li>
+            <li><a href="{% url 'members-page' %}" >Members</a></li>
+            <li><a href="{% url 'news-page' %}" >News</a></li>
+            <li><a href="{% url 'questions-page' %}">Q & A</a></li>
+            <li>
+              <a href="#"></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+	  <div class="col-md-2 col-sm-6">
+        <!--Column1-->
+        <div class="footer-pad">
+          <h4 style="color:#fff">Learn</h4>
+          <ul class="list-unstyled">
+            <li><a href="{% url 'forum:category' %}" >Forum</a></li>
+            <li><a href="{% url 'videos-page' %}" >Video</a></li>
+            <li><a href="{% url 'documents-page' %}" >Document</a></li>
+            <li><a href="{% url 'blog-page' %}" >Blog</a></li>
+            <li>
+              <a href="#"></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    	<div class="col-md-3">
+    		<h4 style="color:#fff">Follow Us</h4>
+            <ul class="social-network social-circle">
+             <li><a href="https://facebook.com/tecvico" class="icoFacebook" title="Facebook"><i class="fa fa-facebook"></i></a></li>
+			 <li><a href="https://instagram.com/tecvico" class="icoInstagram" title="Instagram"><i class="fa fa-instagram"></i></a></li>
+             <li><a href="https://www.linkedin.com/company/tecvico/" class="icoLinkedin" title="Linkedin"><i class="fa fa-linkedin"></i></a></li>
+			 <li><a href="#" class="icoTelegram" title="Telegram"><i class="fa fa-telegram"></i></a></li>
+			 <li><a href="https://twitter.com/tecvico/" class="icoTiwtter" title="Tiwtter"><i class="fa fa-twitter"></i></a></li>
+            </ul>				
+		</div>
+    </div>
+	<div class="row mt-5">
+		<div class="col-md-12 copy">
+			<p class="text-center" style="color:#fff">&copy; Copyright 2021 Tecvico Group - All Rights Reserved.</p>
+		</div>
+	</div>
+
+
+  </div>
+  </div>
+</footer>
+
+  {% block script %}{% endblock %}
+
+</body>
+</html>

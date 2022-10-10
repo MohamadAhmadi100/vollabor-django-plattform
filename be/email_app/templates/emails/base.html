@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tecvico | Advertisement industry</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'favicon-v2.ico' %}"/>
+
+  <link rel="stylesheet" href="{% static 'emails/plugins/fontawesome-free/css/all.min.css' %}">
+  <!-- Ionicons -->
+  <!-- Tempusdominus Bootstrap 4 -->
+  <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">-->
+  <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>-->
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'emails/dist/css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'emails/dist/css/rtl.css' %}">
+  <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script>
+            $(document).ready(function() {
+             $("#btn-add").click(function(){
+                   var ele=[];
+             $("input:checkbox[name=emails]:checked").each(function(){
+                  ele.push($(this).val());
+                  document.getElementById("text-email").innerHTML = ele;
+               });
+             });
+            });
+
+        </script>
+        <style>
+.email_active{
+  display:table-column
+}
+/email_deactive{
+  display:none
+}
+.notify {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  height: 0;
+  box-sizing: border-box;
+  color: white;
+  text-align: center;
+  background: #03bf6d;
+  overflow: hidden;
+  box-sizing: border-box;
+  -webkit-transition: all ease 0.4s;
+  -moz-transition: all ease 0.4s;
+  -ms-transition: all ease 0.4s;
+  -o-transition: all ease 0.4s;
+  transition: all ease 0.4s;
+}
+
+#notifyType:before {
+  display: block;
+  margin-top: 15px;
+}
+
+.notify.active {
+  height: 50px;
+}
+
+#send_email_notif,#reminder_send_email_notif{
+          
+  display: block;
+  width: 25px;
+  background: red;
+  text-align: center;
+  border-radius: 20px;
+  float: right;
+  color: #fff;
+
+}
+.lds-dual-ring {
+  display: inline-block;
+  width: 100%;
+  height: 40px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 5% auto;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  border-color: #003e80  transparent #003e80  transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+  margin: auto;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0,0,0,.8);
+    z-index: 999;
+    opacity: 1;
+    transition: all 0.5s;
+}
+        </style>
+</head>
+
+<div >
+  {% if messages %}
+      {% for message in messages %}
+          <div class="row">
+              {% if message.tags == 'success' %}
+                  <div style="z-index:10000" class="alert alert-success"> {{ message }}</div>
+              {% else %}
+                  <div style="z-index:10000" class="alert alert-danger"> {{ message }}</div>
+              {%endif %}
+          </div>
+      {% endfor %}
+  {% endif %}
+</div>
+<body class="hold-transition sidebar-mini layout-fixed">
+
+
+  <div class="wrapper">
+ 
+
+    <!-- Preloader -->
+
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light"
+ 
+      <!-- Left navbar links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="{% url 'home-page' %}" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="{% url 'dashboard-page' %}" class="nav-link">Dashboard</a>
+        </li>
+      </ul>
+
+      <!-- Right navbar links -->
+      <ul class="navbar-nav ml-auto">
+        <!-- Navbar Search -->
+        <li class="nav-item">
+
+          <div class="navbar-search-block">
+            <form class="form-inline">
+              <div class="input-group input-group-sm">
+                <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+                <div class="input-group-append">
+                  <button class="btn btn-navbar" type="submit">
+                    <i class="fas fa-search"></i>
+                  </button>
+                  <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container -->
+    {% include 'emails/sidebar.html' %}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">{% block title %} {% endblock %}</h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+        
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+       </div>
+       <!-- /.content-header -->
+
+      <!-- Main content -->
+      {% block main %}
+      {% endblock %}
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+      <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
+  </div>
+
+  <script>
+  //  $.widget.bridge('uibutton', $.ui.button)
+  </script>
+  <script src="{% static 'emails/dist/js/adminlte.js' %}"></script>
+  {% comment %} <script type="text/javascript" src="js/popper.min.js"></script> {% endcomment %}
+  {% comment %} <script type="text/javascript" src="js/mdb.min.js"></script> {% endcomment %}
+  {% comment %} <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-modal/2.2.6/js/bootstrap-modalmanager.min.js"></script> {% endcomment %}
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script>
+    $.ajax({
+      type: "POST",
+      enctype: 'multipart/form-data',
+      url: "{% url 'email:email-notif' %}",
+      data:{csrfmiddlewaretoken: '{{ csrf_token }}'},
+      dataType:'json',
+      success:function(res){
+          if(res.notif_send_email==0){
+            $('#send_email_notif , #reminder_send_email_notif').css('display','none')
+          }
+          else{
+            $('#send_email_notif, #reminder_send_email_notif').css('display','block')
+            $('#send_email_notif, #reminder_send_email_notif').html(res.notif_send_email)
+          }
+      },
+      error:function(){
+  
+      }
+  })
+  </script>
+
+</body>
+
+</html>

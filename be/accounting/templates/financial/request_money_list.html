@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+<style>
+  body {
+    background: #e2e1e0;
+  }
+  .selected_box{
+    border: 1px solid #17a2b8;
+    margin: 5px;
+    border-radius: 10px;
+    padding: 5px;
+    width: 200px;
+  }
+  .filtering{
+    cursor:pointer;
+    padding:1%
+  }
+  
+
+  </style>
+<div class="row container">
+  <a  class="float-left col-md-2 text-center filtering card card-1">
+    <h5 class="m-auto" id="all">All</h5>
+</a>
+<a  class="float-left col-md-2 text-center filtering card card-1">
+  <h5 class="m-auto" id="done">done</h5>
+</a>
+{%if role == 'manager'%}
+  <a  class="float-left col-md-2 text-center filtering card card-1">
+    <h5 class="m-auto" id="expert">wait for expert decision</h5>
+  </a>
+  <a  class="float-left col-md-2 text-center filtering card card-1">
+    <h5 class="m-auto" id="manager">waite for you'r decision</h5>
+  </a>
+{%elif role == 'expert'%}
+<a  class="float-left col-md-2 text-center filtering card card-1">
+  <h5 class="m-auto" id="complete">Complete</h5>
+</a>
+<a  class="float-left col-md-2 text-center filtering card card-1">
+  <h5 class="m-auto" id="sendtomanager">Send to manager</h5>
+</a>
+{%endif%}
+</div>
+
+
+<div class="m-auto col-md-11">
+  
+  <!--Datatables-->
+  <table id="example" class="table table-striped table-bordered" style="width:100%">
+      <thead class="thead-dark">
+          <tr>
+              <th>User</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Bank info</th>
+              <th>Service</th>
+              <th>Status</th>
+              <th>Action</th>
+          </tr>
+      </thead>
+      <tbody>
+          {%for request in requests%}
+            <tr>
+              <td>{{request.user.username}}</td>
+              <td>{{request.created}}</td>
+              <td>{{request.amount}}</td>
+              <td><a class="btn btn-info btn-sm" data-toggle="modal" data-target="#bank_info_{{request.id}}"><i class="fa fa-eye" aria-hidden="true"></i></a></td>
+              <td><a class="btn btn-info btn-sm" data-toggle="modal" data-target="#service_{{request.id}}"><i class="fa fa-eye" aria-hidden="true"></i></a></td>
+              <td>
+
+                    {%for s in status%}
+                      {%if s.status == request.status%}
+                        {{s.msg}}
+                      {%endif%}
+                    {%endfor%} 
+
+              </td>
+              <td>
+                {%if request.position == 'expert'%}
+                  {%if role == 'manager'%}
+                    <div class="badge badge-warning">expert decision or opertion</div>
+                  {%else%}
+
+                        {%if  request.status == 'expert_decide'%}
+
+                        {%if not request.expert_approve%}
+
+                          <form id="form_{{request.id}}" method="POST">
+                              {%csrf_token%}
+                              <button id="{{request.id}}" class="btn btn-success is_done" type="button" data-toggle="modal"  data-target="#beshure">Send to manager</button>
+                              <input  type="hidden" name="id" value="{{request.id}}">
+                              {% comment %} <input id="is_done_{{request.id}}"  type="hidden" name="done" value="{{request.is_done}}"> {% endcomment %}
+                          </form>
+                          
+                        {%endif%}
+
+                      {%elif request.status == 'Confirm the operation'%} 
+
+                          <form id="form_{{request.id}}" method="POST">
+                            {%csrf_token%}
+                            <button id="{{request.id}}" class="btn btn-success is_done" type="button" data-toggle="modal"  data-target="#beshure">Complete</button>
+                            <input  type="hidden" name="id" value="{{request.id}}">
+                            <input  type="hidden" name="action" value="Complete">
+                            {% comment %} <input id="is_done_{{request.id}}"  type="hidden" name="done" value="{{request.is_done}}"> {% endcomment %}
+                          </form>
+
+                      {%endif%}
+
+                  {%endif%}
+
+
+                {%elif request.position == 'manager'%}
+
+                  {%if request.status == 'manager_decide'%}
+
+                      <form id="form_{{request.id}}" method="POST">
+                        {%csrf_token%}
+                        <input id="{{request.id}}" class="btn btn-success is_done" type="button" data-toggle="modal" value="Approve" data-target="#beshure">
+                        <input  type="hidden" name="id" value="{{request.id}}">
+                        <input  type="hidden" name="action" value="Approve">
+                        {% comment %} <input id="is_done_{{request.id}}"  type="hidden" name="done" value="{{request.is_done}}"> {% endcomment %}
+                    </form>
+
+                  {%endif%}
+
+                {%elif request.position == 'Complete'%}
+                  <div class="badge badge-success">done</div>
+                {%endif%}
+              </td>
+            </tr>
+
+           <!-- Modal -->
+
+           <!--Bank info Modal-->
+            <div class="modal fade" id="bank_info_{{request.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Bank informations</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+
+                              <h3 class="text-left card-title">{{request.bank_info.username}} {{request.bank_info.lastname}}</h3><br>
+                              <h5 class="text-left card-title">Your balance: <span class="badge badge-info">{{request.bank_info.user.memberprofile.balance}}$</span></h5>
+                              <p class="text-left card-text">Shaba Number: {{request.bank_info.shaba_acoount}}</p>
+                              <p class="text-left card-text">Account Number: {{request.bank_info.account_number}}</p>
+                              <p class="text-left card-text">Card Number: {{request.bank_info.card_number}}</p>
+
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!--Service Modal-->
+            <div class="modal fade" id="service_{{request.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Service informations for request</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                  </div>
+                  <div class="modal-body">
+                    Service : 
+
+                    {% if request.witdrawalbox.service.service_name == 'UN' %}unknow
+                    {%elif request.witdrawalbox.service.service_name == 'P' %}project<br>
+                      Project ID : {{request.witdrawalbox.service.project.id_project}}<br>
+                    {%elif request.witdrawalbox.service.service_name == 'W' %}workshop<br>
+                      Workshop ID : {{request.witdrawalbox.service.workshop.unique_id}}<br>
+                    {%elif request.witdrawalbox.service.service_name == 'BR' %}badgerequest<br>
+                      Badgerequest ID : {{request.witdrawalbox.service.badge.unique_id}}<br>
+                    {%elif request.witdrawalbox.service.service_name == 'SR' %}supervisorrequest<br>
+                      Supervisorrequest ID : {{request.witdrawalbox.service.badgesupervisor.id_request}}<br>
+                    {%elif request.witdrawalbox.service.service_name == 'WR' %}workshoprequest<br>
+                      Workshoprequest ID : {{request.witdrawalbox.service.badgeworkshop.id_request}}<br>
+                    {%endif%}
+
+
+                    Action : {{request.witdrawalbox.service.action}}
+
+
+                  </div>
+                  <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+              </div>
+              </div>
+          </div>
+          {%endfor%}
+      </tboady>
+    </table>
+
+
+    
+           <!-- Modal -->
+           <div class="modal fade" id="beshure" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Bank informations</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+
+                        <h4> Are you shure?</h4>
+
+                </div>
+                <div class="modal-footer">
+                <button  type="button" class="btn btn-secondary" data-dismiss="modal" id="submit_form">Yes</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                </div>
+            </div>
+            </div>
+        </div>
+ 
+
+
+</div>
+
+<script>
+$(document).ready(function() {
+    let form=''
+    $('#example').DataTable();
+
+    $('.is_done').click(function(){
+        let id=$(this).attr('id')
+       /* if ($(this).prop("checked")){
+            $("#is_done_"+id).val('true')
+        }
+        else{
+            $("#is_done_"+id).val('false')
+        }*/
+      form=$('#form_'+id)
+
+    })
+
+    $('#submit_form').click(function(){
+        form.submit()
+    })
+
+    var table=$('#example').DataTable()
+    $('#done').click(function(){
+        table.column(5).search("").draw();
+        table.column(5).search('done').draw();
+    })
+    $('#expert').click(function(){
+      table.column(5).search("").draw();
+      table.column(5).search('expert decision or opertion').draw();
+  })
+  $('#manager').click(function(){
+    table.column(5).search("").draw();
+    table.column(5).search('Approve').draw();
+})
+    $('#all').click(function(){
+        table.column(5).search('').draw();
+    })
+    $('#complete').click(function(){
+      table.column(5).search('Complete').draw();
+  })
+  $('#sendtomanager').click(function(){
+    table.column(5).search('Send to manager').draw();
+})
+})
+
+
+</script>
+{% endblock %}

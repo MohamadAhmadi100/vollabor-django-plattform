@@ -1,0 +1,186 @@
+<div class="table-responsive" >
+    <table class="table table-white table-striped table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th class="text-center align-middle" rowspan="2" colspan="1" scope="col" width="8%" >ID</th>
+                <th class="text-center align-middle" rowspan="2" colspan="1" scope="col" width="30%" style="min-width:250px;">Project title</th>
+                <th class="text-center" rowspan="1" colspan="4" width="30%" scope="col">Users's responsibility fee</th>
+                <th class="text-center align-middle" rowspan="2" colspan="1" scope="col" width="9%">Status</th>
+                <th class="text-center align-middle" rowspan="2" colspan="1" scope="col" width="7%">Grade</th>
+                <th class="text-center align-middle" rowspan="2" colspan="1" scope="col" width="7%">Start date</th>
+                <th class="text-center align-middle" rowspan="2" colspan="1" scope="col" width="7%">End date</th>
+                <th class="text-center align-middle" rowspan="2" colspan="1" scope="col" width="7%">Fund</th>
+                <th class="text-center align-middle" rowspan="2" colspan="1" scope="col" width="7%">Product</th>
+                <th class="text-center align-middle" rowspan="2" colspan="1" scope="col" width="20%" style="min-width:200px;"></th>
+            </tr>
+            <tr>
+               
+                <th class="text-center" width="7.5%">Advisor</th>
+                <th class="text-center" width="7.5%">Mentor</th>
+                <th class="text-center" width="7.5%">Member</th>
+                <th class="text-center" width="7.5%">Learner</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in object_list %}
+              <tr>
+                 <td class="fw-bold">{{i.project.client_form.formclint.id_project}}</td>
+                 <td>{{i.project.client_form.formclint.title}}</td>
+                 {% if i.status == 'new' %}
+                 <td class="text-center align-middle">
+                 
+                     
+                          
+                          ${{i.value_supervisor}}
+                    
+                 </td>
+                 <td class="text-center align-middle">
+                     
+                        
+                          ${{i.value_mentor}}
+                       
+                 </td>
+                 <td class="text-center align-middle">
+                     
+                          
+                          ${{i.value_mmber}}
+                      
+                  </td>
+                 <td class="text-center align-middle">
+                     
+                         
+                          ${{i.value_lerner}}
+                      
+                     
+                 </td>
+                 {% else %}
+
+                 <td class="text-center align-middle"></td>
+                 <td class="text-center align-middle"></td>
+                 <td class="text-center align-middle"></td>
+                 <td class="text-center align-middle"></td>
+                 {% endif %}
+                 <td class="text-center align-middle fw-bold">
+                   
+                  {% if i.status == 'new' %}
+                    <span >New</span>
+                  {% elif i.status == 'on_going' %}
+                    <span >Ongoing</span>
+                  {% elif i.status == 'pending' %}
+                    <span >Pending</span>
+                  {% elif i.status == 'on_hold' %}
+                    <span >On hold</span>
+                  {% elif i.status == 'done' %}
+                    <span >Done</span>
+                  {% endif %}
+
+                 </td>
+                 <td class="text-center align-middle">
+                  {% if i.status_value == 'hard' %}
+                    <span style="color: #ffc107; font-weight:bold">Gold</span>
+                  {% endif %}
+                  
+                  {% if i.status_value == 'normal' %}
+                    <span  class="text-light fw-bold" >Silver</span>
+                  {% endif %}
+                  
+                  {% if i.status_value == 'easy' %}
+                    <span  style="color: #8a471f; font-weight:bold">Boronze</span>
+                  {% endif %}
+                  </td>
+                 <td class="text-center align-middle">{{i.project.client_form.formclint.start_date}}</td>
+                  <td class="text-center align-middle">{{i.project.client_form.formclint.end_date}}</td>
+                  <td class="text-center align-middle">{{i.project.client_form.formclint.fund}}</td>
+                  <td class="text-center align-middle">{{i.project.time_programmins.Products.count}}</td>
+                 <td class="text-center">
+                     <div class="row text-center mb-2">
+                         <div class="col-5 px-0 mx-0 text-center">
+                              {% if i.status == 'new' and i.main_supervisor != request.user %}
+                                  <!--<button class="btn btn-warning w-90 disabled" style="width:90%" type="button">Apply</button>-->
+                                  <button class="btn btn-warning btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:industry-project-apply' i.pk %}'" type="button">Apply</button>
+                              {% else %}
+                                  <button class="btn btn-warning btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:industry-project-apply' i.pk %}'" type="button">Apply</button>
+                                  <!--<button class="btn btn-warning btn-sm w-90 disabled" style="width:70%" type="button">Apply</button>-->
+                              {% endif %}
+                         </div>
+                         <div class="col-5 px-0 text-center">
+                             <button class="btn btn-success btn-sm w-90" style="width:70%" onclick="location.href='{% url 'project-detail-research' i.pk %}'" type="button">View</button>
+                                  
+                          </div>
+                         
+                     </div>
+                     <div class="row text-center">
+                         <div class="col-5 px-0 mx-0 text-center">
+                            {% if request.user.is_superuser or request.user.researchrole.director == True %}
+                             <button class="btn btn-danger btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:industry-project-delete' i.pk %}'" type="button">Delete</button>
+                            {% else %}
+                             <button class="btn btn-danger btn-sm w-90 disabled" style="width:70%" onclick="location.href='{% url 'industry:industry-project-delete' i.pk %}'" type="button">Delete</button>
+                            {% endif %}
+                              
+                         </div>
+                         <div class="col-5 px-0 text-center">
+                              {% if i.main_supervisor == request.user %}
+                              <button class="btn btn-primary btn-sm w-90" style="width:70%" onclick="location.href='{% url 'myprojects-research-mainsupervisor' i.pk %}'" type="button">Edit  <span class="badge badge-danger" style="background-color: danger; color: white">{{i.project_requests.Active.count}}</span></button>
+                              {% else  %}
+                              <button class="btn btn-primary btn-sm w-90 disabled" style="width:70%" type="button">Edit</button>
+                              {% endif %}
+                             
+                         </div>
+                         
+                     </div>
+                     <div class="row text-center">
+                          {% if i.main_supervisor == request.user %}
+                             <div class="col-10 mt-2 px-0 text-center">
+
+                                    <button type="button" class="btn btn-primary mx-1" data-bs-toggle="modal" data-bs-target="#change_status_home_{{i.id}}" >
+
+                                        Change status
+                                        {% if i.view_project_home == False %}
+                                            <i class="fa fa-times-circle" style="color:red"></i>
+                                        {% else %}
+                                            <i class="fa fa-check-circle" style="color:green"></i>
+                                        {% endif %}
+                                    </button>
+                             </div>
+                          {% endif %}
+                         
+                     </div>
+                     
+                 </td>
+              </tr>
+
+                <div class="modal fade" id="change_status_home_{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="{% url 'industry:change-status-to-home' %}" enctype="multipart/form-data">{% csrf_token %}
+                                <div class="modal-body">
+                                    <input type="hidden" name="id_project" value="{{i.id}}">
+
+                                    {% if i.view_project_home == False %}
+                                    <div class="form-check my-3">
+                                        <input type="checkbox"  class="form-check-input chkStyle" id="chk1" name="status">
+                                        <label for="chk1" style="color: white" class="form-check-label ml-3 pt-2 text-dark">Change status to home</label>
+                                    </div>
+                                    {% else %}
+                                    <div class="form-check my-3">
+                                        <input type="checkbox" checked class="form-check-input chkStyle" id="chk1" name="status">
+                                        <label for="chk1" style="color: white" class="form-check-label ml-3 pt-2 text-dark">Change status to home</label>
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success">Change</button>
+                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+    
+</div>

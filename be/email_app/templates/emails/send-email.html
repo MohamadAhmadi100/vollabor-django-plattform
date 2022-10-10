@@ -1,0 +1,1237 @@
+{% extends 'emails/base.html' %}
+{%load static %}
+{% block title %}Send email{% endblock %}
+{% block main %}
+<link rel="stylesheet" href="{% static 'emails/dist/css/jquery.tagsinput-revisited.css' %}">
+<button style="display:none" id="successalert" class="button"></button>
+<div style="z-index:9999" class="notify"><span id="notifyType" class=""></span></div>
+
+
+
+
+    <div style="margin-left: 450px; margin-bottom: 10px">
+        <a class="btn btn-primary" href="{% url 'email:send-email' %}">
+            <h6>Send email</h6>
+        </a>
+        
+        {% if request.user.is_superuser or request.user.adrole.send_email_template == True %}
+            <a class="btn btn-success" href="{% url 'email:send-email-template' %}">
+                <h6>Send email template</h6>
+            </a>
+        {% endif %}
+        
+        <!--reminder-->
+        
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#show_reminder_modal" data-whatever="@getbootstrap">Reminders<span id="reminder_send_email_notif"></span></button>
+        <button style="display:none" id="creminder_modal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#reminder_modal" data-whatever="@getbootstrap">Add reminders</button>
+        <div class="modal fade" id="reminder_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Create reminders</h5>
+                  <button id="creminder_modal_close" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div id="reminder_alert" style="display:none" class="alert " role="alert">
+                        
+                      </div>
+                  <form id="reminder_form" method="POST">
+                      {%  csrf_token %}
+                    {% comment %} <div class="form-group">
+                      <label for="recipient-name" class="col-form-label">Subject:</label>
+                      <input  name="reminder_subject" type="text" class="form-control" id="recipient-name">
+                    </div> {% endcomment %}
+                    {% comment %} <div class="form-group">
+                      <label for="message-text" class="col-form-label">Description:</label>
+                      <textarea name="reminder_text" class="form-control" id="message-text"></textarea>
+                    </div> {% endcomment %}
+                    <div id="reminder_date" class="form-group">
+                        <label for="message-text" class="col-form-label">Reminder date</label>
+                        <input name="reminder_date" type="date" class="form-control" id="message-text">
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer modal-footer-reminder">
+                  <button id="creat_reminder" type="submit" class="btn btn-primary ">Create</button>
+                  <a id="nocreat_reminder" class="btn btn-danger ">no</a>
+                </div>
+              </div>
+            </div>
+        </div>
+          
+          <div class="modal fade" id="show_reminder_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div style="width:800px" class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Today reminders</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                        <table class="table">
+                            <thead>
+                              <tr>
+                                <th scope="col">Subject</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Emails</th>
+                                <th scope="col">Operation</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                        {% for reminder in reminder_list %}
+                            <tr>
+                                <td style="line-break: anywhere;"  id="subject_edit" subject="{{reminder.subject}}">
+                                    {{reminder.subject}}
+                                </td>
+                                <td style="line-break: anywhere;" id="text_edit">{{reminder.text}}</td>
+                                <td>
+                                    <ul>
+                                        {% for email in reminder.emaillist %}
+                                        <li style="list-style:none">{{email}}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td><button subject="{{reminder.subject}}" text="{{reminder.text}}" email_list="{{reminder.emaillist}}" id="{{reminder.subject}}" class=" send_email_reminder btn btn-success">Send</button></td>
+                              </tr>
+                              
+                        {% endfor %}
+                            </tbody>
+                        </table>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <!--reminder-->
+
+    <div class="col-xl-7 col-lg-8 col-md-12 mx-auto">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title"></h3>
+            </div>
+            <div class="card-body">
+                {% if request.GET.filter == "email-company" %}
+                    <a href="?filter=email-company"
+                       class="btn btn-light"
+                       style="background-color: #a3a1a1">Company</a>
+                {% else %}
+                    <a href="?filter=email-company"
+                       class="btn btn-light"
+                       style="background-color: #e1e1e1">Company</a>
+                {% endif %}
+                {% if request.GET.filter == "email-workshop" %}
+                    <a href="?filter=email-workshop"
+                       class="btn btn-light"
+                       style="background-color: #a3a1a1">Wrokshop</a>
+                {% else %}
+                    <a href="?filter=email-workshop"
+                       class="btn btn-light"
+                       style="background-color: #e1e1e1">Wrokshop</a>
+                {% endif %}
+                {% if request.GET.filter == "email-institute" %}
+                    <a href="?filter=email-institute"
+                       class="btn btn-light"
+                       style="background-color: #a3a1a1">Institute</a>
+                {% else %}
+                    <a href="?filter=email-institute"
+                       class="btn btn-light"
+                       style="background-color: #e1e1e1">Institute</a>
+                {% endif %}
+                {% if request.GET.filter == "email-workshop" %}
+                    {% for cat in workshops %}
+                        <div class="row m-2">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="row text-dark px-1">
+                                        <div class="col-1 mx-0 px-0 mt-1">
+                                            <input class="form-check-input border-dark m-1"
+                                                   id="chk{{ cat.id }}"
+                                                   type="checkbox"
+                                                   style="width:25px;height:25px"
+                                                   onclick="checkFnc('chk{{ cat.id }}','{{ cat.unique_id }}')"/>
+                                        </div>
+                                        <div class="col-9 mx-0 px-2">
+                                            <a class="btn btn-info btn-block py-2 text-white"
+                                               data-bs-toggle="collapse"
+                                               href="#e{{ cat.unique_id }}"
+                                               aria-expanded="false"
+                                               aria-controls="e{{ cat.unique_id }}">
+                                                {{ cat.title }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="collapse" id="e{{ cat.unique_id }}">
+                                    {% for i in users_workshop%}
+                                    {%if i.workshop == cat %}
+                                        <div class="row pl-5 mx-auto table-info my-1 py-2">
+                                            <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 form-check text-wrap word-wrap">
+                                                <input class="form-check-input emails"
+                                                       id="{{ i.user.email }}"
+                                                       name="{{ cat.company_name }}"
+                                                       type="checkbox"/>
+                                                <label class="form-check-label text-wrap"
+                                                       style="font-size:0.9em"
+                                                       for="{{ i.user.email }}">{{ i.user.email }}</label>
+                                            </div>
+                                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                                <a data-bs-toggle="modal"
+                                                   href="#InfoModal{{ i.pk }}"
+                                                   style="float: right;"
+                                                   class="d-inline-block mx-3 info"><i class="fa fa-question-circle"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="modal fade"
+                                             id="InfoModal{{ i.pk }}"
+                                             tabindex="-1"
+                                             aria-labelledby="InfoModalLabel"
+                                             aria-hidden="true"
+                                             role="dialog">
+                                            <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header modal-colored-header bg-secondary text-white">
+                                                        <h5 class="modal-title text-white" id="InfoModalLabel">{{i.workshop.title}}</h5>
+                                                        <button type="button"
+                                                                class="btn-close"
+                                                                data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <ul class="list-group list-group-flush">
+                                                            <li class="list-group-item">
+                                                                Full name: <span class="text-secondary">{{ i.user.get_full_name }}</span>
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                Position: <span class="text-secondary">{{ i.user.memberprofile.position }}</span>
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                Degree: <span class="text-secondary">{{ i.user.memberprofile.degree }}</span>
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                Gender: <span class="text-secondary">{{ i.user.memberprofile.gender }}</span>
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                Email address: <span class="text-secondary">{{ i.user.email }}</span>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {%endif%}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <input type="hidden" name="position" id="position" value="workshop">
+                {% endif %}
+                {% if request.GET.filter == "email-institute" %}
+                    </br>
+
+                    <input id="filtering" placeholder="Search emails by tag" class="filtering " name="filtering" value="">
+                    <button position="institute" class="btn btn-success subfiltering">Search</button>
+                        <div id="ajax_response"></div>
+
+                {% for department in departments %}
+                        <input class="dep_checkbox" type="checkbox" id="{{department.name}}">{{department.name}}</br>
+                {% endfor %}
+                    {% for cat in institutes %}
+                        <div class="row my-1 text-dark px-1">
+                            <div class="col-1 mx-0 px-0 mt-1">
+                                <input class="form-check-input border-dark m-1"
+                                       id="chki{{ cat.id }}"
+                                       type="checkbox"
+                                       style="width:25px;height:25px"
+                                       onclick="checkFnc('chki{{ cat.id }}','{{ cat.institute_name }}')"/>
+                            </div>
+                            <div class="col-9 mx-0 px-2">
+                                <a class="btn btn-info btn-block py-2 text-white"
+                                   data-bs-toggle="collapse"
+                                   href="#test{{ cat.id }}"
+                                   aria-expanded="false"
+                                   aria-controls="test{{ cat.id }}">
+                                    {{ cat.institute_name }}
+                                </a>
+                            </div>
+                        </div>
+                        <div  class="collapse" id="test{{ cat.id }}">
+
+                            {% for email in cat.emails_institute.Published %}
+                                <div  e="{{email.department}}" class=" email_div row pl-5 mx-auto table-info my-1 py-2">
+                                    <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 form-check text-wrap word-wrap">
+                                        <input class="form-check-input emails"
+                                               id="{{ email.email_address }}"
+                                               name="{{ cat.institute_name }}"
+                                               type="checkbox"/>
+                                        <label class="form-check-label text-wrap"
+                                               style="font-size:0.9em"
+                                               for="{{ email.email_address }}">
+                                            {{ email.email_address }}
+                                        </label>
+                                    </div>
+                                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                        <a data-bs-toggle="modal"
+                                           href="#InfoModal{{ email.pk }}"
+                                           style="float: right;"
+                                           class="d-inline-block mx-3 info"><i class="fa fa-question-circle"></i></a>
+                                    </div>
+                                </div>
+                                <div class="modal fade"
+                                     id="InfoModal{{ email.pk }}"
+                                     tabindex="-1"
+                                     aria-labelledby="InfoModalLabel"
+                                     aria-hidden="true"
+                                     role="dialog">
+                                    <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header modal-colored-header bg-secondary text-white">
+                                                <h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+                                                <button type="button"
+                                                        class="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item">
+                                                        Full name: <span class="text-secondary">{{ i.user.get_full_name }}</span>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        Position: <span class="text-secondary">{{ i.user.memberprofile.position }}</span>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        Degree: <span class="text-secondary">{{ i.user.memberprofile.degree }}</span>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        Gender: <span class="text-secondary">{{ i.user.memberprofile.gender }}</span>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        Email address: <span class="text-secondary">{{ i.user.email }}</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <input type="hidden" name="position" id="position" value="institute">
+                {% endif %}
+                {% if request.GET.filter == "email-company" %}
+                    <input id="filtering" placeholder="Search emails by tag" class="filtering " name="filtering" value="">
+                    <button position="company" class="btn btn-success subfiltering">Search</button>
+                        <div id="ajax_response"></div>
+                   
+
+                    {% for category in categories %}
+                        <div class="row my-1 text-dark px-1">
+                            <div class="col-1 mx-0 px-0 mt-1">
+                                <input class="form-check-input border-dark m-1"
+                                       id="chk{{ category.id }}"
+                                       type="checkbox"
+                                       style="width:25px;height:25px"
+                                       onclick="checkFnc('chk{{ category.id }}','{{ category.company_name }}')"/>
+                            </div>
+                            <div class="col-9 mx-0 px-2">
+                                <a class="btn btn-info btn-block py-2 text-white"
+                                   data-bs-toggle="collapse"
+                                   href="#e{{ category.id }}"
+                                   aria-expanded="false"
+                                   aria-controls="e{{ category.id }}">
+                                    {{ category.company_name }}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="collapse col-9 pl-5" id="e{{ category.id }}">
+                            {% for email in category.company_email.Published %}
+                                <div class="row pl-5 mx-auto table-info my-2 py-2">
+                                    <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 form-check text-wrap word-wrap">
+                                        <input class="form-check-input emails"
+                                               id="{{ email.agent_email_address }}"
+                                               name="{{ category.company_name }}"
+                                               type="checkbox"/>
+                                        <label class="form-check-label text-wrap"
+                                               style="font-size:0.9em"
+                                               for="{{ email.agent_email_address }}">
+                                            {{ email.agent_email_address }}
+                                        </label>
+                                    </div>
+                                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                        <a data-bs-toggle="modal"
+                                           href="#InfoModal{{ email.pk }}"
+                                           style="float: right;"
+                                           class="d-inline-block mx-3 info"><i class="fa fa-question-circle"></i></a>
+                                    </div>
+                                </div>
+                                <div class="modal fade"
+                                     id="InfoModal{{ email.pk }}"
+                                     tabindex="-1"
+                                     aria-labelledby="InfoModalLabel"
+                                     aria-hidden="true"
+                                     role="dialog">
+                                    <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header modal-colored-header bg-secondary text-white">
+                                                <h5 class="modal-title text-white" id="InfoModalLabel">
+                                                    {{ email }}
+                                                </h5>
+                                                <button type="button"
+                                                        class="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                        aria-label="Close">
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item">
+                                                        Company agent�s first name: <span class="text-secondary">{{ email.company_agent_first_name }}</span>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        Company agent�s surname: <span class="text-secondary">{{ email.company_agent_surname }}</span>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        agent�s position: <span class="text-secondary">{{ email.agent_position }}</span>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        agent�s academic degree: <span class="text-secondary">{{ email.agent_academic_degree }}</span>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        gender: <span class="text-secondary">{{ email.gender }}</span>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        agent�s email address: <span class="text-secondary">{{ email.agent_email_address }}</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <input type="hidden" name="position" id="position" value="company">
+                {% endif %}
+                <!--<button class="btn btn-primary" id="btn-add" type="submit">Add</button>-->
+                <hr>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label for="subject" class="form-label">
+                            Your email:
+                        </label>
+                        {% if request.user.is_superuser %}
+                            <div class="form-check ml-3">
+                                <input class="form-check-input emails"
+                                       id="{{ request.user.email }}"
+                                       name="Cemails"
+                                       type="radio"/>
+                                <label class="form-check-label" for="email2">
+                                    project@tecvico.com
+                                </label>
+                            </div>
+                            {% endif %}
+                            <div class="form-check ml-3">
+                                <input class="form-check-input emails"
+                                       id="info@tecvico.com"
+                                       name="Cemails"
+                                       type="radio"/>
+                                <label class="form-check-label" for="email3">
+                                    info@tecvico.com
+                                </label>
+                            </div>
+                            <div class="form-check ml-3">
+                                <input class="form-check-input emails"
+                                       id="info@tecvico.com"
+                                       name="Cemails"
+                                       type="radio"/>
+                                <label class="form-check-label" for="email3">
+                                    workshop@tecvico.com
+                                </label>
+                            </div>
+                            <!--<div class="form-check ml-3">-->
+                            <!--        <input class="form-check-input emails"
+               id="pa@tecvico.com"
+               name="Cemails"
+               type="radio"/>-->
+                            <!--        <label class="form-check-label" for="email3">pa@tecvico.com</label>-->
+                            <!--</div>-->
+                        
+                        {% if request.user.email == 'siamakmarandi@gmail.com' %}
+                            <div class="form-check ml-3">
+                                <input class="form-check-input emails"
+                                       id="pa1@tecvico.com"
+                                       name="Cemails"
+                                       type="radio"/>
+                                <label class="form-check-label" for="email4">
+                                    pa1@tecvico.com
+                                </label>
+                            </div>
+                        {% elif request.user.email == 'mohamadrezaeiny@gmail.com' %}
+                            <div class="form-check ml-3">
+                                <input class="form-check-input emails"
+                                       id="pa2@tecvico.com"
+                                       name="Cemails"
+                                       type="radio"/>
+                                <label class="form-check-label" for="email5">
+                                    pa2@tecvico.com
+                                </label>
+                            </div>
+                        {% elif request.user.email == 'aminramezani1376@gmail.com' %}
+                            <div class="form-check ml-3">
+                                <input class="form-check-input emails"
+                                       id="pa3@tecvico.com"
+                                       name="Cemails"
+                                       type="radio"/>
+                                <label class="form-check-label" for="email6">
+                                    pa3@tecvico.com
+                                </label>
+                            </div>
+                        {% elif request.user.email == 'arianict0101@gmail.com' %}
+                            <div class="form-check ml-3">
+                                <input class="form-check-input emails"
+                                       id="pa4@tecvico.com"
+                                       name="Cemails"
+                                       type="radio"/>
+                                <label class="form-check-label" for="email7">
+                                    pa4@tecvico.com
+                                </label>
+                            </div>
+                        {% endif %}
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails"
+               id="pa5@tecvico.com"
+               name="Cemails"
+               type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email8">pa5@tecvico.com</label>-->
+                        <!--</div>-->
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails"
+               id="pa6@tecvico.com"
+               name="Cemails"
+               type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email9">pa6@tecvico.com</label>-->
+                        <!--</div>-->
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails"
+               id="pa7@tecvico.com"
+               name="Cemails"
+               type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email10">pa7@tecvico.com</label>-->
+                        <!--</div>-->
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails"
+               id="pa8@tecvico.com"
+               name="Cemails"
+               type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email11">pa8@tecvico.com</label>-->
+                        <!--</div>-->
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails"
+               id="pa9@tecvico.com"
+               name="Cemails"
+               type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email12">pa9@tecvico.com</label>-->
+                        <!--</div>-->
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails"
+               id="pa10@tecvico.com"
+               name="Cemails"
+               type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email13">pa10@tecvico.com</label>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <br>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label" for="email2">
+                                Subject:
+                            </label>
+                            <input class="form-control" id="subject" name="subject" type="text"/>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label" for="email2">
+                                Message:
+                            </label>
+                            <textarea class="form-control" id="text" name="text" rows="5"></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label" for="email_selection_name">
+                                please enter selection name
+                            </label>
+                            <input required
+                                   class="form-control"
+                                   id="email_selection_name"
+                                   name="email_selection_name"
+                                   type="text"/>
+                        </div>
+                    </div>
+                    <!--<h5>Emails:</h5>
+                <div >
+                {{ form.categories }}
+</div>-->
+                    <p>
+                    </p>
+                    <button class="btn btn-primary" type="button" id="subBtn">
+                        Send
+                    </button>
+                    <div class="progress mt-3">
+                        <div class="progress-bar">
+                        </div>
+                    </div>
+
+                </div>
+ <!--lotfi..............................-->
+
+ <!--waiting_modal-->
+                <div class="modal" id="WaitModal">
+                    <div class="modal-dialog modal-sm modal-dialog-centered">
+                        <div class="modal-content">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span id="close_email_modal" aria-hidden="true">&times;</span>
+                            </button>
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <div class="lds-dual-ring">
+                                </div>
+                                <div style="display:none" class="lds-dual-done">
+                                    Done
+                                </div>
+                                <div class="card text-center ">
+                                    <span>Total emails</span>
+                                    <span value=0 id="total">---</span>
+                                </div>
+                                <div class="card text-center ">
+                                    <span>successful</span>
+                                    <span value=0 id="success">---</span>
+                                </div>
+                                <div class="card text-center ">
+                                    <span>remaining</span>
+                                    <span value=0 id="remaning">---</span>
+                                </div>
+                                <div class="card text-center ">
+                                    <span >Unsuccessful</span>
+                                    <span value=0 id="feiled">---</span>
+                                </div>
+                                <div class="accordion" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="feiled-list">
+                                            <button class="accordion-button"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#collapseOne"
+                                                    aria-expanded="true"
+                                                    aria-controls="collapseOne">
+                                                    Show unsuccessful emails
+                                            </button>
+                                        </h2>
+                                        <div id="collapseOne"
+                                             class="accordion-collapse collapse show"
+                                             aria-labelledby="feiled"
+                                             data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                <ul id="failed_e_list" style="width:75%;list-style:none;font-size:13px" class="emails_status">
+                                                </ul>
+                                                <button id="retry" class="btn btn-success" type="submit">Try again</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+ <!--waiting_modal-->
+
+<!--show_last_history_modal-->
+
+            <button id="show_last_history" type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg"> Show the status of the last submission</button>
+
+            <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                        <div  class="card">
+                            <div class="card-body">
+                                <table class="table .table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">
+                                                postage date
+                                            </th>
+                                            <!--<th scope="col">subject</th>-->
+                                            <th scope="col">
+                                                total emails
+                                            </th>
+                                            <th scope="col">
+                                                Successful
+                                            </th>
+                                            <th scope="col">
+                                                failed
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        <tr>
+                                            <td scope="row" id="date">
+                                            </td>
+                                            <!--<td id="subject"></td>-->
+                                            <td id="total">
+                                            </td>
+                                            <td id="Successful">
+                                            </td>
+                                            <td id="failed">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </thead>
+                            </table>
+                        </div>
+                        <a class="btn btn-danger btn-block py-2 text-white"
+                           data-bs-toggle="collapse"
+                           href="#show_failed_emails"
+                           aria-expanded="false"
+                           aria-controls="test{{ cat.id }}">
+                            Show failed emails
+                        </a>
+                        <div class="collapse" id="show_failed_emails">
+                            <div style="overflow-y: scroll;" class="card-body">
+                                <ul id="failed_emails">
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                </div>
+              </div>
+            </div>
+ <!--show_last_history_modal-->
+        </div>
+    </div>
+</div>
+
+<!--edit_failed_email_modal-->            
+<div id="update_failed_email" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-secondary text-white">
+                <h5 class="modal-title text-white" id="InfoModalLabel">sawoj1000@sawoj.com</h5>
+                <button id="close_edit_failed_email" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <form id="edit_failed_email" method="post" action="/emails/edit/email-institute" enctype="multipart/form-data">
+                <input type="hidden" name="csrfmiddlewaretoken" value="jVywldiGRstUlZ0HltScB8dipnD1ZG0arFLLPhoiRhH0XKX5IfLVaQWgL7WkJRhk">
+
+            <div class="form-row">
+
+                <div class="form-group col-md-6 mb-0">
+                    <label class="form-label">Full name:</label>
+                    <input  id="company_agent_first_name" class="form-control" value="None" name="full_name" id="full_name" required="">
+                </div>
+
+                <div class="form-group col-md-6 mb-0">
+                    <label class="form-label">Department:</label>
+                    <input class="form-control" value="None" name="department" id="department" required="">
+                </div>
+
+                <div class="form-group col-md-6 mb-0">
+                    <label class="form-label">Position:</label>
+                    <input class="form-control" value="None" name="position" id="position" required="">
+                </div>
+
+                <div class="form-group col-md-6 mb-0">
+                    <div id="div_id_gender" class="form-group">
+                        <label for="id_gender" class=" requiredField">
+                        Degree<span class="asteriskField">*</span>
+                        </label>
+                        <div class="">
+                            
+                                <select name="degree" class="select form-control" id="degree">
+                                    
+                                    <option value="Master's degree">Master's degree</option>	    
+                                    <option value="Diploma">Diploma</option>
+                                    <option value="Bachelor's degree">Bachelor's degree</option>
+                                    <option value="Doctoral degree">Doctoral degree</option>
+                                    <option value="Other">Other</option>
+                                    
+                                    
+                                </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-6 mb-0">
+                    <div id="div_id_gender" class="form-group">
+                        <label for="id_gender" class=" requiredField">
+                        Gender<span class="asteriskField">*</span>
+                        </label>
+                        <div class="">
+                                <select name="gender" class="select form-control" id="id_gender">
+                                    
+                                    <option value="Female">Female</option>
+                                    <option value="Male">Male</option>
+                                    
+                                </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-6 mb-0">
+                    <label class="form-label">Email address:</label>
+                    <input class="form-control" value="sawoj1000@sawoj.com" name="email_address" id="email_address" required="">
+                </div>
+
+                <div class="form-group col-md-6 mb-0">
+                    <label class="form-label">Laboratory website:</label>
+                    <input class="form-control" value="None" name="laboratory_website" id="laboratory_website">
+                </div>
+
+                <div class="form-group col-md-6 mb-0">
+                    <label class="form-label">Google scholar:</label>
+                    <input class="form-control" value="None" name="google_scholar" id="google_scholar">
+                </div>
+
+                <input type="hidden" name="id_institute" value="13">
+                <input type="hidden" name="id_email" value="2920">
+
+            </div>
+
+
+            </form></div>
+            <button class="btn btn-success" type="submit">Save</button>
+        
+            
+            
+        </div>
+    </div>
+</div>
+<!--edit_failed_email_modal-->
+
+<!--send_email_modal-->
+<button style="display:none" id="send_email_modal_button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#send_email_modal" data-whatever="@getbootstrap">Add reminders</button>
+        <div class="modal fade" id="send_email_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Sending Email</h5>
+                    
+                  <button id="send_email_modal_close" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <h3>Click to Send Emails</h3>
+                </div>
+                <div class="modal-footer ">
+                    <button id="send_emails" type="submit" class="btn btn-primary ">send_emails</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+<!--send_email_modal-->
+<script src="{% static 'emails/dist/js/jquery.tagsinput-revisited.js' %}"></script>
+<script>
+$('.filtering').tagsInput();
+$(document).ready(function() {
+
+    $("#subject_edit,#text_edit").on("click", function(){
+        $(this).attr("contenteditable","true");
+      })
+         
+    document.getElementById("subBtn").addEventListener("click", email_list);
+    $('#show_last_history').click(last_history)
+    $('#close_email_modal').click(function(){
+            $('#WaitModal').modal('toggle');
+    })
+
+
+
+    $('#retry').click(function(){
+            let emails_list=[]
+            $('#failed_e_list li').each(function(i){
+                emails_list.push($(this).text())     
+            })
+            SendData(emails_list)
+        })
+
+    $('#creat_reminder').click(function(e){
+        $('#send_email_modal_button').click()
+        $('#send_email_modal_button').click()       
+        $('#creminder_modal_close').click()       
+        create_reminder(email_list())
+
+    })
+
+    $('#nocreat_reminder').click(function(e){
+        $('#send_email_modal_button').click()       
+        $('#creminder_modal_close').click()
+
+    })
+
+    $('#send_emails').click(function(e){
+        $('#send_email_modal_close').click()
+        SendData(email_list())
+        $('#creminder_modal_close').click()
+    })
+    
+
+    
+
+        
+    $("#successalert").click(function() {
+        $(".notify").toggleClass("active");
+        $("#notifyType").toggleClass("success");
+        setTimeout(function() {
+          $(".notify").removeClass("active");
+          $("#notifyType").removeClass("success");
+        }, 5000);
+      });
+
+
+      let filter=[]
+      $('.dep_checkbox').click(function(e){
+          let checked=$(this)[0].checked
+          if(checked==true){
+              filter.push($(this).attr('id').trim())
+          }
+          else{
+            filter.pop($(this).attr('id').trim())
+
+          }
+          filter_emails(filter)
+          //console.log(filter)
+      })
+
+
+      $('.send_email_reminder').click(function(){
+          let email_list=$(this).attr('email_list')
+          email_list.replace('[','')
+          email_list.replace(']','')
+          emails_list=email_list.split(',')
+          document.getElementById("subject").value=$('#subject_edit').attr('subject')
+          document.getElementById("text").value=$('#text').attr('text')
+          SendData(emails_list)
+      })
+
+
+
+     
+
+})
+
+
+
+
+
+
+
+function get_failed_email_details(email,position){
+
+    console.log(email)
+    $.ajax({
+        type:'POST',
+        url:'get-email-details',
+        data:{
+            'email':email,
+            'position':position
+        },
+        success:function(res){
+            console.log(res)
+
+        },
+        error:function(res){
+            console.log(res)
+        }
+
+    })
+}
+
+function email_list(){
+    let email_checkboxes = document.querySelectorAll('input[type=checkbox].emails:checked');
+    let emails_list=[]
+    for(let i=email_checkboxes.length-1;i>=0;i--){
+        emails_list.push(email_checkboxes[i].id)
+    }
+    $('#creminder_modal').click()
+    //var subject = document.getElementById("subject").value;
+    //var position = document.getElementById("position").value;
+    //var text =  document.getElementById("text").value;
+    //console.log(emails_list)
+    return emails_list
+
+}
+
+
+function SendData(email_list){
+    $('#WaitModal').modal({backdrop: 'static', keyboard: false})  
+    $('#WaitModal').modal('show');
+    var subject = document.getElementById("subject").value;
+    var text =  document.getElementById("text").value;
+    var Cemail_list; 
+    var position = document.getElementById("position").value;
+    let Cemail_checkboxes = document.querySelectorAll('input[name="Cemails"]:checked');
+    Cemail_checkboxes.forEach((checkbox) => {
+        Cemail_list = checkbox.id;
+    });
+    $('#success').html(0)
+    $('#success').attr('value',0)
+    $('#remaning').html(email_list.length)
+    $('#remaning').attr('value',email_list.length)
+    $('#feiled').html(0)
+    $('#feiled').attr('value',0)
+    $('.emails_status').html('')
+    let history=$('#email_selection_name').val()
+    $('#total').html(email_list.length.toString())
+    $.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: "{% url 'email:send-email-test' %}",
+        data:{"text":text, "email_list":email_list[i=email_list.length-1],'Cemail_list':Cemail_list,
+        "subject":subject, "position":position, csrfmiddlewaretoken: '{{ csrf_token }}',"history":history,'new_history_email_id':'create'},
+        success:function(res){
+            console.log(res)
+            let new_history_email_id=res.new_history_email_id
+            if(res.result==1){
+                let success=parseInt($('#success').attr('value'))
+                let remaning=parseInt($('#remaning').attr('value'))
+                $('#success').html(success+1)
+                $('#remaning').html(remaning-1)
+                $('#remaning').attr('value',remaning-1)
+                $('#success').attr('value',success+1)
+            }
+            else{
+            let field=parseInt($('#feiled').attr('value'))
+            let remaning=parseInt($('#remaning').attr('value'))
+            $('#remaning').html(remaning-1)
+            $('#remaning').attr('value',remaning-1)
+            $('#feiled').html(field+1)
+            $('#feiled').attr('value',field+1)
+            $('.emails_status').append('<li>'+ email_list[i] +'</li>')
+            }
+
+
+
+            for(let i=email_list.length-2;i>=0;i--){
+                $.ajax({
+                    type: "POST",
+                    enctype: 'multipart/form-data',
+                    url: "{% url 'email:send-email-test' %}",
+                    data:{"text":text, "email_list":email_list[i],'Cemail_list':Cemail_list,
+                    "subject":subject, "position":position, csrfmiddlewaretoken: '{{ csrf_token }}',"history":history,'new_history_email_id':new_history_email_id},
+                    success:function(res){
+                        if(res.result==1){
+                            let success=parseInt($('#success').attr('value'))
+                            let remaning=parseInt($('#remaning').attr('value'))
+                            $('#success').html(success+1)
+                            $('#remaning').html(remaning-1)
+                            $('#remaning').attr('value',remaning-1)
+                            $('#success').attr('value',success+1)
+                        }
+                        else{
+                            let field=parseInt($('#feiled').attr('value'))
+                        let remaning=parseInt($('#remaning').attr('value'))
+                        $('#remaning').html(remaning-1)
+                        $('#remaning').attr('value',remaning-1)
+                        $('#feiled').html(field+1)
+                        $('#feiled').attr('value',field+1)
+                        $('.emails_status').append('<li>'+ email_list[i] +'</li>')
+                            
+                        }
+                        if(i==0){
+                            $('.lds-dual-ring').css('display','none')
+                            $('.lds-dual-done').css('display','block')
+                        }
+                        
+                    },
+                    error:function(res){
+                        let field=parseInt($('#feiled').attr('value'))
+                        let remaning=parseInt($('#remaning').attr('value'))
+                        $('#remaning').html(remaning-1)
+                        $('#remaning').attr('value',remaning-1)
+                        $('#feiled').html(field+1)
+                        $('#feiled').attr('value',field+1)
+                        $('.emails_status').append('<li>'+ email_list[i] +'</li>')
+                        if(i==0){
+                            $('.lds-dual-ring').css('display','none')
+                            $('.lds-dual-done').css('display','block')
+                        }
+                    }
+                })
+                
+                
+            }
+
+            
+        },
+        error:function(res){
+            alert('connection lost')
+        }
+    })
+
+
+    
+ 
+ 
+  
+}
+    
+function checkFnc(id,name){
+    var chkElm = document.getElementById(id);
+   
+    if(chkElm.checked){
+        selectAll(name);
+    }else{
+        UnSelectAll(name);
+    }
+  //  $("#"+id).click(function(){
+   // $('input:checkbox').not(this).prop('checked', this.checked);
+    
+}   
+
+function selectAll(name) {
+        var items = document.getElementsByName(name);
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type == 'checkbox')
+                items[i].checked = true;
+        }
+}
+
+function UnSelectAll(name) {
+    var items = document.getElementsByName(name);
+    for (var i = 0; i < items.length; i++) {
+        if (items[i].type == 'checkbox')
+            items[i].checked = false;
+    }
+}	 
+
+function last_history(e){
+    if($(this).attr('aria-expanded')!='false'){
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "{% url 'email:show-last-history' %}",
+            data:{csrfmiddlewaretoken: '{{ csrf_token }}'},
+            success:function(res){
+                console.log(res.subject)
+                if(res.data=='true'){
+                    $('#date').html(res.created)
+                    $('#subject').html(res.subject)
+                    $('#total').html(res.total_email)
+                    $('#Successful').html(res.successful)
+                    $('#failed').html(res.failed)
+                    $('#failed_emails').html('')
+                    for(let i=res.failed_emailes.length-1;i>=0;i--){
+                        $('#failed_emails').append('<li class="card text-center p-2 style="list-style:none">'+ res.failed_emailes[i] +'</li>')
+                    }
+                }
+                else{
+                    $('#last_history').html('no data')
+                }
+
+            },
+            error:function(){
+                console.log('false')
+            }
+        })
+    }
+
+}
+
+function create_reminder(email_list){
+    var subject = document.getElementById("subject").value;
+    var text =  document.getElementById("text").value;
+    console.log(email_list)
+    $('#reminder_alert').css('display','none')
+    $('#success').click()
+    $.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: "{% url 'email:create-reminder' %}",
+        data:{'data':$('#reminder_form').serialize(),'email_list':email_list,csrfmiddlewaretoken:'{{csrf_token}}',
+                'subject':subject,'text':text},
+        dataType:'json',
+        success:function(res){
+            if(res.result==true){
+                $('#success').click()
+                $("#notifyType").html("Operation Saved Successfuly");
+            }
+            else{
+                $('#reminder_alert').css('display','block')
+                $('#reminder_alert').html('Your reminder could not be created')
+                $('#reminder_alert').removeClass('alert-success')
+                $('#reminder_alert').addClass('alert-danger')
+            }
+        },
+        error:function(){
+
+        }
+    })
+    
+}   
+
+
+var all_divs=[]
+    $(".email_div").map(function() {
+        //all_emails.push($(this).attr('e'))
+        all_divs.push($(this))
+        return this;
+    }).get(); 
+
+function filter_emails(filter){ 
+      
+    //console.log(all_emails)
+    //console.log(all_divs)
+    
+    if(filter.length==0){
+        for(let i=all_divs.length-1;i>=0;i--){
+        all_divs[i].css('display','')
+        }
+    }
+    else{
+        for(let i=all_divs.length-1;i>=0;i--){      
+            if(filter.includes(all_divs[i].attr('e'))==false){
+                all_divs[i].css('display','none')
+            }
+            else{
+                all_divs[i].css('display','')
+            }
+
+    }
+
+    }
+      
+
+    
+}
+</script>
+
+<script>
+        //new---
+        $('.subfiltering').click(function(){
+            console.log($(this).attr('position'))
+            $.ajax({
+                type:"POST",
+                url:"{% url 'email:ajax-filtering-company' %}",
+                data:{csrfmiddlewaretoken:'{{csrf_token}}','value':$('#filtering').val(),'position':$(this).attr('position')},
+                success:function(res){
+                        $('#ajax_response').html(res)
+                },
+                error:function(res){
+
+                }
+            })
+        })
+
+</script>
+{% endblock %}

@@ -1,0 +1,446 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% load dashboard_filter %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block style %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+<link rel="stylesheet" href="https://cdn.tutorialjinni.com/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+<link rel="stylesheet" href="{% static 'users/css/profile.css' %}"/>
+<style>
+    
+ .profile-img{
+     width:200px;
+     height:200px;
+     object-fit:contain;
+     
+ }   
+    
+    
+</style>
+{% endblock style %}
+
+{% block content %}
+<!-- HEADER SECTION -->
+<div id="member-header-section" style="padding:120px 5px 80px 5px; background:#00262b" class="text-white fw-bold">
+    <div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="text-white fw-bold fs-1">{% trans "Profile" %}</h1>
+                {% if request.GET.next %}
+                <h5 class="text-white">You have to complete your profile details in order to continue</h5>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PROFILE SECTION -->
+<section id="profile-section" class="bg-light text-dark py-5 px-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" style="padding-top:100px;">
+                
+                <div class="card card-margin">
+                    <div class="card-header no-border">
+                        <h5 class="card-title">Badges</h5>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="badgelist">
+                            
+                            <ul>
+                                {% if badges %}
+                                {% for badge in badges %}
+                                <li> Badge: {{badge.skills}} / <span class="fst-italic text-success">Score: {{badge.score}}</span></li>
+                                {% endfor %}
+                            {% endif %}
+                                
+                                
+                            </ul>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 text-end">
+                 {% comment %} <img class="rounded-circle profile-img mt-1" src="{% if user|is_member_profile %}{{ user.memberprofile.image.url }}{% else %}{{ user.legalprofile.image.url }}{% endif %}"> {% endcomment %}
+                {% if LANGUAGE_CODE == 'en-us' %}
+                <div class="mx-auto my-auto">
+                {% else %}
+                <div class="mx-auto my-auto text-right">
+                {% endif %}
+                    <h2 class="account-heading">{{ user.first_name }} {{ user.last_name }}</h2>
+                    {% if user|is_member_profile %}
+                        {% if LANGUAGE_CODE == 'en-us' %}
+                        <p class="text-secondary text-end">{% trans "Position:" %} {{user.memberprofile.position}} {% if user.memberprofile.is_guest %} ({% trans "Guest" %}) {% endif %} </p>
+                        {% else %}
+                        <p class="text-secondary" dir="rtl">{% trans "Position:" %} {{user.memberprofile.position}} {% if user.memberprofile.is_guest %} ({% trans "Guest" %}) {% endif %} </p>
+                        {% endif %}
+                    {% else %}
+                        {% if LANGUAGE_CODE == 'en-us' %}
+                        <p class="text-secondary text-end"><b>{% trans "Company Name:" %}</b> {{user.legalprofile.company_name}} </p>
+                        {% else %}
+                        <p class="text-secondary" dir="rtl"><b>{% trans "Company Name:" %}</b> {{user.legalprofile.company_name}}</p>
+                        {% endif %}
+                    {% endif %}
+                    {% if LANGUAGE_CODE == 'en-us' %}
+                    <p class="text-secondary text-end">{% trans "Email:" %} {{ user.email }}</p>
+                    {% else %}
+                    <p class="text-secondary" dir="rtl">{% trans "Email:" %} {{ user.email }}</p>
+                    {% endif %}
+                    {% if LANGUAGE_CODE == 'en-us' %}
+                    <div class="col-12">
+                        <a href="{% url 'reset-password' %}" class="btn btn-success col-4">
+                        <i class="fa fa-key"></i> {% trans "Change Password" %}
+                    </a>
+                    </div>
+                    
+                    {% else %}
+                    <a href="{% url 'reset-password' %}" class="btn btn-success" dir="rtl">
+                        <i class="fa fa-key"></i> {% trans "Change Password" %}
+                    </a>
+                    {% endif %}
+                    <div class="col-12">
+                         <button class="btn btn-primary col-4 mt-2" type="button" id="editBtn" ><i style="font-size: 14px;" class="fa fa-edit nav-icon"></i> Profile edit</button>
+                    
+                    </div>
+
+                    {% if certificates %}
+                    <div class="col-12">
+                        
+                        <a href="{% url 'show-workshops-to-users' %}?filter=my-workshop" class="btn btn-warning col-4 mt-2" type="button"  >My Certificates</a>                  
+                        {% comment %} <button class="btn btn-warning col-4 mt-2" type="button" data-toggle="modal" data-target="#certificates" >My Certificates</button>                   {% endcomment %}
+                   </div>
+                     <!-- Certificate Modal -->
+                        {% comment %} <div class="modal fade" id="certificates" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">My Certificates</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table ">
+                                        <thead class=table-dark>
+                                            <tr>
+                                                <th>workshop title</th>
+                                                <th>Workshop iD</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for certificate in certificates %}
+                                            <tr>
+                                                <td><a class="btn btn-primary" href="../../media/{{certificate.certificate}}">{{certificate.workshop.title}}</a></td>
+                                                <td>{{certificate.workshop.unique_id}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                
+                                </div>
+                            </div>
+                            </div>
+                        </div> {% endcomment %}
+                    {% endif %}
+                   
+                </div>
+                
+            </div>
+            
+            
+        </div>
+        
+        <div class="content-section">
+            
+            {% if messages %}
+                {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success my-3"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger my-3"> {{ message }}</div>
+                        {%endif %}
+                {% endfor %}
+            {% endif %}
+          <form method="post" id="profileForm" enctype="multipart/form-data">
+             {% csrf_token %}
+              {% if LANGUAGE_CODE == 'en-us' %}
+              <fieldset class="form-group">
+              {% else %}
+              <fieldset class="form-group text-right" dir="rtl">
+              {% endif %}
+                <div class="row border-bottom mb-5">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                         {{ img_form|crispy }}
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                        {{p_form.cv_file|as_crispy_field}}
+                    </div>
+                </div>
+                
+                  {% if not user|is_member_profile %}
+                  <h4>Agent:</h4>
+                  {% endif %}
+                  <div class="row mb-2">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                        <label class="form-label">First name<span style="color:red">*</span></label>
+                        <input name="first_name" id="first_name" value="{{ user.first_name }}" readonly class="form-control" >
+                        <div id="first_name_error" style="color:red"></div>
+                      
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                        <label class="form-label">Last name<span style="color:red">*</span></label>
+                        <input name="last_name" id="last_name" value="{{ user.last_name }}" readonly class="form-control" >
+                        <div id="last_name_error" style="color:red"></div>
+                      
+                    </div>
+                    
+                  </div>
+                  {% if user|is_member_profile %}
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            
+                            {{ p_form.field_of_study|as_crispy_field }}
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                             {{ p_form.status|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                             {{ p_form.degree|as_crispy_field }}
+                        </div>
+                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                        <label for="interest">{% trans "Interest" %}*</label>
+                       
+                              <select class="selectpicker w-100" id="interest" name="interest" data-style="btn-secondary"
+                                      multiple required title="{% trans 'Choose your interest...' %}">
+                                  {% for value, interest in p_form.interest.field.choices %}
+                                  <option value="{{value}}" name="{{form.interest.name}}"
+                                          {% if interest in selected_interests %} selected {% endif %}>{{interest}}</option>
+                                  {% endfor %}
+                              </select>
+                        </div>
+                    </div>
+                  
+                  <div class="form-row">
+                      <div class="col">
+                          {{p_form.about_me|as_crispy_field}}
+                      </div>
+                  </div>
+                  
+                  <div class="row">
+                      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                          {{p_form.birthday|as_crispy_field}}
+                      </div>
+                      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                          {{p_form.gender|as_crispy_field}}
+                      </div>
+                      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                          {{p_form.phone|as_crispy_field}}
+                      </div>
+                  </div>
+                  
+                   <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                             {{p_form.country|as_crispy_field}}
+                        </div>
+                       
+                       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            {{p_form.city|as_crispy_field}}
+                        </div>
+                       
+                       
+                       
+                   </div>
+                   
+                  
+                  
+                  
+                  
+                  <div class="form-row d-none">
+                      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                          {{p_form.phone_region|as_crispy_field}}
+                      </div>
+                      
+                  </div>
+                  
+                  <div class="row mb-2">
+                      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                          {{p_form.time_can_spend_per_day|as_crispy_field}}
+                      </div>
+                      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                          {{p_form.university|as_crispy_field}}
+                      </div>
+                       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                          {{p_form.skype|as_crispy_field}}
+                      </div>
+                  </div>
+                  <div class="form-row">
+                     
+                  </div>
+                  {% else %}
+                  <h4>Company:</h4>
+                  <div class="form-row">
+                     <div class="col">
+                        {{ p_form.company_name|as_crispy_field }}
+                     </div>
+                     <div class="col">
+                         {{ p_form.work_area|as_crispy_field }}
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="col">
+                        {{ p_form.about_company|as_crispy_field }}
+                     </div>
+                  </div>
+                  <div class="form-row d-none">
+                      <div class="col">
+                          {{p_form.phone_region|as_crispy_field}}
+                      </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="col">
+                        {{ p_form.phone|as_crispy_field }}
+                     </div>
+                     <div class="col">
+                         {{ p_form.fax|as_crispy_field }}
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="col">
+                        {{ p_form.street|as_crispy_field }}
+                     </div>
+                     <div class="col">
+                         {{ p_form.city|as_crispy_field }}
+                     </div>
+                      <div class="col">
+                         {{ p_form.country|as_crispy_field }}
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="col">
+                        {{ p_form.zip_code|as_crispy_field }}
+                     </div>
+                     <div class="col">
+                         {{ p_form.registration_number|as_crispy_field }}
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="col">
+                        {{ p_form.skype|as_crispy_field }}
+                     </div>
+                     <div class="col">
+                         {{ p_form.instagram|as_crispy_field }}
+                     </div>
+                      <div class="col">
+                         {{ p_form.linkedin|as_crispy_field }}
+                     </div>
+                      <div class="col">
+                         {{ p_form.telegram|as_crispy_field }}
+                     </div>
+                  </div>
+                  {% endif %}
+
+             </fieldset>
+             <div class="form-group">
+                 <button class="btn btn-outline-info" type="submit">{% trans "Update" %}</button>
+             </div>
+         </form>
+        </div>
+    </div>
+</section>
+
+<!--{% if user|is_member_profile and 'next=/dashboard/' in request.get_full_path %}-->
+<!-- GUIDANCE MODAL -->
+<!--<div class="modal" id="GuidanceModal">-->
+<!--  <div class="modal-dialog">-->
+<!--    <div class="modal-content">-->
+<!--      <div class="modal-header">-->
+<!--        <h5 class="modal-title text-dark">Guidance</h5>-->
+<!--        <button class="close" data-dismiss="modal">&times;</button>-->
+<!--      </div>-->
+<!--      <div class="modal-body text-dark">-->
+<!--          <div class="embed-responsive embed-responsive-16by9">-->
+<!--              <video controls id="guidance-video">-->
+<!--                  <source src="{% static 'ivc_website/video/GuidanceVideo.mp4'%}" type="video/mp4">-->
+<!--                  Your browser does not support the video tag.-->
+<!--              </video>-->
+<!--          </div>-->
+<!--      </div>-->
+<!--      <div class="modal-footer">-->
+<!--        <button class="btn btn-danger" data-dismiss="modal">Close</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+<!--{% endif %}-->
+
+{% endblock content %}
+
+{% block script %}
+<script src="{% static 'ivc_website/js/intlTelInput.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/utils.js' %}"></script>
+<script src="{% static 'users/js/phone.js' %}"></script>
+    {% comment %} <script src="https://cdn.tutorialjinni.com/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script> {% endcomment %}
+<script src="{% static 'dashboard/js/bootstrap-select.min.js' %}"></script>
+<script>
+    {% if user|is_member_profile and 'next=/dashboard/' in request.get_full_path %}
+    $('#GuidanceModal').modal();
+    $("#GuidanceModal").on('hidden.bs.modal', function (e) {
+        $('#guidance-video').get(0).pause();
+    });
+    {% endif %}
+    $('.selectpicker').selectpicker();
+
+    var input = document.querySelector("#id_phone");
+    var iti = window.intlTelInput(input, {
+    {% if user|is_member_profile %}
+        initialCountry: "{{user.memberprofile.phone_region}}"
+    {% else %}
+        initialCountry: "{{user.legalprofile.phone_region}}"
+    {% endif %}
+    });
+
+
+    input.addEventListener("countrychange", function() {
+        region = iti.getSelectedCountryData().iso2
+        $('input[name$="phone_region"]').val(region);
+    });
+
+
+    $('button.btn-outline-info').on('click', function () {
+        console.log($('input.required[value=""]'));
+    })
+
+    $('form').submit(e => {
+        e.preventDefault();
+        if (iti.isValidNumber())
+            e.currentTarget.submit();
+        else
+            $('html, body').animate({
+                scrollTop: $("#id_phone").offset().top - 100
+            });
+    });
+
+    $('#id_phone').focusout(() => {
+      if (iti.isValidNumber()) {
+          $('#id_phone').removeClass("is-invalid");
+      }
+      else {
+          $('#id_phone').addClass("is-invalid");
+          if ($('.phone-feedback').length == 0)
+              $( "<div class=\"invalid-feedback phone-feedback position-absolute \">\n" +
+                      "Format is wrong\n" +
+                      "</div>" ).insertAfter( "#id_phone" );
+      }
+    });
+</script>
+{% endblock script %}

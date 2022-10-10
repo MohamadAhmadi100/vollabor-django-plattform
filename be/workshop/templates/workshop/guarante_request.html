@@ -1,0 +1,61 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+{% block content %}
+<header class="bg-color6 text-dark py-2 w-100">
+        <div class="container">
+            <h1 class="px-4"><i class="fa fa-list"></i> <span> Workshop guarantee request</span></h1>
+        </div>
+</header>
+
+    <div class="w-100 d-md-flex justify-content-md-center">
+        
+        <table class="table table-hover  mt-5 ws-notif-table">
+            <thead style="background-color:#ADD8E6;color:black">
+                <tr>
+                    
+                    <th style="width:40%">Title</th>
+                    <th style="width:10%">Price</th>
+                    <th style="width:20%">Holding date</th>
+                    <th style="width:20%">Owner</th>
+                    <th style="width:10%">Proceed</th>
+                    
+                    
+                </tr>
+            </thead>
+            <tbody class="table-dark">
+                {% for workshop in workshops %}
+                <tr>
+                    <td style="width:40%">{{workshop.title}}</td>
+                    <td style="width:10%">{{workshop.price}}</td>
+                    <td style="width:20%">{{workshop.date}}</td>
+                    <td style="width:20%" >{{workshop.top_user.get_full_name}}</td>
+                    <td style="width:10%"><button class="btn btn-success"><a href="{% url 'guarante-accept-reject' workshop.pk %}">View</a></button> </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+{% endblock content %}

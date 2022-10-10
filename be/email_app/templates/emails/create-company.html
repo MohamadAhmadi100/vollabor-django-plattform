@@ -1,0 +1,742 @@
+{% extends 'emails/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} Company detail{% endblock %}
+{% block main %}
+<div style="padding-left: 220px; padding-right: 220px" class="col-md-12">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"></h3>
+        </div>
+            <div style="padding-bottom: 150px;" class="card-body">
+                <form method="post" enctype="multipart/form-data" id="CompanyForm" name="CompanyForm">{% csrf_token %}
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Company name:</label>
+                            <input class="form-control" name="company_name" id="company_name"  required>
+                            
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">State:</label>
+                            <input class="form-control" name="state" id="state" required>
+                            
+                        </div>
+                        
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">City:</label>
+                            <input class="form-control" name="city" id="city" required>
+                            
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Street number:</label>
+                            <input class="form-control" name="street_number" id="street_number" required>
+                            
+                        </div>
+                        
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Building number:</label>
+                            <input class="form-control" name="building_number" id="building_number" required>
+                            
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Unit:</label>
+                            <input class="form-control" name="unit" id="unit" required>
+                            
+                        </div>
+                        
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Zip code:</label>
+                            <input class="form-control" name="zip_code" id="zip_code" required>
+                            
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Size:</label>
+                            <input class="form-control" name="size" id="size" required>
+                            
+                        </div>
+                        
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Company website link:</label>
+                            <input class="form-control" name="company_website_link" id="company_website_link" required>
+                            
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            
+                            <div id="div_id_country" class="form-group">
+                                <label for="id_country" class=" requiredField">
+                                Country<span class="asteriskField">*</span>
+                                </label>
+                                <div class="">
+                                        <select name="country" class="select form-control" id="country">
+                                            <option value="0" selected disabled>Choose a field...</option>
+                                        {% for i in country %}
+                                            <option value="{{i.id}}">{{i.title}}</option>
+                                        {% endfor %}
+                                        </select>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <div id="div_id_category" class="form-group">
+                                <label for="id_category" class=" requiredField">
+                                Field<span class="asteriskField">*</span>:
+                                </label>
+                                
+                                <div class="input-group mb-3" style="width:100%">
+                                    
+                                    <select name="category" class="form-control py-4" id="category" aria-describedby="Field-addon">
+                                        {% for i in category %}
+                                            <option class="text-dark" value="{{i.id}}">{{i.title}}</option>
+                                        {% endfor %}
+                                        </select>
+                                    <div class="input-group-append" >
+                                        <span class="input-group-text" id="Field-addon"> <button type="button" class="btn btn-success btn-block py-0 my-1" id="FieldBtn" >Add</button></span>
+                                    </div>
+                        
+                                </div>
+                                <div id="id_category_error" style="color:red;font-size:0.9em"></div>
+                                
+                                
+                            </div>
+                            
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            
+                            <table class="table table-sm mt-2" id="Fieldstbl" >
+                                <thead style="border-top:none" >
+                                    <tr class="p-0 m-0" >
+                                        <th class="p-0" colspan="2">
+                                            <div class="">
+                                                <label class="form-label">Fields:</label>
+                                                
+                                            </div>
+                                            
+                                        </th>
+                                        
+                                    </tr>
+                                    <tr class="table-info m-0">
+                                        <th class="text-center">Field</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-secondary text-center"></tbody>
+                            </table>
+                            <div id="field_total_error" style="color:red;font-size:0.9em"></div>
+                            <input type="text" name="fields" class="d-none" id="fields"  >
+                                                                   
+                        </div>
+                        
+                        
+                    </div>
+                    
+                    <div class="row justify-content-center my-2">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <table class="table table-sm" id="OutSrctbl" >
+                                        <thead style="border-top:none" >
+                                            <tr class="p-0 m-0" >
+                                                <th class="p-0" colspan="2">
+                                                    <div class="">
+                                                        <label class="form-label">Outsource/collaborative history<span class="mandStar">*</span></label>
+                                                        <div class="input-group mb-3" style="width:100%">
+                                                            <input type="text" class="form-control py-4" id="OutSrc" placeholder="Please enter..." aria-describedby="outsrc-addon" oninput="ClearErr('OutSrc')">
+                                                            <div class="input-group-append" >
+                                                                <span class="input-group-text" id="outsrc-addon"> <button type="button" class="btn btn-success btn-block py-0 my-1" id="OutSrcBtn" >Add</button></span>
+                                                            </div>
+                                                
+                                                        </div>
+                                                    </div>
+                                                    <div id="OutSrc_error" style="color:red;font-size:0.9em"></div>
+                                                </th>
+                                                
+                                            </tr>
+                                            <tr class="table-info m-0">
+                                                <th class="text-center">History</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-secondary text-center"></tbody>
+                                    </table>
+                                     <div id="outsrc_total_error" style="color:red;font-size:0.9em"></div>
+                                     <input type="text" name="OutSrcs" required class="d-none" id="OutSrcs"  >
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <table class="table table-sm" id="servicetbl">
+                                        <thead >
+                                            <tr class="border-dark p-0 m-0">
+                                                <th class="p-0" colspan="2">
+                                                    <div class="">
+                                                    <label class="form-label">Services<span class="mandStar">*</span></label>
+                                                    <div class="input-group mb-3" style="width:100%">
+                                                        <input type="text" class="form-control py-4" id="service" placeholder="Please enter..." aria-describedby="service-addon" oninput="ClearErr('service')">
+                                                        <div class="input-group-append" >
+                                                            <span class="input-group-text inputclass2" id="service-addon"> <button type="button" class="btn btn-success btn-block py-0 my-1" id="serviceBtn">Add</button></span>
+                                                        </div>
+                                            
+                                                    </div>
+                                                    </div>
+                                                    <div id="service_error" style="color:red;font-size:0.9em"></div>
+                                                </th>
+                                                
+                                            </tr>
+                                            <tr class="table-info m-0">
+                                                <th class="text-center">Service</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-secondary text-center"></tbody>
+                                    </table>
+                                    <div id="service_total_error" style="color:red;font-size:0.9em"></div>
+                                     <input type="text" class="d-none" id="services" name="services">
+                                </div>
+                                
+                </div>
+                
+                <div class="row justify-content-center my-2">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <table class="table table-sm" id="mediatbl" >
+                                        <thead style="border-top:none" >
+                                            <tr class="p-0 m-0" >
+                                                <th class="p-0" colspan="3">
+                                                    <div class="">
+                                                        <label class="form-label">Company social media<span class="mandStar">*</span></label>
+                                                    <div class="form-row">    
+                                                        <select class="form-control text-dark col-sm-3 mx-1 py-4" name="mediaSel" id="mediaSel" style="color:black !important;">
+                                                                <option class="text-dark" value="linkedin">Linkedin</option>
+                                                                <option value="facebook">Facebook</option>
+                                                                <option value="twitter">Twitter</option>
+                                                                <option value="instagram">Instagram</option>
+                                                                <option value="telegram">Telegram</option>
+                                                            </select>
+                                                        <div class="input-group col-sm-8 mb-3">
+                                                            
+                                                            
+                                                            <input type="text" class="form-control py-4" id="media" placeholder="Please enter..." aria-describedby="media-addon" oninput="ClearErr('media')">
+                                                            <div class="input-group-append" >
+                                                                <span class="input-group-text" id="media-addon"> <button type="button" class="btn btn-success btn-block py-0 my-1" id="mediaBtn" >Add</button></span>
+                                                            </div>
+                                                
+                                                        </div>
+                                                    </div>
+                                                    </div>
+                                                    <div id="media_error" style="color:red;font-size:0.9em"></div>
+                                                </th>
+                                                
+                                            </tr>
+                                            <tr class="table-info m-0">
+                                                <th class="text-center">Social media</th>
+                                                <th class="text-center">Link</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-secondary text-center"></tbody>
+                                    </table>
+                                     <div id="media_total_error" style="color:red;font-size:0.9em"></div>
+                                     <input type="text" name="social_mediaa" required class="d-none" id="social_media"  >
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <table class="table table-sm" id="producttbl">
+                                        <thead >
+                                            <tr class="border-dark p-0 m-0">
+                                                <th class="p-0" colspan="2">
+                                                    <div class="">
+                                                    <label class="form-label">Products/specialties<span class="mandStar">*</span></label>
+                                                    <div class="input-group mb-3" style="width:100%">
+                                                        <input type="text" class="form-control py-4" id="product" placeholder="Please enter..." aria-describedby="service-addon" oninput="ClearErr('product')">
+                                                        <div class="input-group-append" >
+                                                            <span class="input-group-text inputclass2" id="product-addon"> <button type="button" class="btn btn-success btn-block py-0 my-1" id="productBtn">Add</button></span>
+                                                        </div>
+                                            
+                                                    </div>
+                                                    </div>
+                                                    <div id="product_error" style="color:red;font-size:0.9em"></div>
+                                                </th>
+                                                
+                                            </tr>
+                                            <tr class="table-info m-0">
+                                                <th class="text-center">Product</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-secondary text-center"></tbody>
+                                    </table>
+                                    <div id="product_total_error" style="color:red;font-size:0.9em"></div>
+                                     <input type="text" class="d-none" id="products" name="products">
+                                </div>
+                                
+                            </div>
+                            
+                <div class="row justify-content-center my-2">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <table class="table table-sm" id="currenttbl" >
+                                        <thead style="border-top:none" >
+                                            <tr class="p-0 m-0" >
+                                                <th class="p-0" colspan="2">
+                                                    <div class="">
+                                                        <label class="form-label">Current need<span class="mandStar">*</span></label>
+                                                        <div class="input-group mb-3" style="width:100%">
+                                                            <input type="text" class="form-control py-4" id="current" placeholder="Please enter..." aria-describedby="current-addon" oninput="ClearErr('current')">
+                                                            <div class="input-group-append" >
+                                                                <span class="input-group-text" id="current-addon"> <button type="button" class="btn btn-success btn-block py-0 my-1" id="currentBtn" >Add</button></span>
+                                                            </div>
+                                                
+                                                        </div>
+                                                    </div>
+                                                    <div id="current_error" style="color:red;font-size:0.9em"></div>
+                                                </th>
+                                                
+                                            </tr>
+                                            <tr class="table-info m-0">
+                                                <th class="text-center">Current need</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-secondary text-center"></tbody>
+                                    </table>
+                                     <div id="current_total_error" style="color:red;font-size:0.9em"></div>
+                                     <input type="text" name="current_need" required class="d-none" id="current_need"  >
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <table class="table table-sm" id="futuretbl">
+                                        <thead >
+                                            <tr class="border-dark p-0 m-0">
+                                                <th class="p-0" colspan="2">
+                                                    <div class="">
+                                                    <label class="form-label">Future need<span class="mandStar">*</span></label>
+                                                    <div class="input-group mb-3" style="width:100%">
+                                                        <input type="text" class="form-control py-4" id="future" placeholder="Please enter..." aria-describedby="future-addon" oninput="ClearErr('future')">
+                                                        <div class="input-group-append" >
+                                                            <span class="input-group-text inputclass2" id="future-addon"> <button type="button" class="btn btn-success btn-block py-0 my-1" id="futureBtn">Add</button></span>
+                                                        </div>
+                                            
+                                                    </div>
+                                                    </div>
+                                                    <div id="future_error" style="color:red;font-size:0.9em"></div>
+                                                </th>
+                                                
+                                            </tr>
+                                            <tr class="table-info m-0">
+                                                <th class="text-center">Future need</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-secondary text-center"></tbody>
+                                    </table>
+                                    <div id="future_total_error" style="color:red;font-size:0.9em"></div>
+                                     <input type="text" class="d-none" id="future_need" name="future_need">
+                                </div>
+                                
+                            </div>
+                    <button style="margin-left: 275px" class="btn btn-primary" id="subBtn" type="button">Create</button>
+                </form>
+            </div>
+    </div>
+</div>
+
+<script>
+    OutSrc_list = [];
+    service_list=[];
+    product_list=[];
+    media_list=[];
+    current_list=[];
+    future_list=[];
+    field_list=[];
+    
+    $(document).ready(function() {
+        document.getElementById("OutSrcBtn").addEventListener("click",AddOutSrc);
+        document.getElementById("serviceBtn").addEventListener("click",AddService);
+        document.getElementById("mediaBtn").addEventListener("click",AddMedia);
+        document.getElementById("productBtn").addEventListener("click",AddProduct);
+        document.getElementById("currentBtn").addEventListener("click",AddCurrent);
+        document.getElementById("futureBtn").addEventListener("click",AddFuture);
+        document.getElementById("FieldBtn").addEventListener("click",AddField);
+        document.getElementById("subBtn").addEventListener("click",SendInfo);
+        
+        
+    });
+    
+    
+    
+    
+function AddOutSrc(){
+    document.getElementById("outsrc_total_error").innerHTML ="";
+    document.getElementById("OutSrc_error").innerHTML="";
+    var OutSrc = document.getElementById("OutSrc").value;
+    if(OutSrc.length != 0 ){
+        var OutSrc_table = document.getElementById("OutSrctbl");
+        var tbodyRowCount = OutSrc_table.tBodies[0].rows.length;
+        if(tbodyRowCount<21){
+            var OutSrc_row = OutSrc_table.tBodies[0].insertRow();
+            var OutSrc_cell0 = OutSrc_row.insertCell();
+            OutSrc_cell0.innerHTML = OutSrc;
+            var OutSrc_cell1 = OutSrc_row.insertCell();
+            OutSrc_cell1.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this)'/>";
+            OutSrc_list.push(OutSrc);
+        }else{
+            document.getElementById("outsrc_total_error").innerHTML ="The maximum number allowed is 20 outsource history.";
+        }
+    document.getElementById("OutSrc").value="";
+    }else{
+        
+        document.getElementById("OutSrc_error").innerHTML = "Please enter the outsource history.";
+    }
+  
+}
+
+ $('#OutSrctbl').on('click', 'input[type="button"]', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        OutSrc_list.splice(rowNum, 1);
+        $(this).closest('tr').remove();
+        var OutSrc_table = document.getElementById("OutSrctbl");
+        var tbodyRowCount = OutSrc_table.tBodies[0].rows.length;
+        
+        
+        
+    })
+
+
+
+function AddService(){
+    document.getElementById("service_total_error").innerHTML ="";
+    document.getElementById("service_error").innerHTML="";
+    var service = document.getElementById("service").value;
+    if(service.length != 0 ){
+        var service_table = document.getElementById("servicetbl");
+        var tbodyRowCount = service_table.tBodies[0].rows.length;
+        if(tbodyRowCount<21){
+            var service_row = service_table.tBodies[0].insertRow();
+            var service_cell0 = service_row.insertCell();
+            service_cell0.innerHTML = service;
+            var service_cell1 = service_row.insertCell();
+            service_cell1.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this)'/>";
+            service_list.push(service);
+        }else{
+            document.getElementById("service_total_error").innerHTML ="The maximum number allowed is 20 services.";
+        }
+    document.getElementById("service").value="";
+    }else{
+        
+        document.getElementById("service_error").innerHTML = "Please enter the services.";
+    }
+  
+}
+
+$('#servicetbl').on('click', 'input[type="button"]', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        service_list.splice(rowNum, 1);
+        $(this).closest('tr').remove();
+        var service_table = document.getElementById("servicetbl");
+        var tbodyRowCount = service_table.tBodies[0].rows.length;
+        
+        
+        
+    })
+
+
+
+
+
+
+function AddMedia(){
+    temp_list=[];
+    document.getElementById("media_total_error").innerHTML ="";
+    document.getElementById("media_error").innerHTML="";
+    var mediaSel = document.getElementById("mediaSel").value;
+    var media = document.getElementById("media").value;
+    if(media.length != 0 ){
+        var media_table = document.getElementById("mediatbl");
+        var tbodyRowCount = media_table.tBodies[0].rows.length;
+        if(tbodyRowCount<21){
+            var media_row = media_table.tBodies[0].insertRow();
+            var media_cell0 = media_row.insertCell();
+            media_cell0.innerHTML = mediaSel;
+            var media_cell1 = media_row.insertCell();
+            media_cell1.innerHTML = media;
+            var media_cell1 = media_row.insertCell();
+            media_cell1.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this)'/>";
+            temp_list.push(mediaSel);
+            temp_list.push(media);
+            media_list.push(temp_list);
+        }else{
+            document.getElementById("media_total_error").innerHTML ="The maximum number allowed is 20 services.";
+        }
+    document.getElementById("media").value="";
+    }else{
+        
+        document.getElementById("media_error").innerHTML = "Please enter the social media.";
+    }
+  
+}
+
+
+$('#mediatbl').on('click', 'input[type="button"]', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        media_list.splice(rowNum, 1);
+        $(this).closest('tr').remove();
+        var media_table = document.getElementById("mediatbl");
+        var tbodyRowCount = media_table.tBodies[0].rows.length;
+        
+        
+        
+    })
+
+function AddProduct(){
+    document.getElementById("product_total_error").innerHTML ="";
+    document.getElementById("product_error").innerHTML="";
+    var product = document.getElementById("product").value;
+    if(product.length != 0 ){
+        var product_table = document.getElementById("producttbl");
+        var tbodyRowCount = product_table.tBodies[0].rows.length;
+        if(tbodyRowCount<21){
+            var product_row = product_table.tBodies[0].insertRow();
+            var product_cell0 = product_row.insertCell();
+            product_cell0.innerHTML = product;
+            var product_cell1 = product_row.insertCell();
+            product_cell1.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this)'/>";
+            product_list.push(product);
+        }else{
+            document.getElementById("product_total_error").innerHTML ="The maximum number allowed is 20 product.";
+        }
+    document.getElementById("product").value="";
+    }else{
+        
+        document.getElementById("product_error").innerHTML = "Please enter the product.";
+    }
+  
+}
+
+
+$('#producttbl').on('click', 'input[type="button"]', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        product_list.splice(rowNum, 1);
+        $(this).closest('tr').remove();
+        var service_table = document.getElementById("producttbl");
+        var tbodyRowCount = product_list.tBodies[0].rows.length;
+        
+        
+        
+    })
+
+
+
+function AddCurrent(){
+    document.getElementById("current_total_error").innerHTML ="";
+    document.getElementById("current_error").innerHTML="";
+    var current = document.getElementById("current").value;
+    if(current.length != 0 ){
+        var current_table = document.getElementById("currenttbl");
+        var tbodyRowCount = current_table.tBodies[0].rows.length;
+        if(tbodyRowCount<21){
+            var current_row = current_table.tBodies[0].insertRow();
+            var current_cell0 = current_row.insertCell();
+            current_cell0.innerHTML = current;
+            var current_cell1 = current_row.insertCell();
+            current_cell1.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this)'/>";
+            current_list.push(current);
+        }else{
+            document.getElementById("current_total_error").innerHTML ="The maximum number allowed is 20 current needs.";
+        }
+    document.getElementById("current").value="";
+    }else{
+        
+        document.getElementById("current_error").innerHTML = "Please enter the current need.";
+    }
+  
+}
+
+$('#currenttbl').on('click', 'input[type="button"]', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        current_list.splice(rowNum, 1);
+        $(this).closest('tr').remove();
+        var current_table = document.getElementById("currenttbl");
+        var tbodyRowCount = current_table.tBodies[0].rows.length;
+        
+        
+        
+    })
+
+
+
+
+function AddField(){
+    document.getElementById("field_total_error").innerHTML ="";
+    //document.getElementById("current_error").innerHTML="";
+    var fieldSel = document.getElementById("category");
+    var field = document.getElementById("category").value;
+    var fieldtext = fieldSel.options[fieldSel.selectedIndex].text;
+    if(fieldSel.value != 0 ){
+        var field_table = document.getElementById("Fieldstbl");
+        var tbodyRowCount = field_table.tBodies[0].rows.length;
+        if(tbodyRowCount<21){
+            var field_row = field_table.tBodies[0].insertRow();
+            var field_cell0 = field_row.insertCell();
+            field_cell0.innerHTML = fieldtext;
+            var field_cell1 = field_row.insertCell();
+            field_cell1.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this)'/>";
+            field_list.push(field);
+        }else{
+            document.getElementById("current_total_error").innerHTML ="The maximum number allowed is 20 field.";
+        }
+        //document.getElementById("current").value="";
+    }else{
+        
+       // document.getElementById("current_error").innerHTML = "Please enter the current need.";
+    }
+  
+}
+
+
+$('#Fieldstbl').on('click', 'input[type="button"]', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        field_list.splice(rowNum, 1);
+        $(this).closest('tr').remove();
+        var current_table = document.getElementById("Fieldstbl");
+        var tbodyRowCount = current_table.tBodies[0].rows.length;
+        
+        
+        
+    })
+
+
+
+
+
+
+
+
+
+
+
+function AddFuture(){
+    document.getElementById("future_total_error").innerHTML ="";
+    document.getElementById("future_error").innerHTML="";
+    var future = document.getElementById("future").value;
+    if(future.length != 0 ){
+        var future_table = document.getElementById("futuretbl");
+        var tbodyRowCount = future_table.tBodies[0].rows.length;
+        if(tbodyRowCount<11){
+            var future_row = future_table.tBodies[0].insertRow();
+            var future_cell0 = future_row.insertCell();
+            future_cell0.innerHTML = future;
+            var future_cell1 =future_row.insertCell();
+            future_cell1.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this)'/>";
+            future_list.push(future);
+        }else{
+            document.getElementById("future_total_error").innerHTML ="The maximum number allowed is 10 future needs.";
+        }
+    document.getElementById("future").value="";
+    }else{
+        
+        document.getElementById("future_error").innerHTML = "Please enter the future need.";
+    }
+  
+}
+
+$('#futuretbl').on('click', 'input[type="button"]', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        future_list.splice(rowNum, 1);
+        $(this).closest('tr').remove();
+        var future_table = document.getElementById("futuretbl");
+        var tbodyRowCount = future_table.tBodies[0].rows.length;
+        
+        
+        
+    })
+
+
+
+function SendInfo(){
+    
+        $('[name=OutSrcs]').val(OutSrc_list); 
+        $('[name=services]').val(service_list); 
+        $('[name=social_mediaa]').val(media_list); 
+        $('[name=products]').val(product_list); 
+        $('[name=current_need]').val(current_list); 
+        $('[name=future_need]').val(future_list); 
+        $('[name=fields]').val(field_list); 
+        var company_name = document.getElementById("company_name").value;
+        var state = document.getElementById("state").value;
+        var city = document.getElementById("city").value;
+        var street_number = document.getElementById("street_number").value;
+        var building_number = document.getElementById("building_number").value;
+        var unit = document.getElementById("unit").value;
+        var zip_code = document.getElementById("zip_code").value;
+        var size = document.getElementById("size").value;
+        var company_website_link = document.getElementById("company_website_link").value;
+        var country = document.getElementById("country").value;
+        var category = document.getElementById("category").value;
+        var fields = document.getElementById("fields").value;
+        var OutSrcs = document.getElementById("OutSrcs").value;
+        var services = document.getElementById("services").value;
+        var social_media = document.getElementById("social_media").value;
+        var products = document.getElementById("products").value;
+        var current_need = document.getElementById("current_need").value;
+        var future_need = document.getElementById("future_need").value;
+        //alert($('[name=fields]').val());
+        //var form_data = new FormData(document.getElementById("CompanyForm"));
+        //form_data.append("social_media",JSON.stringify(media_list));
+        //form_data.append('csrfmiddlewaretoken','{{ csrf_token }}');
+        //alert(form_data.get("city"));
+        //alert(form_data.get("OutSrcs"));
+        //alert(form_data.get("csrfmiddlewaretoken"));
+        //alert(form_data.get("social_media"));
+        $.ajax({
+            type: "POST",
+            url: "{% url 'email:create-category' %}",
+            data:  {"company_name":company_name,"state":state,"city":city,"street_number":street_number,"building_number":building_number,"unit":unit,"zip_code":zip_code,
+            "size":size,"company_website_link":company_website_link,"country":country,"category":category,"fields":fields,"OutSrcs":OutSrcs,"services":services,
+            "social_media":social_media,"products":products,"current_need":current_need,"future_need":future_need,csrfmiddlewaretoken:'{{ csrf_token }}'},
+            
+            success: function(output){
+                // alert(OkOk);
+                // alert(output);
+                if(output!= null){
+                
+                        
+                
+                }
+            }, error: function (output){
+                // alert("NotOk");
+                // alert(output);
+                    
+            }, complete: function(output){
+                    
+            }
+                    
+            
+        });
+    
+    
+}
+
+
+    
+
+</script>
+
+
+
+
+{% endblock %}

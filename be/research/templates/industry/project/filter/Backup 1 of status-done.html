@@ -1,0 +1,756 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+<!DOCTYPE html>
+<html lang="en">
+{% block css %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'project/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'project/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'project/css/workshop.css' %}">
+    <title>Project List</title>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MV42WCDPR9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-MV42WCDPR9');
+    </script>
+</head>
+{% endblock css %}
+{% block content %}
+<body>
+
+    <div class="ws-content d-md-flex">
+        
+        <div class="workshop">
+            <div class="bc">
+                <a href="{% url 'dashboard-page' %}" class="text-capitalize">Dashboard</a>
+                <span class="bc-icon"> / </span>
+                <span class="text-capitalize"> project list</span>
+            </div>
+            <div class="Project-content">
+                <div class="project-list">
+                    <div class="project-list-form">
+                        <form action="{% url 'industry:industry-project-search' %}">
+                            <div class="project-list-search">
+                                <input type="text" name="q" placeholder="Search .....">
+                                <button type="submit" name="search-btn" class="search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="project-list-select">
+                                <div class="select-wrapx select-wrap3">
+                                    <ul class="default-optionx default-option3">
+                                        <li>
+                                            <i class="far fa-clock me-1"></i>
+                                            <div class="option d-inline-block">
+                                                <span>Grade</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <ul class="select-ulx select-ul3">
+                                        <li>
+                                        <a class="text-white text-decoration-none" href="{% url 'industry:industry-project-filter-hard' %}" >
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input type="radio" name="status" value="On-going" >
+                                                    <label for="going">Gold</label>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        </li>
+                                        <li>
+                                        <a class="text-white text-decoration-none" href="{% url 'industry:industry-project-filter-normal' %}" >
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input type="radio" name="status" value="On-going" >
+                                                    <label for="going">Silver</label>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        </li>
+                                        <li>
+                                        <a class="text-white text-decoration-none" href="{% url 'industry:industry-project-filter-easy' %}" >
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input type="radio" name="status" value="On-going" >
+                                                    <label for="going">Boronze</label>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="select-wrapx select-wrap4 mx-3">
+                                    <ul class="default-optionx default-option4">
+                                        <li>
+                                            <i class="far fa-lightbulb me-1"></i>
+                                            <div class="option d-inline-block">
+                                                <span>Done</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <ul class="select-ulx select-ul4">
+                                        <li>
+                                        <a class="text-white text-decoration-none" href="{% url 'dashboard-projects-page' %}" >
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input type="radio" name="status" value="On-going" >
+                                                    <label for="going">All</label>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        </li>
+
+                                        <li>
+                                        <a class="text-white text-decoration-none" href="{% url 'industry:industry-project-filter-on_going' %}" >
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input type="radio" name="status" value="On-going" >
+                                                    <label for="going">On going</label>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        </li>
+
+                                        <li>
+                                        <a class="text-white text-decoration-none" href="{% url 'industry:industry-project-filter-pending' %}" >
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input type="radio" name="status" value="Pending">
+                                                    <label for="Pending">Pending</label>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        </li>
+
+                                        <li>
+                                        <a class="text-white text-decoration-none" href="{% url 'industry:industry-project-filter-new' %}" >
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input type="radio" name="status" value="New">
+                                                    <label for="New">New</label>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        </li>
+
+                                        <li>
+                                        <a class="text-white text-decoration-none" href="{% url 'industry:industry-project-filter-on_hold' %}" >
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input type="radio" name="status" value="On-hold">
+                                                    <label for="hold">On hold</label>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        </li>
+
+                                        <li>
+                                        <a class="text-white text-decoration-none" href="{% url 'industry:industry-project-filter-done' %}" >
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input type="radio" name="status" value="On-hold">
+                                                    <label style="color: #20d8c3" for="hold">Done</label>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="select-wrapx select-wrap5">
+                                    <ul class="default-optionx default-option5">
+                                        <li>
+                                            <i class="fas fa-exchange-alt me-1"></i>
+                                            <div class="option d-inline-block">
+                                                <span>Research</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <ul class="select-ulx select-ul5">
+                                        <li>
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input type="radio" name="section" value="Research" id="Research">
+                                                    <label for="Research"><i class=""></i> Research</label>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input disabled type="radio" name="section" value="Competition"
+                                                        id="Competition">
+                                                    <label for="Competition"><i class=""></i> Competition</label>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="option">
+                                                <div class="option">
+                                                    <input disabled type="radio" name="section" value="Industrial"
+                                                        id="Industrial">
+                                                    <label for="Industrial"><i class=""></i> Industrial</label>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="Project-content-swiper">
+                        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <!-- table -->
+                                    <div class="carousel-box">
+                                        <div class="row table-head">
+                                            <div class="col-md-2 text-center">
+                                                <span class="text-capitalize">project's name</span>
+                                            </div>
+                                            <div class="col-md-4 text-center position-relative">
+                                                <span class="text-capitalize">users</span>
+                                                <div class="users-price">
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 text-center">
+                                                <span class="text-capitalize">status</span>
+                                            </div>
+                                            <div class="col-md-2 text-center">
+                                                <span class="text-capitalize">suggested start date</span>
+                                            </div>
+                                            <div class="col-md-2 text-center">
+                                                <span class="text-capitalize">action</span>
+                                            </div>
+                                        </div>
+                                        {% for i in object_list %}
+                                            <div class="table-container">
+                                                <div class="row table-body table-body-first">
+                                                    <div class="col-md-2">
+                                                        <div class="text-center table-body-decription pe-3">
+                                                            <p>{{i.project.client_form.formclint.title}}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="row">
+                                                            <div class="col-md-3 users-box-col">
+                                                                <div class="users-price-box">
+                                                                    <span>Res fee :</span>
+                                                                    <span>{{i.value_supervisor}}$</span>
+                                                                </div>
+                                                                <div class="users-price-name">
+                                                                    <span>suprevisor</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 users-box-col">
+                                                                <div class="users-price-box">
+                                                                    <span>Res fee :</span>
+                                                                    <span>{{i.value_mentor}}$</span>
+                                                                </div>  
+                                                                <div class="users-price-name">
+                                                                    <span>Mentor</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 users-box-col">
+                                                                <div class="users-price-box">
+                                                                    <span>Res fee :</span>
+                                                                    <span>{{i.value_mmber}}$</span>
+                                                                </div>
+                                                                <div class="users-price-name">
+                                                                    <span>Member</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 users-box-col">
+                                                                <div class="users-price-box">
+                                                                    <span>Res fee :</span>
+                                                                    <span>{{i.value_Learner}}$</span>
+                                                                </div>
+                                                                <div class="users-price-name">
+                                                                    <span>Learner</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                                                                <div class="row users-img">{{sup.user.memberprofile.image.url}}
+                                                            <div class="col-md-3 users-img-col">
+                                                                <ul class="users-img-box">
+                                                                    <li>
+                                                                        <figure>
+                                                                            {% if i.picture_supervisor.memberprofile.image %}
+                                                                            <img src="{{i.picture_supervisor.memberprofile.image.url}}"
+                                                                                alt="users-profile">
+                                                                            {% else %}
+                                                                            <img src="{% static 'projects/img/default.jpg' %}"
+                                                                                alt="users-profile">
+                                                                            {% endif %}
+                                                                        </figure>
+                                                                    </li>
+                                                                    <li>
+                                                                        <figure>
+                                                                            {% if i.picture_supervisor_1.memberprofile.image %}
+                                                                            <img src="{{i.picture_supervisor_1.memberprofile.image.url}}"
+                                                                                alt="users-profile">
+                                                                            {% else %}
+                                                                            <img src="{% static 'projects/img/default.jpg' %}"
+                                                                                alt="users-profile">
+                                                                            {% endif %}
+                                                                        </figure>
+                                                                    </li>
+                                                                    <li class="users-img-more">
+                                                                        <span>+
+                                                                        {% if i.picture_supervisor and i.picture_supervisor_1 %}
+                                                                        {{i.supervisors_project.all.count|add:"-2"}}</span>
+                                                                        {% elif i.picture_supervisor %}
+                                                                        {{i.supervisors_project.all.count|add:"-2"}}</span>
+                                                                        {% else %}
+                                                                        0</span>
+                                                                        {% endif %}
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="col-md-3 users-img-col">
+                                                                <ul class="users-img-box">
+                                                                    <li>
+                                                                        <figure>
+                                                                            {% if i.picture_mentor.memberprofile.image %}
+                                                                            <img src="{{i.picture_mentor.memberprofile.image.url}}"
+                                                                                alt="users-profile">
+                                                                            {% else %}
+                                                                            <img src="{% static 'projects/img/default.jpg' %}"
+                                                                                alt="users-profile">
+                                                                            {% endif %}
+                                                                        </figure>
+                                                                    </li>
+                                                                    <li>
+                                                                        <figure>
+                                                                            {% if i.picture_mentor_1.memberprofile.image %}
+                                                                            <img src="{{i.picture_mentor_1.memberprofile.image.url}}"
+                                                                                alt="users-profile">
+                                                                            {% else %}
+                                                                            <img src="{% static 'projects/img/default.jpg' %}"
+                                                                                alt="users-profile">
+                                                                            {% endif %}
+                                                                        </figure>
+                                                                    </li>
+                                                                    <li class="users-img-more">
+                                                                        <span>+
+                                                                        {% if i.picture_mentor and i.picture_mentor_1 %}
+                                                                        {{i.mentor_project.all.count|add:"-2"}}</span>
+                                                                        {% elif i.picture_mentor %}
+                                                                        {{i.mentor_project.all.count|add:"-1"}}</span>
+                                                                        {% else %}
+                                                                        0</span>
+                                                                        {% endif %}
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="col-md-3 users-img-col">
+                                                                <ul class="users-img-box">
+                                                                    <li>
+                                                                        <figure>
+                                                                            {% if i.picture_member.memberprofile.image %}
+                                                                            <img src="{{i.picture_member.memberprofile.image.url}}"
+                                                                                alt="users-profile">
+                                                                            {% else %}
+                                                                            <img src="{% static 'projects/img/default.jpg' %}"
+                                                                                alt="users-profile">
+                                                                            {% endif %}
+                                                                        </figure>
+                                                                    </li>
+                                                                    <li>
+                                                                        <figure>
+                                                                            {% if i.picture_member_1.memberprofile.image %}
+                                                                            <img src="{{i.picture_member_1.memberprofile.image.url}}"
+                                                                                alt="users-profile">
+                                                                            {% else %}
+                                                                            <img src="{% static 'projects/img/default.jpg' %}"
+                                                                                alt="users-profile">
+                                                                            {% endif %}
+                                                                        </figure>
+                                                                    </li>
+                                                                    <li class="users-img-more">
+                                                                        <span>+
+                                                                        {% if i.picture_member and i.picture_member_1 %}
+                                                                        {{i.mmber_project.all.count|add:"-2"}}</span>
+                                                                        {% elif i.picture_member %}
+                                                                        {{i.mmber_project.all.count|add:"-1"}}</span>
+                                                                        {% else %}
+                                                                        0</span>
+                                                                        {% endif %}
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="col-md-3 users-img-col">
+                                                                <ul class="users-img-box">
+                                                                    <li>
+                                                                        <figure>
+                                                                            {% if i.picture_Learner.memberprofile.image %}
+                                                                            <img src="{{i.picture_Learner.memberprofile.image.url}}"
+                                                                                alt="users-profile">
+                                                                            {% else %}
+                                                                            <img src="{% static 'projects/img/default.jpg' %}"
+                                                                                alt="users-profile">
+                                                                            {% endif %}
+                                                                        </figure>
+                                                                    </li>
+                                                                    <li>
+                                                                        <figure>
+                                                                            {% if i.picture_Learner_1.memberprofile.image %}
+                                                                            <img src="{{i.picture_Learner_1.memberprofile.image.url}}"
+                                                                                alt="users-profile">
+                                                                            {% else %}
+                                                                            <img src="{% static 'projects/img/default.jpg' %}"
+                                                                                alt="users-profile">
+                                                                            {% endif %}
+                                                                        </figure>
+                                                                    </li>
+                                                                    <li class="users-img-more">
+                                                                        <span>+
+                                                                        {% if i.picture_Learner and i.picture_Learner_1 %}
+                                                                        {{i.Learner_project.all.count|add:"-2"}}</span>
+                                                                        {% elif i.picture_Learner %}
+                                                                        {{i.Learner_project.all.count|add:"-1"}}</span>
+                                                                        {% else %}
+                                                                        0</span>
+                                                                        {% endif %}
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="text-center text-capitalize table-body-text">
+                                                            <span>{{i.status}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="text-center table-body-text">
+                                                            <span>{{i.publish}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="text-center">
+                                                            <ul class="table-body-btn">
+                                                                {% if request.user.is_superuser or request.user.researchrole.director == True %}
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        {% if i.status == 'new' %}
+                                                                        <li class="text-capitalize table-body-btn1 ">
+                                                                            <a href="{% url 'industry:industry-project-apply' i.pk %}">Apply</a>
+                                                                        </li>
+                                                                        {% else %}
+                                                                        <li class="text-capitalize table-body-btn ">
+                                                                            <a>apply</a>
+                                                                        </li>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <li class="text-capitalize table-body-btn2">
+                                                                            <a href="{% url 'project-detail-research' i.pk %}">view</a>
+                                                                        </li>
+                                                                    </div>
+                                                                    <div class="col-md-6 mt-2">
+                                                                        {% if request.user.is_superuser or request.user.researchrole.director == True %}
+                                                                        <li class="text-capitalize table-body-btn4">
+                                                                            <a href="{% url 'industry:industry-project-delete' i.pk %}">Delete</a>
+                                                                        </li>
+                                                                        {% else %}
+                                                                        <li class="text-capitalize table-body-btn4">
+                                                                            <a>Delete</a>
+                                                                        </li>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <li class="text-capitalize table-body-btn3">
+                                                                            {% if request.user.is_superuser or request.user.researchrole.director == True %}
+                                                                            <a href="{% url 'industry:industry-project-edit' i.pk %}">Edit </a>
+                                                                            {% else  %}
+                                                                            <a href="#">Task </a>
+                                                                            {% endif %}
+                                                                        </li>
+                                                                    </div>
+                                                                </div>
+                                                                {% else %}
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        {% if i.status == 'new' %}
+                                                                        <li class="text-capitalize table-body-btn1 ">
+                                                                            <a href="{% url 'industry:industry-project-apply' i.pk %}">Apply</a>
+                                                                        </li>
+                                                                        {% else %}
+                                                                        <li class="text-capitalize table-body-btn ">
+                                                                            <a>Apply</a>
+                                                                        </li>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <li class="text-capitalize table-body-btn2">
+                                                                            <a href="{% url 'project-detail-research' i.pk %}">View</a>
+                                                                        </li>
+                                                                    </div>
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <li  class="text-capitalize table-body-btn3">
+                                                                            <a href="#">Task </a>
+                                                                        </li>
+                                                                    </div>
+                                                                </div>
+                                                                {% endif %}
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                        
+
+                                    </div>
+                                    <!-- table -->
+                                </div>
+                                <div class="carousel-item">
+                                    <!-- table -->
+                                    <div class="carousel-box">
+                                        <div class="row table-head">
+                                            <div class="col-md-2 text-center">
+                                                <span class="text-capitalize">Project's name</span>
+                                            </div>
+                                            <div class="col-md-4 text-center position-relative">
+                                                <span class="text-capitalize">Users</span>
+                                                <div class="users-price">
+                                                    <div class="row">
+                                                        <div class="col-md-3 users-box-col">
+                                                            <div class="users-price-box">
+                                                                <span>Res fee :</span>
+                                                                <span>200$</span>
+                                                            </div>
+                                                            <div class="users-price-name">
+                                                                <span>suprevisor</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 users-box-col">
+                                                            <div class="users-price-box">
+                                                                <span>Res fee :</span>
+                                                                <span>200$</span>
+                                                            </div>
+                                                            <div class="users-price-name">
+                                                                <span>Mentor</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 users-box-col">
+                                                            <div class="users-price-box">
+                                                                <span>Res fee :</span>
+                                                                <span>200$</span>
+                                                            </div>
+                                                            <div class="users-price-name">
+                                                                <span>Member</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3 users-box-col">
+                                                            <div class="users-price-box">
+                                                                <span>Res fee :</span>
+                                                                <span>200$</span>
+                                                            </div>
+                                                            <div class="users-price-name">
+                                                                <span>Learner</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 text-center">
+                                                <span class="text-capitalize">Status</span>
+                                            </div>
+                                            <div class="col-md-2 text-center">
+                                                <span class="text-capitalize">Suggested start date</span>
+                                            </div>
+                                            <div class="col-md-2 text-center">
+                                                <span class="text-capitalize">Action</span>
+                                            </div>
+                                        </div>
+                                        <div class="table-container">
+                                            <div class="row table-body">
+                                                <div class="col-md-2">
+                                                    <div class="text-center table-body-decription pe-3">
+                                                        <p>{{i.project.client_form.formclint.title}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="row users-img">
+                                                        <div class="col-md-3 users-img-col">
+                                                            <ul class="users-img-box">
+                                                                <li>
+                                                                    <figure>
+                                                                        <img src="{% static 'project/img/Ellipse 137.png' %}"
+                                                                            alt="users-profile">
+                                                                    </figure>
+                                                                </li>
+                                                                <li>
+                                                                    <figure>
+                                                                        <img src="{% static 'project/img/Ellipse 137.png' %}"
+                                                                            alt="users-profile">
+                                                                    </figure>
+                                                                </li>
+                                                                <li class="users-img-more">
+                                                                    <span>+9</span>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-md-3 users-img-col">
+                                                            <ul class="users-img-box">
+                                                                <li>
+                                                                    <figure>
+                                                                        <img src="{% static 'project/img/Ellipse 137.png' %}"
+                                                                            alt="users-profile">
+                                                                    </figure>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-md-3 users-img-col">
+                                                            <ul class="users-img-box">
+                                                                <li>
+                                                                    <figure>
+                                                                        <img src="{% static 'project/img/Ellipse 137.png' %}"
+                                                                            alt="users-profile">
+                                                                    </figure>
+                                                                </li>
+                                                                <li>
+                                                                    <figure>
+                                                                        <img src="{% static 'project/img/Ellipse 137.png' %}"
+                                                                            alt="users-profile">
+                                                                    </figure>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-md-3 users-img-col">
+                                                            <ul class="users-img-box">
+                                                                <li>
+                                                                    <figure>
+                                                                        <img src="{% static 'project/img/Ellipse 137.png' %}"
+                                                                            alt="users-profile">
+                                                                    </figure>
+                                                                </li>
+                                                                <li>
+                                                                    <figure>
+                                                                        <img src="{% static 'project/img/Ellipse 137.png' %}"
+                                                                            alt="users-profile">
+                                                                    </figure>
+                                                                </li>
+                                                                <li class="users-img-more">
+                                                                    <span>+9</span>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="text-center text-capitalize table-body-text">
+                                                        <span>new</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="text-center table-body-text">
+                                                        <span>10/31/2021</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="text-center">
+                                                        <ul class="table-body-btn">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <li class="text-capitalize table-body-btn1">
+                                                                        <a href="#">Apply</a>
+                                                                    </li>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <li class="text-capitalize table-body-btn2">
+                                                                        <a href="viewproje.html">view</a>
+                                                                    </li>
+                                                                </div>
+                                                                <div class="col-md-6 mt-2">
+                                                                    <li class="text-capitalize table-body-btn4">
+                                                                        <a href="#">Delete</a>
+                                                                    </li>
+                                                                </div>
+                                                                <div class="col-md-6 mt-2">
+                                                                    <li class="text-capitalize table-body-btn3">
+                                                                        <a href="#">Edit</a>
+                                                                    </li>
+                                                                </div>
+                                                            </div>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- table -->
+                                </div>
+                            </div>
+                            {% if page_obj.has_previous %}
+                            <a href="{% url 'industry:industry-project-filter-done' page_obj.previous_page_number%}">
+                            <button class="carousel-control-prev" type="button"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button></a>
+
+                            <button class="carousel-control-next" type="button"
+                                data-bs-slide="next" disabled>
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+
+                            {% endif %}
+                            {% if page_obj.has_next %}
+                            <button style="color: red" class="carousel-control-prev" disabled>
+                                <span  class="carousel-control-prev-icon" ></span>
+                                <span  class="visually-hidden">Previous</span>
+                            </button>
+
+                            <a class="" href="{% url 'industry:industry-project-filter-done' page_obj.next_page_number%}">
+                            <button class="carousel-control-next" type="button"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button></a>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="my-4 text-center ws-footer-content">Copyright <i class="fas fa-copyright"></i> 2021 TECVICO
+                group - all
+                rights reserved</div>
+        </div>
+    </div>
+
+
+
+    <script src="{% static 'project/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'project/js/popper.min.js' %}"></script>
+    <script src="{% static 'project/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'project/js/workshop.js' %}"></script>
+    <script src="{% static 'project/js/myjs.js' %}"></script>
+    <script src="{% static 'project/js/projectlist.js' %}"></script>
+{% endblock content %} 
+{% block script %}
+    <script>
+        var myCarousel = document.querySelector('#carouselExampleControls')
+        var carousel = new bootstrap.Carousel(myCarousel, {
+            interval: false,
+        })
+    </script>
+
+{% endblock script %}
+</body>
+
+</html>
+

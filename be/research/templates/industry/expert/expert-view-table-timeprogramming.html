@@ -1,0 +1,107 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="far fa-clock"></i> WBS</h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div style="margin-left: 150px;" class="col-md-9 mt-3">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="">
+                        <div class="text-white">
+                            <div class="modal-dialog modal-lg text-white">
+                                
+                                <table class="table table-hover table striped">
+                                    <h4>Timetable</h4>
+                                    <thead class="text-dark" style="background-color:#ADD8E6">
+                                        <tr>
+                                            <th>
+                                                Topic
+                                            </th>
+                                            <th>From
+                                            </th>
+                                            <th>To
+                                            </th>
+                                            
+                                            
+                                        </tr>
+                                        
+                                    </thead>
+                                    
+                                    
+                                    <tbody class=" table-dark">
+                                        {% for i in prog %}
+                                    <tr>
+                                        <td>
+                                             {{i.topic}}
+                                        </td>
+                                       
+                                        <td>
+                                            {{i.start_date}}
+                                            
+                                        </td>
+                                        
+                                        <td>
+                                             {{i.end_date}}
+                                        </td>
+                                    </tr>
+                                   
+                                    
+                                    
+                                {% endfor %}
+                                        
+                                        
+                                        
+                                    </tbody>
+                                    
+                                    
+                                </table>
+                                    <a href="{% url 'industry:industry-expert-contract' form_client.pk %}"></div>
+                                        <button style="margin-left: 350px;" type="submit" class="btn btn-success">Back</button>
+                                    </div></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+
+{% endblock script %}

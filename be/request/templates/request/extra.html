@@ -1,0 +1,104 @@
+<section>
+    <div class="container">
+        <div class="contactinfo">
+            <div>
+                <h2>Attention!!</h2>
+                <ul class="info">
+                    <li>
+                        <span>you can select skill<br>
+                        from the list below<br>
+                        that you want to get the badge<br></span>
+                    </li>
+                    <li>
+                        <span>If you do not find the itemyou are looking for<br>
+                        select others at the end of list<br>
+                        and type the skill<br></span>
+                    </li>
+                    <li>
+                        <span>you have to pay<br>
+                        for the badge<br>
+                        after submitting<br></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="contactForm">
+            <div class="formBox">
+                <div>
+                    <h2>Aplicant:</h2>
+                    <p>{{user.get_full_name}}</p>
+                </div>
+                <div>
+                    <h2>request for:</h2>
+                    <p>{{form.skills}} badge</p>
+                </div>
+            </div>
+            <h2 style="margin-top: 10px;">Select reviewer or interviewer</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="formBox">
+                    <div class="dropdown">
+                        <input type="text" class="textBox R-or-I" placeholder="Choose" name="status" readonly>
+                        <div class="option">
+                            <div onclick="show('reviewer')"></i>Reviewer</div>
+                            <div onclick="show('interviewer')"></i>Interviewer</div>
+                        </div>
+                    </div>
+                    <div class="interviewer d-none">
+                        <div class="select-user">
+                            <select name="interviewer">
+                                <option value="">-------</option>
+                                {% for person in interviewer %}
+                                <option value={{person.user.id}}>{{person.user.get_full_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="reviewer d-none">
+                        <div class="select-user">
+                            <select name="reviewer">
+                                <option value="">-------</option>
+                                {% for person in reviewer %}
+                                <option value={{person.user.id}}>{{person.user.get_full_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="inputBox w100" style="margin-top: 30px;">
+                        <input type="number" class="d-none" name="form_id" value="{{form.id}}">
+                        <input type="submit" value="send">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<script>
+    let reviewer = document.querySelector('.reviewer');
+    let interviewer = document.querySelector('.interviewer')
+    let dropdown = document.querySelector('.dropdown')
+
+    function show(skill) {
+        reviewer.classList.add('d-none')
+        interviewer.classList.add('d-none')
+        document.querySelector('.textBox').value = skill
+        if (skill == "reviewer"){
+            reviewer.classList.remove('d-none')
+        }
+        else{
+            interviewer.classList.remove('d-none')
+        }
+    }
+
+    reviewer.onclick = function(){
+        reviewer.classList.toggle('active')
+    }
+
+    interviewer.onclick = function(){
+        interviewer.classList.toggle('active')
+    }
+
+    dropdown.onclick = function(){
+        dropdown.classList.toggle('active')
+    }
+</script>

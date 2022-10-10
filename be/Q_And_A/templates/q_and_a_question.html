@@ -1,0 +1,232 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load humanize %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load q_and_a_filters %}
+
+{% block content %}
+<!-- HEADER SECTION -->
+<div id="faq-header-section2" style="padding-top:200px">
+    <div class="dark-overlay2">
+        <div class="faq-header-inner2">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">{% trans "Q & A" %}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<section id="q-and-a-section2" class="text-dark py-5 px-3" style="background:#eee;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <span class="h2"><span class="badge badge-success"><i class="fa fa-question"></i></span></span>
+                <h2 class="d-inline">{{selected_question}}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 bg-light p-4 m-3">
+                {% if answers %}
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h4>{% trans 'Answers' %}</h4>
+                    </div>
+                </div>
+                <hr>
+                {% for answer in answers %}
+                    <div class="row">
+                        <div class="col-md-1 col-3 text-center"><img src="{{answer.user.memberprofile.image.url}}" alt="user" class="img-fluid rounded-circle"></div>
+                        <div class="col-md-11 col-9">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h6 class="text-primary">{{answer.user.first_name}} {{answer.user.last_name}}</h6>
+                                </div>
+                                <div class="col-6 text-right">
+                                    <h6 class="text-primary d-inline" dir="auto">{{answer.date_created|naturaltime}}</h6>
+                                    {% if is_manager %}
+                                    <button class="btn btn-danger btn-sm" onclick="openDeleteModal('{{answer.pk}}')"><i class="fa fa-times"></i></button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <p><strong>{{answer.answer}}</strong></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 text-right">
+                                    <button class="btn {% if user|has_liked:answer %}btn-success{% else %}btn-outline-success{% endif %} like-btn" answer-pk="{{answer.pk}}"><i class="fa fa-thumbs-up"></i> <span class="like-count">{{answer.answerlike_set.all.count}}</span></button>
+                                    <button class="btn {% if user|has_disliked:answer %}btn-danger{% else %}btn-outline-danger{% endif %} dislike-btn" answer-pk="{{answer.pk}}"><i class="fa fa-thumbs-down"></i> <span class="dislike-count">{{answer.answerdislike_set.all.count}}</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                {% endfor %}
+                {% else %}
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h4 class="text-danger">{% trans 'No answer yet.' %}</h4>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 bg-light p-4 m-3">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        {% if user.is_authenticated %}
+                        <h4>{% trans 'Your answer' %}</h4>
+                        {% else %}
+                        <h4 class="text-danger">{% trans 'Please' %} <a href="{% url 'login' %}?next={{request.path}}">{% trans 'login' %}</a> {% trans 'to submit your answer' %}</h4>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if user.is_authenticated %}
+                <form method="post" dir="auto">
+                    {% csrf_token %}
+                    <textarea name="question-answer" class="form-control" placeholder="{% trans 'type your answer here...' %}"></textarea>
+                    <button class="btn btn-success mt-3"><i class="fa fa-check"></i> {% trans 'Submit' %}</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MESSAGE MODAL -->
+<div class="modal" id="MessageModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark"><i class="fa fa-warning text-warning"></i></h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+          <p id="modalMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" data-dismiss="modal">{% trans 'Close' %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if is_manager %}
+<!-- DELETE MODAL -->
+<div class="modal" id="DeleteModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark"><i class="fa fa-question text-info"></i></h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+          <form method="post">
+              {% csrf_token %}
+              <input type="text" class="d-none" name="delete-answer">
+              <p>Are you sure you want to delete this?</p>
+              <button class="btn btn-success">{% trans 'Yes' %}</button>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" data-dismiss="modal">{% trans 'Close' %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock content %}
+
+{% block script %}
+{% if is_manager %}
+<script>
+    function openDeleteModal(answerPk) {
+        $('input[name="delete-answer"]').val(answerPk);
+        $('#DeleteModal').modal('show');
+    }
+</script>
+{% endif %}
+<script>
+    $('.like-btn').on('click', (event) => {
+       let clickedBtn = $(event.currentTarget);
+       let answerPk = clickedBtn.attr('answer-pk');
+
+       {% if user.is_authenticated %}
+       $.ajax({
+            url: "{{request.path}}",
+            type: "POST",
+            data: {
+                'like-answer': answerPk,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (data) {
+                if (data['success']) {
+                    let currentValue = parseInt(clickedBtn.find('.like-count').text());
+                    if (data['action'] === 'request') {
+                        clickedBtn.find('.like-count').text(currentValue + 1);
+                        clickedBtn.removeClass('btn-outline-success');
+                        clickedBtn.addClass('btn-success');
+                    }
+                    else if (data['action'] === 'withdraw') {
+                        clickedBtn.find('.like-count').text(currentValue - 1);
+                        clickedBtn.removeClass('btn-success');
+                        clickedBtn.addClass('btn-outline-success');
+                    }
+                }
+                else {
+                    $("#modalMessage").text(data['error']);
+                    $('#MessageModal').modal('show');
+                }
+            }
+        });
+        {% else %}
+        $("#modalMessage").text("You need to login first");
+        $('#MessageModal').modal('show');
+        {% endif %}
+    })
+
+    $('.dislike-btn').on('click', (event) => {
+       let clickedBtn = $(event.currentTarget);
+       let answerPk = clickedBtn.attr('answer-pk');
+
+       {% if user.is_authenticated %}
+       $.ajax({
+            url: "{{request.path}}",
+            type: "POST",
+            data: {
+                'dislike-answer': answerPk,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (data) {
+                if (data['success']) {
+                    let currentValue = parseInt(clickedBtn.find('.dislike-count').text());
+                    if (data['action'] === 'request') {
+                        clickedBtn.find('.dislike-count').text(currentValue + 1);
+                        clickedBtn.removeClass('btn-outline-danger');
+                        clickedBtn.addClass('btn-danger');
+                    }
+                    else if (data['action'] === 'withdraw') {
+                        clickedBtn.find('.dislike-count').text(currentValue - 1);
+                        clickedBtn.removeClass('btn-danger');
+                        clickedBtn.addClass('btn-outline-danger');
+                    }
+                }
+                else {
+                    $("#modalMessage").text(data['error']);
+                    $('#MessageModal').modal('show');
+                }
+            }
+        });
+        {% else %}
+        $("#modalMessage").text("You need to login first");
+        $('#MessageModal').modal('show');
+        {% endif %}
+    });
+</script>
+{% endblock script %}

@@ -1,0 +1,72 @@
+{% load static %}
+{% if workshops %}
+    {% for work in workshops %}
+    <div class="item d-flex align-items-center">
+        <img class="workshop_img" src="{{work.image.url}}" alt="">
+        <img class="discount" src="img/discount.png" alt="">
+        <div class="text pt-3">
+            <h6>Workshop ID:  {{work.unique_id}}</h6>
+            {%if work.expire%}
+            <span style="float:right;background:#f52929;padding:1%;border-radius:10px" class="badge badge-danger">Held</span>
+            {%endif%}
+            <h5 class="fw-bold">{{work.title}}</h5>
+            <p class="w-75">{{work.description|truncatewords:20|safe}}</p>
+            <div class="author text-black mt-3">
+                <span class="fw-bold"></span>
+                {% for speaker in work.speaker %}
+                    <div class="fw-bold">{{speaker}}</div>
+                {% endfor %}
+            </div>
+            <span class="me-3 mt-3 mt-md-0">
+                <i class="fa fa-language mx-1"></i>
+                <span class="fw-bold text-black">Language :</span>
+                <span class="fw-bold text-black">{{work.language}}</span>
+            </span>
+            <div class="icon & btn d-flex  align-items-center justify-content-between ">
+                <div class="icon d-flex align-items-center">
+                    <div class="date d-flex align-items-center mx-2">
+                        <img src="{% static 'workshop_view/img/clock.svg' %}" class="mx-1" alt="">
+                        <span class="text-muted">{{work.start_time}}</span>
+                    </div>
+                    <div class="date d-flex align-items-center mx-2">
+                        <img src="{% static 'workshop_view/img/date.svg' %}" class="mx-1" alt="">
+                        <span class="text-muted">{{work.date}}</span>
+                    </div>
+                    <div class="date d-flex align-items-center mx-2">
+                        <!--<img src="{% static 'workshop_view/img/date.svg' %}" class="mx-1" alt="">-->
+                        <span class="" style="font-weight:600">Price: ${{work.price}}</span>
+                    </div>
+                </div>
+                <div class="btn d-flex align-items-center">
+                    <a href="{% url 'view-workshop' work.pk %}" class="view   mx-2">View</a>
+                    {% comment %} {% if user.is_authenticated %}
+                            <a href="{% url 'is-login' work.id %}" class="buy   mx-2 d-flex align-items-center justify-content-center">
+                                Buy
+                                <img src="{% static 'workshop_view/img/icons_buy.svg' %}" alt="">
+
+                            </a>
+                    {%else%}
+                            <a href="{% url 'simple-register' %}?next=../../workshop/is-login/{{work.id}}" class="buy   mx-2 d-flex align-items-center justify-content-center">
+                                Buy
+                                <img src="{% static 'workshop_view/img/icons_buy.svg' %}" alt="">
+
+                            </a>
+                    {%endif%} {% endcomment %}
+
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% endfor %}
+    <div class="d-flex justify-content-center  mt-5">
+        <div class="pagination d-flex ">
+            <ul class="d-flex justify-content-center"> <!--pages or li are comes from javascript --> </ul>
+        </div>
+    </div>
+{% else %}
+<div>
+    <h2>There is no workshop with this information</h2>
+</div>
+{% endif %}

@@ -1,0 +1,75 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block content %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!-- HEADER SECTION -->
+<header id="courses-header-section">
+    <div class="dark-overlay">
+        <div class="courses-header-inner">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">{{course.title}}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- COURSES SECTION -->
+<section id="courses-section" class="bg-light text-dark py-5 px-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                {{course.description}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                {% if course.courseitem_set.all %}
+                <div class="list-group list-group-root well my-3">
+                    {% for course_item in course.courseitem_set.all %}
+                        {% with listCount=forloop.counter %}
+                        <a href="#item-{{listCount}}" class="list-group-item bg-light text-dark" data-toggle="collapse"
+                        role="button" aria-expanded="true" aria-controls="item-1">
+                            {% if course_item.courseitem_set.all %}
+                                <i class="fa fa-chevron-right"></i>
+                            {% endif %}
+                            {{course_item.item_name}}
+                        </a>
+                            <div class="collapse" id="item-{{listCount}}">
+                                {% for nested_item in course_item.courseitem_set.all %}
+                                {% with nestedListCount=forloop.counter %}
+                                <a href="#item-{{listCount}}-{{nestedListCount}}" class="list-group-item text-dark padding-left-50" data-toggle="collapse">
+                                    {% if nested_item.courseitem_set.all %}
+                                        <i class="fa fa-chevron-right"></i>
+                                    {% endif %}
+                                    {{nested_item.item_name}}
+                                </a>
+                                {% if nested_item.courseitem_set.all %}
+                                <div class="collapse" id="item-{{listCount}}-{{nestedListCount}}">
+                                    {% for nested_nested_item in nested_item.courseitem_set.all %}
+                                    <span class="list-group-item padding-left-100">{{nested_nested_item.item_name}}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                {% endfor %}
+                            </div>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    $('.list-group-item').on('click', function() {
+    $('.fa', this)
+      .toggleClass('fa-chevron-right')
+      .toggleClass('fa-chevron-down');
+  });
+</script>
+{% endblock content %}

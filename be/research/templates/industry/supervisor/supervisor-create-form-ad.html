@@ -1,0 +1,291 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% load dashboard_filter %}
+{% load crispy_forms_tags %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'ivc_website/css/intlTelInput.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+{% endblock css %}
+
+{% block content %}
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-plus"></i>Advertisement form</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+    <!-- ACTIONS -->
+    
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    
+    <!-- PROJECTS -->
+    <section id="projects">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="card mb-2 text-white">
+                        <div class="card-header text-dark">
+                            <!--<h4>Please fill out this form to define a new project<span>
+                                <button style="margin-left: 480px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1" >
+                                    Help
+                                </button>
+                            </span></h4>-->
+                            <p style="font-size:1.1em"><span style="color:darkorange">Note:</span> TECVICO advertisement team aims at adverting your project. Thus, it will use some information you
+                            provided. The quality of advertisement directly depends on the information. If the fields were
+                            incorrectly filled in, efficiency of advertisement will decrease. If you would like to provide us with more
+                            correct information, please contact “adv@tecvico.com”.</p>
+                        </div>
+                        <form method="POST" style="color:white" id="aform" enctype="multipart/form-data">{% csrf_token %}
+                            
+                            <div class="content my-1 px-4">
+                                <div class="row py-2">
+                                    <!-- grade -->
+                                    <div class="col-md-6">
+                                        <div class="form-group ">
+                                            <label class="form-label">Grade of project</label>
+                                            <textarea class="form-control fff" name="grade"  id="f1" rows="3" oninput="ClearErr('f1')" readonly cols="10">{{sup.client_form.status_value|title}}</textarea>
+                                                <div id="f1_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+                                    <!-- skills_required -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Skills required to attend in project (Add some bullets) <span style="color: red">*</span></label>
+                                            <textarea class="form-control fff" name="skills_required" id="f2" rows="3" cols="10" oninput="ClearErr('f2')" style="max-width: 100%;">{% if sup.skills_required %}
+                                                {{sup.skills_required}}{% endif %}</textarea>
+                                                <div id="f2_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+                                    <!-- project_ponsored -->
+                                    <div class="col-md-6">
+                                        <div class="form-group ">
+                                            <label class="form-label">Project will be sponsored by (Company or University or Institute)</label>
+                                            
+                                            <textarea class="form-control" name="project_ponsored" id="f3" rows="3" oninput="ClearErr('f3')" cols="10">{% if sup.project_ponsored %}{{sup.project_ponsored}}{% endif %}</textarea>
+                                            <div id="f3_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- informative_bullets -->
+                                    <div class="col-md-6">
+                                        <div class="form-group ">
+                                            <label class="form-label" style="font-size:14px">Few informative bullets to describe content of project (maximum: 6 bullets)<span style="color: red">*</span></label>
+                                            <textarea class="form-control fff" id="f4" name="informative_bullets" rows="3" oninput="ClearErr('f4')" cols="10">{% if sup.informative_bullets %}{{sup.informative_bullets}}{% endif %}</textarea>
+                                            <div id="f4_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- fruitful_countries  -->
+                                    <div class="col-md-6">
+                                        <div class="form-group ">
+                                            <label class="form-label">Suggest fruitful countries</label>
+                                            <textarea class="form-control" id="f5" name="fruitful_countries" rows="3" oninput="ClearErr('f5')" cols="10">{% if sup.fruitful_countries %}{{sup.fruitful_countries}}{% endif %}</textarea>
+                                            <div id="f5_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+                                    <!-- motivating_keywords -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Motivating keywords (Maximum: 6 keywords)</label>
+                                            <textarea class="form-control" id="f6" name="motivating_keywords" rows="3" oninput="ClearErr('f6')" cols="10">{% if sup.motivating_keywords %}{{sup.motivating_keywords}}{% endif %}</textarea>
+                                            <div id="f6_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+                                    <!-- upload_pictures  -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Upload high quality related picture<span style="color: red">*</span></label>
+                                            <div >
+                                                <input type="file" class="form-control-file" name="upload_pictures" id="upload_pictures"  accept="image/*" oninput="CheckIndexAtt('upload_pictures')">
+                                                <div id="upload_pictures_error" style="color:red"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- benefit_of_members -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">What is the benefit of members being present in the project for them?<span style="color: red">*</span></label>
+                                            <textarea class="form-control fff" id="f7" name="benefit_of_members" rows="3" oninput="ClearErr('f7')" cols="10">{% if sup.benefit_of_members %}{{sup.benefit_of_members}}{% endif %}</textarea>
+                                            <div id="f7_error" style="color:red"></div>
+                                            
+                                        </div>
+                                    </div>
+                                    <!-- supervisor_information -->
+                                    <div class="col-md-12">
+                                        <div class="form-group"> 
+                                            <label class="form-label">
+                                                First supervisor’s information  
+                                                <span style="color: red">*</span>
+                                            </label>
+                                            <textarea class="form-control fff" id="f8" name="supervisor_information" rows="3" oninput="ClearErr('f8')" cols="10">{% if sup.supervisor_information %}{{sup.supervisor_information}}{% endif %}</textarea>
+                                            <div id="f8_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- social_platforms -->
+                                    <div class="col-md-12">
+                                        <div class="form-group ">
+                                            <label class="form-label">Suggested helpful social media platforms (name of related groups and links) which you think they are useful to advertise</label>
+                                            <textarea class="form-control" id="f9" name="social_platforms" rows="3" oninput="ClearErr('f9')" cols="10">{% if sup.social_platforms %}{{sup.social_platforms}}{% endif %}</textarea>
+                                            <div id="f9_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                    
+                            </div>
+
+                         
+
+                            
+                            <div class="row mt-0">
+                                <div class="col text-start">
+                                     <button type="button" id="nextBtn" class="btn btn-success px-5"><i class="fa fa-check"></i> Next</button>
+                                </div>
+                                
+                            </div>
+                           
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content text-dark">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Help</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            TECVICO advertisement team aims at adverting your project. Thus, it will use some information you
+                            provided. The quality of advertisement directly depends on the information. If the fields were
+                            incorrectly filled in, efficiency of advertisement will decrease. If you would like to provide us with more
+                            correct information, please contact “adv@tecvico.com”.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+
+{% block script %}
+
+<script>
+var file_status;
+$(document).ready(function(){
+
+
+
+document.getElementById("nextBtn").addEventListener("click",function(){
+            var fields = document.getElementsByClassName("fff");
+            var count = 0;
+            for(var i=0; i<fields.length; i++){
+                var fieldID = fields[i].id;
+                var fieldVal = document.getElementById(fieldID).value;
+                if(fieldVal==""){
+                    document.getElementById(fieldID + "_error").innerHTML = "Error: please complete the field.";
+                    count++;
+                }
+                
+                
+            }        
+    
+    
+    
+    
+    
+    
+    
+            var file_pic = document.getElementById("upload_pictures").value;
+            
+            if(file_pic==""){
+                document.getElementById("upload_pictures_error").innerHTML='Error: please select an image.';
+            }
+            else if(file_status==true){
+                document.getElementById("upload_pictures_error").innerHTML='Error: file index is NOT valid (valid index: jpg, jpeg, png)';
+            
+            }else if(count >0){
+                
+            
+            }else{
+                document.getElementById("aform").submit();
+                document.getElementById('nextBtn').disabled = true; 
+            }
+          
+        });
+
+
+
+});
+
+function ShowfundDiv(){
+    var checkBox = document.getElementById("chkfund");
+    if (checkBox.checked == true){
+        document.getElementById("fundDiv").style.display = "block";
+    } else {
+        document.getElementById("fundDiv").style.display = "none";
+    }
+      
+  }
+  
+ function CheckIndexAtt(id){
+    file_status = false;
+    document.getElementById(id + "_error").innerHTML = '';
+    var file_name   = document.getElementById(id).value;
+	var index_dot=file_name.lastIndexOf(".")+1;
+	var ext=file_name.substr(index_dot);
+	if(!(ext=='jpg' || ext=='jpeg' || ext=='png' )) {
+		document.getElementById(id + "_error").innerHTML = '';
+		document.getElementById(id + "_error").innerHTML='file index is NOT valid (valid index: jpg, jpeg, png)';
+		document.getElementById(id + "_error").style.color = "red";
+		
+		file_status = true;	
+		
+	}   
+	
+	return file_status;
+        
+}
+
+
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+  
+    
+}
+
+    
+
+</script>
+
+
+{% endblock script %}

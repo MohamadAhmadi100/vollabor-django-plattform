@@ -1,0 +1,1008 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+{% load base %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+<style>
+    
+    body{
+    margin-top:20px;
+    background:#ebeef0;
+}
+
+.img-sm {
+    width: 46px;
+    height: 46px;
+}
+
+.panel {
+    box-shadow: 0 2px 0 rgba(0,0,0,0.075);
+    border-radius: 0;
+    border: 0;
+    margin-bottom: 15px;
+}
+
+.panel .panel-footer, .panel>:last-child {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.panel .panel-heading, .panel>:first-child {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.panel-body {
+    padding: 25px 20px;
+}
+
+
+.media-block .media-left {
+    display: block;
+    float: left
+}
+
+.media-block .media-right {
+    float: right
+}
+
+.media-block .media-body {
+    display: block;
+    overflow: hidden;
+    width: auto
+}
+
+.middle .media-left,
+.middle .media-right,
+.middle .media-body {
+    vertical-align: middle
+}
+
+.thumbnail {
+    border-radius: 0;
+    border-color: #e9e9e9
+}
+
+.tag.tag-sm, .btn-group-sm>.tag {
+    padding: 5px 10px;
+}
+
+.tag:not(.label) {
+    background-color: #fff;
+    padding: 6px 12px;
+    border-radius: 2px;
+    border: 1px solid #cdd6e1;
+    font-size: 12px;
+    line-height: 1.42857;
+    vertical-align: middle;
+    -webkit-transition: all .15s;
+    transition: all .15s;
+}
+.text-muted, a.text-muted:hover, a.text-muted:focus {
+    color: #acacac;
+}
+.text-sm {
+    font-size: 0.9em;
+}
+.text-5x, .text-4x, .text-5x, .text-2x, .text-lg, .text-sm, .text-xs {
+    line-height: 1.25;
+}
+
+.btn-trans {
+    background-color: transparent;
+    border-color: transparent;
+    color: #929292;
+}
+
+.btn-icon {
+    padding-left: 9px;
+    padding-right: 9px;
+}
+
+.btn-sm, .btn-group-sm>.btn, .btn-icon.btn-sm {
+    padding: 5px 10px !important;
+}
+
+.mar-top {
+    margin-top: 15px;
+}
+    
+    
+    
+    
+    
+    
+    
+</style>
+
+
+
+
+
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-info text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1><i class="fa fa-eye"></i> Project view </h1>
+                
+            </div>
+            <div class="col-md-6 text-right">
+                    <h5 class="btn btn-secondary fw-bold mb-1" style="font-weight:bold; color:#1AE8F9 ">
+                       Balance: ${{user.memberprofile.balance}}
+                        <br/>
+                        <a class="btn btn-warning btn-sm text-dark fw-bold px-4 my-1 mx-2" href="{% url 'create-checkout-session' %}"> 
+                            <i class="fas fa-money-check-alt text-dark" style='font-size:14px'></i> Charge
+                        </a>
+                    </h5>
+                </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}project{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation is sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is new</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <!-- new -->
+        <!-- new table theme -->         
+        <main class="container-fluid  ">
+            <div class="content my-4">
+                <div class="row px-4 py-2">
+                    {% if selected_project.is_valid %}
+                        {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                        <div class="col-md-3 my-1">
+                                <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                        </div>
+                        {% endif %}
+                     {% endif %}
+                    <div class="col-md-12">
+
+                        <h2 style="overflow: hidden">{{selected_project.title}}</h2>
+                        {% if selected_project.fund > 0 %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                    ${{selected_project.fund}}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if selected_project.status == 'Rejected' %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                 
+                                <span class="badge badge-danger">Reason of rejection</span>
+                                {{selected_project.reject_reason}}                            
+                                </div>
+                            </div>
+                        </div>
+
+                        {% endif %}
+
+                        {% if project_areas %}
+                            <div class="col-md-12">
+                                <label class="form-label">Project areas:</label>
+                                <div class="form-group ">
+                                    <span class="text-info bold"></span>
+                                        {% for project_area in project_areas %}
+                                        <span class="badge
+                                        {% if project_area.is_confirmed %}
+                                            {% if project_area.area.confirmed %}
+                                            badge-success
+                                            {% else %}
+                                            badge-danger
+                                            {% endif %}
+                                        {% else %}
+                                            badge-warning
+                                        {% endif %}
+                                            ">{{project_area.area}}</span>
+                                            {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+    
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="form-group ">
+                            <label class="form-label">ID</label>
+                            <input type="text" class="form-control" value="{{object.research.project.client_form.formclint.id_project}}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+
+                        <div class="form-group ">
+                            <label class="form-label">Title</label>
+                            <textarea class="form-control"  disabled>{{object.research.project.client_form.formclint.title}}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Position</label>
+                            <input type="text" class="form-control" value="{{position}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">  Start date</label>
+                            <input type="text" class="form-control" value="{{object.research.project.client_form.formclint.start_date}}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label"> End date</label>
+                            <input type="text" class="form-control" value=" {{object.research.project.client_form.formclint.end_date}}" disabled>
+                        </div>
+                    </div>
+                    <!--<div class="col-md-6">
+
+                        <div class="form-group ">
+                            <label class="form-label">Title:</label>
+                            <input type="text" class="form-control" value="{{object.research.project.client_form.formclint.title}}" disabled>
+                        </div>
+                    </div>-->
+                    
+                    <!--<div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">Owner</label>
+                            <input type="text" class="form-control" value="{{object.research.project.client_form.formclint.name}}" disabled>
+                        </div>
+                    </div>-->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Fund</label>
+                            <input type="text" class="form-control" value="${{object.research.project.client_form.formclint.fund}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">Dataset link</label>
+                            <div class="form-control">
+
+                                {% if object.research.project.client_form.formclint.data_set_link  %}
+                                <a href="{{object.research.project.client_form.formclint.data_set_link}}">Click</a>
+                                {% else %}
+                                <h6>There is no link</h6>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">Status</label>
+                            <div class="form-control">
+                                {% if object.research.status == 'on_going' %}
+                                    Ongoing
+                                {% elif object.research.status == 'on_hold' %}
+                                    Onhold
+                                {% else %}
+                                    {{object.research.status|title}}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="form-label">Abstract</label>
+                            <textarea class="form-control" rows="5" disabled>{{object.research.project.client_form.formclint.abstrack}}</textarea>
+                        </div>
+                    </div>
+        
+                    <!--<div class="col-md-12">
+                        <div class="form-group ">
+                            <label class="form-label">Abstract :</label>
+                            <input type="text" class="form-control" value=" {{object.research.project.client_form.formclint.abstrack}}" disabled>
+                        </div>
+                    </div>-->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Equipment</label>
+                            <textarea class="form-control" rows="5" disabled>{{object.research.project.client_form.formclint.equipment}}</textarea>
+                        </div>
+                    </div>
+                    <!--<div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Equipment :</label>
+                            <div class="form-control d-flex align-items-center flex-wrap">
+                                {{object.research.project.client_form.formclint.equipment}}
+                            </div>
+                        </div>
+                    </div>-->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Requirement</label>
+                            <textarea class="form-control" rows="5" disabled>{{object.research.project.client_form.formclint.requirement}}</textarea>
+                        </div>
+                    </div>
+                    {% if object.status_remove == 'request-accpet-by-director' or object.status_remove == 'request-accpet-by-expert' %}
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="form-label">Rejection reason</label>
+                            <textarea class="form-control" rows="5" disabled>{{object.comment}}</textarea>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if object.status == 'revised_by_expert' or object.status_remove != 'request-accpet-by-director' and object.status_remove != 'request-accpet-by-expert' %}
+                        {% if object.reason_rejection != None %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="form-label">Reason revision</label>
+                                <textarea class="form-control" rows="5" disabled>{{object.reason_rejection}}</textarea>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if object.status == 'send-contract' or object.status == 'revised_by_expert' %}
+                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12" >
+                        <div class="card text-info border-secondary bg-dark mb-3" style="height:210px">
+                          <div class="card-header text-center"><h5>Contract</h5></div>
+                          <div class="card-body text-light">
+                           
+                            <a  class="btn btn-danger" style="text-decoration:none;color:#fff" href="{{object.contract.url}}">Download</a>
+
+                            <hr class="border-secondary">
+                          </div>
+                            <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                data-bs-target="#send_contract_to_expert" class="btn btn-outline-secondary">
+                                Send the signed contract
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div style="margin-left: 365px" class="col-xl-4 col-lg-4 col-md-12 col-sm-12" >
+                        <div class="card text-light border-light bg-dark mb-3"style="height:137px">
+                          <div class="card-header"><h5>Expert's information</h5></div>
+                          <div class="card-body text-light">
+                              <h6 >Email: {{object.research.project.client_form.expert.researchrole.expert_email_address}}</h6>
+                          </div>
+                        </div>
+                    </div>
+                    </div>
+                    {% if object.research.status != 'done' and object.research.status != 'on_hold' %}
+                        {% if object.status_remove != 'request-accpet-by-director' and object.status_remove != 'request-accpet-by-expert' %}
+                            {% if object.status == 'confirmed' or object.status == 'confirmed-by-expert' %}
+
+                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                    data-bs-target="#create_comment " class="btn btn-warning mt-2">
+                                    Send a massage to the expert
+                                </button>
+                                
+    <!--================================================================================================================================-->
+<!--                     <br>         
+                    <br>         
+                    {% if request.GET.filter == "expert-comment" %}
+                    <a href="" class="text-center text-dark btn btn-warning">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-dark titlestyle">Expert's comment</h4>
+                        <p class="number ">{{new_projects_count}}</p>
+                    </a>
+                    {% else %}
+                        <a href="?filter=expert-comment" class="text-center text-white btn btn-primary">
+                            <i class="fa fa-check-circle"></i>
+                            <h4 class="text-white titlestyle">Expert's comment</h4>
+                            <p class="number ">{{new_projects_count}}</p>
+                        </a>
+                    {% endif %}  
+
+                    {% if request.GET.filter == "main-supervisor-comments" %}
+                    <a href="" class="text-center text-dark btn btn-warning">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-dark titlestyle">Main supervisor's comment</h4>
+                        <p class="number ">{{new_projects_count}}</p>
+                    </a>
+                    {% else %}
+                        <a href="?filter=main-supervisor-comments" class="text-center text-white btn btn-primary">
+                            <i class="fa fa-check-circle"></i>
+                            <h4 class="text-white titlestyle">Main supervisor's comment</h4>
+                            <p class="number ">{{new_projects_count}}</p>
+                        </a>
+                    {% endif %}                
+                                     -->
+                                    
+                    <div class="container bootdey">
+                        <div class="col-md-12 bootstrap snippets">
+
+                            <div class="panel">
+                                <div class="panel-body">
+                                <!-- Newsfeed Content -->
+                                <!--===================================================-->
+                                 {% for i in comment_to_expert %}
+                                    <div class="media-block">
+                                      <img src="{{i.sender.memberprofile.image.url}}" style='height: 60px; width: 60px; border-radius: 100px;'>
+                                      <div class="media-body">
+                                        <div class="mar-btm">
+                                          <a href="#" class="btn-link text-semibold media-heading box-inline"> You</a>
+                                          <p class="text-muted text-sm"> {{i.created}}</p>
+                                        </div>
+                                        <p>{{i.comment}}.</p>
+                                        
+                                
+                                        <div>
+                                         {% for r in i.comments.all %}
+                                          <div style="margin-left: 50px;" class="media-block">
+                                            <a class="media-left" href="#"><i class='fas fa-user-edit' style='font-size:36px'></i></a>
+                                            <div class="media-body">
+                                              <div class="mar-btm">
+                                                <a href="#" class="btn-link text-semibold media-heading box-inline">Expert</a>
+                                                <p class="text-muted text-sm">{{i.created}}</p>
+                                              </div>
+                                              <p>{{i.comment}}.</p>
+                                              
+                                              <hr>
+                                            </div>
+                                          </div>
+                                
+                                         {% endfor %}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <hr class="bg-secondary">
+                                 {% endfor %}
+
+                                 {% for i in comment_to_applicant %}
+                                    <div class="media-block">
+                                        <a class="media-left" href="#"><i class='fas fa-user-edit' style='font-size:36px'></i></a>
+                                      <div class="media-body">
+                                        <div class="mar-btm">
+                                          <a href="#" class="btn-link text-semibold media-heading box-inline"> Expert</a>
+                                          <p class="text-muted text-sm"> {{i.created}}</p>
+                                        </div>
+                                        <p>{{i.comment}}.</p>
+                                            <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                data-bs-target="#riply_comment_advisor{{i.pk}} " class="btn btn-warning mt-2">
+                                                Reply
+                                            </button>
+                                        
+                                        <div class="modal fade text-black" style="color:black" id="riply_comment_advisor{{i.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                
+                                                <form method="POST" action="{% url 'industry:applicant-reply-comment' object.pk %}" id="decform">{% csrf_token %}
+                                                    <div class="modal-content">
+                                                        <div class="modal-body">
+                                                            <input type="hidden" name="id_comment" value="{{i.id}}">
+                                                            <input type="hidden" name="position" value="{{position}}">
+                                                            <label  style="margin-right: 150px">Comment<span style="color:red;"> *</span></label>
+                                                            <div class="row">
+                                                                <div class="col-12"><textarea class="form-control" required name="comment" rows="3"></textarea></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" id="clsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary" >Send</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                                    
+                                        <div>
+                                         {% for r in i.comments.all %}
+                                          <div style="margin-left: 50px;" class="media-block">
+                                            <img src="{{request.user.memberprofile.image.url}}" style='height: 60px; width: 60px; border-radius: 100px;'>
+                                            <div class="media-body">
+                                              <div class="mar-btm">
+                                                <a href="#" class="btn-link text-semibold media-heading box-inline">You</a>
+                                                <p class="text-muted text-sm">{{r.created}}</p>
+                                              </div>
+                                              <p>{{r.comment}}.</p>
+                                              
+                                              <hr>
+                                            </div>
+                                          </div>
+                                
+                                         {% endfor %}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <hr class="bg-secondary">
+                                 {% endfor %}
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                             
+                                
+                       
+    <!--================================================================================================================================-->
+
+
+                                  <div class="w-100 d-flex justify-content-center mt-5">
+                                    <table class="table table-dark table-striped table-hover">
+                                      <thead>
+                                        <tr>
+                                          <th>Full name</th>
+                                          <th>Email</th>
+                                          <th>Email</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                            <tr>
+                                              <th>{{object.research.main_supervisor.get_full_name}}</th>
+                                              <td>Main supervisor</td>
+                                              <th>{{object.research.main_supervisor.email}}</th>
+                                            </tr>
+                                        {% for i in supervisors_info %}
+                                            <tr>
+                                              <th>{{i.user.get_full_name}}</th>
+                                              <td>Advisor</td>
+                                              <td>{{i.user.email}}</td>
+                                            </tr>
+                                        {% endfor %}
+
+                                        {% for i in mentors_info %}
+                                            <tr>
+                                              <th>{{i.user.get_full_name}}</th>
+                                              <td>Mentor</td>
+                                              <td>{{i.user.email}}</td>
+                                            </tr>
+                                        {% endfor %}
+
+                                        {% for i in members_info %}
+                                            <tr>
+                                              <th>{{i.user.get_full_name}}</th>
+                                              <td>Member</td>
+                                              <td>{{i.user.email}}</td>
+                                            </tr>
+                                        {% endfor %}
+
+                                        {% for i in learners_info %}
+                                            <tr>
+                                              <th>{{i.user.get_full_name}}</th>
+                                              <td>Learner</td>
+                                              <td>{{i.user.email}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                      </tbody>
+                                    </table>
+                                  </div>
+
+                                  <div class="w-100 d-flex justify-content-center mt-5">
+                                    <table class="table table-dark table-striped table-hover">
+                                      <thead>
+                                        <tr>
+                                          <th>Link</th>
+                                          <th>Date</th>
+                                          <th>Time</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {% for i in meeting_info %}
+                                            <tr>
+                                              <td>{{i.link_meeting}}</td>
+                                              <td>{{i.date_meeting}}</td>
+                                              <td>{{i.time_meeting}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                      </tbody>
+                                    </table>
+                                  </div>
+
+                                  <div class="w-100 d-flex justify-content-center mt-5">
+                                    <table class="table table-hover table striped">
+                                        <thead class="text-dark" style="background-color:#ADD8E6">
+                                            <tr>
+                                                <th>Topic
+                                                </th>
+                                                <th>Suggested start date</th>
+                                                <th>Suggested end date</th>
+                                                <th>Status</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class=" table-dark">
+                                            {% for i in prog %}
+                                                <tr>
+                                                    <td>{{i.topic}} </td>
+                                                    <td>{{i.start_date}}</td>
+                                                    <td>{{i.end_date}} </td>
+                                                    <td>
+                                                        {% applicant_wbs_status object.research.id i.id request.user %}
+                                                    </td>
+                                                    <td>
+                                                        {% applicant_wbs_button object.research.id i.id request.user %}
+                                                        
+                                                        <div class="modal fade" id="send_report-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog modal-lg">
+                                                                <div class="modal-content">
+                                                                    <form method="POST" id="sendForm{{i.id}}" action="{% url 'industry:project-report-applicant-wbs' %}">{% csrf_token %}
+                                                                        <div class="modal-body">
+                                                                            <div class="modal-body text-dark">
+                                                                                
+                                                                                <input type="hidden" name="id_project" value="{{object.research.id}}" >
+                                                                                <input type="hidden" name="id_project" id="id_id_pr" value="{{i.id}}" >
+                                                                                <div class="form-group col-md-12 mb-0">
+                                                                                </div>
+                                                                                <div class ="row">
+                                                                                    <div class="col-md-6 py-2">
+                                                                                        
+                                                                                     
+                                                                                        <p>question 1 : test test</p>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="row">
+                                                                                            
+                                                                                            
+                                                                                               <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg1{{i.id}}" value="excellent" id="ans11{{i.id}}">
+                                                                                              <label class="form-check-label" for="ans11{{i.id}}">
+                                                                                                option1
+                                                                                              </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg1{{i.id}}" value="good" id="ans21{{i.id}}" >
+                                                                                              <label class="form-check-label" for="ans21{{i.id}}">
+                                                                                                option2
+                                                                                              </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg1{{i.id}}" value="average" id="ans31{{i.id}}">
+                                                                                              <label class="form-check-label" for="ans31{{i.id}}">
+                                                                                                option3
+                                                                                              </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg1{{i.id}}" value="weak" id="ans41{{i.id}}" >
+                                                                                              <label class="form-check-label" for="ans41{{i.id}}">
+                                                                                                option4
+                                                                                              </label>
+                                                                                            </div>
+                                                                                        
+                                                                                        </div>
+                                                                                         <input type="hidden" name="question_1" id="question_1{{i.id}}" value="" class="form-control" />
+                                                                                        </div>
+                                                                                </div>
+                                                                                
+                                                                                <div class ="row">
+                                                                                    <div class="col-md-6 py-2">
+                                                                                        
+                                                                                     
+                                                                                        <p>question 2 : test test</p>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="row">
+                                                                                            
+                                                                                            
+                                                                                               <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg2{{i.id}}" value="excellent" id="ans12{{i.id}}" >
+                                                                                              <label class="form-check-label" for="ans12{{i.id}}">
+                                                                                                option1
+                                                                                              </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg2{{i.id}}"  value="good" id="22{{i.id}}">
+                                                                                              <label class="form-check-label" for="22{{i.id}}">
+                                                                                                option2
+                                                                                              </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg2{{i.id}}" value="average" id="ans32{{i.id}}">
+                                                                                              <label class="form-check-label" for="ans32{{i.id}}">
+                                                                                                option3
+                                                                                              </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg2{{i.id}}" value="weak" id="ans42{{i.id}}" >
+                                                                                              <label class="form-check-label" for="ans42{{i.id}}">
+                                                                                                option4
+                                                                                              </label>
+                                                                                            </div>
+                                                                                        
+                                                                                        </div>
+                                                                                         <input type="hidden" name="question_2" id="question_2{{i.id}}" value="" class="form-control">
+                                                                                        </div>
+                                                                                </div>
+                                                                                
+                                                                                <div class ="row">
+                                                                                    <div class="col-md-6 py-2">
+                                                                                        
+                                                                                     
+                                                                                        <p>question 3 : test test</p>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="row">
+                                                                                            
+                                                                                            
+                                                                                               <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg3{{i.id}}" value="excellent" id="ans13{{i.id}}">
+                                                                                              <label class="form-check-label" for="ans13{{i.id}}">
+                                                                                                option1
+                                                                                                  </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg3{{i.id}}" value="good" id="ans23{{i.id}}" >
+                                                                                              <label class="form-check-label" for="ans23{{i.id}}">
+                                                                                                option2
+                                                                                              </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg3{{i.id}}" value="average" id="ans33{{i.id}}">
+                                                                                              <label class="form-check-label" for="ans33{{i.id}}">
+                                                                                                option3
+                                                                                              </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg3{{i.id}}" value="weak" id="ans43{{i.id}}" >
+                                                                                              <label class="form-check-label" for="ans43{{i.id}}">
+                                                                                                option4
+                                                                                              </label>
+                                                                                            </div>
+                                                                                        
+                                                                                        </div>       
+                                                                                            <input type="hidden" name="question_3" id="question_3{{i.id}}" value="" class="form-control">
+                                                                                     </div>  
+                                                                               </div>
+                                                                                <div class ="row">
+                                                                                    <div class="col-md-6 py-2">
+                                                                                        
+                                                                                     
+                                                                                        <p>question 4 : test test</p>
+                                                                                    </div>
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="row">
+                                                                                            
+                                                                                            
+                                                                                               <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg4{{i.id}}" value="excellent" id="ans14{{i.id}}">
+                                                                                              <label class="form-check-label" for="ans14{{i.id}}">
+                                                                                                option1
+                                                                                              </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg4{{i.id}}" value="good" id="ans24{{i.id}}">
+                                                                                              <label class="form-check-label" for="ans24{{i.id}}">
+                                                                                                option2
+                                                                                              </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg4{{i.id}}" value="average" id="ans34{{i.id}}">
+                                                                                              <label class="form-check-label" for="ans34{{i.id}}">
+                                                                                                option3
+                                                                                              </label>
+                                                                                            </div>
+                                                                                            <div class="form-check mx-2">
+                                                                                              <input class="form-check-input" type="radio" name="ansg4{{i.id}}"  value="weak" id="ans44{{i.id}}" >
+                                                                                              <label class="form-check-label" for="ans44{{i.id}}">
+                                                                                                option4
+                                                                                              </label>
+                                                                                            </div>
+                                                                                        
+                                                                                        </div>
+                                                                                        <input type="hidden" name="question_4" id="question_4{{i.id}}" value="" class="form-control">
+                                                                                        </div>
+                                                                                </div>
+                                                                               
+                                                                               
+                                                                               
+                                                                                
+
+                                                                                <input type="hidden" name="wbs_id" value="{{i.pk}}">
+                                                                                <input type="hidden" name="obj_id" value="{{object.pk}}">
+                                                                                <input type="hidden" name="position" value="{{position}}">
+                                                                                
+                                                                                <div class="form-group col-md-12 mb-0">
+                                                                                    <div id="div_id_status" class="form-group">
+                                                                                        <input type="hidden" name="status" id="id_status" value="end_of_report" >
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" id="SendBtn" class="btn btn-success" onclick="sendAns({{i.id}});" >Send</button>
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        
+                                                        
+                                                        
+                                                    </td>
+                                                </tr>
+
+                                                
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                  </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div>
+                            
+                            <a href="{% url 'dashboard-myprojects-reserach' %}">
+                                <h5 class="btn btn-warning">Back</h5></a> 
+                            
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="send_contract_to_expert" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="POST" action="{% url 'industry:applicant-send-contarct-to-expert' %}" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="modal-body">
+                                <input type="hidden" name="obj_id" value="{{object.id}}">
+                                <input type="hidden" name="position_user" value="{{position}}">
+                                <input type="hidden" name="status" value="send-contract-to-expert">
+                                <div class="form-group col-md-12 mb-0" style="color: black">
+                                    <label>Upload the contract<span style="color:red">*</span></label>
+                                    <input type="file" class="form-control-file" required name="contract">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">Send</button>
+                                <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="modal fade text-black" style="color:black" id="create_comment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form method="POST" action="{% url 'industry:applicant-comment' %}" id="decform">{% csrf_token %}
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <input type="hidden" name="id_project" value="{{object.research.id}}">
+                                <input type="hidden" name="id_applicant" value="{{object.id}}">
+                                <input type="hidden" name="position" value="{{position}}">
+                                <!--<label class="text-dark">Expert</label>-->
+                                <input type="hidden" name="recipient" value="{{object.research.project.client_form.expert.id}}-send_to_expert">
+                                <!--<br>-->
+                                <!--<label class="text-dark">Main-supervisor</label>-->
+                                <!--<input type="checkbox" name="recipient" value="{{object.research.main_supervisor.id}}-send_to_main_supervisor">-->
+                                <br>
+                                <label  style="margin-right: 150px">Comment<span style="color:red;"> *</span></label>
+                                <div class="row">
+                                    <div class="col-12"><textarea class="form-control" required name="comment" rows="3"></textarea></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="clsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary" >Send</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</section>
+
+
+<script>
+    
+    $(document).ready(function(){
+       
+        
+        
+    });
+    
+function sendAns(id){
+   
+       
+       var ans1 = $("input[name='ansg1" +id +"']:checked").val();
+       $("#question_1"+id).val(ans1);
+       
+       var ans2 = $("input[name='ansg2" +id + "']:checked").val();
+        $("#question_2"+id).val(ans2);
+       
+       
+       var ans3 = $("input[name='ansg3" + id + "']:checked").val();
+        $("#question_3"+id).val(ans3);
+       
+       var ans4 = $("input[name='ansg4" +id + "']:checked").val();
+        $("#question_4"+id).val(ans4);
+       
+       
+      
+      
+       document.getElementById("sendForm"+id).submit();
+       
+       
+}   
+    
+</script>
+
+{% endblock content %}
+
+
+{% block script %}
+
+{% endblock script %}
+

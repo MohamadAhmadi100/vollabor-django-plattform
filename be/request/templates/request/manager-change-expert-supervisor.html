@@ -1,0 +1,278 @@
+{% extends "request/base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-5 pt-5">
+        <div class="col-12">
+            <h3 class="text-secondary">Supervisor's request page</h3>
+            
+        </div>
+        
+    </div>
+    <hr class="mb-3">
+    <div class="">
+        <div class="row" id="expert-box">
+            <div class="col-3"><h6>Applicant:</h6></div>
+            <div class="col-9"><h6>{{obj_supervisor.user.get_full_name}}</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Submission date:</h6></div>
+            <div class="col-9"><h6>{{obj_supervisor.created.date}}</h6></div>
+        </div>
+        
+        
+        {% if obj_supervisor.status == 'accepted_by_manager' or obj_supervisor.status == 'accepted_by_expert' %}
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Status:</h6></div>
+            <div class="col-9"><h6>Accepted</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Accepeted date:</h6></div>
+            <div class="col-9"><h6>{{obj_supervisor.accepted_date}}</h6></div>
+        </div>
+        {% elif obj_supervisor.status == 'rejected_by_manager' or obj_supervisor.status == 'rejected_by_expert'  %}
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Status:</h6></div>
+            <div class="col-9"><h6>Rejected</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Rejection date:</h6></div>
+            <div class="col-9"><h6>{{obj_supervisor.rejected_date}}</h6></div>
+        </div>
+
+        <div class="row mt-2" id="view-box">
+            <div class="col-3 "><h6>Rejection resaon:</h6></div>
+             
+        </div>
+        <div class="row mb-2" id="view-box">
+           
+             <div class="col-9 "><textarea class="form-control" disabled rows="3">{{obj_supervisor.comment}}</textarea></div>
+        </div>
+        {% elif obj_supervisor.status == 'revise_by_manager' or obj_supervisor.status == 'revise_by_expert'  %}
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Status:</h6></div>
+            <div class="col-9"><h6>Revised</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Revised date:</h6></div>
+            <div class="col-9"><h6>{{obj_supervisor.revised_date}}</h6></div>
+        </div>
+        {% endif %}
+    
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Email:</h6></div>
+            <div class="col-9"><h6>{{obj_supervisor.user.email}}</h6></div>
+        </div>
+
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Latest degree document:</h6></div>
+            <div class="col-9"><a class="badge badge-primary" href="{{obj_supervisor.latest_degree.url}}" target="_blank">Download</a></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Identification card:</h6></div>
+            <div class="col-9"><a class="badge badge-primary" href="{{obj_supervisor.identification.url}}" target="_blank">Download</a></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Recommendation letter:</h6></div>
+            <div class="col-9"><a class="badge badge-primary" href="{{obj_supervisor.recommendation_letter.url}}" target="_blank">Download</a></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Job letter:</h6></div>
+            <div class="col-9"><a class="badge badge-primary" href="{{obj_supervisor.valid_evidence.url}}" target="_blank">Download</a></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Latest resume:</h6></div>
+            <div class="col-9"><a class="badge badge-primary" href="{{obj_supervisor.latest_resume.url}}" target="_blank">Download</a></div>
+        </div>
+        <div class="row" id="expert-box">
+            <div class="col-3"><h6>Expert:</h6></div>
+            <div class="col-9"><h6>{{obj_supervisor.expert.get_full_name}}</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Expert's email:</h6></div>
+            <div class="col-9"><h6>{{obj_supervisor.expert.researchrole.expert_email_address}}</h6></div>
+        </div>
+        
+        
+    </div>
+    {% if obj_supervisor.status != 'accepted_by_manager' and obj_supervisor.status != 'accepted_by_expert' and obj_supervisor.status != 'rejected_by_manager' and obj_supervisor.status != 'rejected_by_expert' %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="">
+            <div class="row mt-3 px-1" id="view-box">
+                <div class="col-6">
+                    
+                            <lable for="accChk"> Manager's access</lable>
+                            {% if obj_supervisor.access_accept_reject == True %}
+                            <input type="checkbox" name="access_accept_reject" checked id="accChk" onchange="activeBtn();" />
+                            {% else %}
+                            <input type="checkbox" name="access_accept_reject" id="accChk" onchange="activeBtn();" />
+                            {% endif %}
+                   <br>
+                   <br>
+                    
+                   <label>Change expert<span style="color: red">*</span> </label>
+                    <select class="form-control" name="id_expert" id="id_id_expert" onchange="activeBtn();">
+                        <option value="0">--------</option>
+                        {% for expert in experts %}
+                            {% if expert.user.get_full_name != obj_supervisor.expert.get_full_name %}
+                                <option  value={{expert.user.id}}>{{expert.user.get_full_name}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                     <div id="id_id_expert_error" style="color:red"></div>
+                     
+                </div>
+            </div>
+            <div class="row mt-3 px-3">
+                
+                <button type="button" class="btn btn-primary " id="assignBtn" value="declined" >Assign</button>
+                {% if obj_supervisor.status == 'New' %}
+                <button type="button" class="btn btn-danger ml-1" value="declined" data-bs-toggle="modal" data-bs-target="#reject">Reject</button>
+                {% endif %}
+                <a href="{% url 'request:manager-list' %}"><button type="button" class="btn btn-warning ml-1">Back</button></a>
+            </div>
+            
+             <div class="mt-2 mb-5" id="Div_error" style="color:red"></div>
+             
+            <div class="modal fade text-black" style="color:black" id="Assign" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <h6>Are you sure to change the expert or give a manager's access?</h6>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                            <button type="submit" class="btn btn-primary px-4 mx-1" id="chngBtn" >Yes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </form>
+    {% else %}
+    <a href="{% url 'request:manager-list' %}" class="btn btn-warning"> Back</a>
+    {% endif %}
+    <div class="modal fade text-black" style="color:black" id="reject" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="{% url 'request:supervisor-reject' %}" id="RejForm" method="POST">{% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <input type="hidden" name="id_request" value="{{obj_supervisor.pk}}">
+                        <input type="hidden" name="position" value="manager">
+                        <label>Revision reason<span style="color:red">*</span></label>
+                        <textarea class="w-100 form-control" name="comment" id="comment"  oninput="ClearErr('decline_reason')" style="width: 350px;"></textarea>
+                        <div id="comment_error" class="text-danger"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="RejClsBtn" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" id="RejBtn" >Reject</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+   var firstcheckval;
+    var chkchng = false;
+    var selchng = false;
+$(document).ready(function(){
+    
+    
+     if(document.getElementById("RejBtn")){
+        document.getElementById("RejBtn").addEventListener("click",function(){
+            
+            var rejComment = document.getElementById("comment").value;
+            if(rejComment.length==0){
+                    document.getElementById("comment_error").innerHTML="Error: please enter the revision reason.";
+            }else{
+                document.getElementById('RejForm').submit();
+                document.getElementById('RejBtn').disabled = true;
+                document.getElementById('RejClsBtn').disabled = true;
+            }
+          
+        });
+    
+    } 
+    
+    
+    if(document.getElementById("assignBtn")){
+        document.getElementById("assignBtn").addEventListener("click",function(){
+            
+            if(selchng == true || chkchng == true ){
+                document.getElementById('Div_error').innerHTML ="";
+                $('#Assign').modal({backdrop: 'static', keyboard: false})  
+                $('#Assign').modal('show');
+            }else{
+                document.getElementById('Div_error').innerHTML = "Error: to continue, you must change the reviewer or click on the manager's access.";
+            }
+          
+        });
+    
+    } 
+    
+    if(document.getElementById('accChk')){
+        firstcheckval = document.getElementById('accChk').checked;
+    }
+    
+    
+    
+});
+    function activeBtn(){
+   
+    if(document.getElementById('accChk')){
+       var checkval = document.getElementById('accChk');
+        if(checkval.checked==firstcheckval){
+                    //document.getElementById('chngBtn').disabled = true;
+            chkchng = false;
+        }else{
+                    //document.getElementById('chngBtn').disabled = false;
+            chkchng = true;
+        }
+    }
+    
+    if(document.getElementById('id_id_expert')){
+        var selval = document.getElementById('id_id_expert');
+        if(selval.value=="0"){
+                //document.getElementById('chngBtn').disabled = true;
+                //var element = document.getElementById("txtDiv");
+                //element.classList.add("d-none");
+                //document.getElementById("last_exp_comemnt_error").innerHTML="";
+                selchng = false;
+        }else{
+                //document.getElementById('chngBtn').disabled = false;
+                //var element = document.getElementById("txtDiv");
+                //element.classList.remove("d-none");
+                selchng = true;
+        }
+    }
+    
+    
+    
+    /*if(document.getElementById('chngBtn')){
+        if(selchng == true || chkchng == true ){
+            //alert("ok");
+            document.getElementById('chngBtn').disabled = false;
+        }else{
+            document.getElementById('chngBtn').disabled = true;
+        }
+    }*/
+    
+    
+    
+    
+    //document.getElementById('chngBtn').disabled = false;
+    //document.getElementById(id+"_error").innerHTML="";
+}
+    
+    
+    
+    
+</script>
+
+{% endblock %}

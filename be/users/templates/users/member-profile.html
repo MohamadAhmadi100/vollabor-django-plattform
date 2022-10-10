@@ -1,0 +1,82 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load member_filter %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!-- HEADER SECTION -->
+<header id="member-header-section">
+    <div class="member-header-inner">
+        <div class="row d-flex flex-wrap align-items-center">
+            <div class="col-12 text-center">
+                <h1 class="display-4">{% trans "Profile" %}</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- MEMBER PROFILE SECTION -->
+<section id="member-profile-section" class="bg-light text-dark py-5 px-3">
+    <div class="container">
+        <div class="team-single">
+            <div class="row">
+                <div class="col-lg-4 col-md-5">
+                    <div class="team-single-img">
+                        <img style="width: calc(100% - 30px);" src="{{profile.profile.image.url}}" alt="">
+                    </div>
+                    <div class="padding-30px-all negative-margin text-center">
+                        <h4 class="mb-3 text-muted">{{profile.company_position}}</h4>
+                        <div class="mt-3 team-single-icons">
+                            <ul>
+                                {% if profile.facebook_url %}
+                                <li><a href="{{profile.facebook_url}}" target="_blank"><i class="fa fa-facebook-f"></i></a></li>
+                                {% endif %}
+                                {% if profile.twitter_url %}
+                                <li><a href="{{profile.twitter_url}}" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                                {% endif %}
+                                {% if profile.linkedin_url %}
+                                <li><a href="{{profile.linkedin_url}}" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+                                {% endif %}
+                                {% if profile.instagram_url %}
+                                <li><a href="{{profile.instagram_url}}" target="_blank"><i class="fa fa-instagram"></i></a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8 col-md-7">
+                    <div class="team-single-text padding-50px-left sm-no-padding-left">
+                        <h4 class="font-size38 sm-font-size32 xs-font-size30">{{profile.profile.user.first_name}} {{profile.profile.user.last_name}}</h4>
+                        <p class="no-margin-bottom">{{profile.profile.about_me|linebreaks}}</p>
+                        <div class="contact-info-section margin-40px-tb">
+                            <ul class="list-style9 mt-5">
+                                <li>
+                                    <div class="row">
+                                        {% if profile.email %}
+                                        <div class="col-md-5 col-5">
+                                            <i class="fa fa-envelope text-pink"></i>
+                                            <strong class="margin-10px-left xs-margin-four-left text-pink">Email:</strong>
+                                        </div>
+                                        <div class="col-md-7 col-7">
+                                            <p><a href="mailto:{{profile.email}}">{{profile.email}}</a></p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

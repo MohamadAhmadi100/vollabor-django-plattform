@@ -1,0 +1,494 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-file-signature"></i>Contract</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="industry-director">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-3 text-center">
+
+                <div class="card-page">
+                    <div class="row justify-content-center align-items-center">
+                <!-- 1 -->
+                {% if request.GET.filter == "contract_supervisor" %}
+                <div class="col gold">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">New contract</h4>
+                        <p class="number ">{{new_contract_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col gold">
+                    <a href="?filter=contract_supervisor" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">New contract</h4>
+                        <p class="number ">{{new_contract_count}}</p>
+                    </a>
+                </div>
+                {% endif %}
+                
+                <!-- 2 -->
+                {% if request.GET.filter == "reject_contract_supervisor" %}
+                <div class="col gold">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle"> Revised contract</h4>
+                        <p class="number ">{{revise_contract_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col gold">
+                    <a href="?filter=reject_contract_supervisor" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle"> Revised contract</h4>
+                        <p class="number ">{{revise_contract_count}}</p>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mt-2">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="">
+                        <div class=" mb-5" style="overflow-x:auto;">
+                            {% if request.GET.filter == "contract_supervisor" %}
+                            <table class="table table-dark table-hover table-striped p-table">
+                                <thead>
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Title</th>
+                                    <th>Fund</th>
+                                    <th>Submission date</th>
+                                    <th>Suggested start date</th>
+                                    <th>Suggested end date</th>
+                                    <th>Position</th>
+                                    <th>Event date</th>
+                                    <th>Deadline</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                    {% for project in new_contract_advisor_list %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Mentor
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.event_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.deadline|naturaltime}}
+                                            </td>
+                                            <td class="p-name">
+                                                The contract was sent, pending for your signature
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-supervisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in new_contract_mentor_list %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Mentor
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.event_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.deadline|naturaltime}}
+                                            </td>
+                                            <td class="p-name">
+                                                The contract was sent, pending for your signature
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-mentor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in new_contract_member_list %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Mentor
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.event_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.deadline|naturaltime}}
+                                            </td>
+                                            <td class="p-name">
+                                                The contract was sent, pending for your signature
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-member-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in new_contract_learner_list %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Mentor
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.event_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.deadline|naturaltime}}
+                                            </td>
+                                            <td class="p-name">
+                                                The contract was sent, pending for your signature
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-learner-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                </tbody>
+                            </table>
+                            {% endif %}
+
+
+                            {% if request.GET.filter == "reject_contract_supervisor" %}
+                            <table class="table table-dark table-hover table-striped p-table">
+                                <thead>
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Title</th>
+                                    <th>Fund</th>
+                                    <th>Submission date</th>
+                                    <th>Suggested start date</th>
+                                    <th>Suggested end date</th>
+                                    <th>Position</th>
+                                    <th>Event date</th>
+                                    <th>Deadline</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                    {% for project in revise_contract_advisor_list %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Mentor
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.event_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.deadline|naturaltime}}
+                                            </td>
+                                            <td class="p-name">
+                                                Your signed contract needs a revision
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-supervisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in revise_contract_mentor_list %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Mentor
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.event_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.deadline|naturaltime}}
+                                            </td>
+                                            <td class="p-name">
+                                                Your signed contract needs a revision
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-mentor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in revise_contract_member_list %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Mentor
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.event_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.deadline|naturaltime}}
+                                            </td>
+                                            <td class="p-name">
+                                                Your signed contract needs a revision
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-member-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in revise_contract_learner_list %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Mentor
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.event_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.deadline|naturaltime}}
+                                            </td>
+                                            <td class="p-name">
+                                                Your signed contract needs a revision
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-learner-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                </tbody>
+                            </table>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selectedItem = $(this).val();
+        let itemClasses = {
+            "Golden": "bg-warning text-dark",
+            "Silver": "bg-secondary text-white",
+            "Bronze": "bg-danger text-white",
+            "Normal": "bg-dark text-white",
+        };
+        $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+        $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+    });
+</script>
+
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $("[name='project-value']").keypress(function (evt) {
+        let entered_value = evt.originalEvent.key;
+        let current_value = $(evt.currentTarget).val();
+        if (isNumeric(entered_value) || (entered_value === '.' && !(current_value.includes('.')))) {
+            // let input be entered
+        }
+        else {
+            evt.preventDefault();
+        }
+    });
+</script>
+{% endblock script %}

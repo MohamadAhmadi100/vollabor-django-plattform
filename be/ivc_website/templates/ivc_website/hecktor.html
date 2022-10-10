@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/timeline.css' %}"><link rel="stylesheet" href="css/all.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/timeline.css">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MV42WCDPR9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-MV42WCDPR9');
+    </script>
+</head>
+<body>
+<main class="single_page">
+    <div class="t-header">
+        <div class="row justify-content-center">
+            <div class="col-md-6 d-flex justify-content-center">
+                <div class="desc-header">
+                    <h1 class="title_single_page text-center">Hecktor 2021 Competition:
+                        HEad and neCK TumOR segmentation and outcome prediction in PET-CT images
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="mt-3 p-5">
+        <div class="container d-flex justify-content-center align-items-center flex-column">
+            <p class="mb-4">
+                After the success of the first HECKTOR challenge in 2020, this year another challenge was presented at
+                the 24th International Conference on Medical Image Computing and Computer Assisted Intervention (MICCAI)
+                on September 27th, 2021. The competition was about HEad and neCK TumOR segmentation and outcome
+                prediction in PET-CT images and a team was sent from TECVICO to participate in this competition. The
+                following is an explanation of the competition topic and the performance of the TECVICO team.
+            </p>
+
+            <div class="row mt-3 ">
+                <div class="col-md-6">
+                    <h4 style="color: #0b5ed7">Competition Description :</h4>
+                    <p>
+                        A team was sent from TECVICO to participate in this competition. The following is an explanation
+                        of the competition topic and the performance of the TECVICO team.
+                        Head and neck cancer (H&N) are among the most common types of cancer worldwide (fifth in terms
+                        of incidence) (Parkin et al. 2005). Radiation therapy in combination with cetuximab has
+                        established itself as the standard therapy (Bonner et al. 2010). Locoregional failures remain a
+                        major challenge, however, and occur in up to 40% of patients in the first two years after
+                        treatment (Chajon et al. 2013). Recently, several radiomics studies based on positron emission
+                        tomography (PET) and computed tomography (CT) have been proposed to better identify patients
+                        with a poorer prognosis in a non-invasive way and to make images such as these available for
+                        diagnosis and treatment to use. Planning (Vallières et al. 2017), (Bogowicz et al. 2017),
+                        (Castelli et al. 2017). Although very promising, these methods have been validated in 100-400
+                        patients. Further validation on larger cohorts (e.g. 300-3000 patients) is required to ensure an
+                        appropriate relationship between the number of variables and observations in order to avoid
+                        overestimating the generalization performance
+                    </p>
+                </div>
+                <div class="col-md-6 d-flex justify-content-center ">
+                    <img src="{% static 'ivc_website/news/img/hektor.png' %}" class="img-fluid w-100" alt="">
+                </div>
+            </div>
+            <p class="mt-3">
+                Such a validation requires the manual delineation of primary tumors and lymph
+                node
+                metastases for each patient and in three dimensions, which is persistent and error-prone. Methods for
+                automated lesion segmentation in medical images have been proposed in various contexts, which often
+                achieve an expert-level performance (Heimann and Meinzer 2009), (Menze et al. 2015). A surprisingly
+                small number of studies examined the performance of computer-assisted automated segmentation of tumor
+                lesions in PET and CT images (Song et al. 2013), (Blanc-Durand et al. 2018), (Moe et al. 2019). In 2020
+                we organized the first HECKTOR challenge and offered participants the opportunity to develop automatic
+                bimodal approaches for the 3D segmentation of H&N tumors in PET / CT scans with a focus on oropharyngeal
+                cancer. After good participation and promising results at Challenge 2020, we are now increasing the data
+                set by 76 new cases from another clinical center with a different PET / CT scanner model and the
+                associated reconstruction settings (CHU Milétrie, Poitiers, France). In addition, we are expanding the
+                scope of the challenge by adding an additional task with the aim of predicting the outcome based on the
+                PET / CT images. A clinically relevant endpoint that can be used to personalize patient management at
+                diagnosis is being considered: the prediction of progression-free survival in H&N oropharyngeal cancer.
+                By focusing on metabolic and morphological tissue properties, the PET and CT modalities include
+                complementary and synergistic information for the segmentation of cancerous lesions as well as tumor
+                features that are relevant for predicting patient outcome. In order to extract and use this information
+                in the best possible way, modern image analysis methods have to be developed. The data used in this
+                challenge are multicenter and include a total of four centers in Canada (Vallières et al. 2017), one
+                center in Switzerland (Castelli et al. 2017) and one center in France (Hatt et al. 2019; Legot.) . et
+                al. 2018) in a total of 330 patients with annotated primary tumors.
+                This Challenge included in three tasks as follow:
+                • Task 1: the automatic segmentation of head and neck (H&N) primary tumors in FDG-PET and CT images;
+                • Task 2: Predict patient outcomes, namely Progression Free Survival (PFS) from the FDG-PET / CT images
+                and available clinical data;
+                • Task 3: The prediction of the PFS (like task 2) from the FDG-PET / CT images and available clinical
+                data, with the exception that the ground truth annotations of primary tumors are used as inputs for the
+                Challenger algorithms by Docker Will be provided.
+                <br>
+            </p>
+
+            <h4 class="text-start middle-text fw-bold my-3" style="color: #0b5ed7">TECVICO <span>Team</span></h4>
+
+            <p>
+                Our team for Hecktor challenge consist of three groups as the three main processes for solving most of
+                AI problems. Firstly, the preprocessing group tried to normalize of 3D head and neck images and fuse the
+                two CT and PET images belong to the patients to generate new images witch have the details from both
+                types of image including head and neck information. The other two groups concentrated to survival
+                prediction from predicted binary 3D images as segmented areas for tumors each in separated task. The
+                methods which have been used in developing proposed methods presented in the 2021 MICCAI conference and
+                will be in access. The final result of our efforts resulted as 68% accuracy for survival prediction and
+                got the fourth rank in the leadership in comparison with the first rank of 71% as Qurit_Tecvico team.
+                You may be interested for visiting the challenge website and see the leaderboard
+                <a href="https://www.aicrowd.com/challenges/miccai-2021-hecktor/leaderboards?challenge_leaderboard_extra_id=899&challenge_round_id=879"
+                   class="d-inline-block"
+                   target="_blank"
+                >
+                    Here
+                </a>.
+                Also our team was selected to present the work they had done in Task 2 and presented their paper in an
+                oral session. You can see this
+                <a href="https://www.aicrowd.com/challenges/miccai-2021-hecktor#paper-submission" class="d-inline-block"
+                   target="_blank">Here</a>
+                in Oral Session 3.
+
+                <a href="news.html" class="d-flex justify-content-center align-items-center btn-news-back  ">
+                    <i class="fas fa-angle-left mx-2"></i>
+                    Back To News
+                </a>
+            </p>
+
+            <div class="social-media d-flex justify-content-center align-items-center my-4">
+                <a href=""><i class="fab fa-linkedin"></i></a>
+                <a href=""><i class="fab fa-instagram"></i></a>
+                <a href=""><i class="fab fa-twitter"></i></a>
+                <a href=""><i class="fab fa-facebook"></i></a>
+                <a href=""><i class="fab fa-telegram"></i></a>
+            </div>
+
+        </div>
+    </section>
+</main>
+<div>
+</div>
+
+</body>
+<script src="{% static 'ivc_website/news/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/main.js' %}"></script>
+
+</html>
+<script>
+</script>

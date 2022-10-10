@@ -1,0 +1,143 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'projects/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'projects/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'projects/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'projects/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'projects/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'projects/css/projects.css' %}">
+
+</head>
+<body>
+
+<main class="main-project">
+    <div class="t-header">
+        <div class="row justify-content-center">
+            <div class="col-md-6 d-flex justify-content-center">
+                <div class="desc-header">
+                    <h1 class="title_page text-center">PROJECTS</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="ag-timeline-block">
+            <div class="container-fluid">
+                <div class="ag_buttons d-flex justify-content-between  align-items-center mt-4">
+                    <h2>PROJECTS <span style="font-size: 19px">/Research</span> </h2>
+                    <div class="buttons">
+                        <div class=" buttons_header mx-2 d-flex justify-content-center align-items-center">
+                            <button class="btn categories  dropdown-toggle" type="button" id="categories"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                NEW
+                            </button>
+                            <ul class="projects-status dropdown-menu text-center " aria-labelledby="categories">
+                                <li><a class="dropdown-item {% if request.resolver_match.url_name == 'projects-page' %}active{% endif %}" href="{% url 'projects-page' %}">ALL</a></li>
+
+                                <li><a class="dropdown-item {% if request.resolver_match.url_name == 'research-project-main-page-done' %}active{% endif %}" href="{% url 'industry:research-project-main-page-done' %}">DONE</a></li>
+
+                                <li><a class="dropdown-item {% if request.resolver_match.url_name == 'research-project-main-page-new' %}active{% endif %}" href="{% url 'industry:research-project-main-page-new' %}">NEW</a></li>
+
+                                <li><a class="dropdown-item {% if request.resolver_match.url_name == 'research-project-main-page-on-going' %}active{% endif %}" href="{% url 'industry:research-project-main-page-on-going' %}">ONGOING</a></li>
+
+                            </ul>
+                            <button class="btn categories  dropdown-toggle" type="button" id="categories1"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                Research
+                            </button>
+                            <ul class="projects-categories dropdown-menu text-center " aria-labelledby="categories1">
+                                <li><a class="dropdown-item active" href="{% url 'projects-page' %}">Research</a></li>
+                                <li class="dropdown">Competition</li>
+                                <li class="dropdown">Industrial</li>
+
+
+                            </ul>
+                        </div>
+
+
+                    </div>
+                </div>
+                <hr class="mb-5">
+            </div>
+        </div>
+        <div class="container">
+            <section class="projects">
+                <div class="row">
+                    {% for i in object_list %}
+                    <div class="col-md-4 mt-2 p-3">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div class="card-logo d-flex align-items-center me-3">
+                                    <img class="img-fluid" src="img/logo_hand.png" alt="">
+                                    <h5 class="fw-bold mt-2">{{i.project.client_form.formclint.title}}</h5>
+                                </div>
+                                <div class="d-flex align-items-center text-muted">
+                                    <i class="fas fa-clock mx-2"></i>
+                                    {{i.created|naturaltime}}
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <h5 class="card-title">Special title treatment</h5>
+                                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam
+                                    cum cupiditate dolor ducimus, earum eius ex id ipsum magnam minima natus nostrum
+                                    odit providen .........</p>
+                                <div class="card_footer d-flex justify-content-between align-items-center">
+                                    <div class="avatars mt-2">
+                                        {% if i.picture_supervisor.memberprofile.image %}
+                                        <img class="img-fluid" src="{{i.picture_supervisor.memberprofile.image.url}}" alt="">
+                                        {% else %} 
+                                        <img class="img-fluid" src="{% static 'projects/img/default.jpg' %}" alt="">
+                                        {% endif %}
+
+                                        {% if i.picture_mentor.memberprofile.image %}
+                                        <img class="img-fluid" src="{{i.picture_mentor.memberprofile.image.url}}" alt="">
+                                        {% else %}
+                                        <img class="img-fluid" src="{% static 'projects/img/default.jpg' %}" alt="">
+                                        {% endif %}
+
+                                        {% if i.picture_member.memberprofile.image %}
+                                        <img class="img-fluid" src="{{i.picture_member.memberprofile.image.url}}" alt="">
+                                        {% else %}
+                                        <img class="img-fluid" src="{% static 'projects/img/default.jpg' %}" alt="">
+                                        {% endif %}
+                                    </div>
+                                    <a href="{% url 'projects-page-detail' i.pk %}"><div class="btn_view_back mx-2 mt-2 d-flex align-items-center justify-content-center">
+                                        <div class="btn btn_view d-flex align-items-center justify-content-center ">
+                                            view
+                                        </div>
+                                    </div></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center  mt-5">
+        <div class="pagination d-flex ">
+            <ul class="d-flex justify-content-center"> <!--pages or li are comes from javascript --> </ul>
+        </div>
+    </div>
+</main>
+
+<div>
+</div>
+
+</body>
+<script src="{% static 'projects/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'projects/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'projects/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'projects/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'projects/js/main.js' %}"></script>
+
+</html>
+

@@ -1,0 +1,303 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load task_tracker_filter %}
+
+{% block body_class %}bg-light{% endblock body_class %}
+
+{% block content %}
+    <div class="bg-light">
+        <header id="main-header" class="py-2 bg-info text-light ">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1><i class="fa fa-clock"></i> Manager list </h1>
+                    </div>
+                </div>
+                <div class="row ">
+                    <p class="card-text"> You can add your comment here when you see 'add comment' button
+                        <span class="text-bold text-light"></span></p>
+                </div>
+            </div>
+        </header>
+
+        <section id="task-tracker">
+            <div class="container">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger"> {{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- add new task -->
+            <div class="container mb-5 mt-5">
+                <form action="{% url 'add-employee-task' %}" class="d-md-flex justify-content-between" method="POST">
+                    {% csrf_token %}
+                    <div class="container">
+                        <div class="row mb-2">
+                            <div class="col-8">
+                                <label for="tomorrow" class="d-block"><h5>Add your employee task</h5></label>
+                                <textarea class="form-control" name="title" id="tomorrow" style="border-radius: 5px;" placeholder="Please write the title of the task..."></textarea>
+                            </div>
+                            <div class="col-4">
+                                <label for="duration-input" class="d-block">Suggested time</label>
+                                <input class="form-control" name="suggested_time" id="duration-input" style="border-radius: 5px;" type="text" required pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value="00:00:00" title="Write a duration in the format hh:mm:ss">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                <select name="user" class="form-control">
+                                {% for user in employee %}
+                                    <option value={{user.id}}>{{ user.get_full_name }}</option>
+                                {% endfor %}
+                                </select>  
+                            </div>
+                            <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                <input type="submit" class="btn btn-secondary" name="add" value="Submit"
+                                style="width: 50%;border-radius: 5px;">   
+                            </div>  
+                        </div>  
+                    </div>   
+                </form>
+            </div>
+
+            <div class="container my-5">
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table table-bordered mb-5" style="border-radius: 25px;">
+                            <thead>
+                            <tr class="table-info text-dark">
+                                <th class="text-center px-5">Title</th>
+                                <th class="text-center px-4">User</th>
+                                <th class="text-center px-3">suggest time</th>
+                                <th class="text-center px-5">Date</th>
+                                <th class="text-center px-5">Description</th>
+                                <th class="text-center px-3">Start time</th>
+                                <th class="text-center px-3">End time</th>
+                                <th class="text-center px-3">Duration</th>
+                                <th class="text-center px-4">Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in tasks %}
+                                <tr>
+                                    <td class="text-center">
+                                        {{ item.task.title|linebreaks }}
+                                    </td>
+                                    <td class="p-name text-center">
+                                        <p>{{ item.task.user.get_full_name }}</p>
+                                        <p style="font-size: 10px;" class="badge badge-danger">({{item.task.user_position}})</p>
+                                    </td>
+                                    <td class="p-name text-center">
+                                        {% if item.task.status == 'New' %}
+                                        <label for="duration-time" class="d-block">{{item.task.suggested_time}}</label>
+                                        <input type="number" class="d-none" id="taskPk" value="{{item.task.pk}}">
+                                        <input class="form-control" name="suggested_time" id="duration-time" style="border-radius: 5px;" type="text" required pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value="00:00:00" title="Write a duration in the format hh:mm:ss">
+                                        {% else %}
+                                        {{ item.task.suggested_time }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="p-name text-center">
+                                        {{ item.task.date }}
+                                    </td>
+                                    <td class="p-name text-center">
+                                        {% if item.task.task == "" %}
+                                            <p class="badge badge-secondary">Nothing yet</p>
+                                        {% else %}
+                                            {{ item.task.task|linebreaks }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="p-name text-center">
+                                    {% if item.task.start_time == None %}
+                                        <p class="badge badge-warning">--:--</p>
+                                    {% else %}
+                                        {{ item.task.start_time}}
+                                    {% endif %}
+                                    </td>
+                                    <td class="p-name text-center">
+                                    {% if item.task.end_time == None %}
+                                        <p class="badge badge-warning">--:--</p>
+                                    {% else %}
+                                        {{ item.task.end_time }}
+                                    {% endif %}
+                                    </td>
+                                    <td class="p-name text-center">
+                                        {% if item.task.end_time == None %}
+                                            <p class="badge badge-warning">wait for end</p>
+                                        {% else %}
+                                           {{ item.task.get_duration }}
+                                        {% endif %}
+                                        </td>
+                                    {% if item.task.status == 'New' %}
+                                    <td class="p-name text-center">
+                                        <button class="btn btn-success" id="confirmBtn">Confirm</button>
+                                    </td>
+                                    {% elif item.task.status == 'Confirm' %}
+                                    <td class="p-name text-center">
+                                        <p class="badge badge-primary">Not Started</p>
+                                    </td>
+                                    {% elif item.task.status == 'Start' %}
+                                    <td class="p-name text-center">
+                                        <p class="badge badge-primary">In progress</p>
+                                    </td>
+                                    {% elif item.task.status == 'Finished' %}
+                                    <td class="p-name text-center">
+                                        {% if item.comment == "" %}
+                                            <button class="btn btn-success" id="comment-btn" data-value="{{item.task.pk}}">Add Comment</button>
+                                        {% else %}
+                                            <p class="badge badge-danger">Comment Added</p>
+                                        {% endif %}
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <nav class="text-center">
+                    <ul class="pagination">
+                        {% if tasks.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?=page1">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?=page={{ tasks.previous_page_number }}">Previous</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">First</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Previous</a>
+                            </li>
+                        {% endif %}
+                        {% for num in tasks.paginator.page_range %}
+                            {% if tasks.number == num %}
+                                <li class="page-item active">
+                                    {% if url_filters != "" %}
+                                        <a class="page-link" href="?page={{ num }}&{{ url_filters }}">{{ num }}</a>
+                                    {% else %}
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    {% endif %}
+                                </li>
+                            {% elif num > tasks.number|add:'-3' and num < tasks.number|add:'3' %}
+                                <li class="page-item">
+                                    {% if url_filters != "" %}
+                                        <a class="page-link" href="?page={{ num }}&{{ url_filters }}">{{ num }}</a>
+                                    {% else %}
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if tasks.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ tasks.next_page_number }}&{{ url_filters }}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ tasks.paginator.num_pages }}&{{ url_filters }}">Last</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Last</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- ADD TASK MODAL -->
+            <div class="modal" id="addTaskModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-dark">Add Comment</h5>
+                           
+                        </div>
+                        <div class="modal-body text-dark">
+                            <form method="post" action="{% url 'manager-comment' %}">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" name="task" class="d-none">
+                                    <textarea name="comment" class="form-control"
+                                              placeholder="Add your comment here"
+                                              required></textarea>
+                                </div>
+                                <button class="btn btn-success my-2"><i class="fa fa-check"></i> Submit</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="modalClose" data-dismiss="modal">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+        </section>
+    </div>
+
+    <script language="JavaScript">
+        function showInput() {
+            document.getElementById('display').innerHTML =
+                document.getElementById("tomorrow").value;
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#delet").click(function () {
+                $("#display").empty();
+            })
+        })
+    </script>
+{% endblock content %}
+{% block script %}
+    <script>
+        $('#comment-btn').on('click', () => {
+             $('input[name="task"]').val($('#comment-btn').attr('data-value'));
+            $('#addTaskModal').modal('show');
+        });
+
+        $('#confirmBtn').click(function(){
+            suggested_time = $('#duration-time').val();
+            task_pk = $('#taskPk').val();
+           
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'confirm-task'%}",
+                data: {
+                    'suggested_time' : suggested_time,
+                    'task_pk':task_pk,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(){
+                    
+                    location.reload();
+                }
+            });
+        })
+        
+         $('#addTaskModal').on('shown.bs.modal', function (e) {
+             $("#modalClose").click(function () {
+                $('#addTaskModal').modal('hide');
+            })
+         });
+
+
+    </script>
+{% endblock script %}
+</section>

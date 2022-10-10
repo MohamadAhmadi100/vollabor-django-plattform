@@ -1,0 +1,36 @@
+.cm-text {
+    outline: 0;
+    height: 100px;
+    padding: 5px;
+    resize: none;
+}
+
+.slt-name {
+    outline: 0;
+    padding: 5px;
+    width: 180px;
+}
+
+.slt-name option {
+    width: 180px;
+    outline: 0;
+    padding: 5px;
+}
+
+.cmp {
+    width: 70%;
+    margin-left: 50px !important;
+}
+
+.bg-light-coral {
+    background-color: #ffd966;
+}
+
+.bg-color1 {
+    background-color: #8ECAE6;
+}
+
+/*.form-control {
+    width: 400px;
+    height: 100px;
+}*/

@@ -1,0 +1,26 @@
+.cartable-container {
+    margin-left: 90px;
+    margin-right: 30px;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+/* CARTABLE MENU */
+.cartable-menu:hover {
+    cursor: pointer;
+    background-color: #87c5ff;
+    text-decoration: none; /* no underline */
+    color: rgba(0, 0, 0, 0);
+}
+.selected-menu {
+    background-color: #b2d8fb;
+}
+
+/* CARTABLE TABLE */
+#cartable-table td{
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+

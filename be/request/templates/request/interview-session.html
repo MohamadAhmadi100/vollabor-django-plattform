@@ -1,0 +1,125 @@
+{% extends "request/base.html" %}
+{% block content %}
+<!-- table -->
+<section>
+    <div class="container pt-5">
+       
+           <!-- <div>
+                <h2>Attention!!</h2>
+                <ul class="info">
+                    <li>
+                        <span><br>
+                        <br>
+                        <br></span>
+                    </li>
+                </ul>
+            </div>-->
+       
+        <div>
+            <h2>Set the session</h2>
+            <form method="post" id="sessionform">
+                {% csrf_token %}
+                <div class="row mb-2">
+                    <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12">
+                        <label class="form-label" >Session link<span style="color:red">*</span></label>
+                        <input type="text" class="form-control" name="meeting_link" id="meeting_link" oninput="ClearErr('meeting_link')">
+                        <div id="meeting_link_error" style="color:red"></div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12">
+                        <label class="form-label" >Time<span style="color:red">*</span></label>
+                        <input type="datetime-local" class="form-control" id="datetime-local" name="start_at" oninput="ClearErr('datetime-local')">
+                        <div id="datetime-local_error" style="color:red"></div>
+                    </div>
+                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12">
+                        <label for="time_zone" class="form-label">Time zone<span style="color:red">*</span></label>
+                        <select name="time_zone"  id="time_zone" class="form-control">
+                            {% for zone in time_zone %}
+                            <option value="{{zone}}">{{zone}}</option>
+                            {% endfor %}
+                        </select>
+                        
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12">
+                        <label>Comment<span style="color:red">*</span></label>
+                        <textarea name="description" class="form-control" rows="5" id="description"  placeholder="Write your message..."  oninput="ClearErr('description')"></textarea>
+                        <div id="description_error" style="color:red"></div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12">
+                        
+                        <button type="button" class="btn btn-primary" id="subBtn" value="declined" >Send</button>
+                    </div>
+                </div>
+
+                <div class="modal fade text-black" style="color:black" id="submit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <h6>Are you sure to send the meeting information?</h6>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                <input type="button" id="subOKBtn" class="btn btn-primary px-5" value="Yes">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</section>
+<script>
+$(document).ready(function(){
+     
+    if(document.getElementById("subBtn")){
+    document.getElementById("subBtn").addEventListener("click",function(){
+              
+            var link=document.getElementById("meeting_link").value;
+            var sessionTime=document.getElementById("datetime-local").value;
+            var sessionComment = document.getElementById("description").value;
+            if(link==""){
+                
+                    document.getElementById("meeting_link_error").innerHTML="Error: please enter a meeting link";
+            }else if(sessionTime==""){
+                    document.getElementById("datetime-local_error").innerHTML="Error: please enter the session time.";
+            }else if(sessionComment==""){
+                    document.getElementById("description_error").innerHTML="Error: please enter the comment.";
+            }else{
+                 $('#submit').modal({backdrop: 'static', keyboard: false})  
+                $('#submit').modal('show');
+                //document.getElementById('sessionform').submit();
+                document.getElementById('subBtn').disabled = true;
+            }
+          
+        });
+        
+    }
+    
+    
+     document.getElementById("subOKBtn").addEventListener("click",function(){
+          document.getElementById('sessionform').submit();
+                document.getElementById('subOKBtn').disabled = true;
+         
+     })
+    
+  
+    
+    
+})
+
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+  
+    
+}
+
+
+</script>
+{% endblock %}

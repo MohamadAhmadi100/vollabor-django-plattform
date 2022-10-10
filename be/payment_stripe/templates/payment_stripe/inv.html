@@ -1,0 +1,321 @@
+ {% load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+ <link rel="stylesheet" type="text/css" href="{% static 'workshop/css/bootstrap.min.css' %}" />
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+<title>Invoice Page</title>
+
+<style>
+body{
+    margin-top:20px;
+    background-color: #f7f7ff;
+    font-family: Merriweather;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 500;
+    line-height: 14px;
+
+
+}
+#invoice {
+    padding: 0px;
+}
+
+.invoice {
+    position: relative;
+    background-color: #FFF;
+    min-height: 680px;
+    padding: 15px
+}
+
+.invoice header {
+    padding: 10px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+
+
+.invoice .inform {
+    margin-bottom: 20px
+}
+
+.invoice .inform span{
+    font-weight: bold;
+}
+
+
+
+.invoice main {
+    padding-bottom: 50px
+}
+
+.invoice main .thanks {
+    
+    margin: 50px 25px;
+	font-size:2em;
+}
+
+.invoice main .notices {
+    padding-left: 6px;
+    border-left: 6px solid #0d6efd;
+    background: #e7f2ff;
+    padding: 10px;
+}
+
+.invoice main .notices .notice {
+    font-size: 1.2em
+}
+
+
+
+.invoice footer {
+    width: 100%;
+    text-align: center;
+    color: #777;
+    border-top: 1px solid #aaa;
+    padding: 8px 0
+}
+
+@media print {
+    .invoice {
+        font-size: 11px !important;
+        overflow: hidden !important
+    }
+    .invoice footer {
+        position: absolute;
+        bottom: 10px;
+        page-break-after: always
+    }
+    .invoice>div:last-child {
+        page-break-before: always
+    }
+}
+
+.invoice main .notices {
+    padding-left: 6px;
+    border-left: 6px solid #0d6efd;
+    background: #e7f2ff;
+    padding: 10px;
+}
+
+</style>
+</head>
+<body>
+<div>
+    <div>
+        <div>
+            <div id="invoice">
+                <div class="invoice">
+                    <div>
+                        {% if not invoice.paymented == 0 %}
+                        <header>
+                            <div style="background-color:#444444;width:100%; overflow:auto">
+                                
+									<div style="margin:10px 10px;width:55%;float:left">
+										<img src="http://tecvico.com/static/ivc_website/img/logo1.png" style="min-width:250px" width="35%" alt="">
+									</div>
+									<div  style="font-weight:bold;font-size:18px;width:40%;float:left">
+										<div style="float:right; color:white; margin:20px 10px">
+                                            {% if invoice.pymeny_method == 'zarinpal' %}
+											<p style="text-align:left;margin-bottom:5px; font-size:1.1em">Invoice : {{RefID}}<span></span></p>
+                                            {% else %}
+                                            <p style="text-align:left;margin-bottom:5px; font-size:1.1em">Invoice : <span>{{invoice.id_pay}}</span></p>
+                                            {% endif %}
+											<p style="text-align:left;margin-bottom:1px;font-size:1.1em">Date : <span>{{invoice.success_date}}</span></p>
+										</div>
+									</div>
+                            </div>
+                        </header>
+                        {% endif %}
+                        <main>
+							<div class="row">
+							<h1 class="thanks">Thank you for trusting us</h1>
+							
+							</div>
+						<hr>
+						
+                            <div  class="row my-5">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 px-5">
+                                    
+                                    <h2 style="color: #0d6efd">From:</h2>
+									<p class="p-1">Name: <span class="fw-bold">TECVICO</span></p>
+                                    <p class="p-1" style="line-height: normal;">Address: <span class="fw-bold" >6694 Acacia Avenue Burnaby, BC, Canada, V5E 3J7</span></p>
+                                    <p class="p-1">Email: <span class="fw-bold" >payment@tecvico.com</span></p>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 px-5" >
+                                    <h2 style="color: #0d6efd">Billed to:</h2>
+                                    <p>Name: <span class="fw-bold" >{{invoice.user.get_full_name}}</span></p>
+                                    <p>Country: <span class="fw-bold" >{{invoice.country}}</span></p>
+									<p>Phone number: <span class="fw-bold" >{{invoice.user.memberprofile.phone}}</span></p>
+									<p>Email: <span class="fw-bold" >{{invoice.user.email}}</span></p>
+									<p>Gateway: <span class="fw-bold" >{{invoice.pymeny_method}}</span></p>
+                                </div>
+                            </div>
+                            {% if invoice.pymeny_method == 'zarinpal' %}
+                            
+                            <div class="table-responsive px-5">
+                            <table class="table table-light table-striped table-bordered border-primary">
+                                <thead class="table-secondary table-bordered border-primary">
+                                    <tr>
+                                        
+                                        <th colspan="2" style="text-align:center">Description</th>
+										<th style="text-align:center">Price (Rial)</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        
+                                        <td  colspan="2"  style="text-align:left">
+                                            Balance charge
+                                        </td>
+                                        <td style="text-align:center">{{invoice.amount}}</td>
+                                        
+                                    </tr>
+                                    
+                                    <tr>
+                                       
+                                        <td rowspan="3" style="text-align:left">TAX 12%</td>
+										<td>GST 5%</td>
+                                        <td style="text-align:center">{{invoice.gsp}}</td>
+                                    </tr>
+									<!--<tr>-->
+                                       
+                                        
+									<!--	<td>PST 7%</td>-->
+         <!--                               <td style="text-align:center">{{invoice.pst}}</td>-->
+         <!--                           </tr>-->
+									<tr>
+                                       
+                                    {% if invoice.pymeny_method != 'zarinpal' %}    
+										<td>Additional fee</td>
+                                        <td style="text-align:center">{{invoice.additional_fee}}</td>
+                                    {% endif %}
+                                    </tr>
+                                    
+                               </tbody>
+							   <tfoot>
+							   <tr>
+                                    <td style="text-align:left" colspan="2">GRAND TOTAL</td>
+                                    <td style="text-align:center">{{invoice.total}}</td>
+                                </tr>
+							   
+							   </tfoot>
+                            </table>
+                            </div>
+                            {% else %}
+                            <div class="table-responsive px-5">
+                            <table class="table table-light table-striped table-bordered border-primary">
+                                <thead class="table-secondary table-bordered border-primary">
+                                    <tr>
+                                        
+                                        <th colspan="2" style="text-align:center">Description</th>
+                                        <th style="text-align:center">Price ($ Rial)</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        
+                                        <td  colspan="2"  style="text-align:left">
+                                            Balance charge
+                                        </td>
+                                        <td style="text-align:center">${{invoice.amount}}</td>
+                                        
+                                    </tr>
+                                    
+                                    <tr>
+                                       
+                                        <td rowspan="3" style="text-align:left">TAX 12%</td>
+                                        <td>GST 5%</td>
+                                        <td style="text-align:center">${{invoice.gsp}}</td>
+                                    </tr>
+                                    <!--<tr>-->
+                                       
+                                        
+                                    <!--    <td>PST 7%</td>-->
+                                    <!--    <td style="text-align:center">${{invoice.pst}}</td>-->
+                                    <!--</tr>-->
+                                    <tr>
+                                       
+                                    {% if invoice.pymeny_method != 'zarinpal' %}    
+                                        <td>Additional fee</td>
+                                        <td style="text-align:center">${{invoice.additional_fee}}</td>
+                                    {% endif %}
+                                    </tr>
+                                    
+                               </tbody>
+                               <tfoot>
+                               <tr>
+                                    <td style="text-align:left" colspan="2">GRAND TOTAL</td>
+                                    <td style="text-align:center">${{invoice.total}}</td>
+                                </tr>
+                               
+                               </tfoot>
+                            </table>
+                            </div>
+                            {% endif %}
+
+
+
+
+
+
+                                 <div class="row">
+                            {% if invoice.paymented == 0 %}
+                            <div class="col-md-6 text-right">
+                                {% if invoice.pymeny_method == 'zarinpal' %}
+                                
+                                <form action="{% url 'zarinpal:request' invoice.pk %}" method="post">{% csrf_token %}
+                                <input type="hidden" name="payment_method" id="id_payment_method" value="{{invoice.pymeny_method}}">
+                                
+                                  <div style="float:right">
+                                       <button type="submit" class="btn btn-primary btn-lg " >Pay </button>
+                                  </div> 
+                                       
+                                   
+                               
+                                </form>
+                                {% elif invoice.pymeny_method == 'stripe' %}
+                                <form method="post">{% csrf_token %}
+                                <input type="hidden" name="payment_method" id="id_payment_method" value="{{invoice.pymeny_method}}">
+                               
+                                    <div style="float:right">
+                                        <button type="submit" class="btn btn-primary btn-lg " >Pay </button>
+                                   </div>
+                                    
+                               
+                                </form>
+    							{% else %}
+                                {{form.render}}
+    							{% endif %}
+    						</div>
+							{% endif %}
+							
+							    <div class="col-md-6">       
+                                    <a href="{% url 'accounting:invoice-detail' pk=invoice.invoice.id %}" class="btn btn-warning btn-lg text-left" >Exit</a>
+							    </div>
+                               
+                                
+                                </div>
+                                
+                         
+                        </main>
+                        
+                    </div>
+                    <!--DO NOT DELETE THIS div. IT is responsible for showing footer always at the bottom-->
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="application/javascript" src="{% static 'ivc_website/js/jquery.min.js' %}"></script>
+<script type="application/javascript" src="{% static 'ivc_website/js/bootstrap.min.js' %}"></script>
+</body>
+</html>

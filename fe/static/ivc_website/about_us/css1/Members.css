@@ -1,0 +1,56 @@
+.profile-card {
+	
+    transition: 0.5s;
+	box-shadow: 1px 1px 10px 5px #A4A5B4;
+	height:350px;
+	
+}
+
+.tape{
+	background-color:darkorange !important;
+	height:2px;
+	width:100%;
+
+}
+.name{
+color:black;
+font-size:26px;
+
+}
+.post{
+	font-size:20px;
+}
+
+.profile-card a{
+	
+    text-decoration:none;
+}
+
+
+.profile-card:hover {
+    transform: scale(1.1);
+    transition: 0.75s;
+}
+.profile-photo {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    border-radius: 100%;
+    overflow: hidden;
+}
+
+@keyframes example {
+  0%   {transform: scale(0);opacity:0}
+  25%  {transform: scale(0.25); opacity:0.25}
+  50%  {transform: scale(0.5); opacity:0.5}
+  75%  {transform: scale(0.75); opacity:0.75 }
+  100% {transform: scale(1); opacity:1}
+}
+
+#modalinfo {
+  
+ 
+  
+  animation-name: example;
+  animation-duration: 0.2s;
+}

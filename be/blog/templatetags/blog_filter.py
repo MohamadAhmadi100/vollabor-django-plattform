@@ -1,0 +1,1 @@
+from django import templatefrom ivc_website.models import NewsManagerregister = template.Library()@register.filterdef is_blog_manager(user):    author = NewsManager.objects.filter(manager=user).exists()    if author:        return True    else:        return False

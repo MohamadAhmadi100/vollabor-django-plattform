@@ -1,0 +1,350 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+<style>
+    
+.selectedRow {
+ background-color:darkorange;
+}
+
+.modal-body {
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
+}
+
+</style>
+
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-paper-plane"></i> Send to reviewer</h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    
+    
+   <div class="container mt-3">
+        <div class="row text-center">
+            
+                <div class="form-group col-xl-6 col-md-6 col-sm-12 mx-auto">
+                    
+                    <form method="POST" id="pform">{% csrf_token %}
+                        <table id="exprtTbl" class="tbl table table-sm table-bordered ">
+                            <thead class="table-warning text-dark">
+                                <tr>
+                                    <th scope="col">Full name </th>
+                                    <th scope="col">CV</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr class="cursign" id="{{user.id}}" >
+                                    <td class="p-1" data-name="{{user}}">{{user.get_full_name}}</td>
+                                    <td><button type="button" class="btn btn-sm btn-warning text-dark" data-bs-toggle="modal" data-bs-target="#r{{user}}" > View</button>
+                                    
+                                    
+                                    
+                                    <div class="modal fade" id="r{{user}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title text-white" id="exampleModalLabel">CV</h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                                                </div>
+                                                
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                            <table class="table table-dark table-bordered">
+                                                                <tbody class="text-center">
+                                                                    <tr class="table-info text-dark">
+                                                                        <td>First name:</td>
+                                                                        <td>Last name:</td>
+                                                                        <td>Email:</td>
+                                                                    </tr>
+                                                                    <tr class="text-dark">
+                                                                        <td>{{user.first_name}}</td>
+                                                                        <td>{{user.last_name}}</td>
+                                                                        <td>{{user.email}}</td>
+                                                                    </tr>
+                                                                    <tr class="table-info text-dark">
+                                                                        <td>Evaluated:</td>
+                                                                        <td>Declined:</td>
+                                                                        <td>Breach of promise:</td>
+                                                                    </tr>
+                                                                    <tr class="text-dark">
+                                                                        <td>{{user.researchrole.count_evaluated_reviewer}}</td>
+                                                                        <td>{{user.researchrole.count_rejected_reviewer}}</td>
+                                                                        <td>{{user.researchrole.count_breach_of_promis_reviewer}}</td>
+                                                                    </tr>
+                                                                    
+                                                                </tbody>
+                                                                
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row text-center">
+                                                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 text-start">
+                                                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#{{user}}history" >History </button>
+                                                            
+                                                        </div>   
+                                                        
+                                                       
+                                                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 text-end">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                                
+                                        </div><!--modal-dialog-->
+                                    </div> <!--modal-->
+                                    
+                                    
+                                             <!--================modal history ========================================-->
+                        <div class="modal fade" id="{{user}}history" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true" >
+                            <div class="modal-dialog modal-dialog-centered modal-xl modal-lg">
+                                <div class="modal-content" >
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel2" >Cv</h5>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                                    </div>
+                                    
+                                    <div class="modal-body text-dark table-responsive">
+                                        <table class="table table-hover table-striped" style="width:100%;overflow:visible">
+                                            <thead class="table-success">
+                                                <tr>
+                                                    <th>Title</th>
+                                                    <th>Fund</th>
+                                                    <th>Suggested start date</th>
+                                                    <th>Suggested end date</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                                
+                                            </thead>
+                                            <tbody>
+                                                {% for i in history_reviewer_accept %}
+                                                    {% if i.reviewer == user %}
+                                                <tr>
+                                                    
+                                                        <td>{{i.object_supervisor.client_form.formclint.title}}</td>
+                                                        <td>${{i.object_supervisor.client_form.formclint.fund}}</td>
+                                                        <td>{{i.object_supervisor.client_form.formclint.start_date}}</td>
+                                                        <td>{{i.object_supervisor.client_form.formclint.end_date}}</td>
+                                                        <td>Accepted</td>
+                                                </tr>       
+                                                    {% endif %}
+                                                {% endfor %}
+                                                
+                                            </tbody>
+                                        </table>
+                                        <table class="table table-hover table-striped">
+                                            <thead class="table-danger">
+                                                <tr>
+                                                    <th>Title</th>
+                                                    <th>Fund</th>
+                                                    <th>Suggested start date</th>
+                                                    <th>Suggested end date</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                                
+                                            </thead>
+                                            <tbody>
+                                                {% for i in history_reviewer_reject %}
+                                                    {% if i.reviewer == user %}
+                                                    <tr>    
+                                                        <td>{{i.object_supervisor.client_form.formclint.title}}</td>
+                                                        <td>${{i.object_supervisor.client_form.formclint.fund}}</td>
+                                                        <td>{{i.object_supervisor.client_form.formclint.start_date}}</td>
+                                                        <td>{{i.object_supervisor.client_form.formclint.end_date}}</td>
+                                                        <td>Declined</td>
+                                                    </tr>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                
+                                                
+                                                
+                                            </tbody>
+                                            
+                                            
+                                            
+                                        </table>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                                    
+                                    
+                                    </td>
+                                </tr>
+                                
+                       
+                               
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div id="tbl_error" style="color:red"></div>
+                        <input type="hidden"  name="user_list" id="id_user_sel" class="form-control" >
+                        <div id="div_id_status" class="form-group">
+                            <input type="hidden" name="status" id="id_status" value="send_for_reviewer" >
+                                                </div>
+                         <button type="button" id="sendBtn" class="btn btn-primary px-5">Send</button>
+                    </form>
+                </div>
+            
+        </div>
+        
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+
+
+<script>
+var ID_list=[];
+        $(document).ready(function () {
+            
+            document.getElementById("sendBtn").addEventListener("click",function(){
+                var revList =  document.getElementById("id_user_sel").value; 
+                var revListArr = revList.split(",");
+                 if(revList =="" || revListArr.length == 0){    
+                    document.getElementById("tbl_error").innerHTML="Error: please select reviewer(s) of the list.";
+                    return;
+                 }
+                document.getElementById('pform').submit();
+                
+              
+            });
+        
+            
+            
+           
+            $("#exprtTbl tr").click(function(){
+               document.getElementById("tbl_error").innerHTML="";
+                var IDs = document.getElementById("id_user_sel").value;
+                var idRow = $(this).attr('id');
+                var RowElm = document.getElementById(idRow);
+                IDsArr = IDs.split(",");
+                
+                if(RowElm.classList.contains('selectedRow')){
+                    $(this).removeClass('selectedRow');
+                    if(idRow == IDsArr[0]){
+                        new_IDs = IDs.replace(idRow, '');
+                        document.getElementById("id_user_sel").value =  new_IDs ;
+                    }else{
+                        new_IDs = IDs.replace(','+idRow, '');
+                        document.getElementById("id_user_sel").value =  new_IDs ;
+                    }
+                    
+               
+                }else{
+                    $(this).addClass('selectedRow');
+                    if(document.getElementById("id_user_sel").value==""){
+                        document.getElementById("id_user_sel").value = idRow;
+                    }else{
+                        document.getElementById("id_user_sel").value = IDs + "," + idRow ; 
+                    }
+                   
+                }
+              
+              
+               
+                
+            });
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        });
+        
+        
+function addID(user_ID){
+    //alert("ok");
+    var inputTxt="";
+    //var CheckElm = document.getElementById("chk"+ user_ID);
+    var rowElm = document.getElementById("r"+ user_ID);
+    rowElm.addClass('selectedRow').siblings().removeClass('selectedRow');
+    
+    for( var j = 0; j < UserIDsText.length; j++){ 
+                                   
+       inputTxt = inputTxt + UserIDsText[j] +",";
+    }
+    
+    var newinputTxt = inputTxt.slice(0, -1);
+    
+    document.getElementById("id_user_sel").value = newinputTxt;
+      
+  }
+
+
+
+    $( document ).ready( function() {
+        const errorMessage = "This field is required";
+
+        $( this ).find( "textarea" ).on( "input change propertychange", function() {
+
+            const hasError = !/.*\S+.*/.test($(this).val());
+            if ( typeof this.setCustomValidity === "function")
+            {
+                this.setCustomValidity( hasError ? errorMessage : "" );
+            }
+            else
+            {
+                $( this ).toggleClass( "error", !!hasError );
+                $( this ).toggleClass( "ok", !hasError );
+
+                if ( hasError )
+                {
+                    $( this ).attr( "title", errorMessage );
+                }
+                else
+                {
+                    $( this ).removeAttr( "title" );
+                }
+            }
+
+        });
+    });
+</script>
+
+
+{% endblock script %}

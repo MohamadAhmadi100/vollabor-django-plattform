@@ -1,0 +1,477 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <title>Workshop</title>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MV42WCDPR9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-MV42WCDPR9');
+    </script>
+</head>
+
+<body>
+
+    <header class="ws-header">
+        <div class="container d-md-flex justify-content-md-between">
+            <div>
+                <div class="tec-dash-img me-4">
+                    <a href="{% url 'home-page' %}"><img src="{% static 'workshop/img/teclogo.png' %}" alt="tecvico-logo"
+                        title="tecvico-logo"></a>
+                </div>
+                <button type="button" class="sidebar-btn">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="d-md-flex align-items-md-center ws-header-content">
+                <ul class="d-md-flex align-items-md-center ws-header-content-ul">
+                    <li><a href="#" class="me-3"><i class="fas fa-search"></i></a></li>
+                    <li><a href="#" class="position-relative"><i class="me-3 far fa-envelope"></i><span
+                                class="ws-notif">3</span></a></li>
+                    <li>
+                        <div class="dropdown me-3">
+                            <button class="btn dropdown-toggle option-btn active1" type="button"
+                                id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                Option
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="{% url 'logout' %}" class=""> Logout </a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="ws-content d-md-flex">
+        <div class="ws-content-sidebar">
+            <div class="ws-profile mt-2">
+                <div class=""><img src="{{member_profile.image.url}}" alt="profile" title="profile"></div>
+                <div class="d-md-flex ws-name">
+                    <span class="mb-2">{{user.username}}</span>
+                    <span>{{user.email}}</span>
+                </div>
+            </div>
+            <div class="main-sidebar">
+                <!-- <span class="sidebar-title text-capitalize mb-4">main</span> -->
+                <ul>
+                    <li class="d-md-flex hm-row">
+                        <i class="fas fa-home d-inline-block hm-icon"></i>
+                        <a href="{% url 'home-page' %}"><span class="hm-section">Home</span></a>
+                    </li>
+
+                    <li class="d-md-flex hm-row">
+                        <i class="fas fa-users d-inline-block hm-icon"></i>
+                        <div class="select-wrap select-wrap1 collapsible">
+                            <div class="content">
+                                <ul class="default-option default-option1">
+                                    <li>
+                                        <div class="option">
+                                            <span>Workshop</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="select-ul select-ul1 down-box">
+                                    {% comment %} <a href="workshop.html"><i class="far fa-edit me-2"></i> create work</a> {% endcomment %}
+                                    <a href="{% url 'list-for-all' %}"><i class="fa fa-list me-2"></i>Workshops list</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="d-md-flex hm-row">
+                        <i class="far fa-user d-inline-block hm-icon"></i>
+                        <div class="select-wrap select-wrap2 collapsible">
+                            <div class="centent">
+                                <ul class="default-option default-option2">
+                                    <li>
+                                        <div class="option">
+                                            <span>Members</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="select-ul select-ul2 down-box">
+                                    <a href="{% url 'members-page' %}"><i class=""></i>Members list</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="d-md-flex hm-row">
+                        <i class="fas fa-project-diagram d-inline-block hm-icon"></i>
+                        <div class="select-wrap select-wrap2 collapsible">
+                            <div class="centent">
+                                <ul class="default-option default-option2">
+                                    <li>
+                                        <div class="option">
+                                            <span>Project</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="select-ul select-ul2 down-box">
+                                    <a href="{% url 'projects-page' %}"><i class=""></i> Projects list</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="d-md-flex hm-row">
+                        <i class="fas fa-cogs d-inline-block hm-icon"></i>
+                        <a href="#"><span class="hm-section">Settings</span></a>
+                    </li>
+                    <li class="d-md-flex hm-row">
+                        <i class="fa fa-power-off d-inline-block hm-icon"></i>
+                        <a href="{% url 'logout' %}"><span class="hm-section">Logout</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="workshop">
+            <div class="bc">
+                <h2 style="color:#FAFAFA">Workshop edit form</h2>
+                <!--<span class="bc-icon"> / </span>
+                <span> Create_Work</span>-->
+            </div>
+            <div class="form-content">
+                <div class="ws-form">
+                    <div class="ws-form-title d-md-flex justify-content-center text-white">
+                        <span><i class="far fa-edit"></i> Edit your workshop</span>
+                    </div>
+                    <div class="ws-form-info">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row justify-content-center my-5">
+                                <div class="col-md-6">
+                                    <div class="ws-label-box">
+                                        <label for="usname" class="ws-label">Workshop title<span style="color:red">*</span></label>
+                                        <input type="text" name="title" required class="username inputclass" id="usname" value="{{workshop.title}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="ws-label-box">
+                                        <label for="price" class="ws-label">Suggest cost per individual<span style="color:red">*</span></label>
+                                        <input type="text" name="price" required class="price" id="price" value="{{workshop.price}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center my-5">
+                                <div class="col-md-4">
+                                    <div class="ws-label-box">
+                                        <label for="date" class="ws-label">Workshop date<span style="color:red">*</span></label>
+                                        <input type="date" name="date" required class="date" id="date" value="{{workshop.date|date:'Y-m-d'}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="ws-label-box">
+                                        <label for="time" class="ws-label">Start time (Pacific time)<span style="color:red">*</span></label>
+                                        <input type="time" name="time_to_start" required class="time" id="time" value="{{workshop.time_to_start|time:'h:i:s'}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="ws-label-box">
+                                        <label for="duration" class="ws-label">Finish time (Pacific time)<span style="color:red">*</span></label>
+                                        <input type="time" name="duration" required class="duration" id="duration" placeholder="00:00" value="{{workshop.duration|time:'h:i:s'}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center my-3">
+                                <div class="col-md-6">
+                                    <div class="ws-label-box">
+                                        <label for="location" class="ws-label">Location<span style="color:red">*</span></label>
+                                        <input type="text" name="address" required class="loc location" id="location" value="{{workshop.address}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="ws-label-box mb-4">
+                                        <label for="uploadpdf" class="ws-label">Powerpoint/PDF attachment<span style="color:red">*</span> <i class="fas fa-upload mt-1"></i></label>
+                                        <input type="file" name="load_pdf" id="uploadpdf" class="form-control-file" placeholder="Upload File">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center my-3">
+                                <div class="col-md-6">
+                                    <div class="mt-2">
+                                        <label for="description" class="ws-label2" style="color:#fff">Workshop description<span style="color:red">*</span></label>
+                                        <textarea name="description" id="description" required class="description" style="height:335px">{{workshop.description}}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="ws-label-box mb-4">
+                                        <label for="inputFile" style="color:#fff">Background picture<span style="color:red">*</span> </label>
+                                        <input type="file" name="image" id="inputFile" class="form-control-file" placeholder="Upload Image" onchange="readUrl(this)" data-title="Drag and drop a file">
+                                    </div>
+                                    <p style="color:red; font-size:0.9em" id="bgPicError"></p>
+                                    
+                                    <div class="mt-2">
+                                    <a  data-bs-toggle="modal" data-bs-target="#exampleModal" href="#exampleModal">would you like to use demo pictures?</a>
+                                    <a id="demoPic" href="#" target="_blank" style="color:yellow"></a>
+                                    <div id="DelSign" style="display:none"><span class="deletesign"  ; style="color:red">X</span></div>
+                                    <input type="hidden" id="demoImgUrl" name="demoImgUrl" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row justify-content-start mt-5">
+                                <div class="col-md-12">
+                                    <button type="submit" name="submit" class="second" id="btn-notification">Resubmit</button>
+                                </div>
+                            </div>
+
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="successalert" class="alert" role="alert">
+                <span> Success fully inserted </span>
+                <i class="far fa-check-circle"></i>
+            </div>
+            <div id="eroralert" class="alert" role="alert">
+                <span> Please complete form </span>
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="footer my-4 text-center">Copyright <i class="fas fa-copyright"></i> 2021 TECVICO group - all
+                rights reserved</div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="rdoform">
+                <div class="row justify-content-around">
+                <div class="col-4 position-relative mb-4 img-btn-box">
+                    <input type="radio" id="img-btn1" class="img-modal-btn" name="workshop-img" value="img1" data-url="../../media/workshop/demoImage/first.png">
+                    <label for="img-btn1" class="img-btn-label">
+                        <figure>
+                           <img src="../../media/workshop/demoImage/first.png" alt="" title="">
+                        </figure>
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box offset-1">
+                    <input type="radio" id="img-btn2" name="workshop-img" class="img-modal-btn" value="img2" data-url="../../media/workshop/demoImage/first2.png">
+                    <label for="img-btn2" class="img-btn-label">
+                        <figure>
+                            <img src="../../media/workshop/demoImage/first2.png" alt="" title="">
+                        </figure>
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box">
+                    <input type="radio" id="img-btn3" name="workshop-img" class="img-modal-btn" value="img3" data-url="../../media/workshop/demoImage/first3.png">
+                    <label for="img-btn3" class="img-btn-label">
+                        <figure>
+                            <img src="../../media/workshop/demoImage/first3.png" alt="" title="">
+                        </figure>
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box offset-1">
+                    <input type="radio" id="img-btn4" name="workshop-img" class="img-modal-btn" value="img4" data-url="../../media/workshop/demoImage/first4.png">
+                    <label for="img-btn4" class="img-btn-label">
+                        <figure style="min-width: 150px;">
+                            <img src="../../media/workshop/demoImage/first4.png" alt="" title="">
+                        </figure>
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box">
+                    <input type="radio" id="img-btn5" name="workshop-img" class="img-modal-btn" value="img5" data-url="../../media/workshop/demoImage/first5.png">
+                    <label for="img-btn5" class="img-btn-label">
+                        <figure>
+                            <img src="../../media/workshop/demoImage/first5.png" alt="" title="">
+                        </figure>
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box offset-1">
+                    <input type="radio" id="img-btn6" name="workshop-img" class="img-modal-btn" value="img6" data-url="../../media/workshop/demoImage/Group18.png">
+                    <label for="img-btn6" class="img-btn-label">
+                        <figure>
+                            <img src="../../media/workshop/demoImage/Group18.png" alt="" title="">
+                        </figure>
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box">
+                    <input type="radio" id="img-btn7" name="workshop-img" class="img-modal-btn" value="img7" data-url="../../media/workshop/demoImage/Group19.png">
+                    <label for="img-btn7" class="img-btn-label">
+                        <figure>
+                            <img src="../../media/workshop/demoImage/Group19.png" alt="" title="">
+                        </figure>
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box offset-1">
+                    <input type="radio" id="img-btn8" name="workshop-img" class="img-modal-btn" value="img8" data-url="../../media/workshop/demoImage/Group20.png">
+                    <label for="img-btn8" class="img-btn-label">
+                        <figure>
+                            <img src="../../media/workshop/demoImage/Group20.png" alt="" title="">
+                        </figure>
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box">
+                    <input type="radio" id="img-btn9" name="workshop-img" class="img-modal-btn" value="img9" data-url="../../media/workshop/demoImage/Group21.png">
+                    <label for="img-btn9" class="img-btn-label">
+                        <figure>
+                            <img src="../../media/workshop/demoImage/Group21.png" alt="" title="">
+                        </figure>
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box offset-1">
+                    <input type="radio" id="img-btn10" name="workshop-img" class="img-modal-btn" value="img10" data-url="../../media/workshop/demoImage/Group22.png">
+                    <label for="img-btn10" class="img-btn-label">
+                        <figure>
+                            <img src="../../media/workshop/demoImage/Group22.png" alt="" title="">
+                        </figure>
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box">
+                    <input type="radio" id="img-btn11" name="workshop-img" class="img-modal-btn" value="img11" data-url="#">
+                    <label for="img-btn11" class="img-btn-label">
+                       <!-- <figure>
+                            <img src="../../static/workshop/img/workshop-img/Chest-X-ray-findings-A-It-shows-no-active-lung-lesion-initially-B-Directly-after.png" alt="" title="">
+                        </figure>-->
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box offset-1">
+                    <input type="radio" id="img-btn12" name="workshop-img" class="img-modal-btn" value="img12" data-url="#">
+                    <label for="img-btn12" class="img-btn-label">
+                      <!--  <figure>
+                            <img src="" alt="" title="">
+                        </figure>-->
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box">
+                    <input type="radio" id="img-btn13" name="workshop-img" class="img-modal-btn" value="img13" data-url="#">
+                    <label for="img-btn13" class="img-btn-label">
+                       <!-- <figure>
+                            <img src="../../static/workshop/img/workshop-img/CT-Contrast_edit.jpg" alt="" title="">
+                        </figure>-->
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box offset-1">
+                    <input type="radio" id="img-btn14" name="workshop-img" class="img-modal-btn" value="img14" data-url="#">
+                    <label for="img-btn14" class="img-btn-label">
+                       <!-- <figure>
+                            <img src="../../static/workshop/img/workshop-img/Depositphotos_2160508_xs.jpg" alt="" title="">
+                        </figure>-->
+                    </label>
+                </div>
+                <div class="col-4 position-relative mb-4 img-btn-box">
+                    <input type="radio" id="img-btn15" name="workshop-img" class="img-modal-btn" value="img15" data-url="#">
+                    <label for="img-btn15" class="img-btn-label">
+                       <!-- <figure>
+                            <img src="../../static/workshop/img/workshop-img/Difference-between-CTScan-and-Ultrasound.jpg" alt="" title="">
+                        </figure>-->
+                    </label>
+                </div>
+            </form>
+          </div>
+        </div>
+        <!--<div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="saveimgdemo">Save changes</button>
+        </div>-->
+      </div>
+    </div>
+
+
+
+    <script src={% static 'workshop/js/bootstrap.bundle.min.js' %}></script>
+    <script src={% static 'workshop/js/jquery-3.6.0.min.js' %}></script>
+    <script src={% static 'workshop/js/workshop.js' %}></script>
+    <script src={% static 'workshop/js/myjs.js' %}></script>
+    <script>
+
+     $(document).ready(function() {
+
+        $('.sidebar-btn').click(function () {
+        $('.ws-content-sidebar').toggleClass('ws-content-sidebar-toggle');
+        });
+        $('.sidebar-btn').click(function () {
+        $(this).toggleClass('sidebar-btn-toggle');
+        });
+
+            $('#upload').on('click', function () {
+
+                $('#upload').change(function (e) {
+
+                    $('.label').empty().html();
+                    var fileName = e.target.files[0].name;
+                    $('.label').html(fileName);
+                });
+
+            });
+            
+            
+             $('#wsEls').change(function () {
+                 var wsNumSel = document.getElementById("wsEls");
+                 var wsNum = wsNumSel.value;
+         
+                if (wsNum == 0) {
+              
+                    document.getElementById("proof").style.display = "none";
+                    document.getElementById("proofFile").required = false;
+                } else {
+             
+                    document.getElementById("proof").style.display = "block";
+                    document.getElementById("proofFile").required = true;
+                };
+            });
+            
+            
+           var radioBtns = document.getElementById('rdoform').querySelectorAll('.img-modal-btn');
+            
+            for(var i=0; i<radioBtns.length;i++){
+				radioBtns[i].addEventListener('click',function(){
+				    var radioID =  $(this).attr('id');
+				    var imgName = document.getElementById(radioID).value;
+				    var imgUrl = document.getElementById(radioID).getAttribute("data-url");
+				    $("#demoPic").attr("href", imgUrl);
+				    $("#demoPic").text(imgName);
+				     document.getElementById("demoImgUrl").value=imgUrl;
+				     document.getElementById("inputFile").disabled = true;
+				     $('#exampleModal').modal('hide');
+				     document.getElementById("DelSign").style.display = "inline-block";
+				     document.getElementById("DelSign").style.cursor = "pointer";
+				    
+				});
+										
+			}
+			
+			 $('#DelSign').click(function () {
+                  $("#demoPic").text("");
+                   $("#demoPic").attr("href", "#");
+                   document.getElementById("demoImgUrl").value="0";
+                    document.getElementById("DelSign").style.display = "none";
+                    document.getElementById("inputFile").disabled = false;
+                 
+             })
+             
+             
+             
+    
+            
+
+    })
+    </script>
+
+</body>
+
+</html>

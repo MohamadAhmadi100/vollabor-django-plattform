@@ -1,0 +1,250 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<head>
+    <link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+    <style>
+        .ellipsis {
+    max-width: 2px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+    </style>
+</head>
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 ><i class="fa fa-cogs"></i> Project director's panel  </h1>
+                
+            </div>
+        </div>
+    </div>   
+
+    
+</header>
+
+
+<section id="industry-director" >    
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    
+
+    
+    <main class="container ">
+        <div class="card-page">
+            <div class="row justify-content-center align-items-center">
+
+                <!-- 2 compose -->
+                {% if request.GET.filter == "suggest_project_reviewer" %}
+                <div class="col green active">
+                    <a href="?filter=suggest_project_reviewer" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Evaluated project</h4>
+                        <p class="number ">{{suggest_reviewer_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=suggest_project_reviewer" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Evaluated project</h4>
+                        <p class="number ">{{suggest_reviewer_count}}</p>
+                    </a>
+                </div>                  
+                {% endif %}
+
+                        
+                <!-- 3 compose -->
+                {% if request.GET.filter == "check_scores" %}
+                <div class="col green active">
+                    <a href="?filter=check_scores" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Evaluated proposal</h4>
+                        <p class="number ">{{check_score_span}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=check_scores" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Evaluated proposal</h4>
+                        <p class="number ">{{check_score_span}}</p>
+                    </a>
+                </div>                  
+                {% endif %}
+                
+                
+            </div>
+        </div>
+        <!-- new table -->
+        <div class="content my-4 table-responsive">
+
+            {% if request.GET.filter == "suggest_project_reviewer" %}
+                <!-- 2 table -->
+                <table class="table table-hover  table-dark table-striped ">
+                    <thead>
+                    <tr class="">
+                        <th scope="col">Project ID</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Fund</th>
+                        <th scope="col">Submition date </th>
+                        <th scope="col">Suggested start date</th>
+                        <th scope="col">Suggested end date</th>
+                        <th scope="col">Owner</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-center">Action</th>
+                    </tr>
+                    </thead>
+
+                    <tbody >
+                    {% for project in suggest_reviewer %}
+                    <tr>
+                        
+                        <td class="p-name">  
+                            <p style="overflow: hidden; width: 150px">{{project.formclint.id_project}}</td>
+                        
+                        <td class="P-name">
+                        	<p style="overflow: hidden; width: 200px">{{project.formclint.title|truncatechars:50}}</p>
+                        </td>
+                        
+                        <td class="p-name">  ${{project.formclint.fund}}</td>
+                        
+                        <td class="p-name"> {{project.formclint.created|date:'m-d-Y'}}</td>
+                        <td class="p-name"> {{project.formclint.start_date}}</td>
+                        <td class="p-name"> {{project.formclint.end_date}}</td>
+
+                        <td class="p-name"> 
+                            {{project.formclint.user.get_full_name}}
+
+                        {% if project.formclint.main_supervisor %}
+                        <span style="color: green;">Main Supervisor</span>
+                        {% endif %}
+                        </td>
+                        <td class="p-name"> Evaluated and pending for your decision.</td>
+                   
+                        <td class="text-right">
+                            <a href="{% url 'industry:director-see-score-project' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                <i class="fa fa-eye"></i> View 
+                            </a>
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+            
+                    </tbody>
+                </table>
+            {% endif %}
+
+            <!-- 3 table -->
+            {% if request.GET.filter == "check_scores" %}
+            <table class="table table-hover table-dark table-striped ">
+                <thead>
+                <tr class="">
+                    <th scope="col">Project ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Fund</th>
+                    <th scope="col">Submission date</th>
+                    <th scope="col">Suggested start date</th>
+                    <th scope="col">Suggested end date</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" >Action</th>
+                </tr>
+                </thead>
+
+                <tbody >
+                {% for project in check_score %}
+                <tr>
+                    <td class="p-name">  
+                        <p style="overflow: hidden; width: 150px">{{project.formclint.id_project}}</td>
+                    <td class="p-name">
+                        <p style="overflow: hidden; width: 200px">{{project.formclint.title|truncatechars:50}}</p>
+                    </td>
+                    
+                    <td class="p-name">  ${{project.formclint.fund}}</td>
+
+                    <td class="p-name"> {{project.formclint.created|date:'m-d-Y'}}</td>
+                    <td class="p-name"> {{project.formclint.start_date}}</td>
+                    <td class="p-name"> {{project.formclint.end_date}}</td>
+                    <td class="p-name"> 
+                        {{project.formclint.user.get_full_name}}
+
+                        {% if project.formclint.main_supervisor %}
+                        <span style="color: green;">Main Supervisor</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-name"> Evaluated and pending for your decision.</td>
+                    <td class="p-name">
+                        <a href="{% url 'industry:industry-director-supervisor-list' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                            <i class="fa fa-eye"></i> View
+                            <span class="badge badge-danger" style="background-color: white; color: #41cac0">{{project.forms_clients.status_check_score_director.count}}</span>
+
+                        </a>
+                    </td>
+                   
+                </tr>
+                {% endfor %}
+                            
+                </tbody>
+            </table>
+            {% endif %}
+
+        </div>
+    
+    </main>
+    
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selectedItem = $(this).val();
+        let itemClasses = {
+            "Golden": "bg-warning text-dark",
+            "Silver": "bg-secondary text-white",
+            "Bronze": "bg-danger text-white",
+            "Normal": "bg-dark text-white",
+        };
+        $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+        $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+    });
+</script>
+
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $("[name='project-value']").keypress(function (evt) {
+        let entered_value = evt.originalEvent.key;
+        let current_value = $(evt.currentTarget).val();
+        if (isNumeric(entered_value) || (entered_value === '.' && !(current_value.includes('.')))) {
+            // let input be entered
+        }
+        else {
+            evt.preventDefault();
+        }
+    });
+</script>
+{% endblock script %}

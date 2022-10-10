@@ -1,0 +1,1768 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1><i class="fa fa-eye"></i> Project view </h1>
+            </div>
+            <div class="col-md-6 text-right">
+                <h5 class="btn btn-secondary fw-bold mb-1" style="font-weight:bold; color:#1AE8F9 ">
+                   Balance: ${{user.memberprofile.balance}}
+                    <br/>
+                    <a class="btn btn-warning btn-sm text-dark fw-bold px-4 my-1 mx-2" href="{% url 'create-checkout-session' %}"> 
+                        <i class="fas fa-money-check-alt text-dark" style='font-size:14px'></i> Charge
+                    </a>
+                </h5>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}project{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation is sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is new</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <!-- new -->
+        <!-- new table theme -->         
+        <main class="container-fluid  ">
+            <div class="content my-4">
+                <div class="px-4 py-2">
+                    {% if selected_project.is_valid %}
+                        {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                        <div class="col-md-3 my-1">
+                                <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                        </div>
+                        {% endif %}
+                     {% endif %}
+                    <div class="col-md-12">
+
+                        <h2 style="overflow: hidden">{{selected_project.title}}</h2>
+                        {% if selected_project.fund > 0 %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                    ${{selected_project.fund}}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if selected_project.status == 'Rejected' %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                 
+                                <span class="badge badge-danger">Reason of rejection</span>
+                                {{selected_project.reject_reason}}                            
+                                </div>
+                            </div>
+                        </div>
+
+                        {% endif %}
+
+                        {% if project_areas %}
+                            <div class="col-md-12">
+                                <label class="form-label">Project areas:</label>
+                                <div class="form-group ">
+                                    <span class="text-info bold"></span>
+                                        {% for project_area in project_areas %}
+                                        <span class="badge
+                                        {% if project_area.is_confirmed %}
+                                            {% if project_area.area.confirmed %}
+                                            badge-success
+                                            {% else %}
+                                            badge-danger
+                                            {% endif %}
+                                        {% else %}
+                                            badge-warning
+                                        {% endif %}
+                                            ">{{project_area.area}}</span>
+                                            {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+    
+
+                    </div>
+
+                    
+                    
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="form-group ">
+                                <label class="form-label">ID</label>
+                                <input type="text" class="form-control" value="{{obj_project.project.client_form.formclint.id_project}}" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <input value="{% if obj_project.status == 'on_going' %}Ongoing {% elif obj_project.status == 'on_hold' %}Onhold{% else %}{{obj_project.status|title}}{% endif %}" type="text text-left" class="form-control" disabled>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+
+                        <div class="form-group ">
+                            <label class="form-label">Title</label>
+                            <textarea class="form-control"  disabled>{{obj_project.project.client_form.formclint.title}}</textarea>
+                        </div>
+                    </div>
+                        
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group ">
+                                <label class="form-label">  Suggested start date</label>
+                                <input type="text" class="form-control" value="{{obj_project.project.client_form.formclint.start_date}}" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group ">
+                                <label class="form-label"> Suggested end date</label>
+                                <input type="text" class="form-control" value=" {{obj_project.project.client_form.formclint.end_date}}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="row px-4">
+                        <div class="col-10">
+                            <hr class="bg-secondary">
+                        </div>
+                    <div class="col-2"><a href="#" class="text-primary" id="textMore">Show more</a> <i class="fa fa-arrow-circle-down text-primary" onclick="showMore()" id="MoreBtn" style="font-size:24px;" aria-hidden="true"></i></div>
+                    </div>
+                <div id="more" style="display:none">
+                    
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Submission date</label>
+                                <input type="text" class="form-control" value="{{obj_project.project.client_form.formclint.created|date:'m-d-Y'}}" disabled>
+                            </div>
+                        </div>
+
+                    
+
+                        <div class="col-md-6">
+                            <div class="form-group ">
+                                <label class="form-label">Date of being changed to new status</label>
+                                <input type="text" class="form-control" value="{{obj_project.project.client_form.formclint.created_date}}" disabled>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Fund</label>
+                                <input type="text" class="form-control" value="${{obj_project.project.client_form.formclint.fund}}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group ">
+                                <label class="form-label">Dataset link</label>
+                                <div class="form-control">
+    
+                                    {% if obj_project.project.client_form.formclint.data_set_link %}
+                                    <a href="{{obj_project.project.client_form.formclint.data_set_link}}">Click</a>
+                                    {% else %}
+                                    <h6>There is no link</h6>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                    
+                   
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="form-label">Abstract</label>
+                                <textarea class="form-control" rows="5" disabled>{{obj_project.project.client_form.formclint.abstrack}}</textarea>
+                            </div>
+                        </div>
+                        
+                    </div>
+                   
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Equipment</label>
+                                <textarea class="form-control" rows="5" disabled>{{obj_project.project.client_form.formclint.equipment}}</textarea>
+                            </div>
+                        </div>
+                         <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Requirement</label>
+                            <textarea class="form-control" rows="5" disabled>{{obj_project.project.client_form.formclint.requirement}}</textarea>
+                        </div>
+
+                    </div>
+                        
+                    </div>
+                </div>   
+                    
+                   
+                    {% if obj_project.status != 'done' %}
+                        
+                    <div class="row">
+                         <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12" >
+                            <div class="card text-info border-secondary bg-dark mb-3"  >
+                              <div class="card-header"><h5 class="text-center">Request a status change</h5></div>
+                              <div class="card-body text-light">
+                                {% if obj_project.status_change_choices %}
+                                <table class="table table-hover table-dark table-striped  p-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Requested status</th>
+                                        <th>Comment</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="p-name">
+                                                <p>
+                                                    {% if obj_project.status_change_choices == 'on_going' %}
+                                                        Ongoing
+                                                    {% elif obj_project.status_change_choices == 'on_hold' %}
+                                                        On hold
+                                                    {% else %}
+                                                    {{obj_project.status_change_choices}}
+                                                    {% endif %}
+                                                </p>
+                                            </td>
+                                            <td class="p-name">
+                                                
+                                                <button type="button"  data-bs-toggle="modal"
+                                                    data-bs-target="#comment_change_status" class="btn btn-success mx-auto">
+                                                    Comment
+                                                </button>
+                                            </td>
+                                            <td class="p-name">
+                                                <p>
+                                                    {% if obj_project.status_change == 'accept' %}
+                                                        <p class="" >Approved</p>
+                                                    {% elif obj_project.status_change == 'reject' %}
+                                                        <h6 class="" >Declined</h6>   
+                                                        <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#reason_change_status" >
+                                                            View reason
+                                                        </button>
+                                                    {% else %}
+                                                        <p class="" >Under process</p>
+                                                    {% endif %}
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                {% endif %}
+                                
+                                <button type="button" class="btn btn-secondary d-block" data-bs-toggle="modal" data-bs-target="#tracing_project" >
+                                    History
+                                </button>
+                             
+                             
+                              </div>
+
+                                
+
+                                {% if obj_project.status_change == 'accept' or obj_project.status_change == 'reject' or obj_project.status_change == None %}
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#change_status" >
+                                    Change status
+                                </button>
+                                {% else %}
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#view_change_status" >
+                                    Change status
+                                </button>
+                                {% endif %}
+
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12"  >
+                            <div class="card text-info border-secondary bg-dark mb-3" style="height:180px">
+                              <div class="card-header"><h5 class="text-center">Partial financial statment (middle of the project)</h5></div>
+                              <div class="card-body text-light">
+                              </div>
+
+                                {% if obj_project.progress_report_middle_project %}
+                                    <button disabled type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#upload_report_middle_project" > You uploaded </button>
+                               
+                                {% else %}
+                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#upload_report_middle_project" >Click to upload </button>
+                               
+
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12" >
+                            <div class="card text-info border-secondary bg-dark mb-3" style="height: 180px">
+                              <div class="card-header"><h5>Expert's information</h5></div>
+                              <div class="card-body text-light">
+                                  <h6 >Email: {{obj_project.project.client_form.expert.researchrole.expert_email_address}}</h6>
+                              </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                       
+                    {% endif %}
+                  
+                  
+                  
+      </div>
+
+
+
+
+                    {% if obj_project.status != 'done' %}
+                        <!-- WBS table -->
+                        <br>
+                        <br>
+                        <hr class="bg-secondary">
+                        <h4 class="text-center">WBS table</h4>
+                        <br>
+                        <table class="table table-hover table striped">
+                            <thead class="text-dark" style="background-color:#ADD8E6">
+                                <tr class="text-center">
+                                    <th style="width:40%">Topic</th>
+                                    <th style="width:10%">Suggested start date</th>
+                                    <th style="width:10%" >Suggested end date</th>
+                                    <th style="width:20%">Status</th>
+                                    <th style="width:10%">Report</th>
+                                    <th style="width:10%" >Products</th>
+                                </tr>
+                            </thead>
+                            <tbody class=" table-dark text-center">
+                                {% for i in prog %}
+                                    <tr>
+                                        <td>{{i.topic}} </td>
+                                        <td>{{i.start_date}}</td>
+                                        <td>{{i.end_date}} </td>
+                                        <td>
+
+
+                                           {% if i.status == 'end_of_report'  %}
+                                                Done
+                                           {% elif i.end_date <= date_today %}
+                                                You must send the report
+                                           {% else %}
+                                                The time is left
+                                           {% endif %}
+
+
+                                        </td>
+                                        <td>
+                                            {% if i.end_date <= date_today and i.status != 'end_of_report' %}
+
+                                            <button type="button"  data-bs-toggle="modal"
+                                                data-bs-target="#send_report-{{i.id}}" class="btn btn-primary">
+                                                Report
+                                            </button>
+                                            {% elif i.status == 'end_of_report' %}
+
+                                            <button type="button"  data-bs-toggle="modal"
+                                                data-bs-target="#view_report-{{i.id}}" class="btn btn-secondary">
+                                                View
+                                            </button>
+                                            {% else %}
+                                            <button disabled class="btn btn-primary">Report</button>
+                                            {% endif %}
+                                            
+                                            
+                                            <div class="modal fade" id="send_report-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="POST">{% csrf_token %}
+                                                    <div class="modal-body">
+                                                        <div class="modal-body">
+                                                            
+                                                            <input type="hidden" name="id_pr" id="id_id_pr" value="{{i.id}}" >
+                                                            <label class="text-dark">Report <span style="color: red">*</span></label>
+                                                            <textarea class="form-control" rows="5" required name="report"></textarea>
+                                                            
+                                                            <div class="form-group col-md-12 mb-0">
+                                                                <div id="div_id_status" class="form-group">
+                                                                    <input type="hidden" name="status" id="id_status" value="end_of_report" >
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Send</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                            
+                                             <div class="modal fade" id="view_report-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="POST">{% csrf_token %}
+                                                    <div class="modal-body">
+                                                        <div class="modal-body">
+                                                            
+                                                            <input type="hidden" name="id_pr" id="id_id_pr" value="{{i.id}}" >
+                                                            <label class="text-dark">Report <span style="color: red">*</span></label>
+                                                            <textarea class="form-control" disabled rows="5" required name="report"></textarea>
+                                                            
+                                                            <div class="form-group col-md-12 mb-0">
+                                                                <div id="div_id_status" class="form-group">
+                                                                    <input type="hidden" name="status" id="id_status" value="end_of_report" >
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                        </td>
+                                        <td>
+                                            {% if i.end_date <= date_today %}
+                                                {% if i.upload_file %}
+                                                <a href="{% url 'industry:project-upload-paper' i.pk %}" class="btn btn-secondary">View</a>
+                                                {% else %}
+                                                <a href="{% url 'industry:project-upload-paper' i.pk %}" class="btn btn-success">Upload</a>
+                                                {% endif %}
+                                            {% else %}
+                                                <button disabled class="btn btn-success">Upload</button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+
+                                   
+                                    
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                                    
+                                    
+
+
+
+                        <!-- Meeting list -->
+                        <br>
+                        <br>
+                        <hr class="bg-secondary">
+                        <h4 class="text-center">Meeting list
+                            <span data-bs-toggle="modal" data-bs-target="#create_meeting"><i style="color: green;" class="fas fa-plus"></i></span>
+
+                         </h4>
+                        <br>
+                          <div class="w-100 d-flex justify-content-center mt-5">
+                            <table class="table table-dark table-striped table-hover">
+                              <thead>
+                                <tr class="text-center">
+                                  <th style="width:50%">Link</th>
+                                  <th style="width:25%">Date</th>
+                                  <th style="width:25%">Time</th>
+                                  <th style="width:25%">Time zone</th>
+                                  <th style="width:25%"></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for i in meeting_info %}
+                                    <tr  class="text-center">
+                                      <td>{{i.link_meeting}}</td>
+                                      <td>{{i.date_meeting}}</td>
+                                      <td>{{i.time_meeting}}</td>
+                                      <td>{{i.time_zone}}</td>
+                                      <td>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit{{i.id}}" >
+                                            <i class="far fa-edit"></i> Edit
+                                        </button>
+
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{i.id}}" >
+                                            <i class="far fa-trash-alt"></i> Delete
+                                        </button>
+                                        
+                                        <!-- Edit -->
+                                    <div class="modal fade" id="delete{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                                                </div>
+                                                <form action="{% url 'industry:project-create-edit-metting' %}" method="POST">{% csrf_token %}
+                                                <div class="modal-body">
+
+
+                                                <input type="hidden" name="id_project" id="id_project" value="{{obj_project.pk}}">
+                                                <input type="hidden" name="position_metting" id="position_metting" value="delete">
+
+                                                <input type="hidden" name="id_edit" class="form-control" value="{{i.id}}" id="id_id_edit">
+
+                                                <h6 class="text-dark">Are you sure to remove the meeting information?</h6>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-danger" >Delete</button>
+                                                </div>
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                        
+                                         <!-- Edit -->
+                                    <div class="modal fade" id="edit{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                                                </div>
+                                                <form action="{% url 'industry:project-create-edit-metting' %}" method="POST">{% csrf_token %}
+                                                <div class="modal-body">
+
+                                                <input type="hidden" name="id_project" id="id_project" value="{{obj_project.pk}}">
+                                                <input type="hidden" name="position_metting" id="position_metting" value="edit">
+
+                                                <input type="hidden" name="id_edit" class="form-control" value="{{i.id}}" id="id_id_edit">
+
+                                                <input type="text" name="edit_link_meeting" required class="date form-control" id="id_edit_link_meeting" value="{{ i.link_meeting }}">
+
+                                                <input type="time" name="edit_time_meeting" required class="date form-control" id="id_edit_date_meeting">
+
+                                                <input type="date" name="edit_date_meeting" required class="form-control"  id="id_edit_time_meeting">
+
+                                                <div class="ws-label-box">
+                                                    <label for="time_zone" class="ws-label">Time zone<span class="mandStar">*</span></label>
+                                                    <select name="time_zone"  id="time_zone" class="selectField">
+                                                        <option value="{{i.time_zone}}">{{i.time_zone}}</option>
+                                                        {% for zone in time_zone %}
+                                                        <option value="{{zone}}">{{zone}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-success" >Save</button>
+                                                </div>
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                        
+                                        
+                                      </td>
+
+                                    </tr>
+
+                                    
+
+
+                                   
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+
+
+                        {% if obj_project.status_change_choices %}
+
+                        {% endif %}
+
+
+
+
+
+                        <!-- Information Applicant -->
+                        <br>
+                        <br>
+                        <hr class="bg-secondary">
+                        <h4 class="text-center">Applicant's information 
+
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applicant-list" >
+                            Participant's request <span class="badge badge-danger"> {{count_request_apply}}</span>
+                        </button>
+                        </h4>
+                        <br>
+                        {% if obj_project.status == 'new' %}
+                            <table class="table table-hover table striped">
+                                <thead class="text-dark" style="background-color:#ADD8E6">
+                                    <tr class="text-center">
+                                        <th>Full name</th>
+                                        <th>Email</th>
+                                        <th>Position</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class=" table-dark text-center ">
+                                    
+                                    <!-- Advisor -->
+                                    {% for i in obj_project.supervisors_project.all %}
+                                        <tr>
+                                            <td>{{i.user.get_full_name}} </td>
+                                            <td>{{i.user.email}}</td>
+                                            <td>Advisor </td>
+                                            <td>
+                                                {% if i.status == 'confirmed' or i.status == 'confirmed-by-expert' %}
+                                                    Accepted
+
+                                                {% elif i.status == 'reject' %}
+                                                    Rejected
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    {% endfor %}
+                                    
+                                    <!-- Mentor -->
+                                    {% for i in obj_project.mentor_project.all %}
+                                        <tr>
+                                            <td>{{i.user.get_full_name}} </td>
+                                            <td>{{i.user.email}}</td>
+                                            <td>Mentor </td>
+                                            <td>
+                                                {% if i.status == 'confirmed' or i.status == 'confirmed-by-expert' %}
+                                                    Accepted
+
+                                                {% elif i.status == 'reject' %}
+                                                    Rejected
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    
+                                    <!-- Member -->
+                                    {% for i in obj_project.mmber_project.all %}
+                                        <tr>
+                                            <td>{{i.user.get_full_name}} </td>
+                                            <td>{{i.user.email}}</td>
+                                            <td>Member </td>
+                                            <td>
+                                                {% if i.status == 'confirmed' or i.status == 'confirmed-by-expert' %}
+                                                    Accepted
+
+                                                {% elif i.status == 'reject' %}
+                                                    Rejected
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    
+                                    <!-- Learner -->
+                                    {% for i in obj_project.lerner_project.all %}
+                                        <tr>
+                                            <td>{{i.user.get_full_name}} </td>
+                                            <td>{{i.user.email}}</td>
+                                            <td>Lreaner </td>
+                                            <td>
+                                                {% if i.status == 'confirmed' or i.status == 'confirmed-by-expert' %}
+                                                    Accepted
+
+                                                {% elif i.status == 'reject' %}
+                                                    Rejected
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    
+                                    <!-- Applicants -->
+                                    {% for i in obj_project.project_requests.under_process %}
+                                        <tr>
+                                            <td>{{i.user.get_full_name}} </td>
+                                            <td>{{i.user.email}}</td>
+                                            <td>
+                                                {% if i.supervisor == True %}
+                                                     Advisor - 
+                                                {% endif %}
+                                                
+                                                {% if i.mentor == True %}
+                                                     Mentor - 
+                                                {% endif %}
+                                                
+                                                {% if i.member == True %}
+                                                     Member - 
+                                                {% endif %}
+                                                
+                                                {% if i.learner == True %}
+                                                     Learner
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if i.status == 'request' %}
+                                                    Pending for your decision
+                                                 <a href="{% url 'industry:industry-project-edit-request-detail' i.pk %}" target="_blank" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View
+
+                                                {% elif i.status == 'reject' %}
+                                                    Rejected by you
+                                                {% endif %}
+                                                 </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <table class="table table-hover table striped">
+                                <thead class="text-dark" style="background-color:#ADD8E6">
+                                    <tr>
+                                        <th>Full name</th>
+                                        <th>Email</th>
+                                        <th>Position</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody class=" table-dark">
+                                    <!-- Advisor -->
+                                    {% for i in obj_project.supervisors_project.Accepted %}
+                                        <tr>
+                                            <td>{{i.user.get_full_name}} </td>
+                                            <td>{{i.user.email}}</td>
+                                            <td>Advisor </td>
+                                            <td>
+                                                {% if i.status_remove == None %} 
+                                                    Accepted
+                                                    
+                                                {% elif i.status_remove == 'request-remove' %} 
+                                                        You requested to remove this applicant
+
+                                                {% elif i.status_remove == 'request-reject-by-director' or i.status_remove == 'request-reject-by-expert' %} 
+                                                    You request to remove the applicant has been declined
+
+                                                {% elif i.status_remove == 'request-accpet-by-director' or i.status_remove == 'request-accpet-by-expert' %} 
+                                                    Removed
+
+                                                {% else %}
+                                                    Under process
+
+                                                {% endif %}
+                                            </td>
+                                            <td>
+
+                                                {% if i.status_remove == 'request-accpet-by-director' or i.status_remove == 'request-accpet-by-expert' %}
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#reason{{i.id}}" class="btn btn-warning mt-2">
+                                                        Reason
+                                                    </button> 
+
+                                                {% elif i.status_remove == 'request-remove' %} 
+                                                    <button type="button" disabled style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#remove_the_project{{i.id}}" class="btn btn-danger mt-2">
+                                                        Remove
+                                                    </button>
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#reason{{i.id}}" class="btn btn-warning mt-2">
+                                                        Reason
+                                                    </button>
+                                                {% else %} 
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#remove_the_project{{i.id}}" class="btn btn-danger mt-2">
+                                                        Remove
+                                                    </button>
+                                                {% endif %}
+
+                                                <!-- Remove applicant -->
+                                                <div class="modal fade" id="remove_the_project{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <form method="POST" action="{% url 'industry:research-project-applicant-information-remove' %}" enctype="multipart/form-data">{% csrf_token %}
+                                                                <div class="modal-body">
+                                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                                    <input type="hidden" name="project_id" value="{{obj_project.id}}">
+                                                                    <input type="hidden" name="position_user" value="Advisor">
+
+                                                                    <label class="text-dark">Reason rejection<span style="color:red">*</span></label>
+                                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- See reason -->
+                                                <div class="modal fade" id="reason{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                                <div class="modal-body">
+                                                                    <label class="text-dark">Reason rejection<span style="color:red">*</span></label>
+                                                                    <textarea class="form-control" disabled name="reason_rejection">{{i.reason_rejection}}</textarea>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                    
+                                    <!-- Mentor -->
+                                    {% for i in obj_project.mentor_project.Accepted %}
+                                        <tr>
+                                            <td>{{i.user.get_full_name}} </td>
+                                            <td>{{i.user.email}}</td>
+                                            <td>Mentor </td>
+                                            <td>
+                                                {% if i.status_remove == None %} 
+                                                   Accepted
+                                                    
+                                                {% elif i.status_remove == 'request-remove' %} 
+                                                        You requested to remove this applicant
+
+                                                {% elif i.status_remove == 'request-reject-by-director' or i.status_remove == 'request-reject-by-expert' %} 
+                                                    You request to remove the applicant has been declined
+
+                                                {% elif i.status_remove == 'request-accpet-by-director' or i.status_remove == 'request-accpet-by-expert' %} 
+                                                    Removed
+
+                                                {% else %}
+                                                    Under process
+
+                                                {% endif %}
+                                            </td>
+                                            <td>
+
+                                                {% if i.status_remove == 'request-accpet-by-director' or i.status_remove == 'request-accpet-by-expert' %}
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#reason{{i.id}}" class="btn btn-warning mt-2">
+                                                        Reason
+                                                    </button> 
+
+                                                {% elif i.status_remove == 'request-remove' %} 
+                                                    <button type="button" disabled style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#remove_the_project{{i.id}}" class="btn btn-danger mt-2">
+                                                        Remove
+                                                    </button>
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#reason{{i.id}}" class="btn btn-warning mt-2">
+                                                        Reason
+                                                    </button>
+                                                {% else %} 
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#remove_the_project{{i.id}}" class="btn btn-danger mt-2">
+                                                        Remove
+                                                    </button>
+                                                {% endif %}
+
+                                                <!-- Remove applicant -->
+                                                <div class="modal fade" id="remove_the_project{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <form method="POST" action="{% url 'industry:research-project-applicant-information-remove' %}" enctype="multipart/form-data">{% csrf_token %}
+                                                                <div class="modal-body">
+                                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                                    <input type="hidden" name="project_id" value="{{obj_project.id}}">
+                                                                    <input type="hidden" name="position_user" value="Mentor">
+
+                                                                    <label class="text-dark">Reason rejection<span style="color:red">*</span></label>
+                                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- See reason -->
+                                                <div class="modal fade" id="reason{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <form method="POST" action="{% url 'industry:research-project-applicant-information-remove' %}" enctype="multipart/form-data">{% csrf_token %}
+                                                                <div class="modal-body">
+                                                                    <label class="text-dark">Reason rejection<span style="color:red">*</span></label>
+                                                                    <textarea class="form-control" disabled name="reason_rejection">{{i.reason_rejection}}</textarea>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                    <!-- Member -->
+                                    {% for i in obj_project.mmber_project.Accepted %}
+                                        <tr>
+                                            <td>{{i.user.get_full_name}} </td>
+                                            <td>{{i.user.email}}</td>
+                                            <td>Member </td>
+                                            <td>
+                                                {% if i.status_remove == None %} 
+                                                    Accepted
+                                                    
+                                                {% elif i.status_remove == 'request-remove' %} 
+                                                        You requested to remove this applicant
+
+                                                {% elif i.status_remove == 'request-reject-by-director' or i.status_remove == 'request-reject-by-expert' %} 
+                                                    You request to remove the applicant has been declined
+
+                                                {% elif i.status_remove == 'request-accpet-by-director' or i.status_remove == 'request-accpet-by-expert' %} 
+                                                    Removed
+
+                                                {% else %}
+                                                    Under process
+
+                                                {% endif %}
+                                            </td>
+                                            <td>
+
+                                                {% if i.status_remove == 'request-accpet-by-director' or i.status_remove == 'request-accpet-by-expert' %}
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#reason{{i.id}}" class="btn btn-warning mt-2">
+                                                        Reason
+                                                    </button> 
+
+                                                {% elif i.status_remove == 'request-remove' %} 
+                                                    <button type="button" disabled style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#remove_the_project{{i.id}}" class="btn btn-danger mt-2">
+                                                        Remove
+                                                    </button>
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#reason{{i.id}}" class="btn btn-warning mt-2">
+                                                        Reason
+                                                    </button>
+                                                {% else %} 
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#remove_the_project{{i.id}}" class="btn btn-danger mt-2">
+                                                        Remove
+                                                    </button>
+                                                {% endif %}
+
+                                                <!-- Remove applicant -->
+                                                <div class="modal fade" id="remove_the_project{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <form method="POST" action="{% url 'industry:research-project-applicant-information-remove' %}" enctype="multipart/form-data">{% csrf_token %}
+                                                                <div class="modal-body">
+                                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                                    <input type="hidden" name="project_id" value="{{obj_project.id}}">
+                                                                    <input type="hidden" name="position_user" value="Member">
+
+                                                                    <label class="text-dark">Reason rejection<span style="color:red">*</span></label>
+                                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- See reason -->
+                                                <div class="modal fade" id="reason{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                                <div class="modal-body">
+                                                                    <label class="text-dark">Reason rejection<span style="color:red">*</span></label>
+                                                                    <textarea class="form-control" disabled name="reason_rejection">{{i.reason_rejection}}</textarea>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                    <!-- Learner -->
+                                    {% for i in obj_project.lerner_project.Accepted %}
+                                        <tr>
+                                            <td>{{i.user.get_full_name}} </td>
+                                            <td>{{i.user.email}}</td>
+                                            <td>Learner </td>
+                                            <td>
+                                                {% if i.status_remove == None %} 
+                                                    Accepted
+                                                    
+                                                {% elif i.status_remove == 'request-remove' %} 
+                                                        You requested to remove this applicant
+
+                                                {% elif i.status_remove == 'request-reject-by-director' or i.status_remove == 'request-reject-by-expert' %} 
+                                                    You request to remove the applicant has been declined
+
+                                                {% elif i.status_remove == 'request-accpet-by-director' or i.status_remove == 'request-accpet-by-expert' %} 
+                                                    Removed
+
+                                                {% else %}
+                                                    Under process
+
+                                                {% endif %}
+                                            </td>
+                                            <td>
+
+                                                {% if i.status_remove == 'request-accpet-by-director' or i.status_remove == 'request-accpet-by-expert' %}
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#reason{{i.id}}" class="btn btn-warning mt-2">
+                                                        Reason
+                                                    </button> 
+
+                                                {% elif i.status_remove == 'request-remove' %} 
+                                                    <button type="button" disabled style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#remove_the_project{{i.id}}" class="btn btn-danger mt-2">
+                                                        Remove
+                                                    </button>
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#reason{{i.id}}" class="btn btn-warning mt-2">
+                                                        Reason
+                                                    </button>
+
+                                                {% elif i.status_remove == 'request-reject-by-director' or i.status_remove == 'request-reject-by-expert' %} 
+
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#remove_the_project{{i.id}}" class="btn btn-danger mt-2">
+                                                        Remove
+                                                    </button>
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#reason{{i.id}}" class="btn btn-warning mt-2">
+                                                        Reason
+                                                    </button>
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#rejection_reason{{i.id}}" class="btn btn-secondary mt-2">
+                                                        Rejection reason
+                                                    </button>
+                                                {% else %} 
+                                                    <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                        data-bs-target="#remove_the_project{{i.id}}" class="btn btn-danger mt-2">
+                                                        Remove
+                                                    </button>
+                                                {% endif %}
+
+                                                <!-- Remove applicant -->
+                                                <div class="modal fade" id="remove_the_project{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <form method="POST" action="{% url 'industry:research-project-applicant-information-remove' %}" enctype="multipart/form-data">{% csrf_token %}
+                                                                <div class="modal-body">
+                                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                                    <input type="hidden" name="position_user" value="Learner">
+                                                                    <input type="hidden" name="project_id" value="{{obj_project.id}}">
+
+                                                                    <label class="text-dark">Reason rejection<span style="color:red">*</span></label>
+                                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- See reason -->
+                                                <div class="modal fade" id="reason{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                                <div class="modal-body">
+                                                                    <label class="text-dark">Reason rejection<span style="color:red">*</span></label>
+                                                                    <textarea class="form-control" disabled name="reason_rejection">{{i.reason_rejection}}</textarea>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- See rejection reason -->
+                                                <div class="modal fade" id="rejection_reason{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                                <div class="modal-body">
+                                                                    <label class="text-dark">Reason rejection<span style="color:red">*</span></label>
+                                                                    <textarea class="form-control" disabled name="reason_rejection">{{i.comment}}</textarea>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+
+                                    
+                                    <!-- Applicants -->
+                                    {% for i in obj_project.project_requests.under_process %}
+                                        <tr>
+                                            <td>{{i.user.get_full_name}} </td>
+                                            <td>{{i.user.email}}</td>
+                                            <td>
+                                                {% if i.supervisor == True %}
+                                                     Advisor - 
+                                                {% endif %}
+                                                
+                                                {% if i.mentor == True %}
+                                                     Mentor - 
+                                                {% endif %}
+                                                
+                                                {% if i.member == True %}
+                                                     Member - 
+                                                {% endif %}
+                                                
+                                                {% if i.learner == True %}
+                                                     Learner
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if i.status == 'request' %}
+                                                    Pending for your decision
+                                                     <a href="{% url 'industry:industry-project-edit-request-detail' i.pk %}" target="_blank" class="btn btn-primary btn-xs mb-1">
+                                                         <i class="fa fa-eye"></i> View
+                                                     </a>
+
+                                                {% elif i.status == 'reject' %}
+                                                    Rejected by you
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
+                        {% endif %}
+
+                    {% endif %}
+
+
+
+
+
+                    <div class="col-md-6">
+                        <div>
+                            
+                            <a href="{% url 'dashboard-myprojects-reserach' %}">
+                                <h5 class="mt-2 btn btn-warning">Back</h5></a> 
+                                
+                            {% if obj_request.reason_for_rejection %}
+                            <button type="button"  data-bs-toggle="modal"
+                                data-bs-target="#exampleModal3" class="btn btn-danger">
+                                Delete
+                            </button>
+                            {% endif %}
+                            
+                        </div>
+
+                    </div>
+                    
+
+                    <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!--<div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel" style="color: black">Send to supervisors</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                                </div>-->
+                                <form method="POST">{% csrf_token %}
+                                    <div class="modal-body">
+                                            <div class="modal-body">
+                                                <lable class="text-dark">Deleted request</lable>
+                                                <input type="hidden" name="status" required class="date form-control disInp" id="id_status" value='dwadwa'>
+                                            </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Send</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+        
+            </div>
+        </main>
+        
+
+        <!-- reason rejection change status -->
+        <div class="modal fade" id="applicant-list" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="col-md-12 mt-2">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content content">
+                        <div class="modal-header text-white">
+                            <h5 class="modal-title" style="color: darkorange" id="exampleModalLabel"></h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container table-responsive">
+                            <table class="table table-hover table-dark table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Applicant</th>
+                                    <th>Advisor</th>
+                                    <th>Mentor</th>
+                                    <th>Member</th>
+                                    <th>Learner</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in applicant_list %}
+                                        <tr>
+                                            <td class="p-name">
+                                                <p style="overflow: hidden; width: 200px">{{project.user.get_full_name}}
+                                                </p>
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.supervisor == True %}
+                                                    <i class="fa fa-check-circle" style="color:green"></i>
+                                                {% else %}
+                                                    <i class="fa fa-times-circle" style="color:red"></i>
+                                                {% endif %}
+                                                
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.mentor == True %}
+                                                    <i class="fa fa-check-circle" style="color:green"></i>
+                                                {% else %}
+                                                    <i class="fa fa-times-circle" style="color:red"></i>
+                                                {% endif %}
+                                                
+                                               
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.member == True %}
+                                                    <i class="fa fa-check-circle" style="color:green"></i>
+                                                {% else %}
+                                                    <i class="fa fa-times-circle" style="color:red"></i>
+                                                {% endif %}
+                                                
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.learner == True %}
+                                                    <i class="fa fa-check-circle" style="color:green"></i>
+                                                {% else %}
+                                                    <i class="fa fa-times-circle" style="color:red"></i>
+                                                {% endif %}
+                                            
+                                               
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:industry-project-edit-request-detail' project.pk %}" target="_blank" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- reason rejection change status -->
+        <div class="modal fade" id="reason_change_status" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content content">
+                    <div class="modal-header text-white">
+                        <h5 class="modal-title" style="color: darkorange" id="exampleModalLabel">
+                        Reason rejection</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea style="width: 460px; height: 150px" disabled>{{obj_project.reason_reject_expert}}</textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Create meeting -->
+        <div class="modal fade" id="create_meeting" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-dark" id="exampleModalLabel">Create a meeting</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                    </div>
+                    <form action="{% url 'industry:project-create-edit-metting' %}" id="meetform" method="POST">{% csrf_token %}
+                    <div class="modal-body">
+                            <input type="hidden" name="id_project" id="id_project" value="{{obj_project.pk}}">
+                            <input type="hidden" name="position_metting" id="position_metting" value="create">
+
+                            <input type="text" name="link_meeting" placeholder="Meeting link" class="date form-control m-2" id="id_link_meeting" oninput="ClearErr(id_link_meeting)">
+                            <div id="id_link_meeting_error"  style="color:red"></div>
+                            <input type="date" name="date_meeting" placeholder="Meeting date" class="date form-control m-2" id="id_date_meeting" oninput="ClearErr(id_date_meeting)">
+                            <div id="id_date_meeting_error"  style="color:red"></div>
+                            <input type="time" name="time_meeting" placeholder="Meeting time" class="form-control m-2"  id="id_time_meeting" oninput="ClearErr(id_time_meeting)">
+                            <div id="id_time_meeting_error"  style="color:red"></div>
+                           
+                                
+                                <select name="time_zone"  id="time_zone" class="selectField form-control mx-2" onchange="ClearErr(time_zone)">
+                                    <option value="0" disabled selected>Time zone</option>
+                                    {% for zone in time_zone %}
+                                    <option value="{{zone}}">{{zone}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div id="time_zone_error"  style="color:red"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="meetCls" data-bs-dismiss="modal">Close</button>
+                        <button type="button" id="meetBtn" class="btn btn-success" >Submit</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Change status -->
+        <div class="modal fade" id="change_status" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content content">
+                    <div class="modal-header text-white">
+                        <h5 class="modal-title" style="color: darkorange" id="exampleModalLabel">Changing the status</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                    </div>
+                    <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group col-md-12 mb-0">
+                                <div id="div_id_status" class="form-group">
+                                    <label for="id_statusss" class=" requiredField">
+                                    Status<span class="asteriskField">*</span>
+                                    </label>
+                                    <div class="">
+                                            <select name="status_" class="select form-control" id="id_statusss" onchange="showfile()" >
+                                            <option value="new">New</option>
+                                            <option value="on_going">Ongoing</option>
+                                            <option value="pending">Pending</option>
+                                            <option value="on_hold">On hold</option>
+                                            <option value="done">Done</option>
+                                            </select>
+                                    </div>
+                                    <div class="my-3">
+                                        <input type="file" class="form-control-file" name="final_document" style="display:none" id="file_done">
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="form-label" for="description">Comment</label>
+                                <textarea class="form-control" id="description" name="description" rows="4" cols="50"></textarea>
+                            </div>
+                            
+                        </div>
+                        
+                           <!-- {{form_change_status.description}}-->
+                    </div>
+                        <div style="display: none" class="cFileUpload form-group col-md-12 mb-0 " >
+                            <input type="file" id="hiFileUpload" name="hnFileUpload">
+                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" >Change</button>
+                    </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- View Change status -->
+        <div class="modal fade" id="view_change_status" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content content">
+                    <div class="modal-body">
+                        <h6>You have already requested a change of status.</h6>
+                        <p>You can not reapply until the result of your request is known!</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="modal fade" id="tracing_project" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-white" id="exampleModalLabel"></h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12">
+
+                            <table id="exprtTbl" class="table table-sm table-bordered ">
+                                <thead class="table-warning text-dark">
+                                    <tr>
+                                        <th class="text-center" scope="col">Status change request </th>
+                                        <th class="text-center" scope="col">Event date</th>
+                                        <th class="text-center" scope="col">Comment</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  {% for r in obj_project.tracing_main_supervisor.all %}
+                                    <tr class="cursign" id="{{user.id}}" >
+                                        <td style="width: 120px" class="text-center">{{r.position}}</td>
+                                        <td style="width: 120px" class="text-center">{{r.event_date}}</td>
+                                        <td style="width: 120px" class="text-center">
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#view__comment_change_status{{r.pk}}" >
+                                                Comment
+                                            </button>
+
+                                        </td>
+                                    </tr>
+                                  {% endfor %}
+                                </tbody>
+                            </table>
+
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 text-end">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+
+
+        {% for r in obj_project.tracing_main_supervisor.all %}
+            <!-- View comment change status -->
+            <div class="modal fade" id="view__comment_change_status{{r.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content content">
+                        <div class="modal-body">
+                            <textarea disabled class="form-control" rows="4">{{r.status}}</textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="modal fade" id="upload_report_middle_project" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="color: black" id="exampleModalLabel2">Partial financial statement</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="modal-body">
+                           
+                            <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+
+
+                            <div class="form-group col-md-12 mb-0" style="color: black">
+                                <input type="file" class="form-control" required name="progress_report_middle_project">
+                            </div>
+                            <span class="badge badge-suceess" style="color: green; font-size:11px">- Import PDF or Word file</span>
+
+                                
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Send</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="modal fade" id="comment_change_status" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" id="accform" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="modal-body">
+                            <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+                                <textarea class="form-control" rows="4" disabled>{{obj_project.text_change_status}}</textarea>
+
+                                
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="accClsBtn" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+
+
+<script>
+
+$(document).ready(function(){
+ document.getElementById("meetBtn").addEventListener("click", meetSet);
+});
+
+
+
+function meetSet(){
+    var meetlink = document.getElementById("id_link_meeting").value;
+    var meetdate = document.getElementById("id_date_meeting").value;
+    var meettime = document.getElementById("id_time_meeting").value;
+    var meetzone = document.getElementById("time_zone").value;
+    if(meetlink==""){
+        document.getElementById("id_link_meeting_error").innerHTML="Error: please enter the meeting link.";
+    
+        
+    }else if(meetdate==""){
+        document.getElementById("id_date_meeting_error").innerHTML="Error: please enter the meeting date.";
+        
+    
+    }else if(meettime==""){
+        document.getElementById("id_time_meeting_error").innerHTML="Error: please enter the meeting time.";
+        
+    }else if(meetzone=="0"){
+        document.getElementById("time_zone_error").innerHTML="Error: please select the time zone.";
+        
+    }else{
+        document.getElementById('meetform').submit();
+        document.getElementById('meetBtn').disabled = true;
+        document.getElementById('meetCls').disabled = true; 
+        
+    }
+      
+    
+    
+    
+}
+
+
+function showfile(){
+    
+    var seltag = document.getElementById("id_statusss");
+    var fileDone = document.getElementById("file_done");
+    
+    if(document.getElementById("id_statusss").value == "done"){
+        
+        fileDone.style.display = "block";
+    }else{
+        
+         fileDone.style.display = "none";
+        
+    }
+    
+    
+    
+    
+    
+}
+
+
+
+function showMore() {
+  var moreDiv = document.getElementById("more");
+  var moreBtn = document.getElementById("MoreBtn");
+ var textmore = document.getElementById("textMore");
+
+  if (moreDiv.style.display === "none") {
+    moreDiv.style.display = "block";
+    moreBtn.classList.remove("fa-arrow-circle-down");
+    moreBtn.classList.add("fa-arrow-circle-up");
+   // textmore.textContent="Show more";
+    $('#textMore').text('Show less');
+    
+  } else {
+    moreDiv.style.display = "none";
+    moreBtn.classList.remove("fa-arrow-circle-up");
+    moreBtn.classList.add("fa-arrow-circle-down");
+    //textmore.textContent="Show less";
+    $('#textMore').text('Show more');
+  }
+}
+
+
+
+    $('[name="status"]').on('change', function() {
+      if ( this.value == 'done')
+      {
+        $('.cFileUpload').css('visibility', 'visible');
+
+      }
+      else
+      {
+        $('.cFileUpload').css('visibility', 'hidden');      
+      }
+    });
+    
+  function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+  
+}
+  
+    
+    
+</script>
+
+{% endblock script %}
+

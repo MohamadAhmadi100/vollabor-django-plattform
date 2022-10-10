@@ -1,0 +1,70 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/research.css' %}">
+    <title>research</title>
+{% endblock css %}
+
+{% block content %}
+
+    <div class="w-100 d-flex rs-box">
+        <div class="container">
+            <form method="POST" action="{% url 'score-to-proposal' id %}" class="w-100">
+            {% csrf_token %}
+            {% for proposal_opinion in proposal_opinions %}
+                <div class="w-100 mt-5">
+                    <h3 class="text-capitalize w-100 bg-light py-3 ps-2">{{proposal_opinion.item.item}}</h3>
+                    <div class="w-100 d-flex justify-content-between px-3">
+                        <p class="w-50 mt-4">{{proposal_opinion.description}}</p>
+                        <button type="button" class="btn btn-primary rs-help-btn mt-4" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal4">
+                            Help
+                        </button>
+                    </div>
+                    <label for="score1" class="fw-bold mx-3 rs-num-label"><i class="fas fa-star-of-life rs-star-icon"></i> score </label>
+                    <input name="score{{proposal_opinion.item.id}}" ype="number" required max="100" min="0" class="rs-num-input p-1" id="score1">
+                </div>
+                <hr>
+            {% endfor %}
+                <div class="d-block w-100 text-end">
+                    <button type="submit" class="rs-submit-btn my-5">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">category title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aut dolorum repellat maiores optio
+                    voluptas rerum delectus distinctio vitae minima placeat? Numquam dolorum, facilis pariatur quibusdam
+                    reprehenderit dignissimos ex voluptas error commodi ducimus est minima, nihil maxime adipisci
+                    inventore, officiis eaque vel sed ad doloremque animi similique? Id deserunt laborum voluptatibus!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{% static 'dashborad/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'dashborad/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'dashborad/js/research.js' %}"></script>
+
+{% endblock %}

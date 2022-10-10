@@ -1,0 +1,767 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+
+<link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+
+
+<header id="main-header" class="py-2 bg-color6 text-color8">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1><i class="fa fa-cog"></i> Dashboard</h1>
+            </div>
+            <!--<div class="col-md-6 text-right">-->
+            <!--    <h5 class="btn btn-secondary fw-bold mb-1" style="font-weight:bold; color:#1AE8F9 ">-->
+            <!--       Balance: ${{user.memberprofile.balance}}-->
+            <!--        <br/>-->
+            <!--        <a class="btn btn-warning btn-sm text-dark fw-bold px-4 my-1 mx-2" href="{% url 'create-checkout-session' %}"> -->
+            <!--            <i class="fas fa-money-check-alt text-dark" style='font-size:14px'></i> Charge-->
+            <!--        </a>-->
+            <!--    </h5>-->
+            <!--</div>-->
+        </div>
+    </div>
+</header>
+
+
+<!-- DASHBOARD -->
+<section id="dashboard">
+    <div class="container mt-3">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="row">
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger"> {{ message }}</div>
+                        {%endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        <div class="row mb-2">
+            <!--<div class="col-md-6">-->
+            <!--    <a class="btn btn-dark mb-1" target="_blank" href="https://calendar.google.com/calendar/u/3/r?tab=mc">-->
+            <!--        <i class="fab fa-google bg-white p-1 text-dark" style="border-radius: 25px;"></i> Google Calendar-->
+            <!--    </a>-->
+            <!--</div>-->
+            
+        </div>
+{% comment %} if {% endcomment %}
+ 
+{% comment %} endif {% endcomment %}
+
+{% comment %} if {% endcomment %}
+
+{% comment %} endif {% endcomment %}
+        <div class="row">
+        <!--    {% if user.memberprofile.is_technical_manager %}-->
+        <!--    <div class="col-md-3">-->
+        <!--        <div class="card text-center bg-color8 text-white mb-2 dash-card" style="height: 250px;">-->
+        <!--            <div class="card-body mt-4">-->
+        <!--                <h3>Technical Manager</h3>-->
+        <!--                <h1 class="display-5">-->
+        <!--                    <i class="fa fa-cogs"></i>-->
+        <!--                </h1>-->
+        <!--                <a href="{% url 'technical-manager-page' %}" class="btn btn-outline-light btn-sm">View</a>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--    </div>-->
+        <!--    {% endif %}-->
+        
+        
+        
+        
+
+         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div class="card-body mt-1">
+                        <h3>Service</h3>
+                        <div><i class='fas fa-th-large' style='font-size:24px'></i></div>
+                        
+                        <div class="row text-color8 m-1">
+                            <a href="{% url 'dashboard-projects-page' %}" class="btn text-color8 btn-outline-dark btn-sm col-10 mx-auto">Project</a>
+                        </div>
+                        <div class="row text-color8 m-1">
+                            <a href="{% url 'show-workshops-to-users' %}" class="btn text-color8 btn-outline-dark btn-sm col-10 mx-auto">Workshop</a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        
+           
+
+            {% if is_interviewer %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div class="card-body mt-4">
+                        <h3>Interviewer</h3>
+                        <h1 class="display-5">
+                            <img src="{% static 'dashboard/icons/job-interview.svg' %}" class="img-fluid" width="50">
+                        </h1>
+                        <a href="{% url 'interviewer-panel' %}" class="btn btn-outline-dark btn-sm">View</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if project_corresponding_expert_numbers %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div class="card-body mt-4">
+                        <h3>Corresponding expert</h3>
+                        <h1 class="display-5">
+                            <i class="fas fa-user-tie"></i> {{project_corresponding_expert_numbers}}
+                        </h1>
+                        <a href="{% url 'corresponding-expert-page' %}" class="btn btn-outline-dark btn-sm">Manage</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            
+
+           <!--{% if project_reviewers %}
+            <div class="col-md-3">
+                <div class="card text-center bg-color4 text-dark mb-2 dash-card" style="height: 250px;">
+                    <div class="card-body mt-5">
+                        <h3><i class="fas fa-eye"></i> Review</h3>
+                        <h5>
+                             {{project_reviewers}} Project(s)
+                        </h5>
+                        <h6>
+                            {{unseen_proposal_numbers}} Unseen proposal(s)
+                        </h6>
+                        <a href="{% url 'review-page' %}" class="btn btn-outline-dark btn-sm">Visit</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}-->
+            
+            <!-- {% if request.user.is_superuser or request.user.researchrole.reviewer == True or request.user.researchrole.director == True  %}-->
+            <!--<div class="col-md-3">-->
+            <!--    <div class="card text-center bg-color4 text-dark mb-2 dash-card" style="height: 250px;">-->
+            <!--        <div class="card-body mt-4">-->
+            <!--            <h3> Reviewer</h3>-->
+            <!--            <h1 class="display-5">-->
+            <!--                <i class="fa fa-eye"></i> -->
+            <!--            </h1>-->
+                        
+            <!--            <h6>-->
+            <!--                {{unseen_proposal_numbers}} Unseen proposal-->
+            <!--            </h6>-->
+            <!--            <br>-->
+            <!--            <a href="{% url 'industry:research-reviewer-list-dashboard' %}" class="btn btn-outline-dark btn-sm">Project <span class="badge badge-light">-->
+
+            <!--                    {{research_review_count}}-->
+
+            <!--                </span> </a>-->
+            <!--        </div>-->
+            <!--    </div>-->
+            <!--</div>-->
+            <!--{% endif %}-->
+
+            {% if industrial_numbers %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+            <div class="card text-center bg-color5 text-color8 dash-card" style="height: 250px;">
+                <div class="card-body mt-4">
+                    <h3>Approve industrial areas</h3>
+                    <h1 class="display-5">
+                        <i class="fa fa-industry"></i> {{ industrial_numbers }}
+                    </h1>
+                    <a href="{% url 'new-industrial-areas' %}" class="btn btn-outline-dark btn-sm">View</a>
+                </div>
+            </div>
+            </div>
+            {% endif %}
+
+            {% if recently_added_expertises_numbers > 0 %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+            <div class="card text-center bg-color5 text-color8 dash-card" style="height: 250px;">
+                <div class="card-body mt-4">
+                    <h3>Recently added expertises</h3>
+                    <h1 class="display-5">
+                        <i class="fa fa-lightbulb"></i> {{ recently_added_expertises_numbers }}
+                    </h1>
+                    <a href="{% url 'recently-added-expertises' %}" class="btn btn-outline-dark btn-sm">View</a>
+                </div>
+            </div>
+            </div>
+            {% endif %}
+            
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px; ">
+                    <div class="card-body mt-1">
+                        <h3>Request Form</h3>
+                        <div><i class='far fa-id-badge' style='font-size:24px'></i></div>
+                        <div class="row m-1">
+                            <a href="{% url 'request:request' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">Form</a>
+                        </div>
+                        
+                        {% if request.user.researchrole.expert == True or 'workshop expert' in user_role %}
+                        <div class="row m-1">
+                            <a href="{% url 'request:expert' %}?filter=badge/status/new" class="btn btn-outline-dark btn-sm col-10 mx-auto" >Expert <span class="badge badge-light">{{request_expert_count}}</span></a>
+                        
+                        </div>
+                        {% endif %}
+                        {% if request.user.researchrole.reviewer == True or request.user.researchrole.interviewer == True %}
+                        
+                        <div class="row m-1">
+                            <a href="{% url 'request:review-interview' %}?filter=badge/review/new" class="btn btn-outline-dark btn-sm col-10 mx-auto">Review & Interview <span class="badge badge-light" >{{request_reviewer_count}}</span></a>
+                        
+                        </div>
+                        
+                        {% endif %}
+                        {% if 'Request manager' in user_role %}
+                        <div class="row m-1">
+                            <a href="{% url 'request:manager-list' %}?filter=badge/status/new" class="btn btn-outline-dark btn-sm col-10 mx-auto" >Manager <span class="badge badge-light" >{{request_manager_count}}</span></a>
+                        
+                        </div>
+                        
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div class="card-body mt-1">
+                        <h3>My Project</h3>
+                        <!--<h1 class="display-5">-->
+                        <!--    <i class="fa fa-tasks"></i> -->
+                        <!--</h1>-->
+                        <div><i class='fas fa-project-diagram' style='font-size:24px'></i></div>
+                            {% if user|is_member_profile %}
+                            <div class="row m-1"><a href="{% url 'dashboard-myprojects-reserach' %} " class="btn btn-outline-dark btn-sm col-10 mx-auto">View <span class="badge badge-danger" style="background-color: white; color: black"> {{myp_project_count}}</span></a></div>
+                            {% else %}
+                            <div class = "row m-1">
+                                <button class="btn btn-outline-dark btn-sm col-10 mx-auto" disabled>View </button>
+                            </div>
+                                 
+                            {% endif %}
+
+                            {% if competition_collaborated_numbers %}
+                            <!--<a href="{% url 'dashboard-projects-page' %}?filter=my_projects" class="btn btn-outline-light btn-sm mb-2">View Competition</a>-->
+                            {% else %}
+                            <!--<button class="btn btn-outline-light btn-sm mb-2" disabled>View Competition</button>-->
+                            {% endif %}
+                            {% if not request.user.memberprofile.is_guest %}
+                            {% if industrial_collaborated_numbers %}
+                            <!--<a href="{% url 'dashboard-projects-page' %}?filter=my_projects" class="btn btn-outline-light btn-sm mb-2">View Industrial</a>-->
+                            {% else %}
+                            <!--<button class="btn btn-outline-light btn-sm mb-2" disabled>View Industrial</button>-->
+                            {% endif %}
+                            {% endif %}
+                            {% if user|is_member_profile %}
+                            <div class="row m-1">
+                                <a href="{% url 'industry:form-clint' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">Define a project</a>
+                            </div>
+                            
+                            {% else %}
+                            <!--<a href="" class="btn btn-outline-light mb-2">Define a industrial project</a>-->
+                            {% endif %}
+                            {% if request.user.is_superuser or request.user.researchrole.reviewer == True or request.user.researchrole.director == True  %}
+                            <div class="row m-1"><a href="{% url 'industry:research-reviewer-list-dashboard' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">Review <span class="badge badge-light">
+
+                                {{research_review_count}}
+
+                            </span> </a></div>
+                            {% endif %}
+                            
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div class="card-body mt-1">
+                        <h3>Announcements</h3>
+                        <div><i class='fa fa-bullhorn' style='font-size:24px'></i></div>
+                       <!-- <h1 class="display-5">
+                            <i class="fa fa-bullhorn"  style='font-size:24px'></i> 
+                        </h1>-->
+                        <div class="row m-1">
+                            <a href="{% url 'dashboard-announcement-page' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">View <span class="badge badge-light">{{announcement_numbers}}</span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-md-3">-->
+            <!--    <div class="card text-center bg-danger text-white mb-2 dash-card" style="height: 250px;">-->
+            <!--        <div class="card-body mt-4">-->
+            <!--            <h3>Contracts</h3>-->
+            <!--            <h1 class="display-5">-->
+            <!--                <i class="fa fa-file-contract"></i> {{total_contract_numbers}}-->
+            <!--            </h1>-->
+            <!--            <h6>Unseen: {{unseen_contract_numbers}}</h6>-->
+            <!--            <a href="{% url 'contract-list-page' %}" class="btn btn-outline-light btn-sm">View</a>-->
+            <!--        </div>-->
+            <!--    </div>-->
+            <!--</div>-->
+            <!--
+            <div class="col-md-3">
+                <div class="card text-center request-bg text-white mb-2 dash-card" style="margin-bottom: 20px; height: 250px;">
+                    <div class="card-body">
+                        <h3>Requests</h3>
+                        <h1 class="display-5">
+                            <i class="fa fa-user-plus"></i> {{ total_request_numbers }}
+                        </h1>
+                        {% if research_request_numbers > 0 %}
+                        <a href="{% url 'dashboard-requests-page' %}" class="btn btn-outline-light btn-sm mb-2">
+                            View Research Requests <span class="badge badge-light">{{research_request_numbers}}</span>
+                        </a>
+                        {% else %}
+                        <button class="btn btn-outline-light btn-sm mb-2" disabled> View Research Requests <span class="badge badge-light">{{research_request_numbers}}</span> </button>
+                        {% endif %}
+                        {% if competition_request_numbers > 0 %}
+                        <a href="{% url 'requests-with-contracts-page' project_type='Competition' %}" class="btn btn-outline-light btn-sm mb-2">
+                            View Competition Requests <span class="badge badge-light">{{competition_request_numbers}}</span>
+                        </a>
+                        {% else %}
+                        <button class="btn btn-outline-light btn-sm mb-2" disabled> View Competition Requests <span class="badge badge-light">{{competition_request_numbers}}</span></button>
+                        {% endif %}
+                        {% if industrial_request_numbers > 0 %}
+                        <a href="{% url 'requests-with-contracts-page' project_type='Industrial' %}" class="btn btn-outline-light btn-sm">
+                            View Industrial Requests <span class="badge badge-light">{{industrial_request_numbers}}</span>
+                        </a>
+                        {% else %}
+                        <button class="btn btn-outline-light btn-sm" disabled> View Industrial Requests <span class="badge badge-light">{{industrial_request_numbers}}</span></button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            -->
+            <!-- <div class="col-md-3">-->
+            <!--    <div class="card text-center bg-color11 text-white mb-2 dash-card" style="height: 250px;">-->
+            <!--        <div class="card-body mt-3">-->
+            <!--            <h3>Define a project</h3>-->
+            <!--            <h1 class="display-4">-->
+            <!--                <i class="fa fa-plus"></i>-->
+                            <!-- define-projects-page' -->
+            <!--            </h1>-->
+            <!--            {% if user|is_member_profile %}-->
+            <!--            <a href="{% url 'industry:form-clint' %}" class="btn btn-outline-light mb-2 btn-sm">Define a project</a>-->
+            <!--            {% else %}-->
+                        <!--<a href="" class="btn btn-outline-light mb-2">Define a industrial project</a>-->
+            <!--            {% endif %}-->
+            <!--            {% if user|is_competition_manager %}-->
+                        <!--<a href="{% url 'competition-manager-page' %}" class="btn btn-outline-light btn-sm">Define a competition project</a>-->
+            <!--            {% endif %}-->
+            <!--            {% for role in roles %}-->
+            <!--            {% if role.position == 'supervisor'%}-->
+            <!--            <div><a href="{% url 'add-workshop-page' %}" class="btn btn-outline-light mb-3 mt-3 btn-sm">Define a Workshop</a></div>-->
+            <!--            {% endif %}-->
+            <!--            {% endfor %}-->
+            <!--        </div>-->
+            <!--    </div>-->
+            <!--</div>-->
+
+                
+                {% if 'workshop manager' in user_role or 'workshop expert' in user_role%}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                    <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                        <div class="card-body mt-1 ">
+                            <h3>Workshop</h3>
+                            <div><i class='fas fa-chalkboard' style='font-size:24px'></i></div>
+                            
+                            
+                            {% for role in roles %}
+                            {% if role.position == 'workshop manager'%}
+                            <div class="row m-1"><a href="{% url 'add-workshop-page' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">Define a workshop</a></div>
+                            <div class="row m-1"><a href="{% url 'manager-workshop' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">manager <span class="badge badge-danger" style="background-color: white; color: black">{{director_workshop_number}}</span></a></div>
+                            {% comment %} <a href="{% url 'my-workshop-status' %}" class="btn btn-outline-dark btn-sm">My workshop requests</a> {% endcomment %}
+                            {% endif %}
+                            {% if role.position == 'workshop expert'%}
+                            <div class="row m-1"><a href="{% url 'expert-workshop' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">Expert <span class="badge badge-danger" style="background-color: white; color: black">{{expert_workshop_number}}</span></a></div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+            
+
+            <!--{% for role in roles %}-->
+            <!--{% if role.position == 'workshop expert'%}-->
+            <!--    <div class="col-md-3">-->
+            <!--        <div class="card text-center bg-color9 text-white mb-2 dash-card" style="height: 250px;background-color: #228B22" >-->
+            <!--            <div class="card-body mt-4">-->
+            <!--                <h3>Workshop</h3>-->
+            <!--                <h6 class="display-5">-->
+            <!--                    (expert)-->
+            <!--                </h6>-->
+            <!--                <a href="{% url 'expert-workshop' %}" class="btn btn-outline-light btn-sm">View <span class="badge badge-danger" style="background-color: white; color: black">{{expert_workshop_number}}</span></a>-->
+            <!--            </div>-->
+            <!--        </div>-->
+            <!--    </div>-->
+            <!--{% endif %}-->
+            <!--{% endfor %}-->
+
+            <!--{% for role in roles %}-->
+            <!--{% if role.position == 'supervisor'%}-->
+             
+            <!--{% endif %}-->
+            <!--{% endfor %}-->
+            
+               <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                    <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                        <div class="card-body mt-1">
+                            <h3>My workshop</h3>
+                            <div><i class='fas fa-chalkboard-teacher' style='font-size:24px'></i></div>
+                            <!--<h6 class="display-5">-->
+                            <!--    (presenter)-->
+                            <!--</h6>-->
+                            <div class="row m-1"><a href="{% url 'add-workshop-page' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">Define a workshop</a></div>
+                            <div class="row m-1"><a href="{% url 'my-workshop-status' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">View <span class="badge badge-danger" style="background-color: white; color: black">{{supervisor_workshop_number}}</span></a></div>
+                            
+                            
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <!--<div class="col-md-3">-->
+                <!--    <div class="card text-center bg-color9 text-white mb-2 dash-card" style="height: 250px;background-color: #228B22" >-->
+                <!--        <div class="card-body mt-4">-->
+                <!--            <h3>Workshop</h3>-->
+                <!--            <h1 class="display-5">-->
+                <!--            <i class="fa fa-bullhorn"></i>-->
+                <!--            </h1>-->
+                <!--            <a href="{% url 'show-workshops-to-users' %}" class="btn btn-outline-light btn-sm">Show Workshops</a>    -->
+                <!--        </div>-->
+                <!--    </div>-->
+                <!--</div>-->
+                {% for g_user in guarante %}
+                {% if g_user.user == request.user %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                    <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                        <div class="card-body mt-4">
+                            <h3>Workshop guarantee request</h3>
+                            <div><a href="{% url 'guarante-request' %}" class="btn btn-outline-dark mb-3 mt-3 btn-sm col-10 mx-auto">View</a></div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% if request.user in news_manager  %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                    <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                        <div class="card-body mt-1">
+                            <h3>News & Event</h3>
+                            <div><i class='far fa-newspaper' style='font-size:24px'></i></div>
+                            <div class="row m-1"><a href="{% url 'news-view' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">News</a></div>
+                            <div class="row m-1"><a  href="{% url 'event-view' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">Event</a></div>
+                            <div class="row m-1"><a href="{% url 'video-view' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">Video</a></div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <!--{% for user in staff %}-->
+                <!--{% if request.user == user.user %}-->
+                <!--<div class="col-md-3">-->
+                <!--<div class="card text-center bg-color9 text-white mb-2 dash-card" style="height: 250px;background-color: #B8860B" >-->
+                <!--    <div class="card-body mt-4">-->
+                <!--        <h3>Automation</h3>-->
+                <!--        <div><a href="{% url 'total_time' %}" class="btn btn-outline-light mb-3 mt-3 btn-sm">Task Recorder</a></div>-->
+                <!--        <div><a href="{% url 'cartable-main-panel' %}" class="btn btn-outline-light">View</a></div>-->
+                <!--    </div>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--{% endif %}-->
+                <!--{% endfor %}-->
+
+	        {% if user.is_superuser or request.user.adrole.is_staff == True %}
+            <div  class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div class="card-body mt-1">
+                        <h3>Advertisement</h3>
+                        <div> <i class='fab fa-adversal' style='font-size:24px'></i></div>
+                        <div class="row m-1"><a href="{% url 'email:home' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">View</a></div>
+                        <div class="row m-1"><a href="{% url 'user-footprint-page' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">User footprint</a></div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div class="card-body mt-1">
+                        <h3>Activity</h3>
+                        <div>
+                            <i class="far fa-chart-bar text-dark" style="font-size:24px"></i> 
+                            
+                        </div>
+                        <div class="row m-1">
+                            <a href="{% url 'forum' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">View <span class="badge badge-light">
+                                {% if request.user.is_superuser or request.user.forumrole.is_staff == True %}
+                            {{count_activity_all}}
+                            {% else %}
+                            {{count_activity}}
+                            {% endif %}
+                            </span></a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            {% if request.user.is_superuser or request.user.researchrole.comment_management == True %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div class="card-body mt-1">
+                        <h3>Comment</h3>
+                        <div><i class='far fa-comment-alt' style='font-size:24px'></i></div>
+                        
+                        <div class="row m-1"><a href="{% url 'research-comment-management' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">View <span class="badge badge-light">
+                            {{count_comment_research}}
+                        </span></a></div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if request.user.is_superuser %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2" style="height: 250px;">
+                    <div class="card-body mt-1">
+                        <h3>Dollar
+                            {% if doler_obj.Automatically == True %}
+                                <span style="font-size: 17px">Automatically</span></h3>
+                            {% else %}
+                                <span style="font-size: 17px">{{doler_obj.price}}</span></h3>
+                            {% endif %}
+                       <div><i class='fas fa-search-dollar' style='font-size:24px'></i></div>
+                       <div class="row m-1">
+                           <a href="{% url 'change-status-dollar' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">View</a>
+                       </div>
+                        
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if is_applicant %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div class="card-body mt-1">
+                        <h3>Applicants</h3>
+                        <div><i class="fa fa-users" style="font-size:24px"></i></div>
+                        
+                        {% if applicant_numbers %}
+                        <div class="row m-1">
+                            <a href="{% url 'cv-page' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">View <span class="badge badge-light"> {{applicant_numbers}}</span></a>
+                        </div>
+                        
+                        {% else %}
+                        <div class="row m-1"><button class="btn btn-outline-dark btn-sm col-10 mx-auto" disabled>View</button></div>
+                        
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if is_question_answer_manager %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div class="card-body mt-4">
+                        <h1>Q & A</h1>
+                        <h3>
+                            <i class="fa fa-question"></i> {{unverified_question_numbers}} <br>
+                            <i class="fa fa-reply"></i> {{unverified_answer_numbers}}
+                        </h3>
+                        <a href="{% url 'question-and-answer-page' %}" class="btn btn-outline-dark">View</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+             
+            {% if request.user.is_superuser or request.user.researchrole.director == True %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2" style="height: 250px;">
+                    <div class="card-body mt-1">
+                        <h3>Project-director</h3>
+                        <div><i class='fas fa-portrait' style='font-size:24px'></i></div>
+                        <!--<h1 class="display-5">
+                            <i class="fa fa-cogs"></i>
+                        </h1>-->
+                        <div class="row m-1"><a href="{% url 'industry:industry-director' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">View <span class="badge badge-danger" style="background-color: white; color: black">{{count_all_director}}</span></a></div>
+                        
+                        <div class="row m-1"><a href="{% url 'industry:research-director-manage-project' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">Project management <span class="badge badge-danger" style="background-color: white; color: black">{{count_manage_project_director}}</span></a></div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if request.user.is_superuser or request.user.researchrole.expert == True or request.user.researchrole.director == True or request.user.is_superuser %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2" style="height: 250px;">
+                    <div class="card-body mt-1">
+                        <h3>Project-expert </h3>
+                        <div><i class='fas fa-book-reader' style='font-size:24px'></i></div>
+                        
+                        <div class="row m-1"><a href="{% url 'industry:industry-expert-list' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">View <span class="badge badge-danger" style="background-color: white; color: black">{{count_expert_cart}}</span></a></div>
+                         
+                        <div class="row m-1"><a href="{% url 'industry:research-expert-manage-project' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">Project management <span class="badge badge-danger" style="background-color: white; color: black">{{count_manage_project_expert}}</span></a></div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            
+             
+            
+            {% if request.user.is_superuser == False %}
+        {%for role in roles%}
+            {%if role.position == 'accounting manager' or role.position == 'accounting expert'%}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div  class="card-body mt-1">
+                        <h3>Accounting</h3>
+                        <div><i class='fas fa-coins' style='font-size:24px'></i></div>
+                        <div class="row m-1"><a href="{% url 'accounting:accounting' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">View</a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            {%endif%}
+        {%endfor%}
+        {%else%}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+                    <div  class="card-body mt-1">
+                        <h3>Accounting</h3>
+                        <div><i class='fas fa-coins' style='font-size:24px'></i></div>
+                        <div class="row m-1"><a href="{% url 'accounting:accounting' %}" class="btn btn-outline-dark btn-sm col-10 mx-auto">View</a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        {%endif%}
+        
+        {% if request.user.is_staff or request.user.is_superuser %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+            <div class="card text-center bg-color5 text-color8 mb-2 dash-card" style="height: 250px;">
+            <div class="card-body mt-4">
+            <h3>Messages</h3>
+            <h1 class="display-5">
+            <img src="{% static 'dashboard/icons/job-interview.svg' %}" class="img-fluid" width="50">
+            </h1>
+            <a href="{% url 'messages' %}" class="btn btn-outline-dark btn-sm">View</a>
+            </div>
+            </div>
+            </div>
+        {% endif %}
+            
+            
+        </div>
+        {% if user.is_superuser %}
+        <div class="row mb-5">
+            <div class="col-8 mx-auto my-5">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+        {% endif %}
+        
+        
+       
+        
+        
+        
+    </div>
+</section>
+
+{% if has_not_seen_email %}
+<!-- EMAIL MODAL -->
+<div class="modal" id="emailModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark"><i class="fa fa-mail-bulk text-info"></i></h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+          <p>As a member of tecvico, an email is provided for you.</p>
+          <p><strong>Email address:</strong> {{email_info.email}}</p>
+          <p><strong>Initial password:</strong> {{email_info.initial_password}}</p>
+          <p>For logging in, you have to go to <a href="https://https://webmail.tecvico.com/" target="_blank">webmail.tecvico.com</a></p>
+          <form method="post">
+              {% csrf_token %}
+              <input type="text" class="d-none" name="seen-email-info" value="1">
+              <button class="btn btn-danger my-2">Don't show me this again</button>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+{% endblock content %}
+
+{% block script %}
+
+{% if has_not_seen_email %}
+<script>
+    $('#emailModal').modal({show:true,closeOnEscape: true});
+</script>
+{% endif %}
+
+<script>
+    var ctx = $('#myChart');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [
+            {% for week in week_list %}
+            "{{week}}",
+            {% endfor %}
+            ],
+            datasets: [{
+                label: '# of Visitors',
+                data: [
+                {% for visitor in visitor_list %}
+                    {{visitor}},
+                {% endfor %}
+                ],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 99, 132, 1)',
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+</script>
+{% endblock script %}

@@ -1,0 +1,77 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/checkbox.css' %}">
+{% endblock %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-brown text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-file-contract"></i> Contract list</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="contract">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <table class="table table-hover p-table">
+                                <thead>
+                                <tr>
+                                    <th>Project Name</th>
+                                    <th>Contract type</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for contract in contracts %}
+                                    <tr>
+                                        <td class="p-name">
+                                            <p style="overflow: hidden; width: 500px">
+                                                {{contract.project.title}}
+                                                {% if not contract.reply_has_been_sent %}
+                                                <span class="badge badge-warning">Unseen</span>
+                                                {% endif %}
+                                            </p>
+                                        </td>
+                                        <td class="p-name">
+                                            {{contract.contract_type}}
+                                        </td>
+                                         <td class="text-right">
+                                             <a href="{% url 'project-contract-page' project_pk=contract.project.pk contract_type=contract.contract_type %}" class="btn btn-primary btn-xs mb-1">
+                                                 <i class="fa fa-eye"></i> View
+                                             </a>
+                                         </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,26 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!-- HEADER SECTION -->
+<div id="login-header-section" style="padding-top:150px">
+    <div class="dark-overlay">
+        <div class="login-header-inner">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">{% trans "Application has submitted" %}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<section id="logout-section" class="bg-light text-dark py-5 px-3">
+    <div class="container py-5">
+            <h3 class="text-muted text-center">{% trans "You submitted the application request successfully. Please wait for our team to review and accept your request." %}</h3>
+    </div>
+</section>
+
+{% endblock content %}

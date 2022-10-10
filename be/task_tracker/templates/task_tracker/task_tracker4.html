@@ -1,0 +1,735 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load task_tracker_filter %}
+{% block body_class %}bg-light{% endblock body_class %}
+
+{% block content %}
+    <div class="bg-light">
+        <div id="main-header" class="py-2 bg-info text-light ">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1><i class="fa fa-clock"></i> Task Recorder </h1>
+                    </div>
+                </div>
+                <div class="row ">
+                    <p class="card-text">Yesterday’s the past, tomorrow’s the future, but today is a gift. That’s why
+                        it’s
+                        called the present .. <span class="text-bold text-light">" Bil Keane "</span></p>
+                </div>
+
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    {% if today_status == 1 %}
+                    <input type="text" name="end_time" class="d-none">
+                    <input value="End" type="submit" name="end_day" class="btn btn-danger" id="end-day-btn">
+                    {% elif today_status == 2 %}
+                    <input type="text" name="start_time" class="d-none">
+                    <input value="Start" type="submit" name="start_day" class="btn btn-success" id="start-day-btn">
+                    {% else %}
+                        <input type="text" name="start_time" class="d-none">
+                        <input value="Start" type="submit" name="start_day" class="btn btn-success" id="start-day-btn">
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        <div class="col-12 mt-3 text-center">
+            {% if request.user in managers %}
+            <a href="{% url 'manager-list' %}" class="btn btn-outline-dark">
+                Manager list
+                <span class="badge badge-danger"></span>
+            </a>
+            {% endif %}
+
+            {% if request.user in human_resource %}
+            <a href="{% url 'human-resource-list' %}" class="btn btn-outline-dark">
+                Human Resource list
+                <span class="badge badge-danger"></span>
+            </a>
+            {% endif %}
+        </div>
+
+        <br><br>
+
+        <section id="task-tracker">
+            <div class="container">
+                 <div class="alert alert-success d-none" id="altSuccess"></div>
+                 <div class="alert alert-danger d-none" id="altdanger"></div>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger"> {{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- add new task -->
+            <div class="container mb-5">
+                <form action="" class="d-md-flex justify-content-between" method="POST">
+                    {% csrf_token %}
+                    <div class="container">
+                        <div class="row mb-2">
+                            <div class="col-8">
+                                <label for="tomorrow" class="d-block"><h5>Tomorrow’s Task</h5></label>
+                                <textarea class="form-control" name="title" id="tomorrow" style="border-radius: 5px;" placeholder="Please write the title of the task..."></textarea>
+                            </div>
+                            <div class="col-4">
+                                <label for="duration-input" class="d-block">Suggested time</label>
+                                <input class="form-control" name="suggested_time" id="duration-input" style="border-radius: 5px;" type="text" required pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value="00:00:00" title="Write a duration in the format hh:mm:ss">
+                            </div>
+                        </div>
+                         <div class="row">
+                            <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                <select name="position" class="form-control">
+                            {% for pos in user_position %}
+                                <option value="{{ pos.position }}">{{ pos.position }}</option>
+                            {% endfor %}
+                                </select>
+                                
+                            </div>
+                            <div class="col col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                <input type="submit" class="btn btn-secondary" name="add" value="Submit"
+                                style="width: 50%;border-radius: 5px;">
+                            </div>
+                        </div>   
+                            
+                        
+                        
+                        
+                    </div>
+                        
+                   
+                </form>
+            </div>
+
+            <div class="container my-5">
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table table-bordered mb-5" style="border-radius: 25px;" id="tasktbl">
+                            <thead>
+                            <tr class="table-info text-dark">
+                                <th class="text-center px-5">Task Code</th>
+                                <th class="text-center px-5">Title</th>
+                                <th class="text-center px-5">suggest time</th>
+                                <th class="text-center px-5">Date</th>
+                                <th class="text-center px-5">Start time</th>
+                                <th class="text-center px-5">End time</th>
+                                <th class="text-center px-5">Status</th>
+                            </tr>
+                            </thead>
+                             <tbody id="tasktblbody">
+                            {% for finished_task in finished_tasks %}
+                                <tr id="r{{finished_task.pk}}">
+                                    <td class="text-center">
+                                        {{ finished_task.pk|linebreaks }}
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                        {{ finished_task.title|linebreaks }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ finished_task.suggested_time }}
+                                    </td>
+                                    <td class="p-name text-center">
+                                        {{ finished_task.date }}
+                                    </td>
+                                    <td class="p-name text-center">
+                                        {{ finished_task.start_time}}
+                                    </td>
+                                     {% if finished_task.status == 'New' %}
+                                    <td class="p-name text-center">
+                                        <p class="badge badge-primary" >{{finished_task.status}}</p>
+                                    </td>
+                                    {% elif finished_task.status == 'Confirm' or finished_task.status == 'Start' %}
+                                    <td class="p-name text-center">
+                                        {% if finished_task.start_time == None %}
+                                        <form action="" method="POST">
+                                            {% csrf_token %}
+                                                <input type="text" name="task_pk2" class="d-none" value="{{finished_task.pk}}">
+                                                <input type="text" name="start_time2" class="d-none">
+                                                <button value="Start2"  type="button" name="start2" class="btn btn-success StartBtn" id="start-btn2">Start</button>
+                                        </form>
+                                        {% elif finished_task.end_time == None %}
+                                            {% if finished_task.start_pause == None %}
+                                            <div class="row">
+                                                <input type="number" class="d-none" id="task_pk_pause" value="{{finished_task.pk}}">
+                                                <div class="col-6 mx-1">
+                                                    <button value="start_pause" id="start_pause" class="btn btn-warning" type="button">Pause</button>
+                                                </div>
+                                                <div class="col-6 mx-1">
+                                                    <button id="end2-btn" class="btn btn-danger EndBtn"  type="button">End</button>
+                                                </div>
+                                            </div>
+                                            {% elif finished_task.start_pause != None and finished_task.end_pause == None%}
+                                            <div>
+                                                <input type="number" class="d-none" id="task_pk_pause" value="{{finished_task.pk}}">
+                                                <button value="end_pause"  type="button" name="end_pause" class="btn btn-primary end_pause" id="end_pause">Start</button>
+                                            </div>
+                                            {% else %}
+                                            <div>
+                                                <button id="end2-btn" class="btn btn-danger EndBtn"  type="button">End</button>
+                                            </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    {% elif finished_task.status == 'Finished' %}
+                                    <td class="p-name text-center">
+                                        {{ finished_task.status }}
+                                        
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <nav class="text-center">
+                    <ul class="pagination">
+                        {% if finished_tasks.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?=page1">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?=page={{ finished_tasks.previous_page_number }}">Previous</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">First</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Previous</a>
+                            </li>
+                        {% endif %}
+                        {% for num in finished_tasks.paginator.page_range %}
+                            {% if finished_tasks.number == num %}
+                                <li class="page-item active">
+                                    {% if url_filters != "" %}
+                                        <a class="page-link" href="?page={{ num }}&{{ url_filters }}">{{ num }}</a>
+                                    {% else %}
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    {% endif %}
+                                </li>
+                            {% elif num > finished_tasks.number|add:'-3' and num < finished_tasks.number|add:'3' %}
+                                <li class="page-item">
+                                    {% if url_filters != "" %}
+                                        <a class="page-link" href="?page={{ num }}&{{ url_filters }}">{{ num }}</a>
+                                    {% else %}
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if finished_tasks.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ finished_tasks.next_page_number }}&{{ url_filters }}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ finished_tasks.paginator.num_pages }}&{{ url_filters }}">Last</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Last</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            
+            <!--test-->
+        
+        
+        
+        
+
+<!-- The Modal -->
+        <div class="modal" id="myModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+        
+              <!-- Modal Header -->
+              <div class="modal-header">
+                <h4 class="modal-title">Explanations</h4>
+                
+              </div>
+        
+              <!-- Modal body -->
+              <div class="modal-body">
+                    <form class="form-control">
+                        <div class="row">
+                            <div class="col col-5">
+                                <label for="task_id">Task Code</label>
+                                <input class="form-control" type="text" id="task_id" disabled>
+                            </div>
+                             
+                            <div class="col col-7">
+                                <label for="EndTime">End Time</label>
+                                <input class="form-control" type="text" id="EndTime" disabled>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col col-12">
+                                    <textarea name="exp_task" id="exp_task" class="form-control"
+                                      placeholder="Explain your task here"
+                                      required></textarea>
+                                    
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <button class="btn btn-success my-2 mx-2" style="height:35%" id="StrtEndSaveBtn"><i class="fa fa-check"></i> Save</button>
+                            <button type="button" class="btn btn-danger my-2 mx-2" data-bs-dismiss="modal" style="height:35%"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                        
+                    </form>
+              </div>
+        
+              
+        
+            </div>
+          </div>
+        </div>
+        
+        <!-- js modal -->
+        
+         <!-- Modal -->
+  <div class="modal fade" id="myModal2" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+        
+        
+
+            <!-- ADD TASK MODAL -->
+            <div class="modal" id="ExplainModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-dark">Explanations</h5>
+                            <button class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body text-dark">
+                            <form>
+                                <div class="row">
+                                    <div class="col col-4">
+                                        <label for="task_id">Task Code</label>
+                                        <input type="text" id="task_id">
+                                    </div>
+                                    <div class="col col-8">
+                                        <label for="EndTime">End Time</label>
+                                        <input type="text" id="EndTime">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col col-11">
+                                            <textarea name="exp_task" id="exp_task" class="form-control"
+                                              placeholder="Explain your task here"
+                                              required></textarea>
+                                            
+                                    </div>
+                                    
+                                </div>
+                                <div class="row">
+                                    <button class="btn btn-success my-2"><i class="fa fa-check"></i> Save</button>
+                                    
+                                </div>
+                                
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="modalClose" data-dismiss="modal">Close and
+                                continue
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+        </section>
+    </div>
+  
+{% endblock content %}
+{% block script %}
+   
+    <script language="JavaScript">
+        function showInput() {
+            document.getElementById('display').innerHTML =
+                document.getElementById("tomorrow").value;
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#delet").click(function () {
+                $("#display").empty();
+            })
+        //=======================================================
+        var StartBtns = document.getElementById('tasktblbody').querySelectorAll('.StartBtn');
+        var EndBtns = document.getElementById('tasktblbody').querySelectorAll('.EndBtn'); 
+            //alert(StartBtns.length);
+            for(var j=0; j<StartBtns.length;j++){
+			    StartBtns[j].addEventListener('click',function(){
+			         
+			        var rowIndx = $(this).closest('tr').index();
+				    var rowID = $(this).closest('tr').attr('id');
+				    var self = this;
+			        var date = new Date();
+                    var hours = date.getHours();
+                    var minute = date.getMinutes();
+                    var second = date.getSeconds();
+                    var time = hours + ':' + minute + ':' + second;
+                    var taskPK = rowID.substring(1);
+                    //alert(taskPK);
+                     $.ajax({
+                            url: "{% url 'total_time' %}",
+                            type: "POST",
+                            data: {
+                                'start': true,
+                                'task_pk':taskPK,
+                                'start_time': time,         
+                                 csrfmiddlewaretoken: '{{ csrf_token }}'
+                            },
+                            
+                            success: function (data) {
+                                if (data['success']) {
+                                    
+                                    //DivElmBefore = $(self).closest('div');
+                                    
+                			     //  DivElmBefore.addClass("d-none");
+                			      // DivElmAfter = $(self).closest("div").parent().find(".AfterDiv");
+                			       
+                			      // DivElmAfter.removeClass("d-none");
+                                //    timerInterval = setInterval(moveTimer, 1000);
+                                 //   keepAliveInterval = setInterval(sendKeepAlive, 5000);
+                                }
+                            }
+                        }).done(function() {
+                            
+                            
+                        }).always(function() {
+                            if(EndBtns.length>0){
+                                var y = document.getElementById("altdanger");
+                            	$("#altdanger").removeClass("d-none");
+                                y.innerHTML = "you have unfinished task";
+                                timerInterval = setInterval(moveTimer, 1000);
+                                keepAliveInterval = setInterval(sendKeepAlive, 5000);
+                                
+                            }else{
+                                var x = document.getElementById("altSuccess");
+                            	$("#altSuccess").removeClass("d-none");
+                                x.innerHTML = "Task start successfully";
+                            }
+                            
+                            window.location.reload();
+                        });
+                        			        
+			        
+			    });
+            }
+            
+            
+            
+             for(var j=0; j<EndBtns.length;j++){
+			    EndBtns[j].addEventListener('click',function(){
+			         
+			        var rowIndx = $(this).closest('tr').index();
+				    var rowID = $(this).closest('tr').attr('id');
+				    var self = this;
+			        var date = new Date();
+                    var hours = date.getHours();
+                    var minute = date.getMinutes();
+                    var second = date.getSeconds();
+                    var time = hours + ':' + minute + ':' + second;
+                    var taskPK = rowID.substring(1);
+                    
+                    document.getElementById("task_id").value =taskPK; 
+                    document.getElementById("EndTime").value =time; 
+                    $("#myModal").modal("show");
+                  
+			        
+			        
+			    });
+            }
+            
+            
+        var SaveTskBtn = document.getElementById("StrtEndSaveBtn");
+        
+             SaveTskBtn.addEventListener('click',function(){
+                 
+                var taskPK =  document.getElementById("task_id").value; 
+                var endTime = document.getElementById("EndTime").value; 
+                var Explain = document.getElementById("exp_task").value; 
+                   $.ajax({
+                            url: "{% url 'total_time' %}",
+                            type: "POST",
+                            data: {
+                                'end': true,
+                                'task_pk':taskPK,
+                                'end_time': endTime, 
+                                'task': Explain,
+                                 csrfmiddlewaretoken: '{{ csrf_token }}'
+                            },
+                            
+                            success: function (data) {
+                                if (data['success']) {
+                                    
+                                    $("#myModal").modal("hide");
+                                   
+                                  
+                                }
+                            }
+                        }).always(function() {
+                            
+                            window.location.reload();
+                        });
+             });
+            
+            
+            
+            
+				//var rowID = tblRows[j].getAttribute('id');
+				//var rowCells =tblRows[j].querySelectorAll('td');
+				//var btnsCell = rowCells[5];
+				//var FormInTd =  btnsCell.querySelectorAll("form");
+				//if(FormInTd.length >0){
+				 //   var BtnStart =  FormInTd[0].querySelectorAll("button");
+				  //  BtnStart[0].addEventListener('click',function(){
+				//        var rowID = tblRows[j].getAttribute('id');
+				      //  alert(rowID);
+    			       // alert("ok");
+    			     /*   var self = this;
+    			        var date = new Date();
+                        var hours = date.getHours();
+                        var minute = date.getMinutes();
+                        var second = date.getSeconds();
+                        var time = hours + ':' + minute + ':' + second;
+                        var InpInFrm = FormInTd[0].querySelectorAll("input");
+                        var inphidden = InpInFrm[0].value;
+                        var taskPK  =  (rowCells[0].innerText || rowCells[0].textContent);*/
+                        //var InpName = InpInFrm[1].attr('name');
+                       // alert(InpInFrm.length);
+                     //   InpInFrm[2].value = time;
+                       // alert(InpInFrm[2].value);
+                       // InpInFrm[1].innerHtml(time);
+                       // $('input[name="start_time"]').val(time);
+    			       // let myForm = FormInTd[0];
+        		        //let formData = new FormData(myForm);
+        		        //formData.append('start',true);
+        		        //formData.append('csrfmiddlewaretoken','{{ csrf_token }}');
+        		        //var 
+        		        
+        		       // alert(taskPK);
+        			   /* $.ajax({
+                            url: "{% url 'total_time' %}",
+                            type: "POST",
+                            data: {
+                                'start': true,
+                                'task_pk':taskPK,
+                                'start_time': time,         
+                                 csrfmiddlewaretoken: '{{ csrf_token }}'
+                            },
+                            
+                            success: function (data) {
+                                if (data['success']) {
+                                    alert("ok");
+                                    //DivElmBefore = $(self).closest('div');
+                                    
+                			     //  DivElmBefore.addClass("d-none");
+                			      // DivElmAfter = $(self).closest("div").parent().find(".AfterDiv");
+                			       
+                			      // DivElmAfter.removeClass("d-none");
+                                //    timerInterval = setInterval(moveTimer, 1000);
+                                 //   keepAliveInterval = setInterval(sendKeepAlive, 5000);
+                                }
+                            }
+                        });
+			        
+			        });*/
+				
+				
+				
+				
+			/*	var DivInTd =  btnsCell.querySelectorAll("div");
+				if(DivInTd.length > 0){
+			    	var BtnEnd =  DivInTd[0].querySelectorAll("button");
+			    	btnEnd[0].addEventListener('click',function(){
+			         
+    			        var date = new Date();
+                        var hours = date.getHours();
+                        var minute = date.getMinutes();
+                        var second = date.getSeconds();
+                        
+                        var time = hours + ':' + minute + ':' + second;
+                        $('input[name="end_time"]').val(time);
+                         //alert($('#end-btn').attr('data-value'));
+                        $('input[name="task_pk"]').val($(this).attr('data-value'));
+                       
+                        $('#addTaskModal').modal({
+                            show: true,
+                            closeOnEscape: true
+                        });
+            			         
+    			         
+    			       
+    			     });
+    				    
+				    
+				}*/
+			
+				
+		        
+		        
+				//var BeforePlyDiv = DivInTd[0];
+				//var AfterPlyDiv = DivInTd[1];
+				
+			//	var btnPlay = BeforePlyDiv.querySelector("button");
+			//	var AfterBtns = AfterPlyDiv.querySelectorAll("button");
+			//	var btnPause =AfterBtns[0];
+			//	var btnResume =AfterBtns[1];
+			//	var btnEnd =AfterBtns[2];
+				
+				//var name_btnElem = btnElem.getAttribute('name');
+			//	var DivName  = ReqID.closest('div').attr('id');
+				//tblID = $(this).closest('tr').parent().parent().attr('id');
+							
+			  
+			    
+			    
+			    
+			     
+			
+                
+                
+                
+           // }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        //=======================================================    
+        })
+        
+        
+   /*     $(document).ajaxStop(function(){
+    window.location.reload();
+});*/
+    </script>
+
+
+    <script>
+        /*$('#start-btn').on('click', () => {
+            var date = new Date()
+            var hours = date.getHours()
+            var minute = date.getMinutes()
+            var second = date.getSeconds()
+            var time = hours + ':' + minute + ':' + second
+            $('input[name="start_time"]').val(time);
+        });
+
+        $('#end-btn').on('click', () => {
+            
+            var date = new Date();
+            var hours = date.getHours();
+            var minute = date.getMinutes();
+            var second = date.getSeconds();
+            
+            var time = hours + ':' + minute + ':' + second;
+            $('input[name="end_time"]').val(time);
+             //alert($('#end-btn').attr('data-value'));
+            $('input[name="task_pk"]').val($('#end-btn').attr('data-value'));
+           
+            $('#addTaskModal').modal({
+                show: true,
+                closeOnEscape: true
+            });
+        });*/
+        $('#start-day-btn').on('click', () => {
+            var date = new Date()
+            var hours = date.getHours()
+            var minute = date.getMinutes()
+            var second = date.getSeconds()
+            var time = hours + ':' + minute + ':' + second
+            $('input[name="start_time"]').val(time);
+        });
+
+        $('#end-day-btn').on('click', () => {
+            var date = new Date()
+            var hours = date.getHours()
+            var minute = date.getMinutes()
+            var second = date.getSeconds()
+            var time = hours + ':' + minute + ':' + second
+            $('input[name="end_time"]').val(time);
+        });
+
+    </script>
+{% endblock script %}

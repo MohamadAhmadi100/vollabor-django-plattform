@@ -1,0 +1,253 @@
+{% load i18n %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TECVICO</title>
+    <style>
+
+        /*# sourceMappingURL=bootstrap.css.map */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        div, h1, h5, h2, h3, h4 {
+            overflow: hidden !important;
+        }
+
+        body {
+            background: #f7f7f7;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .col-md-8 {
+            padding: 0;
+            margin: 0;
+        }
+
+        .navbar {
+            background: linear-gradient(270.18deg, #151D28 -2.61%, #1E2C39 37.37%, #283E4C 99.84%);
+        }
+
+        .header {
+            height: 70px;
+            margin: 0 auto;
+        }
+
+        .banner {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .banner p, .banner h1 {
+            color: white;
+            text-align: justify;
+        }
+
+        .cards p {
+            text-align: justify;
+            height: 150px;
+        }
+
+        .cards img {
+            width: 100%;
+            height: 250px;
+        }
+
+        .cards a {
+            background-color: #5CE1E6;
+            transition: all 0.3s;
+        }
+
+        .cards a:hover {
+            transform: scale(1.05);
+            color: #5CE1E6;
+            background-color: #233543;
+        }
+
+        .footer {
+            color: white;
+            background: linear-gradient(270.18deg, #151D28 -2.61%, #1E2C39 37.37%, #283E4C 99.84%);
+        }
+
+        .footer > p {
+            font-size: 14px;
+        }
+
+        .footer a img {
+            width: 25px;
+            height: 25px;
+        }
+
+        footer a {
+            transition: all 0.3s;
+        }
+
+        .footer a:hover span {
+            color: #F96853;
+
+        }
+
+        @media only screen and (max-width: 986px) {
+            .col-md-8 {
+                width: 100% !important;
+            }
+
+        }
+
+
+        .mail_r .row > .col-12 {
+            background-color: white;
+        }
+
+        .mail_r .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mail_r .bg-white.col-md-8 {
+            position: relative;
+        }
+
+        .mail_r .footer {
+            width: 100%;
+
+        }
+
+        .mail_r .footer a img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .mail_r ul li {
+            padding: 0;
+            padding-left: 1.5rem;
+            margin-top: 20px;
+            text-align: justify;
+        }
+
+        .btn > svg, .footer svg {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+<div class="mail_r">
+    <div class="row " style="justify-content: center">
+        <div class="col-12  col-md-8 " style="width: 66%">
+            <div class="navbar" style="display: flex;">
+                <a class="navbar-brand" style="margin: 0 1rem 0 1rem" href="https://tecvico.com/">
+                    <img src="https://tecvico.com/media/email/img/header.png" class="header"
+                         style="height: auto;max-width: 100%" alt="">
+                </a>
+            </div>
+
+            <div class="desc" style="padding: 1.5rem">
+
+                <p style="padding: 0 1.5rem 0 1.5rem;font-weight: bold;text-align: justify;font-size: 24px;">
+                    Hello,dear</p>
+                <p style="padding: 1rem 1.5rem 0 1.5rem;font-weight: bold;font-size: 22px;">Thank you for accepting my
+                    <span style="color: orange">request.</span></p>
+                <p style="padding: 0 1.5rem 0 1.5rem;margin-top: 1rem;font-size: 18px;">
+                    Our company (TECVICO Corp) covers such a wide range of services in many scientific and specialized
+                    fields,
+                    a part of the company's activity is as follows:
+                </p>
+
+
+                <ul class="">
+                    <li> 1) Connecting researchers with a research and industrial project without a dealer.</li>
+                    <li> 2) Publishing scientific articles from findings of projects.</li>
+                    <li>
+                        3) Designing, developing, and supporting commercial, industrial, and software products with
+                        advanced technologies.
+                        <br>
+
+                    </li>
+                    <li> 4) Supporting specialized workshops and scientific courses for network members with qualified
+                        internal
+                        and international instructors
+                        <br>
+                        <span style="padding-left: 20px">and university professors.</span>
+                    </li>
+                    <li> 5) Developing an organized platform that facilitates relationships between motivated and
+                        talented researchers with industry in various
+                        <span style="padding-left: 20px">scientific and research fields.</span>
+                    </li>
+                    <li> 6) Supporting new companies to grow.</li>
+                    <li> 7) Collaborating with university professors to accomplish the grants and funds.</li>
+                    <li> 8) Providing the projects with powerful instruments, codes, and robust datasets.</li>
+                    <li> 9) Following accepted projects to arrive at the end.</li>
+                </ul>
+                <h3>Description:{{description}}</h3>
+
+                <p style="margin: 1rem 1.2rem 0 1.2rem">We will be happy to provide you with more information about our
+                    business at
+                    <a href="https://tecvico.com/" target="_blank" style="font-weight: bold;font-size: 20px;">www.tecvico.com</a>
+                    .Thank you</p>
+                <p style="margin: 12px 1.2rem 0 1.2rem">Cheers Business expert</p>
+                <p style="margin: 12px 1.2rem 0 1.2rem">S.Rasouli</p>
+
+            </div>
+
+            <div class="footer">
+                <div
+                        style="display: flex;
+                     flex-direction: column;
+                     justify-content: center;
+                     align-items: center;
+                     margin: 1rem 0 1rem 0"
+                >
+                    <h4>Contact With Us :</h4>
+                    <div class="my-3 d-flex align-items-center justify-content-center"
+                         style="margin: 1rem 0 1rem 0; display: flex;align-items: center;justify-content: center"
+                    >
+                        <a style="margin: 0 0.5rem 0 0.5rem" target="_blank" href="https://t.me/tecvico">
+                            <img src="https://tecvico.com/media/email/img/tel.svg" alt=""></a>
+                        <a style="margin: 0 0.5rem 0 0.5rem" target="_blank" href="https://twitter.com/tecvico/">
+                            <img src="https://tecvico.com/media/email/img/twit.svg" alt=""></a>
+                        <a style="margin: 0 0.5rem 0 0.5rem" target="_blank"
+                           href="https://www.instagram.com/tecvico/"><img
+                                src="https://tecvico.com/media/email/img/insta.svg" alt=""></a>
+                        <a style="margin: 0 0.5rem 0 0.5rem" target="_blank"
+                           href="https://www.linkedin.com/company/tecvico/"><img
+                                src="https://tecvico.com/media/email/img/linke.svg" alt=""></a>
+                        <a style="margin: 0 0.5rem 0 0.5rem" target="_blank" href="https://facebook.com/tecvico"><img
+                                src="https://tecvico.com/media/email/img/fas.png" alt=""></a>
+                    </div>
+                    <div style="font-size: 18px;display: flex;align-items: center">
+
+                        <a href="mailto:hr@tecvico.com" class="text-white"
+                           style="color: white ; display: flex;align-items: center;justify-content: center">
+                            <img src="https://tecvico.com/media/email/img/envelop.svg" style="margin-right: 8px" alt="">
+                            <span>hr@tecvico.com</span>
+                        </a>
+                    </div>
+                </div>
+                <p class="text-center mt-3" style="margin-bottom: 8px;font-size: 14px;text-align: center;">
+                    Copyright 2022 Tecvico Group - All Rights Reserved.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-2 d-md-block d-none col-12"></div>
+    </div>
+</div>
+
+</body>
+</html>
+
+
+

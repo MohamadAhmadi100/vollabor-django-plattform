@@ -1,0 +1,200 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% load dashboard_filter %}
+{% load crispy_forms_tags %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'ivc_website/css/intlTelInput.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+{% endblock css %}
+
+{% block content %}
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-plus"></i></h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+    <!-- ACTIONS -->
+    
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    
+    <!-- PROJECTS -->
+    <section id="projects">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="card mb-2 text-white">
+                        <div class="card-header text-dark">
+                            <!--<h4>Please fill out this form to define a new project<span>
+                                <button style="margin-left: 480px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1" >
+                                    Help
+                                </button>
+                            </span></h4>-->
+                            <p style="font-size:1.1em"><span style="color:darkorange">Note:</span></p>
+                        </div>
+
+                        <form method="POST" style="color:white" id="aform" enctype="multipart/form-data">{% csrf_token %}
+                            
+                            <div class="content my-1 px-4">
+                                <div class="row py-2">
+                                    <!-- grade -->
+                                    <div class="col-md-6">
+                                        <div class="form-group ">
+                                            <label class="form-label">Grade of project</label>
+                                            <textarea disabled class="form-control fff" name="question_1"  id="f1" rows="3" oninput="ClearErr('f1')" cols="10">{{object.project.grade}}</textarea>
+                                                <div id="f1_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- project_ponsored -->
+                                    <div class="col-md-6">
+                                        <div class="form-group ">
+                                            <label class="form-label">Project has been sponsored by (Company or University or Institute)</label>
+                                            
+                                            <textarea class="form-control fff" name="question_3" id="f3" rows="3" oninput="ClearErr('f3')" cols="10"></textarea>
+                                            <div id="f3_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Title<span style="color: red"> *</span></label>
+                                            <textarea class="form-control fff" id="f6" name="question_2" rows="3" oninput="ClearErr('f6')" cols="10">{{object.question_2}}</textarea>
+                                            <div id="f6_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+                                    <!-- motivating_keywords -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Description<span style="color: red"> *</span></label>
+                                            <textarea class="form-control fff" id="f6" name="question_5" rows="3" oninput="ClearErr('f6')" cols="10">{{object.question_5}}</textarea>
+                                            <div id="f6_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- informative_bullets -->
+                                    <div class="col-md-6">
+                                        <div class="form-group ">
+                                            <label class="form-label" style="font-size:14px">Few informative bullets to describe content of project(maximum 6 bullets)<span style="color: red"> *</span></label>
+                                            <textarea required class="form-control fff" id="f4" name="question_4" rows="3" oninput="ClearErr('f4')" cols="10"></textarea>
+                                            <div id="f4_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+                                    <!-- motivating_keywords -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Motivating keywords (Maximum: 6 keywords)</label>
+                                            <textarea class="form-control fff" id="f6" name="question_6" rows="3" oninput="ClearErr('f6')" cols="10"></textarea>
+                                            <div id="f6_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+                                        
+                                    <!-- upload_pictures  -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Upload image<span style="color: red"> *</span></label>
+                                            <div >
+                                                <input required type="file" name="upload_file" >
+                                                <div id="upload_pictures_error" style="color:red"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Upload general paper, conference paper, product<span style="color: red"> *</span></label>
+                                            <div >
+                                                <input required type="file" name="upload_pictures" >
+                                                <div id="upload_pictures_error" style="color:red"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- supervisor_information -->
+                                    <div class="col-md-12">
+                                        <div class="form-group"> 
+                                            <label class="form-label">
+                                                Link                                               
+                                            </label>
+                                            <textarea class="form-control fff" id="f8" name="question_7" rows="3" oninput="ClearErr('f8')" cols="10"></textarea>
+                                            <div id="f8_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- social_platforms -->
+                                    <div class="col-md-12">
+                                        <div class="form-group ">
+                                            <label class="form-label">Suggested helpful social media platforms (name of related groups and links) which you think they are useful to advertise</label>
+                                            <textarea class="form-control fff" id="f9" name="question_8" rows="3" oninput="ClearErr('f9')" cols="10"></textarea>
+                                            <div id="f9_error" style="color:red"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-0">
+                                <div class="col text-start">
+                                     <button type="submit" class="btn btn-success px-5"><i class="fa fa-check"></i> Submit</button>
+                                </div>
+                                
+                            </div>
+                           
+                        </form>
+
+                           
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content text-dark">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Help</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            TECVICO advertisement team aims at adverting your project. Thus, it will use some information you
+                            provided. The quality of advertisement directly depends on the information. If the fields were
+                            incorrectly filled in, efficiency of advertisement will decrease. If you would like to provide us with more
+                            correct information, please contact “adv@tecvico.com”.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+
+{% block script %}
+
+<script>
+
+</script>
+
+
+{% endblock script %}

@@ -1,0 +1,419 @@
+{% extends 'emails/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %} Detail Company {{object.company_name}} {% endblock %}
+{% block main %}
+<link rel="stylesheet" href="{% static 'emails/dist/css/jquery.tagsinput-revisited.css' %}">
+<style>
+	.tag{
+		position: relative;
+		background: #556270;
+		display: block;
+		max-width: 100%;
+		word-wrap: break-word;
+		color: #fff;
+		padding: 5px 30px 5px 5px;
+		border-radius: 2px;
+		margin: 0 5px 5px 0;
+	}
+</style>
+<h1>{{create_notif}}</h1>
+<div class="container">
+	<div class="row">
+		<div class="col-xl-5 col-lg-5 col-md-5 col-sm-12">
+			<div class="card card-primary">
+				<div class="card-header" >
+					<div class="row">
+					<h4 class="col-8">{{object.title}}</h4>
+
+            		{% if request.user.is_superuser or request.user.adrole.edit_delete_company == True %}
+						<span class="col-4 text-end">
+							<a href="{% url 'email:category-email' object.pk %}" class="mx-2"><i class="far fa-edit"></i></a>	
+							<a data-bs-toggle="modal" href="#deletecompany" style="float: right;" id="{{ object.pk }}" class="d-inline-block mx-3 info"><i class="fas fa-trash-alt"></i></a>
+						</span>
+					{% endif %}
+					</div>
+				</div>
+				<div class="card-body">
+						<ul>		    
+					{% for i in emails %}
+							<li class="my-2" style="list-style-type: none;">
+								<span class="">{{i}}</span>
+            					{% if request.user.is_superuser or request.user.adrole.edit_delete_email == True %}
+								<a href="{% url 'email:update-email' i.pk %}" style="float: right;" class="d-inline-block mx-3"><i class="far fa-edit"></i></a>
+								<a data-bs-toggle="modal" href="#DeleteEmail{{i.pk}}" style="float: right;" id="{{ i.pk }}" class="d-inline-block mx-3 info"><i class="fas fa-trash-alt"></i></i></a>
+								{% endif %}
+								<a data-bs-toggle="modal" href="#InfoModal{{i.pk}}" style="float: right;" id="{{ i.pk }}" class="d-inline-block mx-3 info"><i class="fas fa-info-circle"></i></i></a>
+								{% if i.send  %}
+								<a data-bs-toggle="modal" href="#Historymodal{{i.pk}}" style="float: right;" id="{{ i.pk }}" class="d-inline-block mx-3 info"><i class="fa fa-history" aria-hidden="true"></i></i></a>
+								{%endif%}
+								
+							</li>
+
+							<!-- Delete email -->
+							<div class="modal fade"  id="DeleteEmail{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+								<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+									<div class="modal-content">
+										<div class="modal-header modal-colored-header bg-secondary text-white">
+										  <h5 class="modal-title text-white" id="InfoModalLabel">Delete email {{i}}</h5>
+										  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+										<form method="post" enctype="multipart/form-data">{% csrf_token %}
+											<div class="form-row">
+												<div class="form-group col-md-12 mb-0">
+													<div id="div_id_status" class="form-group">
+														<input type="hidden" name="status" id="id_status" value="deleted" >
+													</div>
+													<input type="hidden" name="email_id" id="id_email_id" value="{{i.id}}" >
+													<h6>Are you sure?</h6>
+												</div>
+											</div>
+										</div>
+										<button class="btn btn-danger" type="submit">Delete</button>
+									</form>
+										
+										
+									</div>
+								</div>
+							</div>
+							
+							<div class="modal fade"  id="InfoModal{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+								<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+									<div class="modal-content">
+										<div class="modal-header modal-colored-header bg-secondary text-white">
+										  <h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+										  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<ul class="list-group list-group-flush">
+												<li class="list-group-item">Company agent’s first name: <span class="text-secondary">{{i.company_agent_first_name}}</span></li>
+												<li class="list-group-item">Company agent’s surname: <span class="text-secondary">{{i.company_agent_surname}}</span></li>
+												<li class="list-group-item">Agent’s position: <span class="text-secondary">{{i.agent_position}}</span></li>
+												<li class="list-group-item">Agent’s academic degree: <span class="text-secondary">{{i.agent_academic_degree}}</span></li>
+												<li class="list-group-item">Gender: <span class="text-secondary">{{i.gender}}</span></li>
+												<li class="list-group-item">Agent’s email address: <span class="text-secondary">{{i.agent_email_address}}</span></li>
+											</ul>
+										</div>
+										
+										
+									</div>
+								</div>
+							</div>
+
+						{% if i.send  %}
+							
+									<!--History Modal-->
+									<div class="modal fade"  id="Historymodal{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+										<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+											<div class="modal-content">
+												<div class="modal-header modal-colored-header bg-secondary text-white">
+												<h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+												<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+												</div>
+												<div class="modal-body">
+													<table class="table">
+														<thead class="thead-dark">
+														<tr>
+															<th scope="col">Date</th>
+															<th scope="col">subject</th>
+															<th scope="col">Sending status</th>
+														</tr>
+														</thead>
+														<tbody>
+														{% for h in i.send %}
+														<tr>
+															<th scope="row">{{h.history.created}}</th>
+															<td>{{h.history.subject}}</td>
+															<td>{%if h.sent%}<i class="text-success fa fa-check-circle" aria-hidden="true"></i>{%else%}<i class="text-danger fa fa-times" aria-hidden="true"></i>{%endif%}</td>
+														</tr>
+														{%endfor%}
+														</tbody>
+													</table>
+												</div>
+												
+												
+											</div>
+										</div>
+									</div>
+						{%endif%}
+
+
+
+                            <div class="modal fade"  id="update_email{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                                <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header modal-colored-header bg-secondary text-white">
+                                          <h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                        <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                                            <div class="form-row">
+
+                                                <input type="hidden" name="email_id" value="{{i.pk}}">
+                                                <div class="form-group col-md-6 mb-0">
+                                                    {{ form_update_e.company_first_name|as_crispy_field }}
+                                                </div>
+                                                <div class="form-group col-md-6 mb-0">
+                                                    {{ form_update_e.company_agent_surname|as_crispy_field }}
+                                                </div>
+                                                <div class="form-group col-md-6 mb-0">
+                                                    {{ form_update_e.agent_position|as_crispy_field }}
+                                                </div>
+                                                <div class="form-group col-md-6 mb-0">
+                                                    {{ form_update_e.agent_academic_degree|as_crispy_field }}
+                                                </div>
+                                                <div class="form-group col-md-6 mb-0">
+                                                    <div id="div_id_gender" class="form-group">
+                                                        <label for="id_gender" class=" requiredField">
+                                                        Gender<span class="asteriskField">*</span>
+                                                        </label>
+                                                        <div class="">
+                                                                <select name="gender" class="select form-control" id="id_gender">
+                                                                    <option value="Male">Male</option>
+                                                                    <option value="Female">Female</option>
+                                                                </select>
+                                                        </div>
+                                                    </div>
+													
+													<div class="form-group col-md-6 mb-0">
+														<label class="form-label">Tags:</label>
+														<input id="create_tag" name="tags" type="text" value="">
+													</div>
+													
+                                                </div>
+                                                <div class="form-group col-md-6 mb-0">
+                                                    {{ form_update_e.agent_email_address|as_crispy_field }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button  class="btn btn-primary" type="submit">Create</button>
+                                    </form>
+                                        
+                                        
+                                    </div>
+                                </div>
+                            </div>
+
+							
+					{% endfor %}
+					</ul>
+				</div>
+				{% if request.user.is_superuser or request.user.adrole.create_email == True %}
+					<a data-bs-toggle="modal" href="#CreateEmail" style="float: right;" id="{{ object.pk }}" class="d-inline-block mx-3 info"><i class="fas fa-plus"></i></a>
+				{% endif %}
+			</div>
+		</div>
+
+		<!-- Add email -->
+		<div class="modal fade"  id="CreateEmail" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+				<div class="modal-content">
+					<div class="modal-header modal-colored-header bg-secondary text-white">
+					  <h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+					  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+					<form method="post" enctype="multipart/form-data">{% csrf_token %}
+						<div class="form-row">
+							<div class="form-group col-md-6 mb-0">
+								{{ form_accept.company_agent_first_name|as_crispy_field }}
+							</div>
+							<div class="form-group col-md-6 mb-0">
+								{{ form_accept.company_agent_surname|as_crispy_field }}
+							</div>
+							<div class="form-group col-md-6 mb-0">
+								{{ form_accept.agent_position|as_crispy_field }}
+							</div>
+
+<!-- 							<div class="form-group col-md-6 mb-0">
+								{{ form_accept.agent_academic_degree|as_crispy_field }}
+							</div>
+ -->
+
+							<div class="form-group col-md-6 mb-0">
+								<div id="div_id_gender" class="form-group">
+									<label for="id_gender" class=" requiredField">
+									Agent academic degree<span class="asteriskField">*</span>
+									</label>
+									<div class="">
+											<select name="agent_academic_degree" class="select form-control" id="agent_academic_degree">
+												<option value="Diploma">Diploma</option>
+												<option value="Bachelor's degree">Bachelor's degree</option>
+												<option value="Master's degree">Master's degree</option>
+												<option value="Doctoral degree">Doctoral degree</option>
+												<option value="Other">Other</option>
+											</select>
+									</div>
+								</div>
+							</div>
+
+
+
+
+
+
+							<div class="form-group col-md-6 mb-0">
+								<div id="div_id_gender" class="form-group">
+									<label for="id_gender" class=" requiredField">
+									Gender<span class="asteriskField">*</span>
+									</label>
+									<div class="">
+											<select name="gender" class="select form-control" id="id_gender">
+												<option value="Male">Male</option>
+												<option value="Female">Female</option>
+											</select>
+									</div>
+								</div>
+							</div>
+							<div class="form-group col-md-6 mb-0">
+								{{ form_accept.agent_email_address|as_crispy_field }}
+								<div style="display:none" class="alert alert-danger" role="alert">
+									This email has already been received
+								  </div>
+							</div>
+
+							<div class="card border-info mb-3" style="width: 100%;">
+								<div class="card-header">Tags used</div>
+								<div style="display:flex" class="card-body text-info">
+									{% for tag in tags %}
+									<a  id="{{tag.id}}"><span class="tag"><span class="select tag-text">{{tag.name}}</span></span></a>
+									{%endfor%}
+								</div>
+							  </div>
+							<br>
+							<div class="form-group col-md-6 mb-0">
+								<label class="form-label">Tags:</label>
+								<input id="create_tag" name="tags" type="text" >
+							</div>
+
+						</div>
+					</div>
+					<button id="company_create_email" class="btn btn-primary" type="submit">Create</button>
+				</form>
+					
+					
+				</div>
+			</div>
+		</div>
+
+		<!-- delete company -->
+		<div class="modal fade"  id="deletecompany" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+				<div class="modal-content">
+					<div class="modal-header modal-colored-header bg-secondary text-white">
+					  <h5 class="modal-title text-white" id="InfoModalLabel">Delete compnay {{object.company_name}}</h5>
+					  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+					<form method="post" enctype="multipart/form-data">{% csrf_token %}
+						<div class="form-row">
+							<div class="form-group col-md-12 mb-0">
+								<div id="div_id_status" class="form-group">
+									<input type="hidden" name="status" id="id_status" value="deleted" >
+									<h6>Are you sure?</h6>
+								</div>
+							</div>
+						</div>
+					</div>
+					<button class="btn btn-danger" type="submit">delete</button>
+				</form>
+					
+					
+				</div>
+			</div>
+		</div>
+
+
+		<div class="col-xl-7 col-lg-7 col-md-7 col-sm-12">
+			<div class="card card-success">
+				<div class="card-header" >
+					<h4>Details</h4>
+				</div>
+				<div class="card-body">
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">Company name: <span class="text-secondary">{{object.company_name}}</span></li>
+						<li class="list-group-item">country: <span class="text-secondary">{{object.country.title}}</span></li>
+						<li class="list-group-item">State: <span class="text-secondary">{{object.state}}</span></li>
+						<li class="list-group-item">City: <span class="text-secondary">{{object.city}}</span></li>
+						<li class="list-group-item">Street number : <span class="text-secondary">{{object.street_number}}</span></li>
+						<li class="list-group-item">Building number: <span class="text-secondary">{{object.building_number}}</span></li>
+						<li class="list-group-item">Unit: <span class="text-secondary">{{object.unit}}</span></li>
+						<li class="list-group-item">zip code: <span class="text-secondary">{{object.zip_code}}</span></li>
+						<li class="list-group-item">Size : <span class="text-secondary">{{object.size}}</span></li>
+						<li class="list-group-item">company website link : <span class="text-secondary"><a href="{{object.company_website_link}}" target="_blank">Click</a></span></li>
+						<li class="list-group-item">Company social media : 
+						{% for i in object.CompanySocialMedia_compony.all %}
+						<br>
+						<span class="text-secondary"><a href="{{i.link}}" target="_blank"> {{i.title}}</a></span>
+						{% endfor %}</li>
+						<li class="list-group-item">Category : 
+						{% for i in object.category_compony.all %}
+						<br>
+						<span class="text-secondary">{{i.title}}</span>
+						{% endfor %}</li>
+						<li class="list-group-item">Outsource : <span class="text-secondary">{{object.outsource}}</span></li>
+						<li class="list-group-item">Services : <span class="text-secondary">{{object.services}}</span></li>
+						<li class="list-group-item">Products : <span class="text-secondary">{{object.products}}</span></li>
+						<li class="list-group-item">Current Need : <span class="text-secondary">{{object.current_need}}</span></li>
+						<li class="list-group-item">Future Need : <span class="text-secondary">{{object.future_need}}</span></li>
+					</ul>
+					
+				</div>
+				 
+			</div>
+			 
+		</div>
+	</div>
+	
+	
+	
+   
+	
+	
+	
+	
+</div>
+<script src="{% static 'emails/dist/js/jquery.tagsinput-revisited.js' %}"></script>
+
+<script>
+	$('#create_tag,#edit_Tag').tagsInput();
+	$(document).ready(function () {
+		$("body").on("keyup", "#check_email", function(e){
+			let email_name=$(this).val()
+			$.ajax({
+				type: "POST",
+				enctype: 'multipart/form-data',
+				url: "{% url 'email:check-email' %}",
+				data:{csrfmiddlewaretoken: '{{ csrf_token }}','email_name':email_name},
+				success:function(res){
+					let allow=res.result
+					if(allow==true){
+						$('.alert').css('display','none')
+						$('#company_create_email').unbind('click')
+					}
+					else{
+						$('.alert').css('display','block')
+						$('#company_create_email').click(function(submit){
+							submit.preventDefault() 
+						})
+					}
+
+
+				},
+				error:function(){
+
+				}
+			})
+		})
+		
+
+})
+
+	
+</script>
+
+
+
+{% endblock %}

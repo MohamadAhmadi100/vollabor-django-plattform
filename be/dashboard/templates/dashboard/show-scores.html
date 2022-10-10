@@ -1,0 +1,55 @@
+{% extends "dashboard/base.html" %}
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/all.min.css">
+  <link rel="stylesheet" href="css/research.css">
+  <title>research</title>
+</head>
+
+<body>
+
+
+{% block content %}
+  <div class="w-100 d-flex justify-content-center mt-5">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Category Title</th>
+          <th>Description</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for proposal_opinion in proposal_opinions%}
+        <tr>
+          <th></th>
+          <td>{{proposal_opinion.item.item}}</td>
+          <td>{{proposal_opinion.description}}</td>
+          <td>{{proposal_opinion.score}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="w-100 d-flex justify-content-center">
+    <form action="{% url 'show-scores' id %}" class="rs-form mt-5 d-flex justify-content-between">
+      <textarea name="comment" id="" placeholder="add your comment"></textarea>
+      <button type="submit" name="submit" class="rs-submit-btn">Submit</button>
+    </form>
+  </div>
+
+
+
+
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/jquery-3.6.0.min.js"></script>
+  <script src="js/research.js"></script>
+
+
+{% endblock content %}

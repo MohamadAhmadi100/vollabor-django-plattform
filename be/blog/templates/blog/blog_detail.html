@@ -1,0 +1,92 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block css %}
+
+<link rel="stylesheet" href="{% static 'ivc_website/project_detail/css/main.css' %}">
+<link rel="stylesheet" href="{% static 'ivc_website/project_detail/css/font-awesome.min.css' %}">
+
+{% endblock css %}
+
+{% block content %}
+<div id="single_project" class="sin_blog" >
+    <div class="back-dark pt-5">
+        <div class="row p-5 d-flex flex-md-row flex-column-reverse">
+            <div class="col-md-8">
+                <div class="back-link d-flex flex-md-row flex-column-reverse justify-content-start align-items-center   mt-3 mb-5">
+                    <div class="d-flex align-items-center ">
+                        <a href="{% url 'home-page' %}" class="">Home</a>
+                        <i class="fa fa-angle-right fa-2x mx-2"></i>
+                        <a href="{% url 'blog:blog-page' %}" class="">Blog page</a>
+                        <i class="fa fa-angle-right fa-2x mx-2"></i>
+                        <a href="" class="active">{{post.category_to_str}}</a>
+                    </div>
+                </div>
+                <div class="d-flex flex-column justify-content-start  mt-3">
+                    <h5 class="fw-bold">{{post.title}}</h5>
+                    <div class="grade mt-3 d-flex align-items-center">
+                        <span>{{post.description|truncatewords:30|safe}}</span>
+                    </div>
+                    <!--<div class="author text-white mt-3">-->
+                    <!--    <span>Created by :</span>-->
+                    <!--    <span class="fw-bold">Tecvico</span>-->
+                    <!--</div>-->
+                    <div class="time mt-3 d-flex flex-column flex-md-row">
+                        <span class="me-3 mt-3 mt-md-0">
+                            <i class="fa fa-calendar mx-1"></i>
+                            <span class="fw-bold text-white">{{post.date}}</span>
+                            <i class="fa fa-clock-o mx-1"></i>
+                            <span class="fw-bold text-white">{{post.suggest_time}} minute</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4  d-md-block">
+                <div class="back-white">
+                    <div class="img" style="border-radius: 12px;">
+                        <img class="img-fluid img-head" style="z-index:1;height:300px;width:300px;background-size:contain"  src="{{post.thumbnail.url}}" alt="{{post.title}},{{post.category_to_str}}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid p-5">
+        <div class="description">
+            <!--<hr>-->
+            <div class="desc" style="width:100% !important;">
+                <!--<h5 class="fw-bold"> Description :</h5>-->
+                <p class="" style="text-align: justify">{{post.description|safe}}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid related_news">
+            <div class="row px-5">
+                <h4 class=" fw-bold">
+                    Related Article : </h4>
+                {% for post in related_post %}
+                <div class="col-md-4 col-lg-3">
+                    <div class="item p-4">
+                        <img class="img-fluid" src="{{post.thumbnail.url}}" alt="">
+                         <p class="m-1">{{post.title}}</p>
+                         <p class="m-1">{{post.suggest_time}} minute</p>
+                        <a href="{% url 'blog:blog-detail' post.slug %}" class="btn btn-warning d-flex justify-content-center align-items-center" style="width:150px;">
+                            <span>Read more</span>
+                            <i class="fa fa-angle-right mx-2"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+<script src="{% static 'blog/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'blog/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'blog/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'blog/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'blog/js/main.js' %}"></script>
+<script src="{% static 'ivc_website/project_detail/js/main.js' %}"></script>
+
+{% endblock script %}

@@ -1,0 +1,120 @@
+{% load static %}
+{% if count_obj %}
+    <div class="row" id="expert-box">
+        <div class="col-3"><h6>List:</h6></div>
+        <div class="col-9"><h6>{{count_obj}}</h6></div>
+    </div>
+    <div class="row" id="expert-box">
+        <div class="col-3"><h6>View detail:</h6></div>
+        <div class="col-9"><h6>{{count_detail}}</h6></div>
+    </div>
+{% endif %}
+{% if count_home_forum %}
+<div class="row" id="expert-box">
+    <div class="col-3"><h6>Main category page:</h6></div>
+    <div class="col-9"><h6>{{count_home_forum}}</h6></div>
+</div>
+<div class="row" id="expert-box">
+    <div class="col-3"><h6>Sub category page:</h6></div>
+    <div class="col-9"><h6>{{count_subcategory_forum}}</h6></div>
+</div>
+<div class="row" id="expert-box">
+    <div class="col-3"><h6>Sub category list:</h6></div>
+    <div class="col-9"><h6>{{count_subcategory_list_forum}}</h6></div>
+</div>
+<div class="row" id="expert-box">
+    <div class="col-3"><h6>Topic detail:</h6></div>
+    <div class="col-9"><h6>{{count_topic_forum}}</h6></div>
+</div>
+{% endif %}
+{% if obj_project %}
+<div class="row" id="expert-box">
+    <div class="col-3"><h6>Project detail:</h6></div>
+    <div class="col-9"><h6>{{count_detail}}</h6></div>
+</div>
+<div class="row" id="expert-box">
+    <div class="col-3"><h6>All applicant:</h6></div>
+    <div class="col-9"><h6>{{all_applicant}}</h6></div>
+</div>
+<div class="row" id="expert-box">
+    <div class="col-3"><h6>New request:</h6></div>
+    <div class="col-9"><h6>{{applay_applicant}}</h6></div>
+</div>
+<div class="row" id="expert-box">
+    <div class="col-3"><h6>Accept applicant:</h6></div>
+    <div class="col-9"><h6>{{accept_applicant}}</h6></div>
+</div>
+<div class="row" id="expert-box">
+    <div class="col-3"><h6>Reject applicant:</h6></div>
+    <div class="col-9"><h6>{{reject_applicant}}</h6></div>
+</div>
+{% endif %}
+<br>
+<hr>
+<table class="table table-hover  table-dark table-striped ">
+    <thead class="table-primary text-dark">
+    {% if users_footprint %}
+        <tr class="text-center">
+            <th scope="col">User</th>
+            <th scope="col">URL</th>
+            <th scope="col">Dare</th>
+        </tr>
+    {% elif register_users %}
+        <tr class="text-center">
+            <th scope="col">Full name</th>
+            <th scope="col">Date joined</th>
+        </tr>
+    {% endif %}
+    </thead>
+
+    <tbody >
+    {% if users_footprint %}
+        {% for i in users_footprint %}
+        <tr class="text-center">
+
+            <td class="p-name">{{i.user.get_full_name}} </td>
+            <td class="p-name">{{current_site}}{{i.url}} </td>
+            <td class="p-name">{{i.created}}</td>
+            
+        </tr>
+        {% endfor %}
+    {% elif register_users %}
+        {% for i in register_users %}
+        <tr class="text-center">
+
+            <td class="p-name">{{i.get_full_name}}</td>
+            <td class="p-name">{{i.date_joined}}</td>
+            
+        </tr>
+        {% endfor %}
+    {% endif %}
+
+    </tbody>
+</table>
+
+
+<hr>
+<html>
+    <head>
+        <!--<title>django-chartjs line chart demo</title>-->
+        <!--[if lte IE 8]>
+            <script src="{% static 'js/excanvas.js' %}"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <!--<h1>Some Line Charts loaded in Ajax!</h1>-->
+
+        <canvas id="myChart" width="500" height="400"></canvas>
+
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+        <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+        <script type="text/javascript">
+            $.get('{% url "line_chart_json" %}', function(data) {
+                var ctx = $("#myChart").get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line', data: data
+                });
+            });
+        </script>
+    </body>
+</html>

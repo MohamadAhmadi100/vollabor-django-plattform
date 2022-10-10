@@ -1,0 +1,150 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 text-start">
+                <h1><i class="fa fa-eye"></i> Reviewer's panel </h1>
+                
+            </div>
+            <div class="col-md-6 pt-3" style="text-align:right">
+
+
+                <button type="button" class="btn btn-success" value="declined" data-bs-toggle="modal" data-bs-target="#activities">Report</button>
+
+
+                <div class="modal fade" id="activities" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-white" id="exampleModalLabel"></h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                            </div>
+                            
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-xl-12 col-lg-12 col-md-12">
+                                        <table class="table table-dark table-bordered">
+                                            <tbody class="">
+                                                <tr class="table-info text-dark">
+                                                    <td>Evaluated reviewer</td>
+                                                    <td>Declined reviewer</td>
+                                                    <td>Breach of promise</td>
+                                                </tr>
+                                                <tr class="text-dark">
+                                                    <td class="text-white text-center">{{request.user.researchrole.count_evaluated_reviewer}}</td>
+                                                    <td class="text-white text-center">{{request.user.researchrole.count_rejected_reviewer}}</td>
+                                                    <td class="text-white text-center">{{request.user.researchrole.count_breach_of_promis_reviewer}}</td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row text-center"> 
+                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 text-end">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                   
+            </div>
+                
+        </div>
+            
+    </div>
+    
+</header>
+
+<head>
+    <link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+</head>
+
+<section id="industry-director">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        
+        <!-- new -->
+        <div class="card-page">
+            <div class="row justify-content-center align-items-center">
+                        
+                <!-- 1 compose -->
+                <div class="col gold">
+                    <a href="{% url 'industry:research-reviewer-list-project' %}" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle"> Project evaluation</h4>
+                        <p class="number ">{{count_project_project}}</p>
+                    </a>
+                </div>
+                        
+                <div class="col gold">
+                    <a href="{% url 'industry:industry-reviewer-list' %}" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Proposal evaluation</h4>
+                        <p class="number ">{{count_project_proposal}}</p>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+   
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selectedItem = $(this).val();
+        let itemClasses = {
+            "Golden": "bg-warning text-dark",
+            "Silver": "bg-secondary text-white",
+            "Bronze": "bg-danger text-white",
+            "Normal": "bg-dark text-white",
+        };
+        $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+        $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+    });
+</script>
+
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $("[name='project-value']").keypress(function (evt) {
+        let entered_value = evt.originalEvent.key;
+        let current_value = $(evt.currentTarget).val();
+        if (isNumeric(entered_value) || (entered_value === '.' && !(current_value.includes('.')))) {
+            // let input be entered
+        }
+        else {
+            evt.preventDefault();
+        }
+    });
+</script>
+{% endblock script %}
+
+
+This paste expires in <1 hour. Public IP access. Share whatever you see with others in seconds with Context.Terms of ServiceReport this

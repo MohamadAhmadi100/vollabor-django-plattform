@@ -1,0 +1,213 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<head>
+    <link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+    <style>
+        .ellipsis {
+    max-width: 2px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+    </style>
+</head>
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 ><i class="fa fa-cogs"></i> Project director's panel </h1>
+                <!--<a href="{% url 'industry:project-information-expert' %}"><i style="font-size: 40px; color: white" class="fas fa-users-cog"></i> </a>-->
+                
+            </div>
+            <div class="col-md-6 text-right">
+                <a href="{% url 'industry:project-information-expert' %}" class="text-dark btn btn-primary">Expert's information</a>
+            </div>
+        </div>
+    </div>   
+
+    
+</header>
+
+
+<section id="industry-director" >    
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    
+
+    
+    <main class="container ">
+        <div class="card-page">
+            <div class="row justify-content-center align-items-center">
+
+                <!-- 4 compose -->
+                {% if request.GET.filter == "main_supervisor" %}
+                <div class="col green active">
+                    <a href="?filter=main_supervisor" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle" >Supervisor's contract</h4>
+                        <p class="number ">{{count_main_super_visor}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=main_supervisor" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle" >Supervisor's contract</h4>
+                        <p class="number ">{{count_main_super_visor}}</p>
+                    </a>
+                </div>                  
+                {% endif %}
+                
+                <!-- 4 compose -->
+                {% if request.GET.filter == "contract-client" %}
+                <div class="col green active">
+                    <a href="?filter=contract-client" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle" >Client's contract </h4>
+                        <p class="number ">{{contract_client_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=contract-client" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle" >Client's contract</h4>
+                        <p class="number ">{{contract_client_count}}</p>
+                    </a>
+                </div>                  
+                {% endif %}
+                
+                
+            </div>
+        </div>
+        <!-- new table -->
+        <div class="content my-4 table-responsive">
+            {% if request.GET.filter == "main_supervisor" %}
+            <table class="table table-hover  table-dark table-striped">
+                <thead class="table-primary text-dark">
+                    <tr class="">
+                        <th scope="col">Project ID</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Fund</th>
+                        <th scope="col">Submition date </th>
+                        <th scope="col">Suggested start date</th>
+                        <th scope="col">Suggested end date</th>
+                        <th scope="col">Owner</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-center">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody >
+                {% for project in main_super_visor %}
+                <tr>
+                    <td class="P-name">
+                        <p style="overflow: hidden; width: 150px">{{project.client_form.formclint.id_project}}</p>
+                    </td>
+                    
+                    <td class="P-name">
+                        <p style="overflow: hidden; width: 200px">{{project.client_form.formclint.title|truncatechars:50}}</p>
+                    </td>
+
+                    <td class="p-name">  ${{project.client_form.formclint.fund}}</td>
+                    
+                    <td class="p-name"> {{project.client_form.formclint.created|date:'m-d-Y'}}</td>
+                    <td class="p-name"> {{project.client_form.formclint.start_date}}</td>
+                    <td class="p-name"> {{project.client_form.formclint.end_date}}</td>
+                    
+                    <td class="p-name"> {{project.client_form.formclint.user.get_full_name}}
+                    {% if project.main_supervisor %}
+                    <span style="color: green;">Main Supervisor</span>
+                    {% endif %}
+                    </td>
+                    <td class="p-name"> The contract has been signed and pending for your decision</td>
+                    <td class="text-right">
+                        <a href="{% url 'industry:industry-director-main-supervisor' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                            <i class="fa fa-eye"></i> View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                                
+                </tbody>
+            </table>
+            {% endif %}
+
+            
+            {% if request.GET.filter == "contract-client" %}
+            <table class="table table-hover  table-dark table-striped">
+                <thead class="table-primary text-dark">
+                    <tr class="">
+                        <th scope="col">Project ID</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Fund</th>
+                        <th scope="col">Submition date </th>
+                        <th scope="col">Suggested start date</th>
+                        <th scope="col">Suggested end date</th>
+                        <th scope="col">Owner</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-center">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody >
+                {% for project in contract_client %}
+                <tr>
+                    <td class="P-name">
+                        <p style="overflow: hidden; width: 150px">{{project.id_project}}</p>
+                    </td>
+                    
+                    <td class="P-name">
+                        <p style="overflow: hidden; width: 200px">{{project.title|truncatechars:50}}</p>
+                    </td>
+
+                    <td class="p-name">  ${{project.fund}}</td>
+                    
+                    <td class="p-name"> {{project.created|date:'m-d-Y'}}</td>
+                    <td class="p-name"> {{project.start_date}}</td>
+                    <td class="p-name"> {{project.end_date}}</td>
+                    
+                    <td class="p-name"> {{project.user.get_full_name}}
+                    {% if project.main_supervisor %}
+                    <span style="color: green;">Main Supervisor</span>
+                    {% endif %}
+                    </td>
+                    <td class="p-name"> The contract has been signed and pending for your decision</td>
+                    <td class="text-right">
+                        <a href="{% url 'industry:director-contract-client-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                            <i class="fa fa-eye"></i> View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                                
+                </tbody>
+            </table>
+            {% endif %}
+
+        </div>
+    </main>
+    
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+{% endblock script %}

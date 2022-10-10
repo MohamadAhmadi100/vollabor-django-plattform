@@ -1,0 +1,265 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-color8 text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-cogs"></i> Research Director Panel </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="research-director">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-3 text-center">
+                {% if request.GET.filter == "new_research_projects" %}
+                <a href="./" class="btn btn-dark">
+                {% else %}
+                <a href="?filter=new_research_projects" class="btn btn-outline-dark">
+                {% endif %}
+                    New Research Projects
+                    <span class="badge badge-danger">{{new_research_project_numbers}}</span>
+                </a>
+
+                    {% if request.GET.filter == "main_supervisor_approval" %}
+                    <a href="./" class="btn btn-dark">
+                    {% else %}
+                    <a href="?filter=main_supervisor_approval" class="btn btn-outline-dark">
+                    {% endif %}
+                        Main Supervisor Approval
+                        <span class="badge badge-danger">{{main_supervisor_approval_numbers}}</span>
+                    </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mt-2">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content mb-5" style="overflow-x:auto;">
+                          {% if request.GET.filter == "new_research_projects" %}
+                            <table class="table table-hover p-table">
+                                <thead>
+                                <tr>
+                                    <th>Project Name</th>
+                                    <th>Owner</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for project in new_research_projects %}
+                                    <tr>
+                                        <td class="p-name">
+                                            <p style="overflow: hidden; width: 500px">{{project.title}}</p>
+                                        </td>
+                                        <td class="p-name">
+                                          {% if project.owner|is_member_profile %}
+                                            {{project.owner.first_name}} {{project.owner.last_name}}
+                                          {% else %}
+                                            {{project.owner.legalprofile.company_name}}
+                                          {% endif %}
+                                        </td>
+                                         <td class="text-right">
+                                             <a href="{% url 'dashboard-project-view-page' project_primary_key=project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                 <i class="fa fa-eye"></i> View & Edit
+                                             </a>
+                                         </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                          {% elif request.GET.filter == "main_supervisor_approval" %}
+                            <div class="row mb-5">
+                                <div class="col-12">
+                                    {% if projects %}
+                                    {% for project in projects %}
+                                        {% if request.GET.project == project.pk|to_str %}
+                                        <a href="?filter=main_supervisor_approval" class="btn btn-dark">
+                                        {% else %}
+                                        <a href="?filter=main_supervisor_approval&project={{project.pk}}" class="btn btn-outline-dark">
+                                        {% endif %}
+                                            {{project.title}}
+                                        </a>
+                                    {% endfor %}
+                                    {% else %}
+                                        <h3>No request yet ...</h3>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if request.GET.project and selected_project %}
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="text" class="d-none" name="accept-project-after-review" value="1">
+                                <h5 class="text-info">To observe the scores in greater detail, click on the desired score in the table.</h5>
+                                <table class="table table-hover p-table mt-4">
+                                    <thead>
+                                    <tr>
+                                        <th>Supervisor Applicant</th>
+                                        {% for project_reviewer in project_reviewers %}
+                                        <th class="p-team">
+                                            <a data-toggle='tooltip' data-placement='top' title='{{project_reviewer.user.first_name}} {{project_reviewer.user.last_name}}'>
+                                                        <img alt="image" class="m-1" src="{{project_reviewer.user.memberprofile.image.url}}">
+                                            </a>
+                                        </th>
+                                        {% endfor %}
+                                        <th>Class</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for proposal in total_submitted_proposals %}
+                                    <tr>
+                                        <td class="p-name">
+                                            {{proposal.project_supervisor.supervisor.first_name}} {{proposal.project_supervisor.supervisor.last_name}}
+                                        </td>
+                                        {% for project_reviewer in project_reviewers %}
+                                        <td>
+                                            {% with proposal|get_mean_score:project_reviewer as score %}
+                                                {% if score <= 3.33 %}
+                                                    <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                        <span class="badge badge-danger">{{score}}</span>
+                                                    </a>
+                                                {% elif score <= 6.66 %}
+                                                    <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                        <span class="badge badge-warning">{{score}}</span>
+                                                    </a>
+                                                {% elif score <= 10 %}
+                                                    <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                        <span class="badge badge-success">{{score}}</span>
+                                                    </a>
+                                                {% else %}
+                                                    <span class="badge badge-info">{{score}}</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </td>
+                                        {% endfor %}
+                                        <td>
+                                            <input type="text" class="d-none" name="project-proposal-pk-{{forloop.counter}}" value="{{proposal.pk}}">
+                                            <select class="selectpicker"  name="project-proposal-class-{{forloop.counter}}"
+                                                  data-style="{{proposal|get_class_background}}" data-container="body">
+                                              <option class="bg-warning text-dark" {% if proposal.project_class == 'Golden' %}selected{% endif %}>Golden</option>
+                                              <option class="bg-secondary text-white"  {% if proposal.project_class == 'Silver' %}selected{% endif %}>Silver</option>
+                                              <option class="bg-danger text-white"  {% if proposal.project_class == 'Bronze' %}selected{% endif %}>Bronze</option>
+                                              <option class="bg-dark text-white"  {% if proposal.project_class == 'Normal' %}selected{% endif %}>Normal</option>
+                                          </select>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <hr class="mt-5">
+                                <h5><i class="fa fa-comment"></i> Final Comment:</h5>
+                                <p>{{selected_project.final_comment|linebreaks}}</p>
+                                {% if not main_supervisor_contract_reply %}
+                                    <hr>
+                                    {% if main_supervisor_contract %}
+                                    <h5><i class="fa fa-user-tie"></i> <span class="text-danger">Change</span> the main supervisor:</h5>
+                                    {% else %}
+                                    <h5><i class="fa fa-user-tie"></i> Select the main supervisor:</h5>
+                                    {% endif %}
+                                    {% if total_submitted_proposals.count == 1 and main_supervisor_contract %}
+                                    <h6>There is no other supervisor</h6>
+                                    {% else %}
+                                    <div>
+                                        <select class="selectpicker" name="chosen_main_supervisor"
+                                            data-live-search="true" data-container="body">
+                                            {% for proposal in total_submitted_proposals %}
+                                            {% if not main_supervisor_contract or main_supervisor_contract and main_supervisor_contract.user != proposal.project_supervisor.supervisor %}
+                                            <option data-content="<img src='{{proposal.project_supervisor.supervisor.memberprofile.image.url}}' style='height: 25px;'> {{proposal.project_supervisor.supervisor.first_name}} {{proposal.project_supervisor.supervisor.last_name}}">
+                                                {{proposal.project_supervisor.supervisor.pk}}
+                                            </option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="my-2">
+                                        <h5><i class="fa fa-money-bill"></i> Project Value:</h5>
+                                        <div class="input-group">
+                                            <span class="input-group-prepend"><span class="input-group-text">$</span></span>
+                                            <input class="form-control" name="project-value" type="text">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-success mt-3"><i class="fa fa-check"></i> Submit</button>
+                                    {% endif %}
+                                {% endif %}
+                            </form>
+                                {% if main_supervisor_contract %}
+                                    <hr>
+                                    <h5 class="mb-0"><span class="text-info">Chosen main supervisor:</span> <img src='{{main_supervisor_contract.user.memberprofile.image.url}}' style='height: 25px; border-radius: 10px'> {{main_supervisor_contract.user.first_name}} {{main_supervisor_contract.user.last_name}}</h5>
+                                    <h6 class="mt-0"><span class="text-success"><i class="fa fa-money-bill"></i> Project Value:</span> ${{selected_project.project_value}}</h6>
+                                    <h6 class="mt-0"><span class="text-primary"><i class="fa fa-file-contract"></i> Contract created date:</span> {{main_supervisor_contract.date_created}}</h6>
+                                    {% if main_supervisor_contract_reply %}
+                                    <a href="{{main_supervisor_contract_reply.contract_file.url}}" target="_blank" class="btn btn-info"><i class="fa fa-download"></i> Download Contract response</a>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="text" class="d-none" name="accept-contract-to-be-main-supervisor" value="{{main_supervisor_contract_reply.user.pk}}">
+                                        <button class="btn btn-success my-2"><i class="fa fa-check"></i> Accept</button>
+                                    </form>
+                                    {% else %}
+                                    <h6 class="text-danger">Contract has not been signed yet</h6>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                          {% else %}
+                          <h5>Please <selec></selec>t from the items above</h5>
+                          {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selectedItem = $(this).val();
+        let itemClasses = {
+            "Golden": "bg-warning text-dark",
+            "Silver": "bg-secondary text-white",
+            "Bronze": "bg-danger text-white",
+            "Normal": "bg-dark text-white",
+        };
+        $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+        $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+    });
+</script>
+
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $("[name='project-value']").keypress(function (evt) {
+        let entered_value = evt.originalEvent.key;
+        let current_value = $(evt.currentTarget).val();
+        if (isNumeric(entered_value) || (entered_value === '.' && !(current_value.includes('.')))) {
+            // let input be entered
+        }
+        else {
+            evt.preventDefault();
+        }
+    });
+</script>
+{% endblock script %}

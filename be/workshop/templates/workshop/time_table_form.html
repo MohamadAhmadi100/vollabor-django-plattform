@@ -1,0 +1,510 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+<html lang="en">
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap-clockpicker.min.css' %}">
+    <title>Workshop</title>
+{% endblock css %}
+
+{% block content %}
+
+   
+<!--<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<link href="normalize.css" rel="stylesheet">
+	<link href="bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" >
+	<link href="base.css" rel="stylesheet">
+	<link href="JoinUs.css" rel="stylesheet">
+	<script src="jquery.min.js"></script>
+	<script src="popper.min.js"></script>
+	<script src="bootstrap.min.js"></script>
+	<script src="bootstrap.bundle.min.js"></script>
+	<script src="base.js"></script>
+	<script src="JoinUs.js"></script>
+
+</head>
+
+
+
+
+
+<body>-->
+
+    <div class="ws-content d-md-flex">
+        
+        <div class="workshop">
+            <div class="bc">
+                <h2 style="color:#FAFAFA">Time table form</h2>
+            </div>
+            <div class="container">
+                {% if messages %}
+                    {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success"> {{ message|safe }}</div>
+                            {% else %}
+                                <div class="alert alert-danger"> {{ message|safe }}</div>
+                            {%endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-content">
+                <div class="ws-form">
+                    <div class="ws-form-title d-md-flex justify-content-center text-white text-center">
+                        <span><i class="far fa-edit"></i>Set time table</span>
+                    </div>
+                    <div class="row ws-form-info">
+                        <div class="row justify-content-center mb-2 text-white">
+                            <div class="col-md-6 mb-3">
+                                <div>
+                                    <label for="title" class="ws-label">Chapter title<span style="color:red">*</span></label>
+                                    <input type="text" name="title" required class="form-control" id="title" oninput="ClearErr('title')">
+                                    <p id="title_error" style="color:red;font-size:0.9em"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div>
+                                    <label for="date" class="ws-label">Date<span style="color:red">*</span></label>
+                                    <input type="date" name="date" required class="form-control date" id="date" oninput="ClearErr('date')">
+                                    <p id="date_error" style="color:red;font-size:0.9em"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center mb-2 text-white">
+                            <div class="col-md-4 mb-3">
+                                <div>
+                                    <label for="time" class="ws-label">Start time<span style="color:red">*</span></label>
+                                    <input type="text" name="start_at" required class="form-control time" id="str_time" oninput="ClearErr('str_time')">
+                                    <p id="str_time_error" style="color:red;font-size:0.9em"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div>
+                                    <label for="finished_at" class="ws-label">Finish time<span style="color:red">*</span></label>
+                                    <input type="text" name="finished_at" required class="form-control time" id="end_time" oninput="ClearErr('end_time')">
+                                    <p id="end_time_error" style="color:red;font-size:0.9em"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div>
+                                    <label for="dur" class="ws-label">Registered duration</label>
+                                    <input type="text" name="dur" class="form-control time" id="dur" disabled value="{{workshop.duration}}">
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <button type="submit" name="submit" class="btn btn-success second px-5" id="AddBtn">Add</button>
+                                
+                            </div>
+                        </div>
+                        <div class="row justify-content-center my-5">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover table-dark text-center" id="timetbl">
+                                    <thead>
+                                        <tr class="table-info text-dark text-center">
+                                            <th class="text-center">Title</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Start time</th>
+                                            <th class="text-center">Finish time</th>
+                                            <th class="text-center">Duration</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="timetbl_error" style="color:red"></div>
+                        </div>
+                        <div class="row justify-content-start mt-5">
+                            <div class="col-md-12 text-center">
+                                <input type="number" class="d-none" id="workshop_id" value={{workshop.pk}} >
+                                <input type="text" class="d-none" id="workshop_date" value="{{workshop.date}}" >
+                                <input type="text" class="d-none" id="workshop_duration" value="{{workshop.duration}}" >
+                                <button type="submit" name="submit" class="btn btn-primary second px-5" id="submitBtn">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{% static 'ivc_website/js/jquery.min.js' %}"></script>
+    <script src="{% static 'workshop/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <!--<script src="{% static 'workshop/js/workshop.js' %}"></script>-->
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+    <script src="{% static 'workshop/js/bootstrap-clockpicker.min.js' %}"></script>
+    
+    
+{% endblock content %}
+{% block script %}  
+ <script>
+table_list = [];
+
+$(document).ready(function(){
+     
+    $('#str_time').clockpicker({
+    		placement: 'top',
+    		align: 'left',
+    		autoclose: true,
+    		afterDone: function() {
+				document.getElementById("str_time_error").innerHTML="";
+			}
+    	
+    });
+    
+    $('#end_time').clockpicker({
+    		placement: 'top',
+    		align: 'left',
+    		autoclose: true,
+    		afterDone: function() {
+				document.getElementById("end_time_error").innerHTML="";
+			}
+    		
+    	
+    }); 
+     
+     
+    $("#str_time").keypress(function(event) {
+	   event.preventDefault();
+	});
+
+	$("#end_time").keypress(function(event) {
+	   event.preventDefault();
+	});
+	
+	
+	
+	$('table').on('click', 'input[type="button"]', function(e){
+        $(this).closest('tr').remove()
+    })
+	
+	
+	
+	
+     
+    var firstDay_format = document.getElementById('workshop_date').value;
+    var firstDay = formatDate(firstDay_format);
+    document.getElementById('date').setAttribute("min", firstDay); 
+     
+     
+    const AddBtn = document.getElementById('AddBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    AddBtn.addEventListener('click', () => {
+        var focus_status = false;
+        var title = document.getElementById("title").value;
+        if(title.length ==0){
+            document.getElementById("title_error").innerHTML = "Please enter the chapter title.";
+            if(focus_status == false){
+                document.getElementById("title_error").focus();
+                focus_status = true;
+            }
+            
+        }
+        var date = document.getElementById("date").value;
+        if(date.length ==0){
+           document.getElementById("date_error").innerHTML = "Please enter the date";
+           if(focus_status == false){
+                document.getElementById("date_error").focus();
+                focus_status = true;
+           }
+            
+        }
+    
+   
+    
+        var start_time = document.getElementById("str_time").value;
+        if(start_time.length==0){
+            
+           document.getElementById("str_time_error").innerHTML = "Please enter the start time of the chapter.";
+           if(focus_status == false){
+                document.getElementById("time_error").focus();
+                focus_status = true;
+           }
+            
+        }
+    
+        var end_time = document.getElementById("end_time").value;
+        if(end_time.length==0){
+            
+           document.getElementById("end_time_error").innerHTML = "Please enter the finish time of the chapter.";
+           if(focus_status == false){
+                document.getElementById("end_time_error").focus();
+                focus_status = true;
+           }
+            
+        }
+        
+       
+        if(CompareTimes(start_time,end_time)!="great"){
+            
+           document.getElementById("end_time_error").innerHTML = "Note:The finish time must be greater than the start time.";
+           if(focus_status == false){
+                document.getElementById("end_time_error").focus();
+                focus_status = true;
+           }
+            
+        }
+        var time_table = document.getElementById("timetbl");
+        var tbodyRowCount = time_table.tBodies[0].rows.length;
+        
+        if(tbodyRowCount >0){
+            var end_time_before=time_table.tBodies[0].rows[tbodyRowCount-1].cells.item(3).innerHTML;
+            var date_before=time_table.tBodies[0].rows[tbodyRowCount-1].cells.item(1).innerHTML;
+            var date_new = formatDate(date);
+            if(date_new==date_before && CompareTimes(end_time_before,start_time)!="great"){
+            
+                document.getElementById("str_time_error").innerHTML = "Note:The start time must be greater than the finish time of the previous chapter.";
+                if(focus_status == false){
+                    document.getElementById("str_time_error").focus();
+                    focus_status = true;
+                }
+            
+            }
+            
+        }
+    
+        
+        
+        
+        
+      if(focus_status==false) { 
+        
+      var title = document.getElementById('title').value;
+      var date = document.getElementById('date').value;
+      var start_time = document.getElementById('str_time').value;
+      var end_time = document.getElementById('end_time').value;
+      var duration =CalDiffTimes(start_time,end_time);
+      table_list.push([title, date, start_time, end_time, duration])
+    
+      var time_table = document.getElementById("timetbl");
+      var time_row = time_table.tBodies[0].insertRow();
+      var time_cell1 = time_row.insertCell();
+    	time_cell1.innerHTML = title;
+      var time_cell2 = time_row.insertCell();
+    	time_cell2.innerHTML = date;
+      var time_cell3 = time_row.insertCell();
+    	time_cell3.innerHTML = start_time;
+      var time_cell4 = time_row.insertCell();
+    	time_cell4.innerHTML = end_time;
+      var time_cell5 = time_row.insertCell();
+    	time_cell5.innerHTML = duration;
+    	 var time_cell6 = time_row.insertCell();
+    	time_cell6.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' />";
+      }else{
+          return;
+      }
+    	
+    //var element = document.getElementById("timetbl");
+     // time_table.classList.add("text-center");
+      
+    }, false)
+    
+    
+    submitBtn.addEventListener('click', () => {
+        var probcheck = false;
+        var time_table = document.getElementById("timetbl");
+        var tbodyRowCount = time_table.tBodies[0].rows.length;
+        arary_time = [];
+        for(var i=0;i<tbodyRowCount;i++){
+            
+            var duration=time_table.tBodies[0].rows[i].cells.item(4).innerHTML;
+            arary_time.push(duration);
+        }
+        
+        
+       
+        var duration_total = TimeSum(arary_time);
+        duration_total = duration_total.split(":");
+        var duration_reg = $('#workshop_duration').val();
+         duration_reg = duration_reg.split(":"); 
+         
+        var duration_total_s = new Date(0, 0, 0, duration_total[0], duration_total[1], duration_total[2] ? duration_total[2] : 0, 0);
+	    var duration_reg_s = new Date(0, 0, 0, duration_reg[0], duration_reg[1] ? duration_reg[1] : 0, duration_reg[2] ? duration_reg[2] : 0, 0);
+		
+		
+		
+		if (duration_total_s.getTime() != duration_reg_s.getTime()) {
+        //if(CompareTimes(duration_reg,duration_total)!="equal"){
+            //alert("not equal");
+            probcheck = true;
+            document.getElementById("timetbl_error").innerHTML="Note: The total duration is not equal to the entered duration in the workshop definition."
+            
+        }
+            
+             
+        
+        if(probcheck == false){
+            workshop_id = $('#workshop_id').val();
+            url = "{% url 'set-time-table' 0 %}".replace('0', workshop_id);
+           
+        	jQuery.ajax({
+        		type: "POST",
+        		url: url,
+        		dataType:"JSON",
+        		data: {
+                    //'json': JSON.stringify(rowdataArr),
+                    'json':table_list,
+                    'list_size': table_list.length,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                     //alert("ok");
+                    window.location.href = data.url;
+                },error:function(errors){
+                    
+                    alert(errors.responseText);
+                }
+        	});
+        }else{
+            return;
+        }
+    })
+
+});
+
+
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+
+function CalDiffTimes(start,end){
+	    //var start = document.getElementById('starttime').value;
+	   // var end = document.getElementById('endtime').value;
+	    if(start!="" && end!=""){
+		    start = start.split(":");
+            end = end.split(":");
+         	var startDate = new Date(0, 0, 0, start[0], start[1], start[2] ? start[2] : 0, 0);
+	        var endDate = new Date(0, 0, 0, end[0], end[1], end[2] ? end[2] : 0, 0);
+
+			
+			if (endDate.getTime() < startDate.getTime()) {
+				endDate.setDate(endDate.getDate() + 1);
+			}
+
+			var diff = endDate.getTime() - startDate.getTime();
+			var hours = Math.floor(diff / 1000 / 60 / 60);
+			diff -= hours * 1000 * 60 * 60;
+			var minutes = Math.floor(diff / 1000 / 60);
+			diff -= minutes * 1000 * 60;
+			var seconds = Math.floor(diff / 1000);
+            var hourLeaveTime = (hours < 9 ? "0" : "") + hours + ":" + (minutes < 9 ? "0" : "") + minutes + ":" + (seconds < 9 ? "0" : "") + seconds;
+			//document.getElementById("durationtime").value = hourLeaveTime;
+			//DurationTimeLeave = hourLeaveTime;
+			return hourLeaveTime;
+	    }
+	}
+	
+	
+function CompareTimes(start,end){
+	    //var start = document.getElementById('starttime').value;
+	   // var end = document.getElementById('endtime').value;
+	   //var compare_status = false;
+	    if(start!="" && end!=""){
+		    start = start.split(":");
+            end = end.split(":");
+         	var startDate = new Date(0, 0, 0, start[0], start[1], start[2] ? start[2] : 0, 0);
+	        var endDate = new Date(0, 0, 0, end[0], end[1], end[2] ? end[2] : 0, 0);
+
+			
+			if (endDate.getTime() > startDate.getTime()) {
+				compare_status="great";
+			}else if(endDate.getTime() < startDate.getTime()){
+			    compare_status="small";
+			}else{
+			    compare_status="equal";
+			}
+
+			
+			return compare_status;
+	    }
+	}
+	
+function ClearErr(id){
+    
+    document.getElementById(id+"_error").innerHTML="";
+    
+    
+   
+/*    if(id == "date"){
+        document.getElementById("date_error").innerHTML="";
+    }
+    if(id == "time"){
+        document.getElementById("time_error").innerHTML="";
+    }
+    if(id == "id_fund"){
+        document.getElementById("fund_error").innerHTML="";
+    }*/
+    
+    focus_status = false;
+}
+
+
+
+
+
+
+
+function TimeSum(TimeArray=[]){
+    var hours = 0;
+    var minutes = 0;
+    var seconds = 0;
+    var sum = '';
+  for(var i in TimeArray){
+   hours += parseInt(TimeArray[i].substring(0, 2))
+   minutes += parseInt(TimeArray[i].substring(3, 5))
+   //seconds += parseInt(TimeArray[i].substring(6))
+  }
+  /*if(seconds > 59){
+    minutes += parseInt(seconds / 60);
+    seconds = parseInt(seconds % 60);
+  }*/
+  
+  if(minutes > 59){
+    hours += parseInt(minutes / 60);
+    minutes = parseInt(minutes % 60);
+  }
+  //sum = hours + ":" + minutes + ":" + seconds;
+  sum = hours + ":" + minutes;
+  
+  return sum;
+}
+
+
+
+
+   
+ </script>
+{% endblock script %}

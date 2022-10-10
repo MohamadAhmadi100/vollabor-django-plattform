@@ -1,0 +1,1308 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+{% load base %}
+{% block css %}
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+{% endblock %}
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 text-start">
+                <h1><i class="fas fa-project-diagram"></i> My project </h1>
+            </div>
+            
+        </div>
+    </div>
+</header>
+
+<section id="industry-director">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div style="margin-left: 600px">
+    </div>
+    <div class="container">
+        <div class="card-page">
+            <div class="row justify-content-center align-items-center">
+
+            <!-- 1 -->
+            {% if request.GET.filter == "project_client" %}
+            <div class="col gold active">
+                <a href="" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white titlestyle">Defined project</h4>
+                    <p class="number ">{{count_defined_cart}}</p>
+                </a>
+            </div>
+            {% else %}
+            <div class="col green ">
+                <a href="?filter=project_client" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white titlestyle">Defined project</h4>
+                    <p class="number ">{{count_defined_cart}}</p>
+                </a>
+            </div>
+            {% endif %}
+            {% if request.user.memberprofile.position == 'Supervisor' %}
+                {% if request.GET.filter == "main_supervisor" %}
+                <div class="col green active">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h5 class="text-white">Undertaken project</h5>
+                        <p class="number ">{{main_supervisor_list_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=main_supervisor" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h5 class="text-white">Undertaken project</h5>
+                        <p class="number ">{{main_supervisor_list_count}}</p>
+                    </a>
+                </div>                  
+                {% endif %}
+            {% endif %}
+              
+            <!-- 5   -->
+            {% if request.GET.filter == "project_apply" %}
+            <div class="col gold active">
+                <a href="" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white titlestyle">Contribution</h4>
+                    <span class="number">Message: {{cart_cuntribution_count}}</span>                     
+                    <span class="number">Project: {{project_applicant_count}}</span>                     
+                </a>
+            </div>
+            {% else %}
+            <div class="col green ">
+                <a href="?filter=project_apply" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white titlestyle">Contribution</h4>
+                    <span class="number">Message: {{cart_cuntribution_count}}</span>                     
+                    <span class="number">Project: {{project_applicant_count}}</span>                  
+                </a>
+            </div>
+            {% endif %}
+            
+            
+            
+
+            {% if request.user.memberprofile.position == 'Supervisor' %}
+                {% if request.GET.filter == "new_projects_f" %}
+                <div class="col gold active">
+                    <a href="" class="text-center text-white" style="padding:25px 90px">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Suggested project</h4>
+                        <p class="number ">{{new_projects_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col green ">
+                    <a href="?filter=new_projects_f" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Suggested project</h4>
+                        <p class="number ">{{new_projects_count}}</p>
+                    </a>
+                </div>
+                {% endif %}
+            {% endif %}
+            
+            <div class="col gold ">
+                <a href="{% url 'myprojects-contract-list' %}" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white titlestyle"> Contract</h4>
+                    <p class="number ">{{count_contract_supervisor_project_industry}}</p>
+                </a>
+            </div>
+
+            <!-- 1 compose -->
+            <div class="col pink">
+                <a href="{% url 'industry:project-revised-page' %}" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h5 class="text-white">Revised</h5>
+                    <p class="number ">{{count_revised_cart}}</p>
+                </a>
+            </div>
+
+            <!-- 1 compose -->
+            <div class="col pink">
+                <a href="{% url 'industry:project-rejected-page' %}" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h5 class="text-white">Rejected</h5>
+                    <p class="number ">{{count_rejected_cart}}</p>
+                </a>
+            </div>
+
+          
+            {% if request.GET.filter == "history" %}
+            <div class="col gold active">
+                <a href="" class="text-center text-white" style="padding:25px 90px">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white titlestyle">History</h4>
+                    <p class="number "></p>
+                </a>
+            </div>
+            {% else %}
+            <div class="col green ">
+                <a href="?filter=history" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white titlestyle">History</h4>
+                    <p class="number "></p>
+                </a>
+            </div>
+            {% endif %} 
+        
+            
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mt-2">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class=" mb-5" style="overflow-x:auto;">
+
+                        <!-- Project client -->
+                          {% if request.GET.filter == "project_client" %}
+                            <table class="table table-hover table-dark table-striped p-table">
+                                <thead class="tbl-head">
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Title</th>
+                                    <th>Fund</th>
+                                    <th>Submission date</th>
+                                    <th>Suggested start date</th>
+                                    <th>Suggested end date</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for project in project_list_created %}
+                                    <tr>
+                                        <td class="p-name">
+                                            {{project.project.client_form.formclint.id_project}}
+                                        </td>
+                                        <td class="p-name">
+                                            <p style="">{{project.project.client_form.formclint.title|truncatechars:50}}</p>
+                                        </td>
+                                        
+                                        <td class="p-name">
+                                            ${{project.project.client_form.formclint.fund}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.project.client_form.formclint.created|date:'m-d-Y'}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.project.client_form.formclint.start_date}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.project.client_form.formclint.end_date}}
+                                        </td>
+                                        <td class="p-name">
+                                            {% if project.status == 'on_going' %}
+                                                Ongoing
+                                            {% elif project.status == 'on_hold' %}
+                                                On hold
+                                            {% else %}
+                                            {{project.status|title}}
+                                            {% endif %}
+                                            
+                                        </td>
+                                         <td class="text-right">
+                                             <a href="{% url 'industry:mainsupervisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                 <i class="fa fa-eye"></i> View <span class="badge badge-danger"> {{project.project_requests.Active.count}}</span>
+                                             </a>
+                                         </td>
+                                    </tr>
+                                {% endfor %}
+                                {% for project in object_list %}
+                                    <tr>
+                                        <td class="p-name">
+                                            {{project.id_project}}
+                                        </td>
+                                        <td class="p-name">
+                                            <p style="">{{project.title|truncatechars:50}}</p>
+                                        </td>
+                                        
+                                        <td class="p-name">
+                                            ${{project.fund}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.created|date:'m-d-Y'}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.start_date}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.end_date}}
+                                        </td>
+                                        <td class="p-name">
+                                             {% if project.status == 'r' %}
+                                                Rejected
+
+                                             {% elif project.status == 'not-pay' %}
+                                                Unpaid
+
+                                             {% elif project.status == 'withdrew' %}
+                                                Withdrew
+
+                                             {% elif project.status == 'send-contract-to-client' %}
+                                                Pending for you decision
+
+                                             {% elif project.project_created == True %}
+                                                Created
+
+                                             {% elif project.follow_project == 'p_main_revise_proposal_by_expert' %}
+                                                Revised the proposal
+
+                                             {% elif project.status == 'revise_director_to_client' %}
+                                                The project has been revised
+
+                                             {% elif project.status == 'revised-contract' %}
+                                                Revised the contract and pending for you decision
+
+                                             {% else %}
+                                                Under process
+                                             {% endif %}
+                                            
+                                        </td>
+                                         <td class="text-right">
+                                             {% if project.status == 'r' or project.status == 'rejected_by_expert' %}
+                                                 <a href="{% url 'industry:industry-reject-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View
+                                                 </a> 
+                                             {% elif project.status == 'revise_director_to_client' %}
+                                                 <a href="{% url 'industry:client-detail-revised' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View
+                                                 </a> 
+                                             {% elif project.status != 'withdrew' and project.follow_project == 'p_main_revise_proposal_by_expert'%}
+                                                {% for i in project.forms_client.all %}
+                                                    {% for r in i.forms_clients.all %}
+                                                         <a href="{% url 'industry:industry-supervisor-revise-detail' r.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                             <i class="fa fa-eye"></i> View
+                                                         </a>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                             {% else %}
+                                             <a href="
+                                                {% url 'industry:client-detail' project.pk %}
+                                             " class="btn btn-primary btn-xs mb-1">
+                                                 <i class="fa fa-eye"></i> View
+                                             </a>
+                                             {% endif %}
+                                         </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                          {% endif %}
+
+                        <!-- Project apply -->
+                          {% if request.GET.filter == "project_apply" %}
+                            <table class="table table-hover table-dark table-striped p-table">
+                                <thead class="tbl-head">
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Project name</th>
+                                    <th>Fund</th>
+                                    <th>Submission date</th>
+                                    <th>Start date</th>
+                                    <th>End date</th>
+                                    <th>Position</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in project_apply_supervisor %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td> 
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                             
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Advisor
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.status == 'new' %}
+                                                    Your request has been accepted. Wait for the contract
+
+                                                {% elif project.status == 'send-contract' %}
+                                                    The contract was sent, pending for your signature
+
+                                                {% elif project.status == 'send-contract-to-expert' %}
+                                                    You sent the signed contract
+
+                                                {% elif project.status == 'not-response' %}
+                                                    Time of signing the contract is over.  Another applicant may be replaced with you. 
+
+                                                {% elif project.status == 'confirmed' or project.status == 'confirmed-by-expert' %}
+                                                    Accepted
+                                                    
+                                                {% elif project.status == 'reject' %}
+                                                    Rejected
+                                                    
+                                                {% elif project.status == 'revised_by_expert' %}
+                                                    Your signed contract needs a revision
+                                                    
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-advisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View <span class="badge badge-danger"> {% count_message project.research.id project.user.id %}</span>
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in project_apply_mentor %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Mentor
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.status == 'new' %}
+                                                    Your request has been accepted. Wait for the contract
+
+                                                {% elif project.status == 'send-contract' %}
+                                                    The contract was sent, pending for your decision
+
+                                                {% elif project.status_remove == 'request-accpet-by-director' or project.status_remove == 'request-accpet-by-expert' %}
+                                                    You removed from this project
+
+                                                {% elif project.status == 'send-contract-to-expert' %}
+                                                    You sent the sgined contract
+
+                                                {% elif project.status == 'not-response' %}
+                                                    Time of signing the contract is over.  Another applicant may be replaced with you. 
+
+                                                {% elif project.status == 'confirmed' or project.status == 'confirmed-by-expert' %}
+                                                    Accepted
+                                                    
+                                                {% elif project.status == 'reject' %}
+                                                    Rejected
+                                                    
+                                                {% elif project.status == 'revised_by_expert' %}
+                                                    Your signed contract needs a revision
+                                                    
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-mentor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View <span class="badge badge-danger"> {% count_message project.research.id project.user.id %}</span>
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in project_apply_member %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Member
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.status == 'new' %}
+                                                    Your request has been accepted. Wait for the contract
+
+                                                {% elif project.status == 'send-contract' %}
+                                                    The contract was sent, pending for your decision
+
+                                                {% elif project.status == 'send-contract-to-expert' %}
+                                                    You sent the sgined contract
+
+                                                {% elif project.status == 'not-response' %}
+                                                    Time of signing the contract is over.  Another applicant may be replaced with you. 
+
+                                                {% elif project.status == 'confirmed' or project.status == 'confirmed-by-expert' %}
+                                                    Accepted
+                                                    
+                                                {% elif project.status == 'reject' %}
+                                                    Rejected
+                                                    
+                                                {% elif project.status == 'revised_by_expert' %}
+                                                    Your signed contract needs a revision
+                                                    
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-member-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View <span class="badge badge-danger"> {% count_message project.research.id project.user.id %}</span> 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in project_apply_lerner %}
+                                        <tr>
+                                            
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Learner
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.status == 'new' %}
+                                                    Your request has been accepted. Wait for the contract
+
+                                                {% elif project.status == 'send-contract' %}
+                                                    The contract was sent, pending for your decision
+
+                                                {% elif project.status == 'send-contract-to-expert' %}
+                                                    You sent the sgined contract
+
+                                                {% elif project.status == 'not-response' %}
+                                                    Time of signing the contract is over.  Another applicant may be replaced with you. 
+
+                                                {% elif project.status == 'confirmed' or project.status == 'confirmed-by-expert' %}
+                                                    Accepted
+                                                    
+                                                {% elif project.status == 'reject' %}
+                                                    Rejected
+                                                    
+                                                {% elif project.status == 'revised_by_expert' %}
+                                                    Your signed contract needs a revision
+                                                    
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-learner-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View <span class="badge badge-danger"> {% count_message project.research.id project.user.id %}</span> 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in project_request %}
+                                        <tr>
+                                            
+                                            <td class="p-name">
+                                                {{project.project_request.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.project_request.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project_request.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project_request.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project_request.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project_request.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.supervisor == True %}
+                                                    Advisor - 
+                                                {% endif %}
+                                                
+                                                {% if project.mentor == True %}
+                                                    Mentor - 
+                                                {% endif %}
+                                                
+                                                {% if project.member == True %}
+                                                    Member - 
+                                                {% endif %}
+                                                
+                                                {% if project.learner == True %}
+                                                    Learner - 
+                                                {% endif %}
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.status == 'accept' %}
+                                                    Your request has been accepted. Wait for the contract
+                                                {% elif project.status == 'reject' %}
+                                                    Rejected
+                                                {% elif project.status == 'not-pay' %}
+                                                    Unpaid
+                                                {% elif project.status == 'request' %}
+                                                    Under process
+                                                {% endif %}
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:request-project-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                          {% endif %}
+                          
+                          {% if request.GET.filter == "new_projects_f" %}
+                            <table class=" table table-dark table-striped table-hover p-table">
+                                <thead class="tbl-head">
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Title</th>
+                                    <th>Fund</th>
+                                    <th>Submission date</th>
+                                    <th>Suggested start date</th>
+                                    <th>Suggested end date</th>
+                                    <th>Deadline</th>
+                                    <th>Status</th>
+                                    <!--<th>Owner</th>-->
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in new_projects %}
+                                            <tr>
+                                                <td class="p-name">
+                                                    <p style="overflow: hidden; width: 150px">{{project.client_form.formclint.id_project}}
+                                                </td>
+                                                <td class="p-name">
+                                                    <p style="overflow: hidden; width: 200px">{{project.client_form.formclint.title|truncatechars:50}}</p>
+                                                </td>
+                                                <td class="p-name">
+                                                    ${{project.client_form.formclint.fund}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.client_form.formclint.created|date:'m-d-Y'}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.client_form.formclint.start_date}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.client_form.formclint.end_date}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.client_form.deadline}}
+                                                </td>
+                                                <td class="p-name">
+                                                    Pending for your approval
+                                                </td>
+                                                <!--<td class="p-name">
+                                                    {{project.client_form.formclint.user.get_full_name}}
+                                                </td>-->
+                                                 <td class="text-right">
+                                                     <a href="{% url 'industry:industry-supervisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                         <i class="fa fa-eye"></i> View
+                                                     </a>
+                                                 </td>
+                                            </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                          {% endif %}
+                          
+                          
+                          {% if request.GET.filter == "history" %}
+                            <table class=" table table-dark table-striped table-hover p-table">
+                                <thead class="tbl-head">
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Title</th>
+                                    <th>Fund</th>
+                                    <th>Submission date</th>
+                                    <th>Suggested start date</th>
+                                    <th>Suggested end date</th>
+                                    <th>Position</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+
+
+
+                                    <!-- # Project created -->
+                                    {% for project in history_project_list_created %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            
+                                            <td class="p-name">
+                                                ${{project.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td>---</td>
+                                            <td class="p-name">
+                                            {% if project.status == 'on_going' %}
+                                                Ongoing
+                                            {% elif project.status == 'on_hold' %}
+                                                On hold
+                                            {% else %}
+                                            {{project.status|title}}
+                                            {% endif %}
+                                                
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:mainsupervisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View <span class="badge badge-danger"> {{project.project_requests.Active.count}}</span>
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                    <!-- # Project not created -->
+                                    {% for project in history_project_list_not_created %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.title|truncatechars:50}}</p>
+                                            </td>
+                                            
+                                            <td class="p-name">
+                                                ${{project.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.end_date}}
+                                            </td>
+                                            <td>---</td>
+                                            <td class="p-name">
+                                                 {% if project.status == 'r' or project.status == 'rejected_by_expert' %}
+                                                    Rejected
+                                                    
+                                                 {% elif project.status == 'not-pay' %}
+                                                    Unpaid
+                                                    
+                                                 {% elif project.status == 'withdrew' %}
+                                                    Withdrew
+                                                    
+                                                 {% elif project.status == 'revise_director_to_client' %}
+                                                    The project has been revised
+                                                    
+                                                 {% elif project.project_created == True %}
+                                                    Created
+                                                    
+                                                 {% elif project.follow_project == 'p_main_revise_proposal_by_expert' %}
+                                                    Revised the proposal
+                                                    
+                                                 {% elif project.status == 'send-contract-to-client' %}
+                                                    Pending for you decision
+    
+                                                 {% elif project.status == 'revised-contract' %}
+                                                    Revised the contract and pending for you decision
+                                                    
+                                                 {% else %}
+                                                    Under process
+                                                 {% endif %}
+                                                
+                                            </td>
+                                             <td class="text-right">
+                                                 {% if project.status == 'r' or project.status == 'rejected_by_expert' %}
+                                                     <a href="{% url 'industry:industry-reject-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                         <i class="fa fa-eye"></i> View
+                                                     </a> 
+                                                 {% elif project.status != 'withdrew' and project.follow_project == 'p_main_revise_proposal_by_expert'%}
+                                                    {% for i in project.forms_client.all %}
+                                                        {% for r in i.forms_clients.all %}
+                                                             <a href="{% url 'industry:industry-supervisor-revise-detail' r.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                                 <i class="fa fa-eye"></i> View
+                                                             </a>
+                                                        {% endfor %}
+                                                    {% endfor %}
+                                                 {% else %}
+                                                 <a href="
+                                                    {% url 'industry:client-detail' project.pk %}
+                                                 " class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View
+                                                 </a>
+                                                 {% endif %}
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                    <!-- # Main supervisor list -->
+                                    {% for project in history_main_supervisor_list %}
+                                        {% if project.project.client_form.formclint.main_supervisor == None %}
+                                            <tr>
+                                                <td class="p-name">
+                                                    <p style="overflow: hidden; width: 150px">{{project.project.client_form.formclint.id_project}}</p>
+                                                </td>
+                                                <td class="p-name">
+                                                    <p style="overflow: hidden; width: 200px">{{project.project.client_form.formclint.title|truncatechars:50}}</p>
+                                                </td>
+                                                <td class="p-name">
+                                                    ${{project.project.client_form.formclint.fund}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.project.client_form.formclint.created}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.project.client_form.formclint.start_date}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.project.client_form.formclint.end_date}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.project.client_form.formclint.created_date}}
+                                                </td>
+                                                <td>---</td>
+                                                <td class="p-name">
+                                                    {% if project.status == 'on_going' %}
+                                                        Ongoing
+                                                    {% elif project.status == 'on_hold' %}
+                                                        On hold
+                                                    {% else %}
+                                                    {{project.status|title}}
+                                                    {% endif %}
+                                                </td>
+                                                <!--<td class="p-name">
+                                                    {{project.client_form.formclint.user.get_full_name}}
+                                                </td>-->
+                                                 <td class="text-right">
+                                                     <a href="{% url 'industry:mainsupervisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                         <i class="fa fa-eye"></i> View <span class="badge badge-danger"> {{project.project_requests.Active.count}}</span>
+                                                     </a>
+                                                 </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+
+
+                                    <!-- # Revise project -->
+                                    {% for project in revised_proposal_list %}
+                                        <tr>
+                                            <td class="p-name">
+                                                <p style="overflow: hidden; width: 150px">{{project.client_form.formclint.id_project}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="overflow: hidden; width: 200px">{{project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.client_form.formclint.created}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.rejected_date}}
+                                            </td>
+                                            <td>---</td>
+                                            <td class="p-name">
+                                                The proposal has been revised
+                                            </td>
+                                            <!--<td class="p-name">
+                                                {{project.client_form.formclint.user.get_full_name}}
+                                            </td>-->
+                                             <td class="text-right">
+                                                {% if project.client_form.formclint.main_supervisor %}
+                                                 <a href="{% url 'industry:industry-supervisor-revise-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View
+                                                 </a>
+                                                {% else %}
+                                                 <a href="{% url 'industry:industry-supervisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View
+                                                 </a>
+                                                {% endif %}
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+
+
+                                    <!-- # Applicant -->
+
+                                    {% for project in history_project_apply_supervisor %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td> 
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                             
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Advisor
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.status == 'new' %}
+                                                    Your request has been accepted. Wait for the contract
+
+                                                {% elif project.status == 'send-contract' %}
+                                                    The contract was sent, pending for your decision
+
+                                                {% elif project.status == 'send-contract-to-expert' %}
+                                                    You sent the sgined contract
+
+                                                {% elif project.status == 'not-response' %}
+                                                    Time of signing the contract is over.  Another applicant may be replaced with you. 
+
+                                                {% elif project.status == 'confirmed' or project.status == 'confirmed-by-expert' %}
+                                                    Accepted
+                                                    
+                                                {% elif project.status == 'reject' %}
+                                                    Rejected
+                                                    
+                                                {% elif project.status == 'revised_by_expert' %}
+                                                    Your signed contract needs a revision
+                                                    
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-advisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in history_project_apply_mentor %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Mentor
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.status == 'new' %}
+                                                    Your request has been accepted. Wait for the contract
+
+                                                {% elif project.status == 'send-contract' %}
+                                                    The contract was sent, pending for your decision
+
+                                                {% elif project.status_remove == 'request-accpet-by-director' or project.status_remove == 'request-accpet-by-expert' %}
+                                                    You removed from this project
+
+                                                {% elif project.status == 'send-contract-to-expert' %}
+                                                    You sent the sgined contract
+
+                                                {% elif project.status == 'not-response' %}
+                                                    Time of signing the contract is over.  Another applicant may be replaced with you. 
+
+                                                {% elif project.status == 'confirmed' or project.status == 'confirmed-by-expert' %}
+                                                    Accepted
+                                                    
+                                                {% elif project.status == 'reject' %}
+                                                    Rejected
+                                                    
+                                                {% elif project.status == 'revised_by_expert' %}
+                                                    Your signed contract needs a revision
+                                                    
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-mentor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in history_project_apply_member %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Member
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.status == 'new' %}
+                                                    Your request has been accepted. Wait for the contract
+
+                                                {% elif project.status == 'send-contract' %}
+                                                    The contract was sent, pending for your decision
+
+                                                {% elif project.status == 'send-contract-to-expert' %}
+                                                    You sent the sgined contract
+
+                                                {% elif project.status == 'not-response' %}
+                                                    Time of signing the contract is over.  Another applicant may be replaced with you. 
+
+                                                {% elif project.status == 'confirmed' or project.status == 'confirmed-by-expert' %}
+                                                    Accepted
+                                                    
+                                                {% elif project.status == 'reject' %}
+                                                    Rejected
+                                                    
+                                                {% elif project.status == 'revised_by_expert' %}
+                                                    Your signed contract needs a revision
+                                                    
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:applicant-member-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in history_project_apply_lerner %}
+                                        <tr>
+                                            
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.research.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                ${{project.research.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.research.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                Learner
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.status == 'new' %}
+                                                    Your request has been accepted. Wait for the contract
+
+                                                {% elif project.status == 'send-contract' %}
+                                                    The contract was sent, pending for your decision
+
+                                                {% elif project.status == 'send-contract-to-expert' %}
+                                                    You sent the sgined contract
+
+                                                {% elif project.status == 'not-response' %}
+                                                    Time of signing the contract is over.  Another applicant may be replaced with you. 
+
+                                                {% elif project.status == 'confirmed' or project.status == 'confirmed-by-expert' %}
+                                                    Accepted
+                                                    
+                                                {% elif project.status == 'reject' %}
+                                                    Rejected
+                                                    
+                                                {% elif project.status == 'revised_by_expert' %}
+                                                    Your signed contract needs a revision
+                                                    
+                                                {% else %}
+                                                    Under process
+                                                {% endif %}
+                                            </td>
+                                             <td class="text-right">
+                                                 <a href="{% url 'myprojects-research-applicant-learner' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for project in project_request %}
+                                        <tr>
+                                            
+                                            <td class="p-name">
+                                                {{project.project_request.project.client_form.formclint.id_project}}
+                                            </td>
+                                            <td class="p-name">
+                                                <p style="">{{project.project_request.project.client_form.formclint.title|truncatechars:50}}</p>
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project_request.project.client_form.formclint.fund}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project_request.project.client_form.formclint.created|date:'m-d-Y'}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project_request.project.client_form.formclint.start_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {{project.project_request.project.client_form.formclint.end_date}}
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.supervisor == True %}
+                                                    Advisor - 
+                                                {% endif %}
+                                                
+                                                {% if project.mentor == True %}
+                                                    Mentor - 
+                                                {% endif %}
+                                                
+                                                {% if project.member == True %}
+                                                    Member - 
+                                                {% endif %}
+                                                
+                                                {% if project.learner == True %}
+                                                    Learner - 
+                                                {% endif %}
+                                            </td>
+                                            <td class="p-name">
+                                                {% if project.status == 'accept' %}
+                                                    Your request has been accepted. Wait for the contract
+                                                {% elif project.status == 'reject' %}
+                                                    Rejected
+                                                {% elif project.status == 'not-pay' %}
+                                                    Unpaid
+                                                {% elif project.status == 'request' %}
+                                                    Under process
+                                                {% endif %}
+                                             <td class="text-right">
+                                                 <a href="{% url 'industry:request-project-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                     <i class="fa fa-eye"></i> View 
+                                                 </a>
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                          {% endif %}
+
+                            {% if request.GET.filter == "main_supervisor" %}
+                            <table class="table table-dark table-hover table-striped p-table">
+                                <thead class="tbl-head">
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Title</th>
+                                    <th>Fund</th>
+                                    <th>Submission date</th>
+                                    <th>Suggested strat date</th>
+                                    <th>Suggested end date</th>
+                                    <th>Created date</th>
+                                    <th>Status</th>
+                                    <!--<th>Owner</th>-->
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in main_supervisor_list %}
+                                        {% if project.project.client_form.formclint.main_supervisor == None %}
+                                            <tr>
+                                                <td class="p-name">
+                                                    <p style="overflow: hidden; width: 150px">{{project.project.client_form.formclint.id_project}}</p>
+                                                </td>
+                                                <td class="p-name">
+                                                    <p style="overflow: hidden; width: 200px">{{project.project.client_form.formclint.title|truncatechars:50}}</p>
+                                                </td>
+                                                <td class="p-name">
+                                                    ${{project.project.client_form.formclint.fund}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.project.client_form.formclint.created}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.project.client_form.formclint.start_date}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.project.client_form.formclint.end_date}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{project.project.client_form.formclint.created_date}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {% if project.status == 'on_going' %}
+                                                        Ongoing
+                                                    {% elif project.status == 'on_hold' %}
+                                                        On hold
+                                                    {% else %}
+                                                    {{project.status|title}}
+                                                    {% endif %}
+                                                </td>
+                                                <!--<td class="p-name">
+                                                    {{project.client_form.formclint.user.get_full_name}}
+                                                </td>-->
+                                                 <td class="text-right">
+                                                     <a href="{% url 'industry:mainsupervisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                         <i class="fa fa-eye"></i> View <span class="badge badge-danger"> {{project.project_requests.Active.count}}</span>
+                                                     </a>
+                                                 </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selectedItem = $(this).val();
+        let itemClasses = {
+            "Golden": "bg-warning text-dark",
+            "Silver": "bg-secondary text-white",
+            "Bronze": "bg-danger text-white",
+            "Normal": "bg-dark text-white",
+        };
+        $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+        $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+    });
+</script>
+
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $("[name='project-value']").keypress(function (evt) {
+        let entered_value = evt.originalEvent.key;
+        let current_value = $(evt.currentTarget).val();
+        if (isNumeric(entered_value) || (entered_value === '.' && !(current_value.includes('.')))) {
+            // let input be entered
+        }
+        else {
+            evt.preventDefault();
+        }
+    });
+</script>
+{% endblock script %}

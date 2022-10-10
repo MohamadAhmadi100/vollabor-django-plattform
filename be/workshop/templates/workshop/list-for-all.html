@@ -1,0 +1,555 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+
+
+{% block style %}
+    
+    <link rel="stylesheet" href="{% static 'workshop_view/css/workshop.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js" integrity="sha512-qzrZqY/kMVCEYeu/gCm8U2800Wz++LTGK4pitW/iswpCbjwxhsmUwleL1YXaHImptCHG0vJwU7Ly7ROw3ZQoww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock style %}
+
+{% block content %}
+
+    <div id="carouselExampleIndicators" class="banner_top carousel slide" data-bs-ride="carousel">
+        <!--<div class="carousel-indicators">-->
+        <!--    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"-->
+        <!--            aria-current="true" aria-label="Slide 1"></button>-->
+        <!--    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"-->
+        <!--            aria-label="Slide 2"></button>-->
+        <!--</div>-->
+        <div class="carousel-inner">
+            <div class="carousel-item active ">
+                <div class="row">
+                    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h2 class="text-white fw-bold">
+                            Knowledge is power!
+                        </h2>
+                        <!--<a href="{% url 'cv-upload-page' %}" class="custom_btn  mt-3  text-white">Join</a>-->
+                    </div>
+                    <div class="col-md-6 position-relative">
+                        <img class="img-fluid" src="{% static 'workshop_view/img/banner_workshop.png' %}" style="height: 300px;max-height: max-content" alt="">
+                    </div>
+                </div>
+            </div>
+            <!--<div class="carousel-item  ">-->
+            <!--    <div class="row">-->
+            <!--        <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">-->
+            <!--            <h2 class="text-white fw-bold">-->
+            <!--                TECVICO is inviting the scientists to-->
+            <!--                hold/participate in workshops.-->
+            <!--            </h2>-->
+            <!--            <a href="{% url 'cv-upload-page' %}" class="custom_btn  mt-3  text-white">Join</a>-->
+            <!--        </div>-->
+            <!--        <div class="col-md-6">-->
+            <!--            <img src="{% static 'workshop_view/img/banner_workshop.png' %}" alt="">-->
+            <!--        </div>-->
+            <!--    </div>-->
+            <!--</div>-->
+
+        </div>
+    </div>
+    
+    <div class="container my-1">
+        <div class="row">
+            <ul class="list-group list-group-horizontal">
+              <li class="list-group-item"><a class="ws-nav-link" href="{% url 'documents-page' %}">Documents</a></li>
+              <li class="list-group-item"><a class="ws-nav-link" href="{% url 'videos-page' %}">Videos</a></li>
+              <li class="list-group-item"><a class="ws-nav-link" href="{% url 'add-workshop-page' %}">Create workshop</a></li>
+              <!--<li class="list-group-item">	<a class="ws-nav-link" href="#">Attend Workshop</a></li>-->
+            </ul>
+            
+        </div>
+        
+    </div>
+   
+    <div class="container-fluid p-5">
+        <div class="back-link d-flex align-items-center mt-3">
+            <a href="{% url 'home-page' %}" class="">Home</a>
+            <i class="fa fa-angle-right fa-2x mx-2"></i>
+            <a href="#" class="active">Workshop</a>
+        </div>
+        <div class="sm_sidebar mt-3">
+            <button class="btn btn-outline-primary filter_right">
+                <i class="fa fa-filter"></i>
+                <span>Filter</span>
+            </button>
+        </div>
+        <div class="wrapper d-flex justify-content-center">
+            <div class="sidebar_filter">
+               <!-- <div class="item">
+                    <a class="main" href="{% url 'add-workshop-page' %}">Create Workshop</a>
+                </div>
+                <div class="item">
+                    <a class="main" href="#">Attend Workshop</a>
+                </div>-->
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between ">
+                        <span>Search</span>
+                    </a>
+                    <input type="text" class="form-control mt-2 mb-2" id="search_filter" placeholder="search by title & keywords">
+
+                </div>
+                <div class="item">
+
+                    <a class="main d-flex align-items-center justify-content-between">
+                        <span>Main field</span>
+                        <i class="fa fa-angle-down "></i>
+                    </a>
+
+
+                    <div class="preloader d-none">
+                        <i class="fa-filter"></i>
+                    </div>
+
+                    <ul class="unstyled centered" name="main[]">
+                        {% for number, field in main_field.items %}
+                        <li>
+                            <input class="styled-checkbox main" id="checkbox-{{number}}" type="checkbox" value="{{field.title}}">
+                            <label for="checkbox-{{number}}">{{field.title}}</label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between">
+                        <span>Sub field</span>
+                        <i class="fa fa-angle-down "></i>
+                    </a>
+                    <ul class="unstyled centered" id="sub_field">
+                        {% for field in sub_field %}
+                        <li>
+                            <input class="styled-checkbox sub" id="checkbox-1" type="checkbox" value="{{field.title}}">
+                            <label for="checkbox-1">{{field.title}}</label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between ">
+                        <span>Date</span>
+                        <i class="fa fa-angle-down "></i>
+                    </a>
+                    <ul class="unstyled centered date">
+                        <li>
+                            <input class="styled-checkbox date1" id="date1" type="checkbox" value="Next week">
+                            <label for="date1">Next week</label>
+                        </li>
+                        <li>
+                            <input class="styled-checkbox date1" id="date2" type="checkbox" value="Next month">
+                            <label for="date2">Next month</label>
+                        </li>
+                        <li>
+                            <input class="styled-checkbox date1" id="date3" type="checkbox" value="Next two month">
+                            <label for="date3">Next two month</label>
+                        </li>
+                        <li>
+                            <input class="styled-checkbox date1" id="date4" type="checkbox" value="Last week">
+                            <label for="date4">Last week</label>
+                        </li>
+                        <li>
+                            <input class="styled-checkbox date1" id="date5" type="checkbox" value="Last month">
+                            <label for="date5">Last month</label>
+                        </li>
+                    </ul>
+
+                </div>
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between">
+                        <span>Language</span>
+                        <i class="fa fa-angle-down "></i>
+                    </a>
+                    <ul class="unstyled centered">
+                        {% for number, lang in workshop_lang.items %}
+                        <li>
+                            <input class="styled-checkbox lang" id="checkbox-lang-{{number}}" type="checkbox" value="{{lang}}">
+                            <label for="checkbox-lang-{{number}}">{{lang}}</label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="content ms-2 d-flex flex-column justify-content-center align-items-center" id="workshops">
+                {% for work in workshops %}
+                <div class="item d-flex align-items-center active">
+                    <img class="workshop_img" src="{{work.image.url}}" alt="">
+                    <!--<img class="discount" src="{% static 'workshop_view/img/discount.png' %}" alt="">-->
+                    <div class="text pt-3">
+                        <h6>Workshop ID:  {{work.unique_id}}</h6>
+                        {%if work.expire%}
+                        <span style="float:right;background:#f52929;padding:1%;border-radius:10px" class="badge badge-danger">Held</span>
+                        {%endif%}
+                        
+                        <h5 class="fw-bold">{{work.title}}</h5>
+                        <p class="w-75">{{work.description|truncatewords:20|safe}}</p>
+                        <div class="author text-black mt-3">
+                            <span class="fw-bold"></span>
+                            {% for speaker in work.speaker %}
+                                <div class="fw-bold">{{speaker}}</div>
+                            {% endfor %}
+                        </div>
+                        <span class="me-3 mt-3 mt-md-0">
+                            <i class="fa fa-language mx-1"></i>
+                            <span class="fw-bold text-black">Language: {{work.language}}</span>
+                        </span>
+                        
+                        <div class="icon&btn d-flex  align-items-center justify-content-between ">
+                            <div class="icon d-flex align-items-center">
+                                <div class="date d-flex align-items-center mx-2">
+                                    <img src="{% static 'workshop_view/img/clock.svg' %}" class="mx-1" alt="">
+                                    <span class="text-muted">{{work.start_time}}</span>
+                                </div>
+                                <div class="date d-flex align-items-center mx-2">
+                                    <img src="{% static 'workshop_view/img/date.svg' %}" class="mx-1" alt="">
+                                    <span class="text-muted">{{work.date}}</span>
+                                </div>
+                                <div class="date d-flex align-items-center mx-2">
+                                    <!--<img src="{% static 'workshop_view/img/date.svg' %}" class="mx-1" alt="">-->
+                                    <span class="" style="font-weight:600">Price: ${{work.price}}</span>
+                                </div>
+                            </div>
+                            <div class="btn d-flex align-items-center">
+                                <a href="{% url 'view-workshop' work.pk %}" class="view   mx-2">View</a>
+                               
+                                {% comment %} {% if user.is_authenticated %}
+                                        <a href="{% url 'is-login' work.id %}" class="buy   mx-2 d-flex align-items-center justify-content-center">
+                                            Buy
+                                            <img src="{% static 'workshop_view/img/icons_buy.svg' %}" alt="">
+        
+                                        </a>
+                                {%else%}
+                                        <a href="{% url 'simple-register' %}?next=../../workshop/is-login/{{work.id}}" class="buy   mx-2 d-flex align-items-center justify-content-center">
+                                            Buy
+                                            <img src="{% static 'workshop_view/img/icons_buy.svg' %}" alt="">
+        
+                                        </a>
+                                {%endif%} {% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+                <!--<div class="d-flex justify-content-center  mt-5">
+                    <div class="pagination d-flex ">
+                        <ul class="d-flex justify-content-center">  </ul>
+                    </div>
+                    <div>{{workshops.paginator.page_range}}</div>
+                </div>-->
+                
+                <!--<div class="row">
+                    <div class="col-md-6">
+                        {% if workshops.has_previous %}
+                            <a class="btn btn-primary" href="?page={{ workshops.previous_page_number }}">Prev</a>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        {% if workshops.has_next %}
+                            <a class="btn btn-primary" href="?page={{ workshops.next_page_number }}">Next</a>
+                        {% endif %}
+                    </div>
+                </div>-->
+                <nav aria-label="Page navigation example" class="d-flex justify-content-center my-5">
+                            {% if workshops.has_other_pages %}
+                            <ul  class="pagination">
+                                {% if workshops.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ workshops.previous_page_number }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+            
+                                {% for i in workshops.paginator.page_range %}
+                                    {% if workshops.number == i %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#">
+                                            {{ i }}
+                                            </a>
+                                        </li>   
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{i}}">
+                                                {{ i }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+            
+                                {% if workshops.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ workshops.next_page_number }}">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                            {% endif %}
+                        </nav>
+                
+               
+
+            </div>
+        </div>
+    </div>
+
+
+<div class="sidebar_bg ">
+    <div class="sidebar_right  ">
+        <a class=" btn clos">
+            <i class="fa fa-times-circle "></i>
+        </a>
+        <div class="filters">
+            <div class="item">
+                <a href="#">Create workshop</a>
+            </div>
+            <div class="item">
+                <a href="#">Attend workshop</a>
+            </div>
+            <div class="item">
+                <a class=" d-flex align-items-center justify-content-between ">
+                    <span>Search</span>
+                </a>
+                <input type="text" class="form-control mt-2 mb-2 " placeholder="search by title & keywords">
+
+            </div>
+            <div class="item">
+                <a class=" d-flex align-items-center justify-content-between">
+                    <span>Main fields</span>
+                    <i class="fa fa-angle-down me-3 "></i>
+                </a>
+                <ul class="style_right centered">
+                    <li>
+                        <input class="styled-checkbox" id="main1" type="checkbox" value="English">
+                        <label for="main1">English</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="main2" type="checkbox" value="Persian">
+                        <label for="main2">Persian</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="main3" type="checkbox" value="Spain">
+                        <label for="main3">Español</label>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="item">
+                <a class=" d-flex align-items-center justify-content-between">
+                    <span>Subfields</span>
+                    <i class="fa fa-angle-down me-3 "></i>
+                </a>
+                <ul class="style_right centered active">
+                    <li>
+                        <input class="styled-checkbox" id="sub1" type="checkbox" value="English">
+                        <label for="sub1">English</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="sub2" type="checkbox" value="Persian">
+                        <label for="sub2">Persian</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="sub3" type="checkbox" value="Spain">
+                        <label for="sub3">Español</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="sub4" type="checkbox" value="Spain">
+                        <label for="sub4">日本語</label>
+                    </li>
+                </ul>
+            </div>
+            <div class="item">
+                <a class=" d-flex align-items-center justify-content-between">
+                    <span>Language</span>
+                    <i class="fa fa-angle-down me-3 "></i>
+                </a>
+                <ul class="style_right centered">
+                    <li>
+                        <input class="styled-checkbox" id="checkbox1" type="checkbox" value="English">
+                        <label for="checkbox1">English</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="checkbox2" type="checkbox" value="Persian">
+                        <label for="checkbox2">Persian</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="checkbox3" type="checkbox" value="Spain">
+                        <label for="checkbox3">Español</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="checkbox4" type="checkbox" value="Spain">
+                        <label for="checkbox4">日本語</label>
+                    </li>
+                </ul>
+            </div>
+            <div class="item">
+                <a class=" d-flex align-items-center justify-content-between">
+                    <span>Date</span>
+                    <i class="fa fa-angle-down me-3 "></i>
+                </a>
+                <ul class="style_right centered">
+                    <li>
+                        <input class="styled-checkbox" id="date1" type="checkbox" value="English">
+                        <label for="date1">Last week</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date2" type="checkbox" value="Persian">
+                        <label for="date2">Last month</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date3" type="checkbox" value="Spain">
+                        <label for="date3">Español</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date4" type="checkbox" value="Spain">
+                        <label for="date4">日本語</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'workshop_view/js/main.js' %}"></script>
+<script>
+
+
+
+    let main_list = [];
+    let sub_list = [];
+    let date_time = "";
+    let lang_list = [];
+    let search_word = ""
+    $(document).ready(function(){
+        $('#search_filter').change(function(){
+            search_word = $('#search_filter').val()
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'ajax_load_workshop' %}",
+                data: {
+                    'main_list': main_list,
+                    'sub_list': sub_list,
+                    'date_time': date_time,
+                    'lang_list': lang_list,
+                    'search_word': search_word,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $('#workshops').html(data)
+                },
+                error: function (request, errors) {}
+            });
+        })
+
+        $('.date1').click(function() {
+        $('.date1').not(this).prop('checked', false);
+        if ($(this).is(":checked")){
+            date_time = $(this).val()
+        }
+        else {
+            date_time = ""
+        }
+    });
+
+        $('.styled-checkbox.main').click(function (){
+        if ($(this).is(":checked")){
+            main_list.push($(this).attr('value'))
+        }
+        else {
+            let val = $(this).attr('value')
+            const index = main_list.indexOf(val);
+            if (index > -1) {
+              main_list.splice(index, 1);
+                }
+            }
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'ajax_load_subfield' %}",
+                data: {
+                    'main_list': main_list,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) { 
+                    $("#sub_field").html(data);
+                    var elements = document.querySelectorAll('.styled-checkbox.sub');
+									
+                    for(var i=0; i<elements.length;i++){
+                    	elements[i].addEventListener('click',function(){
+                            if ($(this).is(":checked")){
+                                sub_list.push($(this).attr('value'))
+                            }
+                            else {
+                                let val = $(this).attr('value')
+                                const index = sub_list.indexOf(val);
+                                if (index > -1) {
+                                    sub_list.splice(index, 1);
+                                    }
+                                }
+                                $.ajax({
+                                    type: 'POST',
+                                    url: "{% url 'ajax_load_workshop' %}",
+                                    data: {
+                                        'main_list': main_list,
+                                        'sub_list': sub_list,
+                                        'date_time': date_time,
+                                        'lang_list': lang_list,
+                                        'search_word': search_word,
+                                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                                    },
+                                    success: function (data) {
+                                        $('#workshops').html(data)
+                                    },
+                                    error: function (request, errors) {}
+                                });
+                            });
+                    }
+                }
+            });
+        })
+        $('.styled-checkbox.lang').click(function (){
+        if ($(this).is(":checked")){
+            lang_list.push($(this).attr('value'))
+        }
+        else {
+            let val = $(this).attr('value')
+            const index = lang_list.indexOf(val);
+            if (index > -1) {
+                lang_list.splice(index, 1);
+                }
+            }
+        })
+
+        $('.styled-checkbox').click(function () {
+            console.log(main_list,date_time,lang_list)
+            var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'ajax_load_workshop' %}",
+                data: {
+                    'main_list': main_list,
+                    'sub_list': sub_list,
+                    'date_time': date_time,
+                    'lang_list': lang_list,
+                    'search_word': search_word,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $('#workshops').html(data)
+                },
+                error: function (request, errors) {}
+            });
+        })
+    })
+</script>
+{% endblock content %}

@@ -1,0 +1,255 @@
+html {
+    scroll-behavior: smooth;
+}
+
+main {
+    position: relative;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+}
+
+a {
+    margin: 0;
+    padding: 0;
+    text-decoration: none !important;
+}
+
+ul, li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+
+body{
+    background-color: #00262b!important;
+    color: white;
+}
+
+.bg-color6 {
+    background-color: #90B77D;
+}
+
+/* tab pane */
+.card-page .col{
+    margin-left: 16px;
+    margin-top: 16px;
+    /*background-color: #32DBA3;*/
+    background-color:#a4a19f;
+    padding: 1rem;
+    border-radius: 8px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: all 0.3s;
+    color:#000;
+}
+
+.card-page .col:hover {
+    cursor: pointer;
+    box-shadow: 1px 2px 15px rgba(241, 235, 235, 0.49);
+}
+.card-page .col.pink:hover,
+.card-page .pink.active{
+    background-color: #FA5B5A;
+}
+.card-page .col.gold:hover,
+.card-page .gold.active{
+    background-color: #FA5B5A;
+}
+.card-page .col.green:hover,
+.card-page .green.active{
+    background-color: #FA5B5A;
+}
+
+
+.card-page .col i {
+    font-size: 48px;
+    margin-bottom: 1rem;
+}
+.card-page .col h4{
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+.card-page .col .number{
+    font-weight: bold;
+    color: white;
+}
+
+
+
+/* table **/
+ .table .tbl-head{
+    background-color:#515465;
+    
+}
+.content .table tbody tr:hover {
+    cursor: pointer;
+}
+
+.content .table tbody .name{
+    max-width: 400px;
+    text-align: justify;
+}
+.content .table tbody .button a{
+    width: 80%;
+    text-align: center;
+    margin: 0 auto;
+    background-color: #ffc720;
+    transition: all 0.3s;
+}
+
+.content .table tbody .button a:hover {
+    font-weight: bold;
+    border: 3px solid #000;
+}
+
+
+@media only screen and (min-width: 320px) {
+
+}
+
+@media only screen and (max-width: 480px) {
+    .content .table tbody tr{
+        max-width: 350px;
+        width: 350px;
+    }
+
+}
+
+@media only screen and (min-width: 600px) {
+
+
+
+}
+
+@media only screen and (max-width: 769px) {
+    .content .table tbody tr{
+        max-width: 500px;
+        width: 500px;
+    }
+}
+
+@media only screen and (min-width: 769px) {
+
+
+}
+
+@media only screen and (max-width: 1025px) {
+    .content .table thead{
+        opacity: 0;
+    }
+    .content .table tbody tr{
+        border: 1px solid #fff;
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* end of tab pane */
+
+/* table  */
+
+.content{
+    background-color: #2C3034;
+    height: auto;
+    padding-bottom: 2rem;
+    border-radius: 12px;
+}
+
+.content .row > div {
+    margin-top: 1rem;
+}
+
+.content .row > div > div >.form-control{
+    background-color: rgba(255, 255, 255, 0.66);
+    font-size: 18px;
+}
+
+.content .row > div > div >.form-control > .item{
+    margin-left: 6px;
+    margin-right: 6px;
+    margin-top: 1rem;
+    height: 40px;
+    padding: 1rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #909090;
+    border-radius: 8px;
+    color: #ffffff;
+}
+.content .row > div > div > .form-label{
+    font-weight: bold;
+}
+.content .row > div > div >.form-control >a {
+    color: #0047c4;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.content .row > div > div >.form-control >a:hover {
+    color: #00ffa5;
+    font-weight: bold;
+}
+.content .row > div > div > a {
+    background-color: #32DBA3;
+    transition: all 0.3s;
+}
+.content .row > div > div > a:hover {
+    background-color: #0da576;
+    transform: scale(1.05);
+    font-weight: bold;
+}
+.titlestyle{
+    font-size: 18px;
+}
+
+@media only screen and (min-width: 320px) {
+
+}
+
+@media only screen and (max-width: 480px) {
+    .content .table tbody tr{
+        max-width: 350px;
+        width: 350px;
+    }
+
+}
+
+@media only screen and (min-width: 600px) {
+
+
+
+}
+
+@media only screen and (max-width: 769px) {
+    .content .table tbody tr{
+        max-width: 500px;
+        width: 500px;
+    }
+}
+
+@media only screen and (min-width: 769px) {
+
+
+}
+
+@media only screen and (max-width: 1025px) {
+    .content .table thead{
+        opacity: 0;
+    }
+    .content .table tbody tr{
+        border: 1px solid #fff;
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+}
+/* end of table */
+

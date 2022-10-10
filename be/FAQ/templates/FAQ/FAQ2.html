@@ -1,0 +1,56 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'ivc_website/css/faq.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- HEADER SECTION -->
+<div id="faq-header-section2" style="padding-top:150px">
+    <div class="dark-overlay2">
+        <div class="faq-header-inner2">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">{% trans "FAQ" %}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<section id="faq-section" class="text-dark py-5 px-3" style="background:#eee;">
+    <div class="container">
+        <div class="row">
+            {% if question_answers %}
+            <div class="col-12">
+                <div id="accordion" role="tablist">
+                    {% for question_answer in question_answers %}
+                    <div class="card">
+                        <div class="card-header" role="tab" id="heading">
+                            <h5 class="mb-0"><a href="#collapse{{forloop.counter}}" data-parent="#accordion" data-toggle="collapse">
+                                {{question_answer.question}}
+                            </a></h5>
+                        </div>
+
+                        <div id="collapse{{forloop.counter}}" class="collapse {% if forloop.counter == 1 %} show {% endif %}">
+                            <div class="card-body">
+                                {{question_answer.answer|linebreaks}}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <h3 class="text-muted">Coming soon...</h3>
+        {% endif %}
+    </div>
+</section>
+
+
+{% endblock content %}
+

@@ -1,0 +1,1076 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<div id="loader"></div>
+<div id="loader-background"></div>
+
+
+<header id="main-header" class="py-2
+    {% if project_type == 'Research' %}
+    bg-color10
+    {% elif project_type == 'Competition' %}
+    bg-color5
+    {% else %}
+    bg-color7
+    {% endif %}
+    text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa {% if project_type == 'Research' %}fa-file{% elif project_type == 'Competition' %}fa-trophy{%else%}fa-globe{% endif %}"></i> {{project_type}} Projects</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ACTIONS -->
+<section id="action" class="py-4 mb-4 bg-light">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                {% if user|is_member_profile %}
+                <a href="Research" class="btn btn-color1 mb-1"><i class="fa fa-file"></i> Research</a>
+                <a href="Competition" class="btn btn-color2 mb-1"><i class="fa fa-trophy"></i> Competition</a>
+                {% if not user.memberprofile.is_guest %}
+                <a href="Industrial" class="btn btn-color3 mb-1"><i class="fa fa-globe"></i> Industrial</a>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <ul class="nav nav-pills">
+                <li class="nav-item"></li>
+                    {% if request.GET.filter == 'my_projects' or default_is_my_projects and request.GET.filter is None%}
+                    <a class="nav-link bg-dark active" href="./{{project_type}}">My Projects</a>
+                    {% else %}
+                    <a class="nav-link text-dark" href="?filter=my_projects">My Projects</a>
+                    {% endif %}
+                </li>
+                <li class="nav-item">
+                    {% if request.GET.filter == 'new_projects' or default_is_new and request.GET.filter is None %}
+                    <a class="nav-link bg-dark active" href="./{{project_type}}">New</a>
+                    {% else %}
+                    <a class="nav-link text-dark" href="?filter=new_projects">New</a>
+                    {% endif %}
+                </li>
+                <li class="nav-item">
+                    {% if request.GET.filter == 'others' %}
+                    <a class="nav-link bg-dark active" href="?filter=others">Others</a>
+                    {% else %}
+                    <a class="nav-link text-dark" href="?filter=others">Others</a>
+                    {% endif%}
+                </li>
+            </ul>
+             <div class="dropdown ml-3 mb-1">
+                <button class="btn btn-dark" data-toggle="dropdown" type="button">
+                    Sort by <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <form class="sort-form">
+                        {% if request.GET.filter %}
+                        <input type="text" class="d-none" name="filter" value="{{request.GET.filter}}">
+                        {% endif %}
+                        {% if request.GET.search %}
+                        <input type="text" class="d-none" name="search" value="{{request.GET.search}}">
+                        {% endif %}
+                        <input type="text" class="d-none" name="sort">
+                    </form>
+                    <a class="dropdown-item" name="order_item">Date</a>
+                    <a class="dropdown-item" name="order_item">Name</a>
+                </div>
+            </div>
+            <div class="col-md-6 ml-auto">
+                <form>
+                    <div class="input-group">
+                            {% if request.GET.filter %}
+                            <input type="text" class="form-control d-none" name="filter" value="{{request.GET.filter}}">
+                            {% endif %}
+                            {% if request.GET.search %}
+                            <input type="text" class="form-control" value="{{ request.GET.search }}" name="search">
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Search" name="search">
+                            {% endif %}
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-success">Search</button>
+                            </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col mt-3">
+                <span class="m-2"><div class="badge badge-primary">O</div> <b>Owner</b></span>
+                <span class="m-2"><div class="badge badge-danger">A</div> <b>Agent</b></span>
+            </div>
+            {% if 'Competition' in request.path and user|is_competition_manager %}
+            <div class="col mt-3">
+                <a href="{% url 'competition-manager-page' %}" class="btn btn-color2"><i class="fa fa-plus"></i> Create new project</a>
+            </div>
+            {% endif %}
+            {% if 'Research' in request.path and user|is_member_profile %}
+            <div class="col mt-3">
+                <a href="{% url 'define-projects-page' %}" class="btn btn-color1"><i class="fa fa-plus"></i> Suggest new project</a>
+            </div>
+            {% endif %}
+            {% if 'Industrial' in request.path and not user|is_member_profile %}
+            <div class="col mt-3">
+                <a href="{% url 'define-projects-page' %}" class="btn btn-color3"><i class="fa fa-plus"></i> Add new project</a>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if request.GET.filter == "my_projects" or not request.GET.filter %}
+        <form id="my-project-switches">
+            {% if request.GET.search %}
+                <input type="text" class="d-none" name="search" value="{{request.GET.search}}">
+            {% endif %}
+            {% if request.GET.sort %}
+                <input type="text" class="d-none" name="sort" value="{{request.GET.sort}}">
+            {% endif %}
+            <div class="row">
+            <div class="col-md-2">
+                <div class="row mt-3">
+                    <div>
+                      <label id="my-defined-switch" class="switch pr-0" onclick="$('#my-project-switches').submit()">
+                          <input name="my-defined" type="checkbox" {{my_defined}}>
+                          <span class="switch-slider round"></span>
+                      </label>
+                      <span>Defined by me</span>
+                      
+                    </div>
+                </div>
+                <div class="row">
+                    <div>
+                      <label class="switch pr-0" onclick="$('#my-project-switches').submit()">
+                          <input name="other-defined" type="checkbox" {{other_defined}}>
+                          <span class="switch-slider round"></span>
+                      </label>
+                      <span>Defined By others</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mt-md-4">
+                <div class="form-group">
+                    <label for="status-filter">Status Filter:</label>
+                    <select class="selectpicker" id="status-filter" name="status_filter"
+                            multiple data-live-search="false">
+                        {% if 'Ongoing' in request.GET|get_list:'status_filter' %}
+                        <option selected>Ongoing</option>
+                        {% else %}
+                        <option>Ongoing</option>
+                        {% endif %}
+                        {% if 'Pending' in request.GET|get_list:'status_filter' %}
+                        <option selected>Pending</option>
+                        {% else %}
+                        <option>Pending</option>
+                        {% endif %}
+                        {% if 'New' in request.GET|get_list:'status_filter' %}
+                        <option selected>New</option>
+                        {% else %}
+                        <option>New</option>
+                        {% endif %}
+                        {% if 'On Hold' in request.GET|get_list:'status_filter' %}
+                        <option selected>On Hold</option>
+                        {% else %}
+                        <option>On Hold</option>
+                        {% endif %}
+                        {% if 'Done' in request.GET|get_list:'status_filter' %}
+                        <option selected>Done</option>
+                        {% else %}
+                        <option>Done</option>
+                        {% endif %}
+                    </select><i class="fa fa-caret-down text-white text-white status-icon"></i>
+                </div>
+            </div>
+            </div>
+            <div class="row">
+                <button class="btn btn-success" type="submit">Apply changes</button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+
+
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+    <div class="container">
+        {% if messages %}
+                {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success my-3"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger my-3"> {{ message }}</div>
+                        {%endif %}
+                {% endfor %}
+        {% endif %}
+        <section class="panel" style="overflow-x:auto;">
+            <table class="table table-hover p-table mb-5">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th class="text-center">Project Name</th>
+                    <th colspan="4" class="text-center">{% if project_type == "Research" %}Researchers{% else %}Collaborators{% endif %}</th>
+                    <th class="text-center">Project Status</th>
+                    <th class="text-center">Start Date</th>
+                    <th class="text-center"></th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th class='h6'>Supervisors</th>
+                    <th class='h6'>Mentors</th>
+                    <th class='h6'>Members</th>
+                    <th class='h6'>Learners</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody class="infinite-container">
+                    {% for project in projects %}
+                        <tr class="infinite-item">
+                            <td>
+                                {{forloop.counter|calculate_id:projects.number}}.
+                            </td>
+                            <td class="p-name" style="width: 300px;">
+                                {% if user == project.main_supervisor%}
+                                <div>
+                                    <i class="fa fa-bell"></i>
+                                    <span class="notif-count rounded-circle bg-info text-white p-1 ">
+                                        {{project|get_request_numbers_all}} Requests
+                                    </span>
+                                </div>
+                                {% elif user in project|get_project_supervisors %}
+                                <div>
+                                    <i class="fa fa-bell"></i>
+                                    <span class="notif-count rounded-circle bg-info text-white p-1 ">
+                                        {{project|get_request_numbers_mentor}} Requests
+                                    </span>
+                                </div>
+                                {% endif %}
+                                {% if project.is_urgent and project.status == "New" %}
+                                <span class="badge bg-color5 text-white">URGENT</span>
+                                {% endif %}
+                                {{project.title}} </br>
+                                {% if user in project|get_collaborators %}
+                                <small class="text-muted mt-2 d-inline-block">
+                                    <b>Weekly Meeting:</b>
+                                    {% if project.week_day %}
+                                        {{project.week_day}} - {{project.meeting_time }}
+                                        {% if project.meeting_timezone %}
+                                        ({{project.meeting_timezone}} time)
+                                        {% endif %}
+                                    {% else %}
+                                        Not determined
+                                    {% endif %}
+                                    {% if user == project.main_supervisor or user == project.agent and project.agent_permission == True %}
+                                        <a class="text-success" href="{% url  'edit-meeting' project_pk=project.pk %}">
+                                             <i class="fa fa-pencil-alt"></i>
+                                         </a>
+                                    {% endif %}
+                                </small>
+                                <small class="text-muted d-inline-block">
+                                    <b>Meeting Link:</b>
+                                    {% if project.meeting_link %}
+                                        <a href="{{project.meeting_link}}" target="_blank">Click to open</a>
+                                    {% else %}
+                                        Not determined
+                                    {% endif %}
+                                    {% if user == project.main_supervisor or user == project.agent and project.agent_permission == True %}
+                                        <a class="text-success" href="{% url  'edit-meeting' project_pk=project.pk %}">
+                                             <i class="fa fa-pencil-alt"></i>
+                                         </a>
+                                    {% endif %}
+                                </small>
+                                <small class="text-muted d-inline-block">
+                                    <b>Meeting Language:</b>
+                                    <span>{{project.meeting_language}} </span>
+                                    {% if user == project.main_supervisor or user == project.agent and project.agent_permission == True %}
+                                        <a class="text-success" href="{% url  'edit-meeting' project_pk=project.pk %}">
+                                             <i class="fa fa-pencil-alt"></i>
+                                         </a>
+                                    {% endif %}
+                                </small>
+                                {% endif %}
+                                {% if project.status == "New" and user|is_member_profile %}
+                                {% if user.memberprofile.position == "Supervisor" and project.project_type == "Research" %}
+                                <div>
+                                    <span class="badge badge-success" title="Responsibility fee required for supervisor" data-toggle="tooltip"><span class="badge badge-light"><i class="fa fa-dollar-sign"></i>{{project|get_required_responsibility_fee:'Supervisor'}}</span></span>
+                                    <span class="badge badge-info" title="Responsibility fee required for mentor" data-toggle="tooltip"><span class="badge badge-light"><i class="fa fa-dollar-sign"></i>{{project|get_required_responsibility_fee:'Mentor'}}</span></span>
+                                    <span class="badge badge-warning" title="Responsibility fee required for member" data-toggle="tooltip"><span class="badge badge-light"><i class="fa fa-dollar-sign"></i>{{project|get_required_responsibility_fee:'Member'}}</span></span>
+                                    <span class="badge badge-danger" title="Responsibility fee required for learner" data-toggle="tooltip"><span class="badge badge-light"><i class="fa fa-dollar-sign"></i>{{project|get_required_responsibility_fee:'Learner'}}</span></span>
+                                </div>
+                                {% endif %}
+                                {% endif %}
+                            </td>
+                            <td class="p-team" style="width: 150px;">
+                                {% for collaborator in project|get_project_supervisors|slice:":5" %}
+                                    {% if user|is_member_profile and user.memberprofile.position == "Supervisor" or user.is_superuser or user.memberprofile.position == "Mentor"%}
+                                        <a  user_pk="{{collaborator.pk}}" data-toggle='tooltip' data-placement='top' long-tooltip="True" data-html='true' data-delay='{"show":"1200"}'
+                                           data-original-title='Loading...'>
+                                            {% if collaborator|is_member_profile %}
+                                            <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                            {% else %}
+                                            <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                            {% endif %}
+                                            {% if collaborator == project.agent %}
+                                            <span class="badge badge-danger collaborator-badge">A</span>
+                                            {% endif %}
+                                            {% if collaborator == project.owner %}
+                                            <span class="badge badge-primary collaborator-badge">O</span>
+                                            {% endif %}
+                                        </a>
+                                    {% else %}
+                                        <a data-toggle='tooltip' data-placement='top' title='{{collaborator.first_name}} {{collaborator.last_name}}'>
+                                            {% if collaborator|is_member_profile %}
+                                            <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                            {% if collaborator == project.agent %}
+                                            <span class="badge badge-danger collaborator-badge">A</span>
+                                            {% endif %}
+                                            {% if collaborator == project.owner %}
+                                            <span class="badge badge-primary collaborator-badge">O</span>
+                                            {% endif %}
+                                            {% else %}
+                                            <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                            {% endif %}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="p-team" style="width: 120px;">
+                                {% for collaborator in project|get_project_mentors|slice:":5" %}
+                                    {% if user|is_member_profile and user.memberprofile.position == "Supervisor" or user.is_superuser or user.memberprofile.position == "Mentor"%}
+                                        <a user_pk="{{collaborator.pk}}" data-toggle='tooltip' data-placement='top' data-html='true' long-tooltip="True" data-delay='{"show":"1200"}'
+                                           data-original-title='Loading...'>
+                                            {% if collaborator|is_member_profile %}
+                                            <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                            {% else %}
+                                            <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                            {% endif %}
+                                            {% if collaborator == project.agent %}
+                                            <span class="badge badge-danger collaborator-badge">A</span>
+                                            {% endif %}
+                                            {% if collaborator == project.owner %}
+                                            <span class="badge badge-primary collaborator-badge">O</span>
+                                            {% endif %}
+                                        </a>
+                                    {% else %}
+                                        <a data-toggle='tooltip' data-placement='top' title='{{collaborator.first_name}} {{collaborator.last_name}}'>
+                                            {% if collaborator|is_member_profile %}
+                                            <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                            {% if collaborator == project.agent %}
+                                            <span class="badge badge-danger collaborator-badge">A</span>
+                                            {% endif %}
+                                            {% if collaborator == project.owner %}
+                                            <span class="badge badge-primary collaborator-badge">O</span>
+                                            {% endif %}
+                                            {% else %}
+                                            <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                            {% endif %}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="p-team" style="width: 120px;">
+                                {% for collaborator in project|get_project_members|slice:":5" %}
+                                    {% if user|is_member_profile and user.memberprofile.position == "Supervisor" or user.is_superuser or user.memberprofile.position == "Mentor"%}
+                                        <a user_pk="{{collaborator.pk}}" data-toggle='tooltip' data-placement='top' data-html='true' long-tooltip="True" data-delay='{"show":"1200"}'
+                                           data-original-title='Loading...'>
+                                            {% if collaborator|is_member_profile %}
+                                            <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                            {% else %}
+                                            <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                            {% endif %}
+                                            {% if collaborator == project.agent %}
+                                            <span class="badge badge-danger collaborator-badge">A</span>
+                                            {% endif %}
+                                            {% if collaborator == project.owner %}
+                                            <span class="badge badge-primary collaborator-badge">O</span>
+                                            {% endif %}
+                                        </a>
+                                    {% else %}
+                                        <a data-toggle='tooltip' data-placement='top' title='{{collaborator.first_name}} {{collaborator.last_name}}'>
+                                            {% if collaborator|is_member_profile %}
+                                            <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                            {% if collaborator == project.agent %}
+                                            <span class="badge badge-danger collaborator-badge">A</span>
+                                            {% endif %}
+                                            {% if collaborator == project.owner %}
+                                            <span class="badge badge-primary collaborator-badge">O</span>
+                                            {% endif %}
+                                            {% else %}
+                                            <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                            {% endif %}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="p-team" style="width: 120px;">
+                                {% for collaborator in project|get_project_learners|slice:":5" %}
+                                    {% if user|is_member_profile and user.memberprofile.position == "Supervisor" or user.is_superuser or user.memberprofile.position == "Mentor"%}
+                                        <a user_pk="{{collaborator.pk}}" data-toggle='tooltip' data-placement='top' data-html='true' long-tooltip="True" data-delay='{"show":"1200"}'
+                                           data-original-title='Loading...'>
+                                            {% if collaborator|is_member_profile %}
+                                            <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                            {% else %}
+                                            <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                            {% endif %}
+                                            {% if collaborator == project.agent %}
+                                            <span class="badge badge-danger collaborator-badge">A</span>
+                                            {% endif %}
+                                            {% if collaborator == project.owner %}
+                                            <span class="badge badge-primary collaborator-badge">O</span>
+                                            {% endif %}
+                                        </a>
+                                    {% else %}
+                                        <a data-toggle='tooltip' data-placement='top' title='{{collaborator.first_name}} {{collaborator.last_name}}'>
+                                            {% if collaborator|is_member_profile %}
+                                            <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                            {% if collaborator == project.agent %}
+                                            <span class="badge badge-danger collaborator-badge">A</span>
+                                            {% endif %}
+                                            {% if collaborator == project.owner %}
+                                            <span class="badge badge-primary collaborator-badge">O</span>
+                                            {% endif %}
+                                            {% else %}
+                                            <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                            {% endif %}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+
+
+                            <td id="status-col">
+                                {% if project.is_valid %}
+                                    {% if project.status == 'New' %}
+                                        {% if project.main_supervisor == user and project|is_able_to_edit_status %}
+                                            <input type="text" class="project_pk d-none" name="project-pk" value="{{project.pk}}" project-type="{{project.project_type}}">
+                                            <div class="btn-group">
+                                              <button type="button" class="btn bg-secondary text-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                New
+                                              </button>
+                                              <div class="dropdown-menu">
+                                                  {% if not project.slack_workspace_address %}
+                                                  <a class="dropdown-item"
+                                                     onclick="
+                                                     $('#OngoingModal').modal('show');
+                                                     $('#ongoing_project_pk').val('{{project.pk}}');
+                                                     {% if project.end_date %}
+                                                     $('#check-end-date').removeClass('d-none');
+                                                     $('#close-end-date').addClass('d-none');
+                                                     {% else %}
+                                                     $('#close-end-date').removeClass('d-none');
+                                                     $('#check-end-date').addClass('d-none');
+                                                     {% endif %}
+                                                     ">
+                                                      Ongoing
+                                                  </a>
+                                                  {% else %}
+                                                  <a class="dropdown-item">
+                                                      Ongoing
+                                                  </a>
+                                                  {% endif %}
+                                                  <a class="dropdown-item">
+                                                      Pending
+                                                  </a>
+                                                  <a class="dropdown-item">
+                                                      On Hold
+                                                  </a>
+                                                  <a class="dropdown-item">
+                                                      Done
+                                                  </a>
+                                              </div>
+                                            </div>
+                                        {% else %}
+                                            <span class="label text-secondary"><strong>New</strong></span>
+                                        {% endif%}
+                                    {% elif project.status == 'Pending' %}
+                                        {% if project.main_supervisor == user %}
+                                            <input type="text" class="project_pk d-none" name="project-pk" value="{{project.pk}}" project-type="{{project.project_type}}">
+                                            <div class="btn-group">
+                                              <button type="button" class="btn bg-info text-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Pending
+                                              </button>
+                                              <div class="dropdown-menu">
+                                                  <a class="dropdown-item">
+                                                      New
+                                                  </a>
+                                                  {% if not project.slack_workspace_address %}
+                                                  <a class="dropdown-item"
+                                                     onclick="$('#OngoingModal').modal('show'); $('#ongoing_project_pk').val('{{project.pk}}');">
+                                                      Ongoing
+                                                  </a>
+                                                  {% else %}
+                                                  <a class="dropdown-item">
+                                                      Ongoing
+                                                  </a>
+                                                  {% endif %}
+                                                  <a class="dropdown-item">
+                                                      On Hold
+                                                  </a>
+                                                  <a class="dropdown-item">
+                                                      Done
+                                                  </a>
+                                              </div>
+                                            </div>
+                                        </form>
+                                        {% else %}
+                                            <span class="label text-info"><strong>Pending</strong></span>
+                                        {% endif%}
+                                    {% elif project.status == 'Ongoing' %}
+                                        {% if project.main_supervisor == user %}
+                                            <input type="text" class="project_pk d-none" name="project-pk" value="{{project.pk}}" project-type="{{project.project_type}}">
+                                            <div class="btn-group">
+                                              <button type="button" class="btn bg-primary text-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Ongoing
+                                              </button>
+                                              <div class="dropdown-menu">
+                                                  <a class="dropdown-item">
+                                                      New
+                                                  </a>
+                                                  <a class="dropdown-item">
+                                                      Pending
+                                                  </a>
+                                                  <a class="dropdown-item">
+                                                      On Hold
+                                                  </a>
+                                                  <a class="dropdown-item">
+                                                      Done
+                                                  </a>
+                                              </div>
+                                            </div>
+                                        </form>
+                                        {% else %}
+                                            <span class="label text-primary"><strong>Ongoing</strong></span>
+                                        {% endif%}
+                                    {% elif project.status == 'On Hold' %}
+                                        {% if project.main_supervisor == user %}
+                                            <input type="text" class="project_pk d-none" name="project-pk" value="{{project.pk}}" project-type="{{project.project_type}}">
+                                            <div class="btn-group">
+                                              <button type="button" class="btn bg-danger text-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                On Hold
+                                              </button>
+                                              <div class="dropdown-menu">
+                                                  <a class="dropdown-item">
+                                                      New
+                                                  </a>
+                                                  {% if not project.slack_workspace_address %}
+                                                  <a class="dropdown-item"
+                                                     onclick="$('#OngoingModal').modal('show'); $('#ongoing_project_pk').val('{{project.pk}}');">
+                                                      Ongoing
+                                                  </a>
+                                                  {% else %}
+                                                  <a class="dropdown-item">
+                                                      Ongoing
+                                                  </a>
+                                                  {% endif %}
+                                                  <a class="dropdown-item">
+                                                      Pending
+                                                  </a>
+                                                  <a class="dropdown-item">
+                                                      Done
+                                                  </a>
+                                              </div>
+                                            </div>
+                                        </form>
+                                        {% else %}
+                                            <span class="label text-danger"><strong>On Hold</strong></span>
+                                        {% endif%}
+                                    {% elif project.status == 'Done' %}
+                                        {% if project.main_supervisor == user %}
+                                            <input type="text" class="project_pk d-none" name="project-pk" value="{{project.pk}}" project-type="{{project.project_type}}">
+                                            <div class="btn-group">
+                                              <button type="button" class="btn bg-success text-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Done
+                                              </button>
+                                              <div class="dropdown-menu">
+                                                  <a class="dropdown-item">
+                                                      New
+                                                  </a>
+                                                  {% if not project.slack_workspace_address %}
+                                                  <a class="dropdown-item"
+                                                     onclick="$('#OngoingModal').modal('show'); $('#ongoing_project_pk').val('{{project.pk}}');">
+                                                      Ongoing
+                                                  </a>
+                                                  {% else %}
+                                                  <a class="dropdown-item">
+                                                      Ongoing
+                                                  </a>
+                                                  {% endif %}
+                                                  <a class="dropdown-item">
+                                                      Pending
+                                                  </a>
+                                                  <a class="dropdown-item">
+                                                      On Hold
+                                                  </a>
+                                              </div>
+                                            </div>
+                                        </form>
+                                        {% else %}
+                                            <span class="label text-success"><strong>Done</strong></span>
+                                        {% endif%}
+                                    {% elif project.status == "Waiting For Signature" or project.status == "Inspecting Signature" %}
+                                    <span class="text-secondary"><strong>Waiting for owner signature</strong></span>
+                                    {% endif %}
+                                {% else %}
+                                    {% if project.status == "Deleted" or project.status == "Rejected" %}
+                                    <span class="text-danger"><strong>{{project.status}}</strong></span>
+                                    {% else %}
+                                    <span class="text-secondary"><strong>{{project.status}}</strong></span>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <p class="text-muted">{{project.start_date}}</p>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'dashboard-project-view-page' project_primary_key=project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                    <i class="fa fa-eye"></i> View
+                                </a>
+                            {% if project.is_valid %}
+                                {% if user not in project|get_collaborators  %}
+                                    {% if user in project|get_accepted_pending_collaborators %}
+                                        {% if not user|has_a_scored_proposal:project %}
+                                        <form method="post" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="text" name="data-project-request" class="d-none"
+                                                   value="{{project.pk}}">
+                                            <button class="btn btn-danger btn-xs mb-1" type="submit">
+                                                <i class="fa fa-check"></i> Submitted <span class="small-font d-block">(Cancel application)</span>
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    {% elif not project|is_inside_project:user and user != project.expert and project.status == 'New' %}
+                                        {% if project.project_type != "Research" or not user|is_member_profile or user|get_requested_limit < 3  %}
+                                        <div>
+                                            <input type="text" name="data-project-request" class="d-none"
+                                                   value="{{project.pk}}">
+                                            {% if not user|is_member_profile or user.memberprofile.position != 'Learner' %}
+                                                <div class="dropdown mb-1">
+                                                    <button class="btn btn-warning" data-toggle="dropdown" type="button">
+                                                        Apply As <i class="fa fa-caret-down"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        {% if not user|is_member_profile or user.memberprofile.position == 'Supervisor' %}
+                                                            {% if project.project_type == "Industrial" and project.main_supervisor is None %}
+                                                            <a href="{% url 'project-proposal-page' project_pk=project.pk %}" class="dropdown-item">Main Supervisor</a>
+                                                            {% elif project.project_type == "Research" and not project|is_project_reviewer_exists%}
+                                                            <a href="{% url 'project-proposal-page' project_pk=project.pk %}" class="dropdown-item">Main Supervisor</a>
+                                                            {% endif %}
+                                                            <a class="dropdown-item" name="apply_item">Supervisor</a>
+                                                            <a class="dropdown-item" name="apply_item">Mentor</a>
+                                                        {% endif %}
+                                                        {% if user.memberprofile.position == 'Mentor' %}
+                                                        <a class="dropdown-item" name="apply_item">Mentor</a>
+                                                        {% endif %}
+                                                        <a class="dropdown-item" name="apply_item">Member</a>
+                                                        <a class="dropdown-item" name="apply_item">Learner</a>
+                                                    </div>
+                                                </div>
+                                            {% else%}
+                                            <button class="btn btn-warning btn-xs mb-1" name="learner-apply" type="submit">Apply</button>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if user.is_superuser %}
+                                    <button class="btn btn-danger btn-xs delete-project mb-1" data-pk="{{project.pk}}" data-toggle="modal" data-target="#deleteProjectModal">
+                                        <i class="fa fa-trash-alt"></i> Delete
+                                    </button>
+                                {% endif %}
+                                {% if project.status == "New" or project.status == "Pending" %}
+                                    {% if project.project_type == "Industrial" %}
+                                        {% if project.main_supervisor == user or user.is_superuser %}
+                                        <a href="../manage/{{project.pk}}" class="btn btn-success mb-1 btn-xs text-light">
+                                            <i class="fa fa-tasks"></i> Manage
+                                        </a>
+                                        {% endif %}
+                                    {% elif project.project_type == "Research" %}
+                                        {% if project.main_supervisor == user or user.is_superuser or project|is_project_accepted_supervisor:user or project|is_project_accepted_mentor:user %}
+                                        <a href="../manage/{{project.pk}}" class="btn btn-success mb-1 btn-xs text-light">
+                                            <i class="fa fa-tasks"></i> Manage
+                                        </a>
+                                        {% endif %}
+                                    {% elif project.project_type == "Competition" %}
+                                        {% if project.main_supervisor == user or user.is_superuser or user|is_competition_manager and project|is_competition_manager_eligible_to_see %}
+                                        <a href="../manage/{{project.pk}}" class="btn btn-success mb-1 btn-xs text-light">
+                                            <i class="fa fa-tasks"></i> Manage
+                                        </a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% elif user in project|get_project_supervisors or user in project|get_project_mentors or user.is_superuser %}
+                                <a href="../manage/{{project.pk}}" class="btn btn-success mb-1 btn-xs text-light">
+                                    <i class="fa fa-tasks"></i> Manage
+                                </a>
+                                {% endif %}
+                                {% if user == project.main_supervisor or user == project.agent and project.agent_permission%}
+                                <a href="{% url 'weekly-meeting-attendees-page' project_pk=project.pk %}"
+                                   class="btn btn-info mb-1"><i class="fa fa-users"></i> Manage attendees</a>
+                                {% endif %}
+                            {% endif %}
+                            {% if project.is_valid %}
+                                {% if user == project.owner or user == project.main_supervisor or user.is_superuser %}
+                                    <a href="{% url 'dashboard-edit-project-page' project_pk=project.pk%}" class="btn btn-info btn-xs mb-1"><i class="fa fa-pencil-alt"></i> Edit </a>
+                                {% endif %}
+                            {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="loading display-4" style="display: none; margin-bottom: 100px">
+                Loading...
+            </div>
+        </section>
+    </div>
+</section>
+{% if projects.has_next %}
+    <div>
+        {% if request.GET|length > 0 %}
+        <a class="infinite-more-link" href="{{request.get_full_path}}&page={{ projects.next_page_number }}"></a>
+        {% else %}
+        <a class="infinite-more-link" href="?page={{ projects.next_page_number }}"></a>
+        {% endif %}
+    </div>
+{% endif %}
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteProjectModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <div class="modal-title">Confirmation</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                        <p>Are you sure you want to delete the project?</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" name="data-project-delete" class="delete-pk d-none">
+                        <button class="btn btn-danger" type="submit">Yes</button>
+                    </form>
+                    <button class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- DONE RESEARCH MODAL -->
+<div class="modal fade" id="DoneResearchModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <div class="modal-title"><i class="fa fa-check"></i></div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="radio" id="conferenceLink" name="choose-project-link" value="Conference">
+                    <label for="conferenceLink">Conference</label><br>
+                    <input type="radio" id="journalLink" name="choose-project-link" value="Journal">
+                    <label for="journalLink">Journal</label><br>
+                    <div id="conferenceLinkSection" class="d-none">
+                        <hr>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="text" class="d-none" name="done-research" value="1">
+                            <input type="url" name="conference-link" class="form-control" placeholder="place conference link here" required>
+                            <button class="btn btn-success submit-add-area-template my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                    <div id="journalLinkSection" class="d-none">
+                        <hr>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="text" class="d-none" name="done-research" value="1">
+                            <input type="url" name="journal-link" class="form-control" placeholder="place journal link here" required>
+                            <button class="btn btn-success submit-add-area-template my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" name="data-project-delete" class="delete-pk d-none">
+                        <button class="btn btn-danger" type="submit">Yes</button>
+                    </form>
+                    <button class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if not user|is_member_profile or user.memberprofile.position == 'Supervisor' or user.is_superuser %}
+<!-- ONGOING MODAL -->
+<div class="modal fade" id="OngoingModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <div class="modal-title">Ongoing Confirmation</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <p><b>End date:</b> <i id="check-end-date" class="fa fa-check text-success d-none"></i> <i id="close-end-date" class="fa fa-times text-danger d-none"></i></p>
+                    <input type="text" id="ongoing_project_pk" class="d-none" name="ongoing-project-pk">
+                    {{ ongoing_form|crispy}}
+                    <input type="checkbox" name="send-email" checked> <span>Send Email</span>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="submit">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- APPLY MODAL -->
+<div class="modal fade" id="applyModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <div class="modal-title">Project Application</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    :)
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        set_collaborator_tooltip_listener();
+
+        let $loading = $('#loader, #loader-background').hide();
+        $(document).ajaxStart(function () {
+            $loading.show();
+        }).ajaxStop(function () {
+            $loading.hide();
+        });
+
+        $('a[name ="order_item"]').click(function() {
+            const clicked_element_name = $(this).html().toLowerCase();
+            $('input[name="sort"]').val(clicked_element_name);
+            $('.sort-form').submit();
+        });
+
+        set_apply_button_click_listener();
+        set_delete_button_click_listener();
+
+        let infinite = new Waypoint.Infinite({
+          element: $('.infinite-container')[0],
+          onBeforePageLoad: function () {
+            $('.loading').show();
+          },
+          onAfterPageLoad: function ($items) {
+            $('.loading').hide();
+            $('[data-toggle="tooltip"]').tooltip();
+
+
+            $('#status-col > .btn-group > .dropdown-menu > .dropdown-item').off();
+            set_status_button_click_listener();
+            set_collaborator_tooltip_listener();
+            set_apply_button_click_listener()
+            set_delete_button_click_listener();
+          }
+        });
+
+        $(function () {
+        $("#id_weekly_meeting_time").datetimepicker({
+          format: 'd/m/Y H:i',
+        });
+
+        set_status_button_click_listener();
+        });
+
+
+    });
+
+    $('input[type=radio][name=choose-project-link]').change(function() {
+        if (this.value === "Conference") {
+            $('#conferenceLinkSection').removeClass('d-none')
+            $('#journalLinkSection').addClass('d-none')
+        }
+        else {
+            $('#conferenceLinkSection').addClass('d-none')
+            $('#journalLinkSection').removeClass('d-none')
+        }
+    });
+
+    function set_apply_button_click_listener() {
+        $('a[name ="apply_item"]').click(function() {
+            let clicked_element_name = $(this).html();
+            let project_pk = $(this).parent().parent().siblings().eq(0).val()
+            $(this).parent().siblings().eq(1).val(clicked_element_name);
+            $.ajax({
+                type: "POST",
+                data: {
+                    'request-to-apply-for-a-project': 1,
+                    'project-pk': project_pk,
+                    'apply_as': clicked_element_name,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data, textStatus) {
+                    if (data['success']) {
+                        if (data['eligible']) {
+                            $('#applyModal .modal-body').html(`
+                            <form method="post">
+                                <input type="text" class="d-none" name="data-project-request" value="${project_pk}">
+                                <input type="text" class="d-none" name="apply_as" value="${clicked_element_name}">
+                                <p>Are you sure you want to apply as ${clicked_element_name.toLowerCase()}?</p>
+                                <button class="btn btn-success"><i class="fa fa-check"></i> Yes</button>
+                            </form>`)
+                        }
+                        else {
+                            $('#applyModal .modal-body').html(
+                                `<p>Your balance is not enough to apply as ${clicked_element_name.toLowerCase()} ($${data['fee_required']} more is required)</p>
+                                 <a class="btn btn-success" href="{% url 'create-checkout-session' %}?fill=${data['fee_required']}"><i class="fa fa-check"></i> Pay</a>`)
+                        }
+                        $('#applyModal').modal('show');
+                    }
+                }
+            });
+        });
+
+        $('[name ="learner-apply"]').click(function() {
+            let project_pk = $(this).siblings().eq(0).val()
+            $.ajax({
+                type: "POST",
+                data: {
+                    'request-to-apply-for-a-project': 1,
+                    'project-pk': project_pk,
+                    'apply_as': "Learner",
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data, textStatus) {
+                    if (data['success']) {
+                        if (data['eligible']) {
+                            $('#applyModal .modal-body').html(`
+                            <form method="post">
+                                <input type="text" class="d-none" name="data-project-request" value="${project_pk}">
+                                <input type="text" class="d-none" name="apply_as" value="Learner">
+                                <p>Are you sure you want to apply?</p>
+                                <button class="btn btn-success"><i class="fa fa-check"></i> Yes</button>
+                            </form>`)
+                        }
+                        else {
+                            $('#applyModal .modal-body').html(
+                                `<p>Your balance is not enough to apply as learner ($${data['fee_required']} more is required)</p>
+                                 <a class="btn btn-success" href="{% url 'create-checkout-session' %}?fill=${data['fee_required']}"><i class="fa fa-check"></i> Pay</a>`)
+                        }
+                        $('#applyModal').modal('show');
+                    }
+                }
+            });
+        });
+    }
+
+    function set_delete_button_click_listener() {
+        $(".delete-project").click(function () {
+            let clicked_element = $(this);
+            let data_pk = clicked_element.attr('data-pk');
+            $('.delete-pk').val(data_pk);
+        });
+    }
+
+    function set_status_button_click_listener() {
+        $('#status-col > .btn-group > .dropdown-menu > .dropdown-item').on("click", function () {
+            let onclick_attr = $(this).attr('onclick');
+            if (typeof onclick_attr == 'undefined' || onclick_attr == false) {
+                let project_pk = $(this).parent().parent().parent().find('.project_pk').val();
+                let project_type = $(this).parent().parent().parent().find('[project-type]').attr('project-type');
+
+
+                let clicked_text = $(this).html().trim();
+                let clicked_element = $(this);
+                let button_element = $(this).parent().prev();
+                if (project_type === 'Research' && clicked_text === "Done") {
+                    $('input[name="done-research"]').val(project_pk);
+                    $('#DoneResearchModal').modal({
+                      show:true,
+                      closeOnEscape: true
+                    });
+                }
+                else {
+                    $.ajax({
+                        type: "POST",
+                        data: {
+                            'project-pk': project_pk,
+                            'status-change': clicked_text,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function(data, textStatus) {
+                            if (data['success']) {
+                                clicked_element.html(button_element.html().trim());
+
+                                button_element.removeClass();
+                                button_element.addClass('btn dropdown-toggle text-light');
+                                if (clicked_text === "New")
+                                    button_element.addClass('btn-secondary')
+                                if (clicked_text === "Pending")
+                                    button_element.addClass('bg-info')
+                                if (clicked_text === "Ongoing")
+                                    button_element.addClass('bg-primary')
+                                if (clicked_text === "On Hold")
+                                    button_element.addClass('btn-danger')
+                                if (clicked_text === "Done")
+                                    button_element.addClass('btn-success')
+
+                                button_element.html(clicked_text);
+                            }
+                        }
+                    });
+                }
+            }
+        })
+    }
+
+    function set_collaborator_tooltip_listener() {
+        $('a[long-tooltip="True"]').one("mouseover", function (){
+            let user_pk = $(this).attr('user_pk');
+            let hover_element = $(this);
+            $.ajax({
+                    type: "GET",
+                    data: {
+                        'get-user': user_pk,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    global: false,
+                    success: function(data) {
+                        hover_element.attr("data-original-title", data);
+                    }
+            });
+        })
+    }
+
+
+
+</script>
+{% endblock script %}

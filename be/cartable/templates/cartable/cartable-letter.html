@@ -1,0 +1,366 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'cartable/css/cartable_style.css' %}">
+    <link rel="stylesheet" href="{% static 'cartable/css/letter.css' %}">
+{% endblock %}
+
+{% block body_class %}gray-container{% endblock body_class %}
+
+{% block content %}
+    <header id="main-header" class="py-2 bg-light-coral">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1><i class="fa fa-file"></i> Cartable: LETTER NAME HERE</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="cartable">
+        <div class="container">
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="container">
+        </div>
+
+        <div class="cartable-container mt-4">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h4 class="bg-color1 text-white p-3">Information</h4>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-lg-1 col-md-1"></div>
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <span class="bold">Number</span>
+                                            <input type="text" class="form-control form-control-input d-block mb-3"
+                                                   style="margin-bottom:1%"
+                                                   readonly="readonly" value="{{ letters.number }}">
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <span class="bold">Date</span>
+                                            <input type="text" class="form-control form-control-input d-block mb-3"
+                                                   style="margin-bottom:1%"
+                                                   readonly="readonly" value="{{ letters.date }}">
+
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <span class="bold">Sender<span class="text-danger bold"></span></span>
+                                            <input type="text" class="form-control form-control-input d-block mb-3"
+                                                   style="margin-bottom:1%"
+                                                   readonly="readonly" value="{{ letters.sender }}">
+
+                                        </div>
+                                    </div>
+                                    <br>
+
+                                    <br>
+                                    <h4 class="bg-color1 text-white p-3">Specifications</h4>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-lg-1 col-md-1"></div>
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <span class="bold">Security<span class="text-danger bold"></span></span>
+                                            <input type="text" class="form-control form-control-input d-block mb-3"
+                                                   style="margin-bottom:1%"
+                                                   readonly="readonly" value="{{ letters.security }}">
+
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <span class="bold">Priority<span class="text-danger bold"></span></span>
+                                            <input type="text" class="form-control form-control-input d-block mb-3"
+                                                   style="margin-bottom:1%"
+                                                   readonly="readonly" value="{{ letters.priority }}">
+
+                                        </div>
+
+                                    </div>
+                                    <br>
+                                    <h4 class="bg-color1 text-white p-3">Summary</h4>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-lg-1 col-md-1"></div>
+                                        <div class="col-lg-10 col-md-10 col-sm-12">
+                                            <span class="bold">title<span class="text-danger bold"></span></span>
+                                            <input type="text" class="form-control form-control-input d-block mb-3"
+                                                   style="margin-bottom:1%"
+                                                   readonly="readonly" value="{{ letters.title }}">
+
+                                        </div>
+                                        <div class="col-lg-1 col-md-1"></div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-lg-1 col-md-1"></div>
+                                        <div class="col-lg-10 col-md-10 col-sm-12">
+                                            <span class="bold">Summary<span class="text-danger bold"></span></span>
+                                            <textarea class="form-control form-control-input d-block mb-3"
+                                                      style="margin-bottom:1%"
+                                                      id="message" rows="5"
+                                                      readonly="readonly">{{ letters.summary }}</textarea>
+
+                                        </div>
+
+                                        <div class="col-lg-1 col-md-1"></div>
+                                    </div>
+                                    <h4 class="bg-color1 text-white p-3">Files</h4>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-lg-1 col-md-1"></div>
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <span class="bold">Document<span class="text-danger bold"></span></span>
+                                            <a class="d-block mb-3" href="../../../media/{{ letters.document }}"
+                                               style="margin-bottom:1%"
+                                            >{{ letters.document }}</a>
+
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <span class="bold">Attach File<span class="text-danger bold"></span></span>
+                                            <a class="d-block mb-3" href="../../../media//{{ letters.attach_file }}"
+                                               style="margin-bottom:1%"
+                                            >{{ letters.attach_file }}</a>
+
+                                        </div>
+
+
+                                    </div>
+                                    <!-- <br>
+                                    <h4 class="bg-color1 text-white p-3">Refer</h4>
+                                    <br>
+                                    <div>
+                                        <p class="cmp">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum quod earum, voluptatum dicta dolore repellendus id nulla culpa, atque, autem vero voluptate dolores debitis explicabo quas cum impedit quae. Est. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam quas reprehenderit corporis, mollitia nostrum molestiae voluptate facilis. Recusandae, dolorum rerum maxime, eaque, ea error nesciunt debitis dignissimos cumque enim nam?</p>
+                                    </div>
+                                    <br>
+                                    <h4 class="bg-color1 text-white p-3">Send</h4>
+                                    <br>
+                                    <div>
+                                        <p class="cmp">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum quod earum, voluptatum dicta dolore repellendus id nulla culpa, atque, autem vero voluptate dolores debitis explicabo quas cum impedit quae. Est. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam quas reprehenderit corporis, mollitia nostrum molestiae voluptate facilis. Recusandae, dolorum rerum maxime, eaque, ea error nesciunt debitis dignissimos cumque enim nam?</p>
+                                    </div> -->
+                                    <br>
+                                    <h4 class="bg-color1 text-white p-3">Follow up letter</h4>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-2"></div>
+                                        <div class="col-md-8 ">
+                                            <div id="accordion" role="tablist">
+                                                {% for section in setion_list %}
+
+                                                    <div class="card">
+                                                        <div class="card-header bg-white" role="tab" id="heading">
+                                                            <h5 class="mb-0 "><a class=" text-dark  mylist"
+                                                                                 href="#collapse1"
+                                                                                 data-parent="#accordion"
+                                                                                 data-toggle="collapse">
+                                                                <i class="fa fa-chevron-down text-dark ">{{ section
+                                                                        }}</i>
+                                                            </a></h5>
+                                                        </div>
+                                                        {% for staff in staffs %}
+                                                            {% if staff.section == section %}
+                                                                <div id="collapse1" class="collapse show">
+                                                                    <div class="card-body">
+                                                                        {{ staff.position }}
+                                                                        {{ staff.user.lastname }}
+                                                                        <i class="fa fa-envelope "></i>
+                                                                        <i class="fa fa-envelope-open d-none"></i>
+                                                                        <br>
+                                                                    </div>
+                                                                </div>
+                                                                </div>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2"></div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-5 empty-dv"></div>
+                                        <div class="col-md-7">
+                                            <!-- <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#send"><i class="fa fa-send"></i> Send</button> -->
+                                            <button class="btn btn-danger"><i class="fa fa-window-close"></i> End
+                                            </button>
+                                            <button class="btn btn-info" type="button" data-bs-toggle="modal"
+                                                    data-bs-target="#refer"><i class="fa fa-window-close"></i> Refer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="send" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <form action="">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Send</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body d-flex flex-column">
+                            <textarea name="cm" placeholder="comment" class="mb-4 cm-text" required></textarea>
+                            <select name="name" class="slt-name">
+                                <option value="">name</option>
+                                <option value="">name</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="modal fade" id="refer" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <form action="{% url 'cartable-letter-panel' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Refer</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;
+                            </button>
+                        </div>
+                        <div class="modal-body d-flex flex-column">
+                            <textarea name="cm" placeholder="comment" class="mb-4 cm-text" required></textarea>
+                            <!--<button class="btn btn-light" type="button" data-bs-toggle="modal"
+                            data-bs-target="#name" style="width: 200px;">name</button>-->
+                            <hr/>
+                            <div id="" class="collapse show">
+                                <div class="card-body">
+                                <input type="hidden" value={{ letters.id }} name="let">
+                                    <span class="bold">refer to:</span>
+
+                                        <div class="form-check">
+
+                                        <label class="form-check-label mr-2">
+                                            {% for staff in staffs %}
+                                                <div class="row" >
+
+                                            <input type="checkbox" class="form-check-input" name="receiver"
+                                                   value="{{ staff.user }}"> <span> {{ staff.user }}</span>
+                                                </div>
+                                            {% endfor %}
+
+                                        </label>
+
+                                    <br>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr/>
+                        <div class="col-md-6">
+                                        <label for="title" class="bold">Attachment</label>
+                                        <div class="form-group form-control">
+                                            <input type="file" id="file" name="document" class="form-control-file">
+                                        </div>
+                                    </div>
+{#                            <div class="col-lg-12 col-md-12 col-sm-12">#}
+{#                                <span class="bold">Attach File<span class="text-danger bold"></span></span>#}
+{#                                <input type="file" class="form-control form-control-input d-block mb-3"#}
+{#                                       style="margin-bottom:1%" name="document">#}
+{#                            </div>#}
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="modal" id="name" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <form action="{% url 'cartable-letter-panel' %}" method="post">
+                {% csrf_token %}
+
+                <input type="hidden" value={{ letters.id }} name="let">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Original </h5>
+                            <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="accordion" role="tablist">
+                                <div class="card ">
+                                    <div class="card-header bg-white" role="tab" id="heading">
+                                        <h5 class="mb-0 "><a class=" text-dark  mylist"
+                                                             href="{% url 'cartable-letter-panel' %}"
+                                                             data-parent="#accordion"
+                                                             data-toggle="collapse">
+                                            <i class="fa fa-chevron-down text-dark "></i>
+                                        </a></h5>
+                                    </div>
+                                    <div id="" class="collapse show">
+                                        <div class="card-body">
+
+                                            <div class="form-check">
+                                                <label class="form-check-label mr-2">
+                                                     {% for staff in staffs %}
+                                                        <input type="checkbox" class="form-check-input" name="receiver"  value="{{ staff.user }}">
+
+                                                    {% endfor %}
+                                                </label>
+
+
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-success my-2 submits" id="myOriginalBtn" type="button"> Submit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <script src="../../static/js/bootstrap.bundle.min.js"></script>
+        <script src="../../static/js/jquery-3.6.0.min.js"></script>
+        <script>
+            $('.mylist').on('click', function () {
+                $('.fa', this)
+                    .toggleClass('fa-chevron-right')
+                    .toggleClass('fa-chevron-down');
+            });
+        </script>
+    </section>
+{% endblock content %}

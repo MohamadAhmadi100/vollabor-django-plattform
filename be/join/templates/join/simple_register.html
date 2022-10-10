@@ -1,0 +1,151 @@
+{% extends 'ivc_website/base.html' %}
+{% load static %}
+{% block style %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/css/intlTelInput.css" rel="stylesheet"
+        media="screen">
+    
+     <link rel="stylesheet" href="{% static 'users/css/phone.css' %}">
+     <link rel="stylesheet" href="https://cdn.tutorialjinni.com/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+     <link rel="stylesheet" href="{% static 'users/css/JoinUs.css' %}">
+<style>
+	#password{
+	width: 100%;
+    display: block;
+    margin: 5px 0;
+    padding: 15px;
+    border: 1px solid #b5b5b5;
+    outline: none;
+	}
+</style>
+   
+{% endblock %}
+{% block content %}
+
+<div style="margin: 50px 0px 200px 0px">
+    
+	{% if messages %}
+	{% for message in messages %}
+			{% if message.tags == 'success' %}
+				<div class="alert alert-success"> {{ message }}</div>
+			{% else %}
+				<div class="alert alert-danger"> {{ message }}</div>
+			{%endif %}
+	{% endfor %}
+{% endif %}
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12 py-0 text-center" id="user_options-forms">
+				<div class="m-0 py-0" id="user_forms-individual">
+					<h3 class="text-center bg-dark text-info my-1 p-2">Login</h3>
+					<form action="{% url 'simple-login' %}" method="POST" class="forms_form"  id="natural-form">
+					    {% csrf_token %}
+					  <fieldset class="forms_fieldset">
+						  <input type="hidden" name="next" value="{{next}}">
+						<div class="row">
+							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+							  <input type="text" id="Username" name="username" placeholder="Username" class="forms_field-input"  autofocus />
+							  <div id="first_name_error" class="text-danger small"></div>
+						    </div>						    
+						</div>
+						<div class="row">
+							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 py-2">
+							  <input type="password" name="password" id="password" placeholder="Password" class="forms_field-input"  autofocus />
+							  <div id="email_error" class="text-danger small"></div>
+						    </div>
+										
+						</div>
+						
+						<div class="g-recaptcha my-3" data-sitekey="6LfNkwsaAAAAALzFdst8DfNe0qxir5VResjWdJhf"></div>
+					  </fieldset>
+					  <div class="row mt-2">
+						  <div class="forms_buttons mx-auto my-3">
+							<input type="submit"  id="SignBtn" value="Login" class="forms_buttons-action">
+						  </div>
+					  </div>
+					</form>
+				</div>
+			</div>
+        
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12 py-0 text-center" id="user_options-forms2">
+				<div class="m-0 py-0" id="user_forms-individual2">
+					<h3 class="text-center bg-dark text-info my-1 p-2">Individual registration form</h3>
+					<form method="post" class="forms_form"  id="natural-form2">
+					    {% csrf_token %}
+					  <fieldset class="forms_fieldset">
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <input type="text" id="first_name" name="first_name" placeholder="First name" class="forms_field-input"  autofocus />
+							  <div id="first_name_error" class="text-danger small"></div>
+						    </div>
+						    
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <input type="text" id="last_name" name="last_name" placeholder="Last name" class="forms_field-input"  autofocus />
+							  <div id="last_name_error" class="text-danger small"></div>
+						    </div>
+						    
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12  py-2">
+								<input required class="forms_field-input" type="text" name="phone" id="phone" >
+						           <input value="us" type="text" name="phone_region" id="natural_phone_region" class="d-none">
+								<div id="first_name_error" class="text-danger small"></div>
+							  </div>
+							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 py-2">
+							  <input type="email" name="email" id="email" placeholder="Email" class="forms_field-input"  autofocus />
+							  <div id="email_error" class="text-danger small"></div>
+						    </div>
+							
+						</div>
+						
+						<div class="g-recaptcha my-3" data-sitekey="6LfNkwsaAAAAALzFdst8DfNe0qxir5VResjWdJhf"></div>
+					  </fieldset>
+					  <div class="row mt-2">
+						  <div class="forms_buttons mx-auto my-3">
+							<input type="submit"  id="SignnBtn" value="Sign up" class="forms_buttons-action">
+						  </div>
+					  </div>
+					</form>
+				</div>
+			</div>
+        
+        
+    </div>
+    
+    
+</div>
+
+
+
+
+
+
+
+	
+
+<script src="{% static 'ivc_website/js/intlTelInput.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/utils.js' %}"></script>
+<script src="{% static 'users/js/phone.js' %}"></script>
+<script src="{% static 'dashboard/js/bootstrap-select.min.js' %}"></script>
+	<script>
+		var input1 = document.querySelector("#phone");
+		var iti=window.intlTelInput(input1, {
+		  separateDialCode: true,
+		  initialCountry: "us"
+		});
+
+	 input1.addEventListener("countrychange", function() {
+		region = iti.getSelectedCountryData().iso2
+		console.log(region)
+		$('#natural_phone_region').attr('value',region);
+
+	});  
+
+</script>
+
+{% endblock %}

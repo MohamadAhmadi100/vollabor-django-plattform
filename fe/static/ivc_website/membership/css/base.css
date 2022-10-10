@@ -1,0 +1,671 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto|Gothic+A1|Kaushan+Script|Libre+Baskerville|Lobster');
+
+
+html {
+    position: relative;
+    height: 100%;
+    min-height: 100%;
+}
+
+body {
+    width: 100%;
+    font-family: 'Gothic A1', sans-serif;
+    font-size: 16px;
+    margin: 0px !important;
+
+}
+
+main {
+    margin-top: 50px;
+    position: relative;
+    height: auto;
+}
+
+p {
+    color: #6c6c6f;
+    font-size: 1em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #323233;
+}
+
+header {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 100px;
+    right: 0px;
+    overflow: hidden;
+    z-index: 3;
+    margin-bottom: 100px;
+}
+
+.navbar-brand span {
+    color: #fed136;
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    font-family: 'Kaushan Script', 'Helvetica Neue', Helvetica, Arial, cursive;
+}
+
+.navbar-brand {
+    color: #fff;
+    font-size: 25px;
+    font-family: 'Kaushan Script', 'Helvetica Neue', Helvetica, Arial, cursive;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+}
+
+#collapsibleNavbar {
+
+    font-size: 13px;
+
+}
+
+#mainDiv {
+    padding-left: 230px;
+    padding-top: 15px;
+    background-image: url('../img/logo_header.png');
+    background-repeat: no-repeat;
+    /*background-attachment: scroll;*/
+    background-position: top center;
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+
+
+}
+
+.collapseDiv {
+
+    padding: 0 0 !important;
+    margin: 0 2px !important;
+
+}
+
+.navbarUL {
+    margin: 0 0 !important;
+
+}
+
+.nav-item {
+    padding: 6px 0 !important;
+}
+
+.navbar-nav .nav-item .nav-link {
+    padding: 0.7em 1em !important;
+    font-size: 120%;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: #fff;
+    font-family: 'Gothic A1', sans-serif;
+
+}
+
+.navbar-nav .nav-item:hover {
+    border-top: 3px solid #fff;
+}
+
+.logpan {
+    padding-top: 0px;
+
+}
+
+.logpan a {
+    text-decoration: none;
+}
+
+.logpanLink {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-top: 15px;
+    padding-bottom: 4px;
+}
+
+.logpanLink span {
+    font-family: 'Roboto';
+}
+
+#lgnLink:hover {
+    border-top: 3px solid #fff;
+    color: #fed136 !important;
+    text-shadow: 1px 1px 5px orange;
+    text-decoration: none;
+
+}
+
+#MydLink:hover {
+    border-top: 3px solid #fff;
+    color: #fed136 !important;
+    text-shadow: 1px 1px 5px orange;
+    text-decoration: none;
+}
+
+#lgotLink:hover {
+    border-top: 3px solid #fff;
+    color: #fed136 !important;
+    text-shadow: 1px 1px 5px orange;
+    text-decoration: none;
+}
+
+#MailLink:hover {
+    border-top: 3px solid #fff;
+    color: #fed136 !important;
+    text-shadow: 1px 1px 5px orange;
+    text-decoration: none;
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    color: #fed136;
+    text-shadow: 1px 1px 5px orange;
+}
+
+.navbar-expand-md .navbar-nav .dropdown-menu {
+    border-top: 3px solid #fed136;
+}
+
+.dropdown-item:hover {
+    background-color: #fed136;
+    color: gray;
+    font-weight: bold
+}
+
+nav {
+    -webkit-transition: padding-top .3s, padding-bottom .3s;
+    -moz-transition: padding-top .3s, padding-bottom .3s;
+    transition: padding-top .3s, padding-bottom .3s;
+    border: none;
+}
+
+.shrink {
+    padding-top: 0;
+    padding-bottom: 0;
+    background: linear-gradient(90deg, rgba(37, 68, 153, 0.98) 52.66%, #0F238B 102.53%);
+}
+
+#LogDiv {
+    margin-left: 5px;
+    margin-top: 0px;
+    padding-top: 1px;
+}
+
+
+.section-footer {
+    background: -webkit-linear-gradient(175.99deg, #091865 3.28%, rgba(16, 35, 132, 0.7665) 64.35%, rgba(45, 64, 167, 0.68) 116.48%, rgba(37, 55, 153, 0.55) 150.11%, rgba(255, 255, 255, 0) 252.51%);
+    background: linear-gradient(175.99deg, #091865 3.28%, rgba(16, 35, 132, 0.7665) 64.35%, rgba(45, 64, 167, 0.68) 116.48%, rgba(37, 55, 153, 0.55) 150.11%, rgba(255, 255, 255, 0) 252.51%);
+    color: white;
+    margin-top: 100px;
+
+    width: 100%;
+    height: auto;
+
+    overflow: hidden;
+
+}
+
+
+.section-footer a {
+    color: #fff;
+    font-size: 14px;
+    transition-duration: 0.2s;
+}
+
+.section-footer a:hover {
+    color: #FA944B;
+    text-decoration: none;
+}
+
+.copy {
+    font-size: 12px;
+    padding: 10px;
+    color: #fff;
+}
+
+.footer-middle {
+    padding-top: 2em;
+    color: white;
+}
+
+
+/*SOCİAL İCONS*/
+
+/* footer social icons */
+
+ul.social-network {
+    list-style: none;
+    display: inline;
+    margin-left: 0 !important;
+    padding: 0;
+}
+
+ul.social-network li {
+    display: inline;
+    margin: 0 5px;
+}
+
+
+/* footer social icons */
+
+.social-network a.icoFacebook:hover {
+    background-color: #3B5998;
+}
+
+.social-network a.icoLinkedin:hover {
+    background-color: #007bb7;
+}
+
+.social-network a.icoFacebook:hover i,
+.social-network a.icoLinkedin:hover i {
+    color: #fff;
+}
+
+.social-network a.socialIcon:hover,
+.socialHoverClass {
+    color: #44BCDD;
+}
+
+.social-circle li a {
+    display: inline-block;
+    position: relative;
+    margin: 0 auto 0 auto;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+}
+
+.social-circle li i {
+    margin: 0;
+    line-height: 30px;
+    text-align: center;
+}
+
+.social-circle li a:hover i,
+.triggeredHover {
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -ms--transform: rotate(360deg);
+    transform: rotate(360deg);
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    -ms-transition: all 0.2s;
+    transition: all 0.2s;
+}
+
+.social-circle i {
+    color: #595959;
+    -webkit-transition: all 0.8s;
+    -moz-transition: all 0.8s;
+    -o-transition: all 0.8s;
+    -ms-transition: all 0.8s;
+    transition: all 0.8s;
+}
+
+.social-network a {
+    background-color: #F9F9F9;
+}
+
+.footer-pad li a {
+
+    text-decoration: none;
+
+}
+
+
+@media only screen and (max-device-width: 280px) {
+    /* styles for mobile browsers smaller than 480px; (iPhone) */
+    #mainDiv {
+        margin-left: 1px;
+        padding-left: 1px;
+        padding-top: 20px;
+        background-image: url('../img/logo_header.png');
+        background-repeat: no-repeat;
+        background-position: top center;
+        -webkit-background-size: contain;
+        -moz-background-size: contain;
+        -o-background-size: contain;
+        background-size: contain;
+
+
+    }
+
+    .navbar-nav .nav-item:hover {
+        border-top: none
+    }
+
+
+    #lgnLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    #MydLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    #lgotLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    #MailLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    .navbar-nav .nav-item .nav-link:hover {
+        color: #fed136;
+        text-shadow: 1px 1px 5px orange;
+    }
+
+    .hidden-xs {
+        display: none;
+    }
+
+    .navbar-toggler-icon {
+
+        font-size: 14px;
+    }
+
+
+}
+
+
+@media only screen and (min-width: 281px) and (max-width: 480px) {
+
+    #mainDiv {
+        margin-left: 1px;
+        padding-left: 1px;
+        padding-top: 20px;
+        background-image: url('../img/logo_header.png');
+        background-repeat: no-repeat;
+
+        background-position: top center;
+        -webkit-background-size: contain;
+        -moz-background-size: contain;
+        -o-background-size: contain;
+        background-size: contain;
+
+    }
+
+    .navbar-nav .nav-item:hover {
+        border-top: none
+    }
+
+
+    #lgnLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    #MydLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    #lgotLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    #MailLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    .navbar-nav .nav-item .nav-link:hover {
+        color: #fed136;
+        text-shadow: 1px 1px 5px orange;
+    }
+
+    .hidden-xs {
+        display: none;
+    }
+
+    .navbar-toggler-icon {
+
+        font-size: 16px;
+    }
+
+
+}
+
+@media only screen and (min-width: 481px) and (max-width: 767px) {
+
+    #mainDiv {
+        margin-left: 1px;
+        padding-left: 1px;
+        padding-top: 20px;
+        background-image: url('../img/logo_header.png');
+        background-repeat: no-repeat;
+
+        background-position: top center;
+        -webkit-background-size: contain;
+        -moz-background-size: contain;
+        -o-background-size: contain;
+        background-size: contain;
+
+
+    }
+
+    .navbar-nav .nav-item:hover {
+        border-top: none
+    }
+
+
+    #lgnLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    #MydLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    #lgotLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    #MailLink:hover {
+        border-top: none;
+        color: #fed136 !important;
+        text-shadow: 1px 1px 5px orange;
+        text-decoration: none;
+    }
+
+    .navbar-nav .nav-item .nav-link:hover {
+        color: #fed136;
+        text-shadow: 1px 1px 5px orange;
+    }
+
+    .hidden-xs {
+        display: none;
+    }
+
+    #LogDiv {
+        width: 30%;
+    }
+
+    .logpan {
+        padding-top: 0px;
+    }
+
+
+    .logpanLink {
+        margin-left: 10px;
+        margin-right: 10px;
+        padding: 15px 1px 4px 1px;
+    }
+
+
+}
+
+@media only screen and (min-width: 768px) and (max-width: 990px) {
+    #mainDiv {
+        margin-left: 0px;
+        padding-left: 100px;
+        padding-top: 7px;
+        background-image: url('../img/logo_header.png');
+        background-repeat: no-repeat;
+        background-position: top center;
+        -webkit-background-size: contain;
+        -moz-background-size: contain;
+        -o-background-size: contain;
+        background-size: contain;
+
+
+    }
+
+    .collapseDiv {
+        padding: 0px 0px !important;
+        margin: 0px 0px !important;
+    }
+
+    .navbarUL {
+        margin: 0px 0px !important;
+    }
+
+    .nav-item {
+        padding: 0px 0px !important;
+    }
+
+
+    .logpan {
+        padding-top: 0px;
+    }
+
+
+    .logpanLink {
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-top: 15px;
+        padding-bottom: 4px;
+    }
+
+
+    .hidden-xs {
+        display: none;
+    }
+
+    #LogDiv {
+        width: 30%;
+    }
+
+}
+
+
+@media only screen and (min-width: 991px) and (max-width: 1024px) {
+
+    #mainDiv {
+        margin-left: 0px;
+        padding-left: 180px;
+        padding-top: 10px;
+        background-image: url('../img/logo_header.png');
+        background-repeat: no-repeat;
+        background-position: top center;
+        -webkit-background-size: contain;
+        -moz-background-size: contain;
+        -o-background-size: contain;
+        background-size: contain;
+
+
+    }
+
+    .collapseDiv {
+        padding: 0px 0px !important;
+        margin: 0px 0px !important;
+    }
+
+    .navbarUL {
+        margin: 0px 0px !important;
+    }
+
+    .nav-item {
+        padding: 0px 0px !important;
+    }
+
+
+    .logpan {
+        padding-top: 0px;
+    }
+
+
+    .logpanLink {
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-top: 15px;
+        padding-bottom: 4px;
+    }
+
+    .logpanLink.before {
+        color: red;
+    }
+
+    .hidden-xs {
+        display: none;
+
+    }
+
+    #LogDiv {
+        width: 30%;
+    }
+
+
+}
+
+@media only screen and (min-width: 1440px) {
+    /* styles for browsers larger than 1440px; */
+}
+
+@media only screen and (min-width: 2000px) {
+    /* for sumo sized (mac) screens */
+}
+
+@media only screen and (max-device-width: 480px) {
+    /* styles for mobile browsers smaller than 480px; (iPhone) */
+
+
+}
+
+/* different techniques for iPad screening */
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation: portrait) {
+    /* For portrait layouts only */
+}
+
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation: landscape) {
+    /* For landscape layouts only */
+}
+
+
+/*Ideas*/

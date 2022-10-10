@@ -1,0 +1,295 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/researchtheme.css' %}">
+    
+    
+    <title>Document</title>
+{% endblock css %}
+
+{% block content %}
+
+
+    <header class="bg-danger text-white py-2 w-100">
+        <div class="container">
+            <h1 class="px-4"><i class="far fa-edit"></i> <span> Workshop registrant list</span></h1>
+        </div>
+    </header>
+
+        <!--new workshop list-->
+        <div class="container ml-5" style="margin-left:200px" >
+            
+            <div class="container mt-3 ">
+                {% if messages %}
+                    {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success"> {{ message|safe }}</div>
+                            {% else %}
+                                <div class="alert alert-danger"> {{ message|safe }}</div>
+                            {%endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% if users %}
+            <div class="row mt-3 ml-5">
+                <button type="button" class="btn btn-primary col-md-2"><a data-bs-toggle="modal" data-bs-target="#EmailModal" href="#EmailModal" style="text-decoration:none;color:white">Send Email</a></button>
+            </div>
+            <div class="col-md-2  ">
+                <label>Filter by section</lable></br>
+                        <a href="{% url 'view-registrants-workshop' pk=workshop.pk %}">All section</a></br>
+                        {%for section in timetable %}
+                        <a href="?filter={{section.title}}">{{section.title}}</a></br>
+                        {%endfor%}
+            </div>
+            <div class="row text-center mt-5 px-5">
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 ">
+        	        <article class="postcard dark">
+            			<div class="postcard__text">
+            				<h3 class="postcard__title text-success"><a href="#">Workshop title:</a></h3>
+            				
+            				<div class="postcard__preview-txt text-white">{{workshop.title}}</div>
+            				
+            			</div>
+        	        </article>
+        	    </div>
+        	    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 ">
+        	        <article class="postcard dark">
+            			<div class="postcard__text">
+            				<h3 class="postcard__title text-success"><a href="#">Workshop date:</a></h3>
+            				
+            				<div class="postcard__preview-txt text-white">{{workshop.date}}</div>
+            				
+            			</div>
+        	        </article>
+        	    </div>
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 ">
+                    <article class="postcard dark">
+                        <div class="postcard__text">
+                            <h3 class="postcard__title text-success"><a href="#">Workshop Speaker:</a></h3>
+                            
+                            <div class="postcard__preview-txt text-white">{{workshop.top_user.email}}</div>
+                            
+                        </div>
+                    </article>
+                </div>
+        	  </div>
+          </div>
+        </div>
+        	  <div class="container-fluid">
+        	      <div class="row text-center px-5">
+        	          <div class="col-11 mx-auto">
+                    {%if request.GET.filter%}
+                        {%for section in timetable%}
+                            {%if request.GET.filter == section.title%}
+                            <table class="table table-hover  mt-5 mx-auto ">
+                                <thead style="background-color:#ADD8E6;color:black">
+                                    <tr>
+                                        <th style="width:25%">Full Name</th>
+                                        <th style="width:25%">Email</th>
+                                        <th style="width:25%">Username</th>
+                                        <th style="width:25%">Phone</th>
+                                        <th style="width:20%">Buy date</th>
+                                    </tr>
+                                </thead>
+                                <h3 style="float:left">Unpaid</h3>
+                                <tbody class="table-dark">
+                                        {%for u in users%}
+                                            {%if u.section == section.title%}
+                                                {%if u.is_paid == 0%}
+                                                <tr>
+                                                    <td style="width:25%">{{u.user.get_full_name}}</td>
+                                                    <td style="width:25%">{{u.user.email}}</td>
+                                                    <td style="width:25%">{{u.user.username}}</td>
+                                                    <td style="width:25%">{{u.user.memberprofile.phone}}</td>
+                                                    <td style="width:20%">{{u.created.date}}</td>
+                                                </tr>
+                                                {%endif%}
+                                            {%endif%}
+                                        {%endfor%}
+                                    </tbody>
+                            </table>
+                            <table class="table table-hover  mt-5 mx-auto ">
+                                <thead style="background-color:#ADD8E6;color:black">
+                                    <tr>
+                                        <th style="width:25%">Full Name</th>
+                                        <th style="width:25%">Email</th>
+                                        <th style="width:25%">Username</th>
+                                        <th style="width:25%">Phone</th>
+                                        <th style="width:20%">Buy date</th>
+                                        <th style="width:20%">Certificate</th>
+                                    </tr>
+                                </thead>
+                                <h3 style="float:left">Payments</h3>
+                                <tbody class="table-dark">
+                                    {%for u in users%}
+                                    {%if u.section == section.title%}
+                                                {%if u.is_paid == 1%}
+                                                <tr>
+                                                    <td style="width:25%">{{u.user.get_full_name}}</td>
+                                                    <td style="width:25%">{{u.user.email}}</td>
+                                                    <td style="width:25%">{{u.user.username}}</td>
+                                                    <td style="width:25%">{{u.user.memberprofile.phone}}</td>
+                                                    <td style="width:20%">{{u.created.date}}</td>
+                                                    <td>
+                                                        {%if u.certificate == 'deleted' or u.certificate == None %}
+                                                        <form action="{%url 'upload-certificate' pk=u.id%} " method="POST" enctype='multipart/form-data' >
+                                                            {% csrf_token %}
+                                                            <input required type="file" name="certificate" class="form-control">
+                                                            <button type="submit" class="btn btn-primary" style="width:100px">Upload</button>
+
+                                                        </form>
+                                                        
+                                                        {%else%}
+                                                        <a class="btn btn-primary" target="_blank" href="../../../media/{{u.certificate}}">View</a>
+                                                        <a class="btn btn-danger"  href="{%url 'upload-certificate' pk=u.id%}?delete=true">Delete</a> 
+                                                        {%endif%}
+                                                    </td>
+                                                </tr>
+                                                {%endif%}
+                                            {%endif%}
+                                {%endfor%}
+                                </tbody>
+                            </table>
+                            {%endif%}
+                        {%endfor%}
+                    {%else%}
+                    <table class="table table-hover  mt-5 mx-auto ">
+                        <thead style="background-color:#ADD8E6;color:black">
+                            <tr>
+                                <th style="width:25%">Full Name</th>
+                                <th style="width:25%">Email</th>
+                                <th style="width:25%">Username</th>
+                                <th style="width:25%">Phone</th>
+                                <th style="width:20%">Buy date</th>
+                            </tr>
+                        </thead>
+                        <h3 style="float:left">Unpaid</h3>
+                        <tbody class="table-dark">
+                                {%for u in users%}
+                                    {%if u.section == 'All'%}
+                                        {%if u.is_paid == 0%}
+                                        <tr>
+                                            <td style="width:25%">{{u.user.get_full_name}}</td>
+                                            <td style="width:25%">{{u.user.email}}</td>
+                                            <td style="width:25%">{{u.user.username}}</td>
+                                            <td style="width:25%">{{u.user.memberprofile.phone}}</td>
+                                            <td style="width:20%">{{u.created.date}}</td>
+                                        </tr>
+                                        {%endif%}
+                                    {%endif%}
+                                {%endfor%}
+                            </tbody>
+                    </table>
+                    <table class="table table-hover  mt-5 mx-auto ">
+                        <thead style="background-color:#ADD8E6;color:black">
+                            <tr>
+                                <th style="width:25%">Full Name</th>
+                                <th style="width:25%">Email</th>
+                                <th style="width:25%">Username</th>
+                                <th style="width:25%">phone</th>
+                                <th style="width:20%">Buy date</th>
+                                <th style="width:20%">Certificate</th>
+                            </tr>
+                        </thead>
+                        <h3 style="float:left">Payments</h3>
+                        <tbody class="table-dark">
+                            {%for u in users%}
+                                {%if u.section == 'All'%}
+                                    {%if u.is_paid == 1%}
+                                    <tr>
+                                        <td style="width:25%">{{u.user.get_full_name}}</td>
+                                        <td style="width:25%">{{u.user.email}}</td>
+                                        <td style="width:25%">{{u.user.username}}</td>
+                                            <td style="width:25%">{{u.user.memberprofile.phone}}</td>
+                                        <td style="width:20%">{{u.created.date}}</td>
+                                        <td>
+                                            {%if u.certificate == 'deleted' or u.certificate == None or u.certificate == '' %}
+                                            <form action="{%url 'upload-certificate' pk=u.id%} " method="POST" enctype='multipart/form-data' >
+                                                {% csrf_token %}
+                                                <input required type="file" name="certificate" class="form-control">
+                                                <button type="submit" class="btn btn-primary" style="width:100px">Upload</button>
+
+                                            </form>
+                                            
+                                            {%else%}
+                                            <a class="btn btn-primary" target="_blank" href="../../../media/{{u.certificate}}">View</a>
+                                            <a class="btn btn-danger"  href="{%url 'upload-certificate' pk=u.id%}?delete=true">Delete</a> 
+                                            {%endif%}
+                                        </td>
+                                    </tr>
+                                    {%endif%}
+                                {%endif%}
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                    {%endif%}
+               
+            {% else %}
+                    <h1 style=" color: rgb(214, 3, 73); margin-top: 10px;">No one bought this workshop yet!!</h1>
+            {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            
+            
+            
+            <div class="modal fade" id="EmailModal" tabindex="-1" aria-labelledby="EmailModalLabel" aria-hidden="true" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header text-dark">
+                          <h5 class="modal-title" id="EmailModalLabel">Email</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-dark">
+                            <div class="container">
+                                <div class="row">
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label class="form-label">Subject</label>
+                                            <input type="text" name="subject"  class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Description</label>
+                                            <textarea name="description" class="form-control" style="height:200px"></textarea>   
+                                            
+                                        </div>
+                                       
+                                        
+                                        <button type="submit" class="btn btn-primary">Send Email</button>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+            
+            
+            
+            
+            
+            
+       
+    
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+{% endblock content %}

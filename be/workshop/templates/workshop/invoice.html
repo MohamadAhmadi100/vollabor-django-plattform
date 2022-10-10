@@ -1,0 +1,81 @@
+{% load task_tracker_filter %}
+{% load static %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Title</title>
+        <style type="text/css">
+            body {
+                font-weight: 200;
+                font-size: 14px;
+            }
+            .header {
+                font-size: 20px;
+                font-weight: 100;
+                text-align: center;
+                color: #007cae;
+            }
+            .title {
+                font-size: 22px;
+                font-weight: 100;
+               /* text-align: right;*/
+               padding: 10px 20px 0px 20px; 
+               color: #007cae; 
+            }
+            .title span {
+                color: #007cae;
+            }
+            .details {
+                padding: 10px 20px 0px 20px;
+                text-align: left !important;
+                /*margin-left: 40%;*/
+            }
+            .hrItem {
+                border: none;
+                height: 1px;
+                /* Set the hr color */
+                color: #333; /* old IE */
+                background-color: #fff; /* Modern Browsers */
+            }
+        </style>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MV42WCDPR9"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-MV42WCDPR9');
+        </script>
+    </head>
+    <body>
+        <div class='details'>
+            <div class="title">title: </div>
+            {{form.title}}
+            <div class="title">date: </div>
+            {{form.date}}
+            <div class="title">start at: </div>
+            {{form.time_to_start}}
+            <div class="title">end at: </div>
+            {{form.duration}}
+            <div class="title">speaker: </div>
+            {{form.speaker}}
+            <div class="title">suggested country: </div>
+            {{form.suggest_country}}
+            <div class="title">keyword: </div>
+            {{form.keyword}}
+            <div class="title">skills: </div>
+            {{form.skills}}
+            <div class="title">email: </div>
+            {{form.top_user.email}}
+            <div class="title">phone number: </div>
+            {{user_phone.phone}}
+            <div class="title">price: </div>
+            {{form.price}}
+            <div class="title">address: </div>
+            {{form.address}}
+            <div class="title">description: </div>
+            {{form.description}}
+        </div>
+    </div>
+    </body>
+</html>

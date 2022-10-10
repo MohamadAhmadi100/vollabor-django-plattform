@@ -1,0 +1,168 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+{% block content %}
+
+
+    <header class="bg-dark text-white py-2 w-100">
+        <div class="container">
+            <h1 class="px-4"><i class="far fa-edit"></i> <span> My workshop status</span></h1>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message|safe }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message|safe }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+            </div>
+            <div class="col-md-6 text-right text-black text-end mt-2">
+                <a class="btn btn-color6 bg-danger text-black mb-1" href="{% url 'create-checkout-session' %}">
+                    Balance
+                    <span class="badge badge-black"> <i class="fa fa-dollar-sign bg-dark p-2 text-white" style="border-radius: 25px;"></i>{{user}}</span>
+                </a>
+            </div>
+
+        
+        </div>
+        
+    </div>
+    <!--notpay table -->
+    <h1 class="text-center">Your unpaid invoices</h1>
+    
+    <div class="w-100 d-md-flex justify-content-md-center">
+        <table class="table table-hover table-sm table-striped mt-5 ws-notif-table">
+            <thead style="background-color:#ADD8E6 !important;color:black">
+                <tr>
+                    <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                    <th class="text-center" style="width:35%;vertical-align:middle">Title</th>
+                    <th class="text-center" style="width:5%;vertical-align:middle">Cost per individual ($ USA)</th>
+                    <th class="text-center" style="width:5%;vertical-align:middle">Holding date</th>
+                    <th class="text-center" style="width:5%;vertical-align:middle">Submited date</th>
+                    <th class="text-center" style="width:5%;vertical-align:middle">Action</th>
+                </tr>
+            </thead>
+            <tbody class="table-dark">
+            {% for workshop in Notpay_workshop %}
+                <tr>
+                    <td  class="text-center" style="width:5%;vertical-align:middle">{{workshop.unique_id}}</td>
+                    <td  style="width:35%;vertical-align:middle;">{{workshop.title|truncatechars:50}}</td>
+                    <td  class="text-center" style="width:5%;vertical-align:middle">{{workshop.price}}</td>
+                    <td  class="text-center" style="width:5%;vertical-align:middle">{{workshop.date}}</td>
+                    <td  class="text-center" style="width:5%;vertical-align:middle">{{workshop.created.date}}</td>
+                    {%for invoice in invoces%}
+                        {%if invoice.service.workshop == workshop%}
+                            <td class="text-center" style="width:5%;vertical-align:middle"><a class="btn btn-success" href="{% url 'accounting:invoice-detail' invoice.pk %}">Pay</a></td>
+                        {%endif%}
+                    {%endfor%}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!--End notpay table-->
+    <div class="w-100 d-md-flex justify-content-md-center">
+        <table class="table table-hover table-sm table-striped mt-5 ws-notif-table">
+            <thead style="background-color:#ADD8E6 !important;color:black">
+                <tr>
+                    <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                    <th class="text-center" style="width:35%;vertical-align:middle">Title</th>
+                    <th class="text-center" style="width:5%;vertical-align:middle">Cost per individual ($ USA)</th>
+                    <th class="text-center" style="width:5%;vertical-align:middle">Holding date</th>
+                    <th class="text-center" style="width:5%;vertical-align:middle">Submited date</th>
+                    <th class="text-center" style="width:15%;vertical-align:middle">Status</th>
+                    <th class="text-center" style="width:25%;vertical-align:middle">Comment</th>
+                    <th class="text-center" style="width:25%;vertical-align:middle">Members count</th>
+                    <th class="text-center" style="width:5%;vertical-align:middle">Action</th>
+                </tr>
+            </thead>
+            <tbody class="table-dark">
+            {% for workshop in all_workshop %}
+                <tr>
+                    <td  class="text-center" style="width:5%;vertical-align:middle">{{workshop.unique_id}}</td>
+                    <td  style="width:35%;vertical-align:middle;">{{workshop.title|truncatechars:50}}</td>
+                    <td  class="text-center" style="width:5%;vertical-align:middle">{{workshop.price}}</td>
+                    <td  class="text-center" style="width:5%;vertical-align:middle">{{workshop.date}}</td>
+                    <td  class="text-center" style="width:5%;vertical-align:middle">{{workshop.created.date}}</td>
+                    {% if workshop.status == 'pay_guarante'%}
+                    <td  class="text-center" style="width:15%;vertical-align:middle"><button class="btn btn-success"><a href="{% url 'guarante-pay' workshop.pk %}">Pay</a></button></td>
+                    <td  class="text-center" style="width:25%;vertical-align:middle">Pending for paying responsibility fee</td>
+                    {% elif workshop.status == 'New' %}
+                    <td class="text-center" style="width:15%;vertical-align:middle">Pending for the guarantor's response</td>
+                    <td  class="text-center" style="width:25%;vertical-align:middle"></td>
+                    {% elif workshop.status == 'Set_time_table' %}
+                    <td class="text-center" style="width:15%;vertical-align:middle"><button class="btn btn-warning"><a href="{% url 'edit-my-workshop' workshop.id %}">Edit</a></button></td>
+                    <td class="text-center" style="width:25%;vertical-align:middle">To finialize the submission you must set the timetable</td>
+                    {% elif workshop.status == 'Guarante_accept' %}
+                    <td class="text-center" style="width:15%;vertical-align:middle">Under process</td>
+                    <td class="text-center" style="width:25%;vertical-align:middle" ></td>
+                    {% elif workshop.status == 'Expert_comment' %}
+                    <td class="text-center" style="width:15%;vertical-align:middle">Under process</td>
+                    <td class="text-center" style="width:25%;vertical-align:middle"></td>
+                    {% elif workshop.status == 'Expert_decide' %}
+                    <td class="text-center" style="width:15%;vertical-align:middle">Under process</td>
+                    <td class="text-center" style="width:25%;vertical-align:middle"></td>
+                    {% elif workshop.status == 'Manager_check' %}
+                    <td class="text-center" style="width:15%;vertical-align:middle">Under process</td>
+                    <td class="text-center" style="width:25%;vertical-align:middle"></td>
+                    {% elif workshop.status == 'Accept' %}
+                    <td class="text-center" style="width:15%;vertical-align:middle">Accepted</td>
+                    <td class="text-center" style="width:25%;vertical-align:middle"></td>
+                    {% elif workshop.status == 'Delete' %}
+                    <td class="text-center" style="width:15%;vertical-align:middle"><p class="text-danger">Deleted</p></td>
+                    <td class="text-center" style="width:25%;vertical-align:middle"></td>
+                    {% elif workshop.status == 'Reject' %}
+                        {% for acc in accept_reject %}
+                        {% if acc.workshop == workshop %}
+                        <td class="text-center" style="width:15%;vertical-align:middle">
+                            <div class="row text-center">
+                                <div class="col-6 mx-auto px-0">
+                                    <p class="text-danger text-center mt-2">Rejected</p>
+                                    <button class="btn btn-success">
+                                        <a href="{% url 'edit-my-workshop' workshop.id %}">Resubmit</a>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center" style="width:25%;vertical-align:middle" >{{acc.comment}}</td>
+                        {% endif %}
+                        {% endfor %}
+                    
+                    {% else %}
+                    <td class="text-center" style="width:15%;vertical-align:middle"><p class="text-danger">{{workshop.status}}</p></td>
+                    <td class="text-center" style="width:25%;vertical-align:middle"></td>
+                    
+                    {% endif %}
+                    <td class="text-center" style="width:5%;vertical-align:middle">{{workshop.count}}</td>
+                    <td class="text-center" style="width:5%;vertical-align:middle"><a class="btn btn-success" href="{% url 'show-supervisor-detail' workshop.pk %}">View</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+{% endblock content %}

@@ -1,0 +1,62 @@
+{% extends 'emails/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %} History {% endblock %}
+{% block main %}
+
+
+
+<div style="padding-left: 10px; padding-right: 10px" class="col-md-12">
+	<div class="card card-primary">
+		<div class="card-header">
+			<h3 class="card-title"></h3>
+		</div>
+		<div style="margin-left: 17px" class="category-section w-100 mt-5">
+			<div class="d-flex flex-wrap">
+				<!-- card start -->
+				{% for email in object_list %}
+				<div class="card mx-1 mb-5" style="width: 16rem; border-radius: 7px;">
+					<div class="card-body">
+						<h5 class="card-title"><b>{{email.subject}}</b></h5>
+					</div>
+					<ul style="display: block;">
+						<!-- row start -->
+						<li style="list-style-type: none;">
+							{% for i in email.history_emails.all %}
+							<p>{{i.email}} 
+								<span class="ml-1">
+									{% if i.sent == True %}
+										<td><i style="color: red" class="far fa-times-circle"></i></td>
+									{% else %}
+										<i style="color: green" class="far fa-check-circle"></i>
+									{% endif %}
+								</span>
+							</p>
+							{% endfor %}
+						</li>
+						<p></p>
+						<li style="list-style-type: none;">
+							<h5 style="font-size: 12px">{{email.created}}</h5>
+						</li>
+						<li style="list-style-type: none;">
+							<h5 style="font-size: 12px">{{email.user.get_full_name}}</h5>
+						</li>
+					    {% if email.template_name %}
+						<li style="list-style-type: none;">
+							<h6 class="badge badge-primary">{{email.template_name}}</h6>
+						</li>
+					    {% endif %}
+						<!-- row end -->
+					</ul>
+				</div>
+				{% endfor %}
+				<!-- card end -->
+			</div>
+		</div>
+
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}

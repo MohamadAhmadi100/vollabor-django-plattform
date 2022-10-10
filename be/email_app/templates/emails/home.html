@@ -1,0 +1,138 @@
+{% extends 'emails/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %} Categories {% endblock %}
+{% block main %}
+<div style="margin-left: 450px">
+
+{% if request.GET.filter == "home/category-email" %}
+<a href="?filter=home/category-email" class="btn btn-light" style="background-color: #a3a1a1"> Company </a>
+{% else %}
+<a href="?filter=home/category-email" class="btn btn-light"> Company </a>
+{% endif %}
+
+{% if request.GET.filter == "home/workshop" %}
+<a href="?filter=home/workshop" class="btn btn-light" style="background-color: #a3a1a1"> Workshop </a>
+{% else %}
+<a href="?filter=home/workshop" class="btn btn-light"> Workshop </a>
+{% endif %}
+
+{% if request.GET.filter == "home/institute" %}
+<a href="?filter=home/institute" class="btn btn-light" style="background-color: #a3a1a1"> Institute </a>
+{% else %}
+<a href="?filter=home/institute" class="btn btn-light"> Institute </a>
+{% endif %}
+
+{% if request.GET.filter == "home/category-template" %}
+<a href="?filter=home/category-template" class="btn btn-light" style="background-color: #a3a1a1"> Category template </a>
+{% else %}
+<a href="?filter=home/category-template" class="btn btn-light"> Category template </a>
+{% endif %}
+
+{% if request.GET.filter == "home/tags" %}
+<a href="?filter=home/tags" class="btn btn-light" style="background-color: #a3a1a1"> Tags </a>
+{% else %}
+<a href="?filter=home/tags" class="btn btn-light"> Tags </a>
+{% endif %}
+</div>
+<div class="col-md-12">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"></h3>
+        </div>
+		<div style="margin-left: 4px" class="category-section w-100 mt-5">
+			<div class="d-flex flex-wrap">
+				{% if request.GET.filter == "home/category-email" %}
+					{% for i in object_list %}
+					<div class="card mx-1 mb-5" style="width: 23.1rem; border-radius: 7px;">
+						<a href="{% url 'email:detail-category' i.pk %}">
+						<div class="card-body">
+							<h5 class="col-md-12 p-1 m-1 text-center text-white card-title alert alert-primary">{{i.company_name}}</h5>
+							<h5 class="col-md-12 p-1 m-1 text-center text-white card-title alert alert-success">Created:{{i.created}}</h5><br>
+							{% if i.emails_count %}
+							<h5 class="col-md-12 p-1 m-1 text-center text-white card-title alert alert-warning">Number of emails:<span class="badge badge-danger">{{i.emails_count}}</span></h5>
+							{%endif%}
+						</div></a>
+					</div>
+					{% endfor %}
+				{% endif %}
+
+				{% if request.GET.filter == "home/category-template" %}
+					{% for i in category_temp %}
+					<div class="card mx-1 mb-5" style="width: 13.1rem; border-radius: 7px;">
+						<a href="{% url 'email:detail-template-category' i.slug %}">
+						<div class="card-body">
+							<h5 class="card-title">{{i.title}}</h5>
+						</div></a>
+					</div>
+					{% endfor %}
+				{% endif %}
+
+				{% if request.GET.filter == "home/workshop" %}
+					{% for i in workshops %}
+					<div class="card mx-1 mb-5" style="width: 13.1rem; border-radius: 7px;">
+						<a href="{% url 'email:detail-workshop' i.pk %}">
+						<div class="card-body">
+							<h5 class="card-title">{{i.title}}</h5>
+						</div></a>
+					</div>
+					{% endfor %}
+				{% endif %}
+
+				{% if request.GET.filter == "home/institute" %}
+					{% for i in institutes %}
+					<div class="card mx-1 mb-5" style="width: 23.1rem; border-radius: 7px;">
+						<a href="{% url 'email:detail-institute' i.pk %}">
+						<div class="card-body">
+							<h5 class="col-md-12 p-1 m-1 text-center text-white card-title alert alert-primary">{{i.institute_name}}</h5><br>
+							<h5 class="col-md-12 p-1 m-1 text-center text-white card-title alert alert-success">Created:{{i.created}}</h5><br>
+							{% if i.emails_count %}
+							<h5 class="col-md-12 p-1 m-1 text-center text-white card-title alert alert-warning">Number of emails:<span class="badge badge-danger">{{i.emails_count}}</span></h5>
+							{%endif%}
+						</div></a>
+					</div>
+					{% endfor %}
+				{% endif %}
+
+
+				{% if request.GET.filter == "home/tags" %}
+
+				<a href="{%  url 'email:create-tags' %}" class="btn btn-primary">Create tag</a>
+					
+					<table class="table">
+						<thead class="thead-dark">
+						  <tr>
+							<th scope="col">Name</th>
+							<th scope="col">Description</th>
+							<th scope="col">Create date</th>
+							<th scope="col">Operation</th>
+						  </tr>
+						</thead>
+						<tbody>
+							{% for tag in tags %}
+								<tr>
+									<th scope="row">{{tag.name}}</th>
+									<td>{{tag.description}}</td>
+									<td>{{tag.created}}</td>
+									<td>
+										<a  href="{% url 'email:create-tags' %}?edit={{tag.pk}}"class="btn btn-sm btn-warning" href="">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+											<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+											<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+										  	</svg>
+										</a>
+										<a href="{% url 'email:create-tags' %}?delete={{tag.pk}}" class="btn btn-sm btn-danger" href=""><i class="fa fa-trash" aria-hidden="true"></i></a>
+									</td>
+								</tr>
+							{% endfor %}
+						<tboady>
+					</table>
+				{% endif %}
+
+
+			</div>
+		</div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,203 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+{% block content %}
+
+<header id="main-header" class="py-2 bg-color5 text-dark" xmlns="http://www.w3.org/1999/html">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-eye"></i> Review</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- REVIEW -->
+<section id="review-areas">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content" style="overflow-x:auto;">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    {% for project in project_items %}
+                                    {% if request.GET.project == project.pk|to_str %}
+                                    <a href="./" class="btn btn-{% if project|all_proposals_have_been_scored:user %}success{% else %}danger{% endif %}">
+                                    {% else %}
+                                    <a href="?project={{project.pk}}" class="btn btn-outline-{% if project|all_proposals_have_been_scored:user %}success{% else %}danger{% endif %}">
+                                    {% endif %}
+                                        {{project.title}}
+                                    </a>
+                                    {% endfor %}
+                                    {% if project_proposals %}
+                                        <hr>
+                                        {% for project_proposal in project_proposals %}
+                                            {% if request.GET.proposal == project_proposal.pk|to_str %}
+                                                <a href="?project={{request.GET.project}}"
+                                                   class="btn {% if project_proposal|has_been_scored:user%}btn-success{%else%}btn-danger{%endif%}">
+                                            {% else %}
+                                                <a href="?project={{request.GET.project}}&proposal={{project_proposal.pk}}"
+                                                   class="btn {% if project_proposal|has_been_scored:user%}btn-outline-success{%else%}btn-outline-danger{%endif%}">
+                                            {% endif %}
+                                                {{project_proposal.project_supervisor.supervisor.first_name}} {{project_proposal.project_supervisor.supervisor.last_name}}
+                                            </a>
+                                        {% endfor %}
+                                    {% elif project_proposals.count == 0 %}
+                                        <hr>
+                                        <h5>There is no proposal yet...</h5>
+                                    {% endif %}
+                                    {% if selected_project_proposal %}
+                                        <div class="row">
+                                            <div class="col-12 text-right">
+                                                <a href="{{selected_project_proposal.proposal_file.url}}" target="_blank" class="btn btn-info">View project Proposal</a>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-12">
+{% if selected_project_proposal|has_been_scored:user or not selected_project_proposal%}
+                <div class="wrapper wrapper-content animated fadeInUp">
+
+                    <div class="ibox">
+                        <div class="ibox-content" style="overflow-x:auto;">
+                            <div class="row">
+                                <div class="col-12">
+                                        {% for proposal_opinion in proposal_opinions %}
+                                        <div class="row my-2">
+                                            <div class="col-8">
+                                                <span>
+                                                    <span class="bold">{{forloop.counter}}.</span>
+                                                    {{ proposal_opinion.item }}
+                                                </span>
+                                            </div>
+                                            <div class="col-4 text-right">
+                                                <p  class="form-control w-25 ml-auto">
+                                                    {{proposal_opinion.score}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        {% endfor %}
+                                        {% if reviewer_comment.comment %}
+                                        <h3><span class="badge badge-success"><i class="fa fa-comment"></i> Comment</span></h3> {{reviewer_comment.comment|linebreaksbr}}
+                                        {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                {% else %}
+    <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content" style="overflow-x:auto;">
+                            <div class="row">
+                                <div class="col-12 text-right">
+                                    <span class="badge badge-info">Score from 0 to 10</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        {% if selected_project_proposal|has_been_scored:user %}
+                                        <input type="text" name="submit-proposal-opinion" class="d-none" value="1">
+                                        {% else %}
+                                        <input type="text" name="submit-new-proposal-opinion" class="d-none" value="1">
+                                        {% endif %}
+
+                                        {% for proposal_opinion in proposal_opinions %}
+                                        <div class="row my-2">
+                                            <div class="col-8">
+                                                <span>
+                                                    <span class="bold">{{forloop.counter}}.</span>
+                                                    {{ proposal_opinion.item }}
+                                                </span>
+                                            </div>
+                                            <div class="col-4 text-right">
+                                                <input type="number" name="item-{{proposal_opinion.pk}}" min="0" max="10" class="form-control w-25 ml-auto" required
+                                                value="{{proposal_opinion.score}}">
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        {% endfor %}
+                                        <div class="form-group">
+                                            <textarea name="reviewer-comment" rows="5" class="form-control" placeholder="Your comment here" required></textarea>
+                                        </div>
+                                        <button class="btn btn-outline-success" type="submit"><i class="fa fa-check"></i> Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+
+                </div>
+{% endif %}
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+{% endblock content %}
+
+{% block script %}
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $("[type='number']").keypress(function (evt) {
+        let entered_number = evt.originalEvent.key;
+        if (isNumeric(entered_number)) {
+            let current_value = $(evt.currentTarget).val();
+            let after_value = parseInt(current_value + entered_number)
+            if (after_value < 0 || after_value > 10) {
+                evt.preventDefault();
+            }
+        }
+        else {
+            evt.preventDefault();
+        }
+    });
+</script>
+{% endblock script %}

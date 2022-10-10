@@ -1,0 +1,269 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-info text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-user-tag"></i> Expert's approval panel</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<head>
+    <link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+</head>
+
+
+
+<section id="industry-director">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <!-- new -->
+        <div class="card-page">
+            <div class="row justify-content-center align-items-center">
+                        
+                <!-- 1 compose -->
+                {% if request.GET.filter == "accept_or_reject" %}
+                <div class="col green active">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white">New project without main supervisor</h4>
+                        <p class="number ">{{accept_reject_project_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink ">
+                    <a href="?filter=accept_or_reject" class="text-center text-white ">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white">New project without main supervisor</h4>
+                        <p class="number ">{{accept_reject_project_count}}</p>
+                    </a>
+                </div>                  
+                {% endif %}
+                        
+                <!-- 2 compose -->
+                {% if request.GET.filter == "accept_or_reject_main_supervisor_" %}
+                <div class="col green active">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white"> New project with main supervisor</h4>
+                        <p class="number ">{{accept_or_reject_main_supervisor_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink ">
+                    <a href="?filter=accept_or_reject_main_supervisor_" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white">New project with main supervisor</h4>
+                        <p class="number ">{{accept_or_reject_main_supervisor_count}}</p>
+                    </a>
+                </div>                  
+                {% endif %}
+                
+
+                <div class="content my-4 table-responsive">
+                    {% if request.GET.filter == "accept_or_reject" %}
+                    <table class="table table-dark table-striped table-dark table-hover p-table">
+                        <thead>
+                        <tr>
+                            <th>Project ID</th>
+                            <th>Title</th>
+                            <th>Fund</th>
+                            <th>Submission date</th>
+                            <th>Suggested start date</th>
+                            <th>Suggested end date</th>
+                            <th>Owner</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for project in object_list %}
+                                <tr>
+                                    <td class="p-name">
+                                        <p style="overflow: hidden; width: 150px">{{project.formclint.id_project}}</p>
+                                    </td>
+                                    <td class="p-name">
+                                        <p style="overflow: hidden; width: 200px">{{project.formclint.title|truncatechars:50}}</p>
+                                    </td>
+                                    <td class="p-name">
+                                        ${{project.formclint.fund}}
+                                    </td>
+                                    <td class="p-name">
+                                        {{project.formclint.created|date:'d-m-Y'}}
+                                    </td>
+                                    <td class="p-name">
+                                        {{project.formclint.start_date}}
+                                    </td>
+                                    <td class="p-name">
+                                        {{project.formclint.end_date}}
+                                    </td>
+                                    <td class="p-name">
+                                        {{project.formclint.user.get_full_name}}
+                                    </td>
+                                    <td class="p-name">
+                                        Pending for your decision
+                                    </td>
+                                     <td class="text-right">
+                                         <a href="
+                                         {% if project.formclint.main_supervisor %}
+                                            {% url 'industry:industry-expert-sepcial-mainsupervisor' project.pk %}
+                                         {% else %}
+                                            {% url 'industry:research-access-expert-detail' project.pk %} 
+                                         {% endif %}"
+                                         class="btn btn-primary btn-xs mb-1">
+                                             <i class="fa fa-eye"></i> View 
+                                         </a>
+                                     </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                  {% endif %}
+
+
+                  {% if request.GET.filter == "accept_or_reject_main_supervisor_" %}
+                    <table class="table table-dark table-striped table-dark table-hover p-table">
+                        <thead>
+                        <tr>
+                            <th>Project ID</th>
+                            <th>Title</th>
+                            <th>Fund</th>
+                            <th>Submission date</th>
+                            <th>Suggested start date</th>
+                            <th>Suggested end date</th>
+                            <th>Owner</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% if request.user.is_superuser or request.user.researchrole.director == True %}
+                                {% for project in superuser_accept_or_reject_main_supervisor %}
+                                    <tr>
+                                        <td class="p-name">
+                                            <p style="overflow: hidden; width: 150px">{{project.client_form.formclint.id_project}}
+                                        </td>
+                                        <td class="p-name">
+                                            <p style="overflow: hidden; width: 200px">{{project.client_form.formclint.title|truncatechars:50}}</p>
+                                        </td>
+                                        <td class="p-name">
+                                            ${{project.client_form.formclint.fund}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.client_form.formclint.created|date:"M-d-Y"}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.client_form.formclint.start_date}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.client_form.formclint.end_date}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.client_form.formclint.user.get_full_name}}
+                                        </td>
+                                    <td class="p-name">
+                                        Pending for your decision
+                                    </td>
+                                         <td class="text-right">
+                                             <a href="{% url 'industry:research-access-expert-detail-main' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                 <i class="fa fa-eye"></i> View
+                                             </a>
+                                         </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                {% for project in accept_or_reject_main_supervisor %}
+                                    <tr>
+                                        <td class="p-name">
+                                            <p style="overflow: hidden; width: 150px">{{project.client_form.formclint.id_project}}
+                                        </td>
+                                        <td class="p-name">
+                                            <p style="overflow: hidden; width: 200px">{{project.client_form.formclint.title|truncatechars:50}}</p>
+                                        </td>
+                                        <td class="p-name">
+                                            ${{project.client_form.formclint.fund}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.client_form.formclint.created|date:"M-d-Y"}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.client_form.formclint.start_date}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.client_form.formclint.end_date}}
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.client_form.formclint.user.get_full_name}}
+                                        </td>
+                                         <td class="text-right">
+                                             <a href="{% url 'industry:research-access-expert-detail-main' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                 <i class="fa fa-eye"></i> View
+                                             </a>
+                                         </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                  {% endif %}
+                </div>
+
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selectedItem = $(this).val();
+        let itemClasses = {
+            "Golden": "bg-warning text-dark",
+            "Silver": "bg-secondary text-white",
+            "Bronze": "bg-danger text-white",
+            "Normal": "bg-dark text-white",
+        };
+        $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+        $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+    });
+</script>
+
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $("[name='project-value']").keypress(function (evt) {
+        let entered_value = evt.originalEvent.key;
+        let current_value = $(evt.currentTarget).val();
+        if (isNumeric(entered_value) || (entered_value === '.' && !(current_value.includes('.')))) {
+            // let input be entered
+        }
+        else {
+            evt.preventDefault();
+        }
+    });
+</script>
+{% endblock script %}

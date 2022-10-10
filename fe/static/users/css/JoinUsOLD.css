@@ -1,0 +1,262 @@
+@import url('https://fonts.googleapis.com/css?family=Mukta');
+
+button{
+  background-color: transparent;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+input{
+  background-color: transparent;
+  padding: 0;
+  border: 0;
+  outline: 0;
+}
+
+
+
+@keyframes bounceLeft {
+  0% {transform: translate3d(100%, -50%, 0);}
+
+  50% {transform: translate3d(-30px, -50%, 0);}
+
+  100%{transform: translate3d(0, -50%, 0);}
+}
+
+/**
+ * Bounce to the left side
+ */
+@keyframes bounceRight{
+	0% {transform: translate3d(0, -50%, 0);}
+	50% {transform: translate3d(calc(100% + 30px), -50%, 0);}
+	100% {transform: translate3d(100%, -50%, 0);}
+}
+/**
+ * Show Sign Up form
+ */
+@keyframes showSignUp{
+  100%{opacity: 1;visibility: visible; transform: translate3d(0, 0, 0);}
+}
+
+  
+ .animateRight{
+	animation-name: bounceRight;
+	animation-duration: 2s; 
+	animation-fill-mode: forwards;
+	
+
+ }	
+
+.animateLeft{
+	animation-name: bounceLeft;
+	animation-duration: 2s; 
+	 animation-fill-mode: forwards;
+
+ }	 
+  
+.changeform{
+	animation-name: showSignUp;
+	animation-duration: 2s; 
+	animation-fill-mode: forwards;
+
+
+ }	 
+  
+  
+  
+
+.user{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 200%;
+  background: #ccc;
+  /*background-size: cover;*/
+  padding-top:0px;
+  margin:0px 0px;
+  padding-bottom:200px;
+}
+.user_options-container{
+    position: relative;
+    width: 80%;
+    
+}
+.user_options-text{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background-color: #4a4a46;
+    border-radius: 5px;
+}
+.user_options-registered,
+.user_options-unregistered{
+  width: 50%;
+  padding: 75px 45px;
+  color: #fff;
+  font-weight:300;
+}
+.user_registered-title,
+.user_unregistered-title{
+  margin-bottom: 15px;
+  font-size: 1.66rem;
+  line-height: 1em;
+}
+.user_company-text,
+.user_individual-text{
+  line-height: 1.4em;
+  color:#ccc;
+}
+.user_registered-login,
+.user_individual-signup{
+  background-color: transparent;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  margin-top: 30px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 10px 30px;
+  color: #fff;
+  /*text-transform: uppercase;*/
+  line-height: 1em;
+  letter-spacing: .2rem;
+  transition: background-color .2s ease-in-out, color .2s ease-in-out;
+  
+}
+.user_registered-login:hover,
+.user_individual-signup:hover{
+    color: rgba(#222222, .85);
+    background-color: #ccc;
+
+}
+
+/*---------Forms ------------*/
+.user_options-forms{
+  position: absolute;
+  top: 50%;
+  left: 30px;
+  width: calc(50% - 30px);
+  min-height: 650px;
+  height:80%;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 2px 0 15px rgba(#000, .25);
+  /*overflow: hidden;*/
+  transform: translate3d(100%, -50%, 0);
+  transition: transform .4s ease-in-out;
+  padding:2px;
+  margin-bottom:20px;
+}
+.user_forms-individual{
+    transition: opacity .4s ease-in-out, visibility .4s ease-in-out;
+}	
+
+.forms_title{
+    margin-bottom: 45px;
+    font-size: 1.5rem;
+    font-weight: $ff-medium;
+    line-height: 1em;
+    /*text-transform: uppercase;*/
+    color: $salmon;
+    letter-spacing: .1rem;
+}
+
+.forms_field .forms_field:not(:last-of-type){
+        margin-bottom: 20px;
+}
+
+.forms_fieldset input[type="text"], .forms_fieldset input[type="email"], .forms_fieldset select{
+    width: 100%;
+    display: block;
+    margin:5px 0;
+    padding: 15px;
+    border: 1px solid #b5b5b5;
+    outline: none;
+}
+
+.forms_fieldset option{
+  color: green;
+}
+
+
+
+.forms_field-input2{
+      width: 100%;
+      border-bottom: 1px solid #ccc;
+      padding: 6px 20px 6px 6px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 300;
+      color: darken(#ccc, 30%);
+      letter-spacing: .1rem;
+      transition: border-color .2s ease-in-out;
+}
+.forms_field-input:focus{
+        border-color: darken(#ccc, 30%);
+}
+
+.forms_buttons{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 35px;
+}
+
+.forms_buttons-forgot{
+        font-family: 'Montserrat', sans-serif;
+        letter-spacing: .1rem;
+        color: #ccc;
+        text-decoration: underline;
+        transition: color .2s ease-in-out;
+}
+.forms_buttons-forgot:hover{
+          color: darken(#ccc, 10%);
+}
+
+.forms_buttons-action{
+	background-color: #e8716d;
+	border-radius: 3px;
+	padding: 10px 35px;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    color: #fff;
+    /*text-transform: uppercase;*/
+    letter-spacing: .1rem;
+    transition: background-color .2s ease-in-out;
+	width:100%;
+}
+
+.forms_buttons-action:hover{
+   background-color: darken(#e8716d, 10%);
+}
+
+.user_forms-individual,
+.user_forms-corporation{
+position: absolute;
+top: 70px;
+left: 40px;
+width: calc(100% - 80px);
+/*opacity: 0;*/
+visibility: hidden;
+/*transition: opacity .4s ease-in-out, visibility .4s ease-in-out, transform .5s ease-in-out;*/
+}
+
+.user_forms-corporation{
+   /* transform: translate3d(120px, 0, 0);*/
+}
+.forms_buttons{
+      justify-content: flex-end;
+}
+
+.user_forms-individual{
+    /*transform: translate3d(0, 0, 0);*/
+    opacity: 1;
+    visibility: visible;
+}
+
+
+
+    

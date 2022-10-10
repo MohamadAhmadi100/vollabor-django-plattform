@@ -1,0 +1,51 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+{% block content %}
+
+
+    <div class="w-100 d-md-flex justify-content-md-center">
+        <table class="table table-hover table-dark mt-5 ws-notif-table">
+            <thead>
+                <tr>
+                    <th class="col-md-1"></th>
+                    <th class="col-md-5">Title</th>
+                    <th class="col-md-3">Price</th>
+                    <th class="col-md-3">Handle</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for workshop in workshops%}
+                <tr>
+                    <th class="col-md-1">{{i}}</th>
+                    <td class="col-md-5">{{workshop.title}}</td>
+                    <td class="col-md-3">{{workshop.price}}</td>
+                    <td><a href="{% url 'view-workshop' workshop.id %}">view</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+{% endblock content %}

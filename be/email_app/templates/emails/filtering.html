@@ -1,0 +1,130 @@
+{% if emails%}
+        {% if position == 'company' %}
+                {%for email in emails %}
+
+                        <div class="row pl-5 mx-auto table-info my-2 py-2">
+                            <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 form-check text-wrap word-wrap">
+                                <input class="form-check-input emails"
+                                    id="{{ email.agent_email_address }}"
+                                    name="{{ category.company_name }}"
+                                    type="checkbox"/>
+                                <label class="form-check-label text-wrap"
+                                    style="font-size:0.9em"
+                                    for="{{ email.agent_email_address }}">
+                                    {{ email.agent_email_address }}
+                                </label>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                <a data-bs-toggle="modal"
+                                href="#InfoModal{{ email.pk }}"
+                                style="float: right;"
+                                class="d-inline-block mx-3 info"><i class="fa fa-question-circle"></i></a>
+                            </div>
+                        </div>
+                        <div class="modal fade"
+                            id="InfoModal{{ email.pk }}"
+                            tabindex="-1"
+                            aria-labelledby="InfoModalLabel"
+                            aria-hidden="true"
+                            role="dialog">
+                            <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header modal-colored-header bg-secondary text-white">
+                                        <h5 class="modal-title text-white" id="InfoModalLabel">
+                                            {{ email }}
+                                        </h5>
+                                        <button type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">
+                                                Company agent�s first name: <span class="text-secondary">{{ email.company_agent_first_name }}</span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                Company agent�s surname: <span class="text-secondary">{{ email.company_agent_surname }}</span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                agent�s position: <span class="text-secondary">{{ email.agent_position }}</span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                agent�s academic degree: <span class="text-secondary">{{ email.agent_academic_degree }}</span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                gender: <span class="text-secondary">{{ email.gender }}</span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                agent�s email address: <span class="text-secondary">{{ email.agent_email_address }}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                {%endfor%}
+        {%else%}
+                {%for email in emails%}
+                        <div  e="{{email.department}}" class=" email_div row pl-5 mx-auto table-info my-1 py-2">
+                            <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 form-check text-wrap word-wrap">
+                                <input class="form-check-input emails"
+                                    id="{{ email.email_address }}"
+                                    name="{{ cat.institute_name }}"
+                                    type="checkbox"/>
+                                <label class="form-check-label text-wrap"
+                                    style="font-size:0.9em"
+                                    for="{{ email.email_address }}">
+                                    {{ email.email_address }}
+                                </label>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                <a data-bs-toggle="modal"
+                                href="#InfoModal{{ email.pk }}"
+                                style="float: right;"
+                                class="d-inline-block mx-3 info"><i class="fa fa-question-circle"></i></a>
+                            </div>
+                        </div>
+                        <div class="modal fade"
+                            id="InfoModal{{ email.pk }}"
+                            tabindex="-1"
+                            aria-labelledby="InfoModalLabel"
+                            aria-hidden="true"
+                            role="dialog">
+                            <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header modal-colored-header bg-secondary text-white">
+                                        <h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+                                        <button type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">
+                                                Full name: <span class="text-secondary">{{ i.user.get_full_name }}</span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                Position: <span class="text-secondary">{{ i.user.memberprofile.position }}</span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                Degree: <span class="text-secondary">{{ i.user.memberprofile.degree }}</span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                Gender: <span class="text-secondary">{{ i.user.memberprofile.gender }}</span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                Email address: <span class="text-secondary">{{ i.user.email }}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                {%endfor%}
+
+        {%endif%}
+{%endif%}

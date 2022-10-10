@@ -1,0 +1,265 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block css %}
+   
+    <link rel="stylesheet" href="{% static 'workshop_view/workshop_detail/css/workshop_view.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop_view/workshop_detail/css/font-awesome.min.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div id="single_project" style="padding-top:50px">
+    <div class="back-dark">
+        <div class="row p-5 d-flex flex-md-row flex-column-reverse">
+            <div class="col-md-7">
+                <div class="back-link d-flex flex-md-row flex-column-reverse justify-content-start align-items-center   mt-3 mb-5">
+                    <div class="d-flex align-items-center ">
+                        <a href="{% url 'home-page' %}" class="">Home</a>
+                        <i class="fa fa-angle-right fa-2x mx-2"></i>
+                        <a href="{% url 'list-for-all' %}" class="">Workshop page</a>
+                        <i class="fa fa-angle-right fa-2x mx-2"></i>
+                        <a href="" class="active">Workshop detail </a>
+                    </div>
+                </div>
+                <div class="d-flex flex-column justify-content-start  mt-3">
+                    <h6 class=" text-white" style="text-align: justify ">Workshop ID:
+                        {{workshop.unique_id}}
+                    </h6>
+                    <h5 class="fw-bold" style="text-align: justify">
+                        {{workshop.title}}
+                    </h5>
+                    <h6 class=" mt-3 text-warning fw-bold">{{workshop.main_field}} <span class="text-white mx-2">/</span>
+                    {% if workshop.add_field == '' %}
+                        {{workshop.sub_field}}
+                    {% else %}
+                        {{workshop.add_field}}
+                    {% endif %}
+                    </h6>
+                    <p class="text-white mt-3 mr-3">
+                        {{workshop.description|truncatewords:40}}</p>
+
+                    <div class="author text-white mt-3">
+                        <span class="fw-bold"></span>
+                        {% for speaker in speakers %}
+                            <div class="fw-bold">{{speaker}}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="time mt-3 d-flex flex-column flex-md-row">
+                        <span class="me-3 mt-3 mt-md-0">
+                            <i class="fa fa-bookmark mx-1"></i>
+                            <span class="fw-bold text-white">Status :</span>
+                            <span class="fw-bold text-white">{{workshop.status}}</span>
+                        </span>
+
+                        <span class="me-3 mt-3 mt-md-0">
+                            <i class="fa fa-language mx-1"></i>
+                            <span class="fw-bold text-white">Language :</span>
+                            <span class="fw-bold text-white">{{workshop.language}}</span>
+                        </span>
+
+                        <span class="me-3 mt-3 mt-md-0">
+                            <i class="fa fa-users mx-1"></i>
+                            <span class="fw-bold text-white">Students : </span>
+                            <span class="fw-bold text-white">{{registrants}}</span>
+                        </span>
+
+                    </div>
+                    <div class="btn d-flex align-items-center">
+                        <a href="{% url 'is-login' workshop.id %}" class="buy   mx-2 d-flex align-items-center justify-content-center">
+                                    Buy
+                                    <img src="{% static 'workshop_view/img/icons_buy.svg' %}" alt=""></a>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4  d-md-block">
+                <div class="back-white">
+                    <div class="img" style="border-radius: 12px;">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="side_details">
+        <div class="img mb-3">
+            <img class="img-fluid" src="{{workshop.image.url}}" alt="">
+        </div>
+        <div class="desc p-3">
+            <div class="price d-flex justify-content-between align-items-center">
+                <h3 class="fw-bold ">{{workshop.price}}$</h3>
+<!--                            <h4 class="fw-bold"><del class="">99.99$</del></h4>-->
+<!--                            <h3 class="fw-bold text-warning">99.99$</h3>-->
+            </div>
+            <div class="but my-3">
+                <a href="{% url 'is-login' workshop.id %}" class="btn">Buy Now</a>
+            </div>
+            <hr>
+            <h6 class="fw-bold">This workshop includes:</h6>
+            <div class="detail mt-3">
+                <p>
+                    <i class="fa fa-tv mx-2"></i>
+                    {{workshop.duration}} hours
+                </p>
+                <p>
+                    <i class="fa fa-calendar-check-o mx-2"></i>
+                    {{workshop.date}}
+                </p>
+                
+                <p>
+                    <i class="fa fa-cloud-download mx-2"></i>
+                    Downloadable resources
+                </p>
+                <p>
+                    <i class="fa fa-map-marker  mx-2"></i>
+                    {{workshop.address}}
+                </p>
+                <p>
+                    <i class="fa fa-trophy mx-2"></i>
+                    Certificate of completion
+                </p>
+            </div>
+            <hr>
+            <div class="more">
+                <a href="#" class="btn video">
+                    <i class="fa fa-play"></i>
+                    Video
+                </a>
+                <a href="#" class="btn forum">
+                    <i class="fa fa-comment"></i>
+                    Forum
+                </a>
+            </div>
+            <hr>
+            <!--
+            <div class="time_table">
+                <h6 class="fw-bold d-flex justify-content-between align-items-center">
+                    <span>Time Table :</span>
+                    <select class="form-select w-50" aria-label="Default select example">
+                        <option selected>select Time zone</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </h6>
+                <table class="table table-hover my-4">
+                    <thead>
+                    <tr>
+                        <th scope="col">date</th>
+                        <th scope="col">title</th>
+                        <th scope="col">start</th>
+                        <th scope="col">end</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">12/jan/2021</th>
+                        <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis doloribus eum ex
+                            exercitationem
+                        </td>
+                        <td>14 PM</td>
+                        <td>16 PM</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">12/jan/2021</th>
+                        <td>Lorem ipsum
+                        </td>
+                        <td>14 PM</td>
+                        <td>16 PM</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">12/jan/2021</th>
+                        <td>Lorem ipsum sadada
+                        </td>
+                        <td>14 PM</td>
+                        <td>16 PM</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            -->
+        </div>
+    </div>
+    <div class="row single-view">
+        <div class="col-md-8">
+            <div class="container-fluid p-5">
+                <div class="description">
+                    <div class="time_table   ">
+                        <h6 class="fw-bold d-flex justify-content-between align-items-center">
+                            <span>Timetable :</span>
+                            <!--
+                            <select class="form-select w-50" aria-label="Default select example">
+                                <option selected>select Time zone</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                            -->
+                        </h6>
+                        <table class="table table-hover my-4">
+                            <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Start time</th>
+                                <th scope="col">End time</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for time in time_table %}
+                            <tr>
+                                <th scope="row">{{time.2}}</th>
+                                <td>{{time.1}}</td>
+                                <td>{{time.3}}</td>
+                                <td>{{time.4}}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                    <div class="req">
+                        <h5 class="fw-bold">Requirements :</h5>
+                        <p style="text-align: justify">
+                            {{workshop.skills}}
+                        </p>
+                    </div>
+                    <hr>
+                    <!--
+                    <div class="learn">
+                        <h5 class="fw-bold">What you'll learn :</h5>
+                        <p style="text-align: justify">
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. A accusantium ad assumenda, atque
+                            corporis
+                            cumque dolor, dolores eum illo libero magni maxime modi necessitatibus numquam omnis quo, ut
+                            veniam
+                            voluptates?
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. A accusantium ad assumenda, atque
+                            corporis
+                            cumque dolor, dolores eum illo libero magni maxime modi necessitatibus numquam omnis quo, ut
+                            veniam
+                            voluptates?
+                        </p>
+                    </div>
+                    -->
+                    <hr>
+                    <div class="desc">
+                        <h5 class="fw-bold"> Description :</h5>
+                        <p style="text-align: justify">
+                        <p>
+                            {{workshop.description}}
+                        </p>
+                    </div>
+                     
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="{% static 'workshop_view/workshop_detail/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'workshop_view/workshop_detail/js/main.js' %}"></script>
+
+{% endblock %}

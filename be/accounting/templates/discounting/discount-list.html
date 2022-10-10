@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{%load static %}
+{% block title %}Discounts list{% endblock %}
+{% block main %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div id="ajax_message" class="container">
+  {% if messages %}
+      {% for message in messages %}
+              {% if message.tags == 'success' %}
+                  <div class="alert alert-success"> {{ message }}</div>
+              {% else %}
+                  <div class="alert alert-danger"> {{ message }}</div>
+              {%endif %}
+      {% endfor %}
+  {% endif %}
+</div>
+<div class="m-auto col-md-12">
+
+  <table id="discount-table" class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+          <th>Discount|Name|Amount</th>
+          <th>General</th>
+          <th>Project</th>
+          <th>Workshop</th>
+          <th>Badge request</th>
+          <th>Supervisor request</th>
+          <th>Workshop request</th>
+        </tr>
+    </thead>
+    <tbody>
+      {%for d in discounts%}
+      <tr class="text-center">
+        <td>{{d.discount_code}} | {{d.name}} | {{d.amount}}{%if d.use_status == 'percent'%}%{%else%}${%endif%}</td>
+          {%if d.is_all%}
+            <td><i class="fa-solid fa-check"></i> </td>
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i></td>
+          {%endif%}
+          {%if d.is_all_project%}
+            <td><i class="fa-solid fa-check"></i> </td>
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i></td>
+          {%endif%}
+          {%if d.is_all_workshop%}
+            <td><i class="fa-solid fa-check"></i> </td>
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i></td>
+          {%endif%}
+          {%if d.is_all_badge%}
+            <td><i class="fa-solid fa-check"></i> </td>
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i></td>
+          {%endif%}
+          {%if d.is_all_supervisorrequests%}
+            <td><i class="fa-solid fa-check"></i> </td>
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i></td>
+          {%endif%}
+          {%if d.is_all_workshoprequest%}
+            <td><i class="fa-solid fa-check"></i> 
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i>
+          {%endif%}
+          <div style="display: flex;float: right;">
+            <button class="btn btn-sm btn-warning " id="m_{{d.id}}" data-toggle="modal" data-target="#show_more_{{d.id}}"><i class="fa-solid fa-circle-info"></i></button>        
+        
+            <form method="POST">
+              {% csrf_token %}
+              <input value="{{d.id}}" name="object_id" type="hidden">
+              <button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-ban"></i></button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {%endfor%}
+    </tbody>
+  </table>
+
+{% for d in discounts%}
+          <!-- Modal -->
+          <div id="show_more_{{d.id}}" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-lg modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Show details</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div style="height: auto;width: 100%;" class="modal-body">
+                  <table class="table">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col">Expire date</th>
+                        <th scope="col">Usable number</th>
+                        <th scope="col">Number used</th>
+                        <th scope="col">Projects</th>
+                        <th scope="col">Workshop</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                          <td>{{d.exp_date}}</td>
+                          <td>{{d.max_uses}}</td>
+                          <td>{{d.uses_count}}</td>
+                          <td><ul>
+                            {%for dp in discountproject%}
+                              {%if dp.dis == d.id %}
+                                {%for project in dp.plist%}
+                                    {% comment %} {%for p in  projects%}                                    {% endcomment %}
+                                      {% comment %} {%if p.id ==  project %} {% endcomment %}
+                                        <li>{{project}}</li>
+                                      {% comment %} {%endif%} {% endcomment %}
+                                    {% comment %} {%endfor%} {% endcomment %}
+                                {%endfor%}
+                              {%endif%}
+                            {%endfor%}
+                          </ul></td>
+                          <td><ul>
+                            {%for dp in discountworkshop%}
+                              {%if dp.dis == d.id %}
+                                {%for workshop in dp.plist%}
+                                  {% comment %} {%for p in  projects%}                                    {% endcomment %}
+                                    {% comment %} {%if p.id ==  project %} {% endcomment %}
+                                      <li>{{workshop}}</li>
+                                    {% comment %} {%endif%} {% endcomment %}
+                                  {% comment %} {%endfor%} {% endcomment %}
+                                {%endfor%}
+                              {%endif%}
+                            {%endfor%}
+                          </ul></td>
+                        </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+{%endfor%}
+
+
+
+  
+</div>
+
+<script>
+$(document).ready(function() {
+  $('#discount-table').DataTable();
+
+
+})
+</script>
+{% endblock %}

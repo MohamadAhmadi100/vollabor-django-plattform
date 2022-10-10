@@ -1,0 +1,138 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1> <i class="fa fa-bell"></i> Notification</h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+    <div class="row">
+            {% if page_notification %}
+            <div class="col-md-3 mt-3">
+                <div class="wrapper wrapper-content project-manager">
+                    <h4>Filter</h4>
+                    <ul class="nav nav-pills flex-column">
+                        {% for filter in filters %}
+                        {% if filter == request.GET.filter %}
+                        <li class="nav-item filter-item active bg-light">
+                        {% else %}
+                        <li class="nav-item filter-item">
+                        {% endif %}
+                            <a class="nav-link text-dark" href="?filter={{filter}}">
+                                {{ filter }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                <hr>
+                <div class="wrapper wrapper-content project-manager">
+                    <div class="row">
+                        <div class="col">
+                            <form method="post">
+                                {%csrf_token%}
+                                <input class="d-none" name="mark-seen" value="1">
+                                <button class="btn btn-primary mb-1" type="submit"><i class="fa fa-check"></i> Mark All As Seen</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <form method="post">
+                                {%csrf_token%}
+                                <input class="d-none" name="delete-all" value="1">
+                                <button class="btn btn-danger" type="submit"><i class="fa fa-trash"></i> Delete All</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9 mt-3 mb-5">
+                {% for notification in page_notification %}
+                {% if not notification.seen %}
+                    <form method="post" class="notif-form-{{notification.pk}}">
+                        {% csrf_token %}
+                        <!--<div class="ibox-content notif-box p-4 mb-4" onclick="$('.notif-form-{{notification.pk}}').submit();">-->
+                        <div class="ibox-content notif-box p-4 mb-4">
+                            <input type="text" name="notif-page-pk" value="{{notification.pk}}" class="d-none">
+                            <div CLASS="text-right notif-new">
+                                <span class="bg-success p-2 text-light">NEW</span>
+                            </div>
+                            <input type="hidden" class="notif_seen"  id="n{{notification.id}}" value="{{notification.id}}">
+                            <span class="bg-danger text-light p-2 rounded-circle notif-bell"><i class="fa fa-bell"></i></span>
+                            <span class="data"><b>{{notification.title}}:</b>
+                                {{notification.description|safe}}
+                            </span>
+                            <span class="notif-date">{{ notification.date }}</span>
+                        </div>
+                    </form>
+                {% else %}
+                    <!--<a href="{{notification.link}}" class="ibox-content notif-box p-4 mb-4 d-block">
+                        <span class="bg-danger text-light p-2 rounded-circle notif-bell"><i class="fa fa-bell"></i></span>
+                        <span><b>{{notification.title}}:</b>
+                            {{notification.description|safe}}
+                        </span>
+                        <span class="notif-date"><br>{{ notification.date }}</span>
+                    </a>-->
+                    <form class="notif-form-{{notification.pk}}">
+                        <div class="ibox-content notif-box p-4 mb-4" >
+                            <span class="bg-danger text-light p-2 rounded-circle notif-bell"><i class="fa fa-bell"></i></span>
+                            <span class="data"><b>{{notification.title}}:</b>
+                                {{notification.description|safe}}
+                            </span>
+                            <span class="notif-date">{{ notification.date }}</span>
+                        </div>
+                    </form>
+                {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+        <p class="m-5 display-4">There is nothing to show.</p>
+        {% endif %}
+        </div>
+    </div>
+</section>
+
+
+
+
+<script>
+    
+$(document).ready(function(){
+    
+   var notifs = document.querySelectorAll('.notif_seen'); 
+   var notif_arr=[];
+    for(var i=0; i<notifs.length;i++){
+        var notifID = notifs[i].id;
+        notif_arr.push(notifID);
+    }
+    jQuery.ajax({
+		type: "POST",
+		url: "",
+		data: { "notification_IDs":notif_arr},
+		success: function(output){
+			
+		}, error: function (output){
+							
+		}, complete: function(output){
+				
+		}
+	});
+    
+    
+});
+    
+    
+    
+</script>
+{% endblock content %}

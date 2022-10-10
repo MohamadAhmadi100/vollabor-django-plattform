@@ -1,0 +1,75 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+<!-- HEADER SECTION -->
+<header id="goals-header-section">
+    <div class="dark-overlay">
+        <div class="goals-header-inner">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">{% trans "Our Goals" %}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="goals-section" class="bg-light text-dark py-5 px-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{% static 'ivc_website/img/goals.png' %}" alt="" class="img-fluid mb-3">
+            </div>
+            {% if LANGUAGE_CODE == 'en-us' %}
+            <div class="col-md-6">
+            {% else %}
+            <div class="col-md-6 text-right">
+            {% endif %}
+                <div class="d-block mb-3">
+                </div>
+                {% if LANGUAGE_CODE == 'en-us' %}
+                <div class="d-block">
+                {% else %}
+                <div class="d-block" dir="rtl">
+                {% endif %}
+                <div class="d-block">
+                    <p>
+                        {% trans "1) Developing well-organized networks to connect academic researchers and industry." %}
+                    </p>
+                    <p>
+                        {% trans "2) Identifying motivated and talented researchers in various fields of science and technology and organizing them in different branches of knowledge enterprises" %}
+                    </p>
+                    <p>
+                        {% trans "3) Providing financial support for selective well-defined industrial projects around the world" %}
+                    </p>
+                    <p>
+                        {% trans "4) Educating and organizing new members of the network in the corresponding specialized groups" %}
+                    </p>
+                    <p>
+                        {% trans "5) Implementation of professional management on the cooperation of the network members and mentors in carrying out scientific and industrial project " %}
+                    </p>
+                    <p>
+                        {% trans "6) Providing an efficient platform for effective collaboration of the researchers and professors around the world" %}
+                    </p>
+                    <p>
+                        {% trans "7) High standard quality assurance of scientific and industrial projects" %}
+                    </p>
+                    <p>
+                        {% trans "8) Production of scientific articles resulting from conducting the projects" %}
+                    </p>
+                    <p>
+                        {% trans "9) Assuring direct advantage of the members from the financial and legal benefits of the projects" %}
+                    </p>
+                    <p>
+                        {% trans "10) Holding specialized workshops and scientific courses by qualified instructors for the members of the network all around the world" %}
+                    </p>
+                    <p>
+                        {% trans "11) Direct monitoring and support by a specialized professional group on the performance and proper implementation of all the network members’ rights" %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

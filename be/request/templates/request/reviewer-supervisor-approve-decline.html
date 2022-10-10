@@ -1,0 +1,128 @@
+{% extends "request/base.html" %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row mt-5 pt-5">
+        <div class="col-12">
+            <h3 class="text-secondary">Supervisor's request</h3>
+           
+            
+        </div>
+        
+    </div>
+    <hr class="mb-3">
+    <div class="">
+        <div class="row" id="expert-box">
+            <div class="col-3"><h6>Applicant:</h6></div>
+            <div class="col-9"><h6>{{obj_review.supervisor.user.get_full_name}}</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Email:</h6></div>
+            <div class="col-9"><h6>{{obj_review.supervisor.user.email}}</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Submission date:</h6></div>
+            <div class="col-9"><h6>{{obj_review.supervisor.created.date}}</h6></div>
+        </div>
+
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Latest resume:</h6></div>
+            <div class="col-9"><a class="badge badge-primary" href="{{obj_review.supervisor.latest_resume.url}}">Download</a></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>State of purpose(SOP):</h6></div>
+           
+        </div>
+        <div class="row" id="view-box">
+           
+            <div class="col-9"><textarea class="form-control" disabled rows="3">{{obj_review.supervisor.state_of_purpose}}</textarea></div>
+        </div>
+    </div>
+        <div class="mt-3">
+            <div class="">
+                <button type="button" class="btn btn-primary" value="declined" data-bs-toggle="modal" data-bs-target="#accept">Approve</button>
+                <button type="button" class="btn btn-danger"  data-bs-toggle="modal" data-bs-target="#reject">Decline</button>
+            </div>
+        </div>
+    
+    <!-- accepted -->
+    <div class="modal fade text-black" style="color:black" id="accept" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" id="appform">{% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <input type="hidden" name="approve" id="id_approve" value="approve">
+                        <h6>Are you sure to approve the evaluation request?</h6>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="appClsBtn" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button type="button" id="appBtn" class="btn btn-success" >Yes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- rejected -->
+    <div class="modal fade text-black" style="color:black" id="reject" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" id="decform">{% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <label>Rejection reason<span style="color:red">*</span></label>
+                        <textarea class="w-100 form-control" name="reject_reason" id="id_reject_reason" oninput="ClearErr('id_reject_reason')" style="width: 350px;"></textarea>
+                        <input type="hidden" name="decline" id="id_decline" value="reject">
+                        <div id="id_reject_reason_error" style="color:red"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="clsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" id="decBtn" class="btn btn-danger" >Decline</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+</div>
+
+
+<script>
+    
+ $(document).ready(function() {
+     
+    document.getElementById("decBtn").addEventListener("click",function(){
+              
+        var declineReason=document.getElementById("id_reject_reason").value;
+        if(declineReason.length==0){
+            document.getElementById("id_reject_reason_error").innerHTML="Error: please enter the rejection reason."
+        }else{
+            document.getElementById('decform').submit();
+            document.getElementById('decBtn').disabled = true;
+             document.getElementById('clsBtn').disabled = true;
+        }
+          
+    }); 
+     
+    document.getElementById("appBtn").addEventListener("click",function(){
+        document.getElementById('appform').submit();
+        document.getElementById('appBtn').disabled = true; 
+        document.getElementById('appClsBtn').disabled = true;
+         
+    });
+     
+     
+     
+ });
+ 
+ 
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+}
+    
+</script>
+
+{% endblock %}

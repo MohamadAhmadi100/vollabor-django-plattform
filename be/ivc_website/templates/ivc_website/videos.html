@@ -1,0 +1,379 @@
+{% extends 'ivc_website/base.html' %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'video/css/normalize.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'video/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'video/css/font-awesome.min.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<main id="video_main" class="py-5">
+    <!--<div id="carouselExampleIndicators" class="banner_top carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active ">
+                <div class="row">
+                    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h2 class="text-white ">
+                            TECVICO is inviting the scientists to
+                            hold/participate in workshops.
+                        </h2>
+                        <a href="#" class="custom_btn  mt-3  text-white">Join</a>
+                    </div>
+                    <div class="col-md-6 position-relative">
+                        <img class="img-fluid" src="img/banner_workshop.png" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item  ">
+                <div class="row">
+                    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h2 class="text-white fw-bold">
+                            TECVICO is inviting the scientists to
+                            hold/participate in workshops.
+                        </h2>
+                        <a href="#" class="custom_btn  mt-3  text-white">Join</a>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="img/banner_workshop.png" alt="">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>-->
+    <div class="container-fluid p-5">
+        
+        <div class="sm_sidebar d-block d-md-none mt-3">
+            <button class="btn btn-outline-primary filter_right">
+                <i class="fa fa-filter"></i>
+                <span>Filter</span>
+            </button>
+        </div>
+
+        <section class="top_video my-5">
+            <div class="row">
+                <!--0-->
+                <div class=" col-xl-6 col-lg-6 col-md-12 col-sm-12 vb">
+                    <a href="{% url 'video-detail' top_video.0.pk %}">
+                    <div class="video_full" style="background-image:url('{{top_video.0.image.url}}');" >
+                        <div class="video_shadow">
+                            <div class="bag_top">
+                                <img src="{% static 'video/img/hot.png' %}" alt="">
+                                <span>Hot</span>
+                            </div>
+                            <div class="information">
+                                <div class="profile">
+                                    <img src="{% static 'video/img/peoples.svg' %}" alt="">
+                                    <span>tecvico</span>
+                                </div>
+                                <div class="video">
+                                    <img src="{% static 'video/img/svg/play.svg' %}" alt="">
+                                    <p>
+                                        {{top_video.0.title}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+               
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <div class="row smalls">
+                         <!--1-->
+                        <div class="col-md-6">
+                            <a href="{% url 'video-detail' top_video.1.pk %}">
+                            <div class="video_small" style="background-image:url('{{top_video.1.image.url}}');">
+                                <div class="video_shadow">
+                                    <div class="bag_top">
+                                        <img src="{% static 'video/img/hot.png' %}" alt="">
+                                        <span>Hot</span>
+                                    </div>
+                                    <div class="information">
+                                        <div class="video">
+                                            <img src="{% static 'video/img/svg/play.svg' %}" alt="">
+                                            <p>
+                                                {{top_video.1.title}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                        <!--2-->
+                        <div class="col-md-6">
+                            <a href="{% url 'video-detail' top_video.2.pk %}">
+                            <div class="video_small" style="background-image:url('{{top_video.2.image.url}}');">
+                                <div class="video_shadow">
+                                    <div class="bag_top">
+                                        <img src="{% static 'video/img/hot.png' %}" alt="">
+                                        <span>Hot</span>
+                                    </div>
+                                    <div class="information">
+                                        <div class="video">
+                                            <img src="{% static 'video/img/svg/play.svg' %}" alt="">
+                                            <p>
+                                                {{top_video.2.title}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                        <!--3-->
+                        <div class="col-md-6">
+                            <a href="{% url 'video-detail' top_video.3.pk %}">
+                            <div class="video_small" style="background-image:url('{{top_video.3.image.url}}');">
+                                <div class="video_shadow">
+                                    <div class="bag_top">
+                                        <img src="{% static 'video/img/hot.png' %}" alt="">
+                                        <span>Hot</span>
+                                    </div>
+                                    <div class="information">
+                                        <div class="video">
+                                            <img src="{% static 'video/img/svg/play.svg' %}" alt="">
+                                            <p>
+                                                {{top_video.3.title}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                        <!--4-->
+                        <div class="col-md-6">
+                            <a href="{% url 'video-detail' top_video.4.pk %}">
+                            <div class="video_small" style="background-image:url('{{top_video.4.image.url}}');">
+                                <div class="video_shadow">
+                                    <div class="bag_top">
+                                        <img src="{% static 'video/img/hot.png' %}" alt="">
+                                        <span>Hot</span>
+                                    </div>
+                                    <div class="information">
+                                        <div class="video">
+                                            <img src="{% static 'video/img/svg/play.svg' %}" alt="">
+                                            <p>
+                                                {{top_video.4.title}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="wrapper d-flex justify-content-center">
+            
+            <div class="sidebar_filter">
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between ">
+                        <span>Search</span>
+                        <div class="sm_sidebar d-none d-md-block mt-3">
+                            <button class="btn btn-outline-primary filter_right">
+                                <i class="fa fa-filter"></i>
+                                <span>Filter</span>
+                            </button>
+                        </div>
+
+                    </a>
+                    <input type="text" class="form-control mt-2 mb-2" id="search_filter" placeholder="search by title">
+
+                </div>
+                <div class="item">
+
+                    <a class="main d-flex align-items-center justify-content-between">
+                        <span>Category</span>
+                        <i class="fa fa-angle-down "></i>
+                    </a>
+
+
+                    <div class="preloader d-none">
+                        <i class="fa-filter"></i>
+                    </div>
+
+                    <ul class="unstyled centered" name="main[]">
+                        {% for num, cat in category.items %}
+                        <li>
+                            <input class="styled-checkbox category_list" id="cat-1-{{num}}" type="checkbox" value="{{cat.title}}">
+                            <label for="cat-1-{{num}}">{{cat.title}}</label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between">
+                        <span>Date</span>
+                        <i class="fa fa-angle-down "></i>
+                    </a>
+                    <ul class="unstyled centered">
+                        <li>
+                            <input class="styled-checkbox date1" id="sub_cat2" type="checkbox" value="Last_week">
+                            <label for="sub_cat2">Last week</label>
+                        <li>
+                            <input class="styled-checkbox date1" id="sub_cat4" type="checkbox" value="Last_month">
+                            <label for="sub_cat4">Last month</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="content ms-2 d-flex flex-column justify-content-center align-items-center">
+                <div class="video_items">
+                    <div class="row" id="videos_list">
+                        {% for video in videos %}
+                        <div class="col-xl-4 col-lg-4 col-sm-6 my-2" style="width:350px; max-width:350px;">
+                            <a href="{% url 'video-detail' video.pk %}">
+                                <div class="item video_item d-flex align-items-center flex-column justify-content-center ">
+                                    <div class="bag_top">
+                                        <img src="{% static 'video/img/hot.png' %}" alt="">
+                                        <span>Hot</span>
+                                    </div>
+                                    <img class="workshop_img" style="object-fit: cover;
+                                            overflow: hidden;
+                                            height: 90%;
+                                            width: 90%;" src="{{video.image.url}}" alt="">
+                                    <div class="text pt-3">
+                                        <div class="profile justify-content-between ">
+                                            <div>
+                                                <img class="mx-2" src="{% static 'video/img/peoples.svg' %}" alt="">
+                                                <span> TECVICO</span>
+                                            </div>
+                                            <div class="btn d-flex align-items-center justify-content-center text-muted">
+                                                <span>{{video.seen}}</span>
+                                                <i class="fa fa-eye mx-1"></i>
+                                            </div>
+                                        </div>
+                                        <h5 class="fw-bold p-3  ">
+                                            {{video.title}}
+                                        </h5>
+                                        <div class="icon&btn d-flex  align-items-center justify-content-between ">
+                                            <div class="icon d-flex align-items-center">
+                                                <div class="date d-flex justify-content-center align-items-center mx-2">
+                                                    <img src="{% static 'video/img/date.svg' %}" class="mx-1" alt="">
+                                                    <span class="text-muted">{{video.created.date}}</span>
+                                                </div>
+                                            </div>
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!--<div class="d-flex justify-content-center  mt-5">
+                    <div class="pagination d-flex ">
+                        <ul class="d-flex justify-content-center"> </ul>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+
+{% endblock %}
+
+
+
+{% block script %}
+
+<!------ js files ----->
+<!--<script src="{% static 'video/js/jquery-3.6.0.min.js' %}"></script>-->
+<!--<script src="{% static 'video/js/popper.min.js' %}"></script>-->
+<!--<script src="{% static 'video/js/bootstrap.min.js' %}"></script>-->
+<!--<script src="{% static 'video/js/bootstrap.bundle.min.js' %}"></script>-->
+<script src="{% static 'video/js/base.js' %}"></script>
+<script src="{% static 'video/js/main.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        let category_list = [];
+        let date_time = "";
+        let search_word = ""
+        $('#search_filter').change(function(){
+            search_word = $('#search_filter').val()
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'ajax-videos-filter' %}",
+                data: {
+                    'category_list': category_list,
+                    'date_time': date_time,
+                    'search_word': search_word,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $('#videos_list').html(data)
+                },
+                error: function (request, errors) {
+                    alert(errors.httpResponse)
+                }
+            });
+        })
+    $('.date1').click(function() {
+        $('.date1').not(this).prop('checked', false);
+        if ($(this).is(":checked")){
+            date_time = $(this).val()
+        }
+        else {
+            date_time = ""
+        }
+    });
+
+
+    $('.category_list').click(function (){
+        if ($(this).is(":checked")){
+            category_list.push($(this).attr('value'))
+        }
+        else {
+            let val = $(this).attr('value')
+            const index = category_list.indexOf(val);
+            if (index > -1) {
+                category_list.splice(index, 1);
+                }
+            }
+        });
+
+    $('.styled-checkbox').click(function () {
+        
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'ajax-videos-filter' %}",
+                data: {
+                    'category_list': category_list,
+                    'date_time': date_time,
+                    'search_word': search_word,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $('#videos_list').html(data)
+                    //alert('hi')
+                },
+                error: function (request, errors) {
+                    alert(errors.httpResponse)
+                }
+            });
+        })
+    })
+</script>
+
+{% endblock %}

@@ -1,0 +1,471 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load task_tracker_filter %}
+
+{% block body_class %}bg-light{% endblock body_class %}
+
+{% block content %}
+    <div class="bg-light">
+        <header id="main-header" class="py-2 bg-info text-light ">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1><i class="fa fa-clock"></i> Task Recorder </h1>
+                    </div>
+                </div>
+                <div class="row ">
+                    <p class="card-text">Yesterday’s the past, tomorrow’s the future, but today is a gift. That’s why
+                        it’s
+                        called the present .. <span class="text-bold text-light">" Bil Keane "</span></p>
+                </div>
+                {% if today_status == 1 %}
+                <a href="{% url 'end-day' %}" class="btn btn-danger"><i class="fa fa-stop"></i> End</a>
+                {% elif today_status == 2 %}
+                <a href="{% url 'start-day' %}" class="btn btn-success"><i class="fa fa-play"></i> Start</a>
+                {% else %}
+                <a href="{% url 'start-day' %}" class="btn btn-success"><i class="fa fa-play"></i> Start</a>
+                {% endif %}
+            </div>
+        </header>
+        <div class="col-12 mt-3 text-center">
+            {% if request.user in managers %}
+            <a href="{% url 'manager-list' %}" class="btn btn-outline-dark">
+                Manager list
+                <span class="badge badge-danger"></span>
+            </a>
+            {% endif %}
+
+            {% if request.user in human_resource %}
+            <a href="{% url 'human-resource-list' %}" class="btn btn-outline-dark">
+                Human Resource list
+                <span class="badge badge-danger"></span>
+            </a>
+            {% endif %}
+        </div>
+
+        <br><br>
+
+        <section id="task-tracker">
+            <div class="container">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger"> {{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- add new task -->
+            <div class="container mb-5">
+                <form action="" class="d-md-flex justify-content-between" method="POST">
+                    {% csrf_token %}
+                    <div class="col">
+                        <div class="row mb-2">
+                        <label for="tomorrow" class="d-block"><h5>Tomorrow Task</h5></label>
+                        <textarea class="form-control" name="title" id="tomorrow" rows="3" style="border-radius: 2px;"></textarea>
+                        </div>
+                        <div class="row">
+                            <input type="submit" class="btn btn-primary" name="add" placeholder="Submit"
+                            style="border-radius: 8px;">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-12 text-center">
+
+                        {% if unfinished_task %}
+                            <h1 class="display-4"><span
+                                    id="hour">{{ unfinished_task.duration|get_hour_part|format_time_part }}</span>:<span
+                                    id="minute">{{ unfinished_task.duration|get_minute_part|format_time_part }}</span>:<span
+                                    id="second">{{ unfinished_task.duration|get_second_part|format_time_part }}</span>
+                            </h1>
+                        {% else %}
+                            <h1 class="display-4"><span id="hour">00</span>:<span id="minute">00</span>:<span
+                                    id="second">00</span></h1>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="container my-5">
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table table-bordered mb-5" id="tasktbl" style="border-radius: 25px;">
+                            <thead>
+                            <tr class="table-info text-dark">
+                                <th class="text-center px-5">Title</th>
+                                <th class="text-center px-5">Date</th>
+                                <th class="text-center px-5">Time</th>
+                                <th class="text-center px-5">Status</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tasktblbody">
+                               
+                            {% for finished_task in finished_tasks %}
+                            
+                                <tr>
+                                    <td class="text-center">
+                                        {{ finished_task.title|linebreaks }}
+                                    </td>
+                                    <td class="p-name text-center">
+                                        {{ finished_task.date }}
+                                    </td>
+                                    <td class="p-name text-center">
+                                        {{ finished_task.duration|format_time }}
+                                    </td>
+                                    {% if finished_task.status == 'New' %}
+                                    <td class="p-name text-center">
+                                        <a class="btn btn-success" href="{% url 'confirm-task' finished_task.pk %}">Confirm</a> - 
+                                        <a class="btn btn-danger" href="{% url 'delete-task' finished_task.pk %}">Delete</a>
+                                    </td>
+                                    {% elif finished_task.status == 'Confirm' %}
+                                    <td class="p-name text-center">
+                                        <div class="row startDiv" name="startDiv" id="before-play">
+                                            <button class="btn btn-success start-btn" name="start-btn" id="start-btn"><i class="fa fa-play"></i> Start</button>
+                                        </div>
+                                        <div class="row d-none AfterDiv" id="after-play">
+                                                <button class="btn btn-warning" id="pause-btn"><i class="fa fa-pause"></i> Pause</button>
+                                                <button class="btn btn-success d-none" id="resume-btn"><i class="fa fa-play"></i> Resume
+                                                </button>
+                                                <button class="btn btn-danger" id="end-btn" data-value="{{finished_task.pk}}"><i class="fa fa-stop"></i> End</button>
+                                        </div>
+                                    </td>
+                                    {% elif finished_task.status == 'Finished' %}
+                                    <td class="p-name text-center">
+                                        {{ finished_task.status }}
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                               
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <nav class="text-center">
+                    <ul class="pagination">
+                        {% if finished_tasks.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?=page1">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?=page={{ finished_tasks.previous_page_number }}">Previous</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">First</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Previous</a>
+                            </li>
+                        {% endif %}
+                        {% for num in finished_tasks.paginator.page_range %}
+                            {% if finished_tasks.number == num %}
+                                <li class="page-item active">
+                                    {% if url_filters != "" %}
+                                        <a class="page-link" href="?page={{ num }}&{{ url_filters }}">{{ num }}</a>
+                                    {% else %}
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    {% endif %}
+                                </li>
+                            {% elif num > finished_tasks.number|add:'-3' and num < finished_tasks.number|add:'3' %}
+                                <li class="page-item">
+                                    {% if url_filters != "" %}
+                                        <a class="page-link" href="?page={{ num }}&{{ url_filters }}">{{ num }}</a>
+                                    {% else %}
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if finished_tasks.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ finished_tasks.next_page_number }}&{{ url_filters }}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ finished_tasks.paginator.num_pages }}&{{ url_filters }}">Last</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Last</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- ADD TASK MODAL -->
+            <div class="modal" id="addTaskModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-dark">Add Task</h5>
+                            <button class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body text-dark">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" name="end" class="d-none">
+                                    <input type="text" name="task_pk" class="d-none">
+                                    <input type="text" name="duration" class="d-none">
+                                    <textarea name="task" class="form-control"
+                                              placeholder="Explain your task here"
+                                              required></textarea>
+                                </div>
+                                <button class="btn btn-success my-2"><i class="fa fa-check"></i> Submit</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="modalClose" data-dismiss="modal">Close and
+                                continue
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+        </section>
+    </div>
+
+    <script language="JavaScript">
+        function showInput() {
+            document.getElementById('display').innerHTML =
+                document.getElementById("tomorrow").value;
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#delet").click(function () {
+                $("#display").empty();
+            })
+            
+            
+            var tblRows = document.getElementById('tasktblbody').querySelectorAll('tr');
+            
+            
+            for(var j=0; j<tblRows.length;j++){
+							
+				var rowCells =tblRows[j].querySelectorAll('td');
+				var btnsCell = rowCells[3];
+				var DivInTd =  btnsCell.querySelectorAll("div");
+				var BeforePlyDiv = DivInTd[0];
+				var AfterPlyDiv = DivInTd[1];
+				
+				var btnPlay = BeforePlyDiv.querySelector("button");
+				var AfterBtns = AfterPlyDiv.querySelectorAll("button");
+				var btnPause =AfterBtns[0];
+				var btnResume =AfterBtns[1];
+				var btnEnd =AfterBtns[2];
+				
+				//var name_btnElem = btnElem.getAttribute('name');
+			//	var DivName  = ReqID.closest('div').attr('id');
+				//tblID = $(this).closest('tr').parent().parent().attr('id');
+							
+			    btnPlay.addEventListener('click',function(){
+			        var self = this;
+			      
+    			    $.ajax({
+                        url: "{% url 'total_time' %}",
+                        type: "POST",
+                        data: {
+                            'start': true,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function (data) {
+                            if (data['success']) {
+                                DivElmBefore = $(self).closest('div');
+                                
+            			       DivElmBefore.addClass("d-none");
+            			       DivElmAfter = $(self).closest("div").parent().find(".AfterDiv");
+            			       
+            			       DivElmAfter.removeClass("d-none");
+                                timerInterval = setInterval(moveTimer, 1000);
+                                keepAliveInterval = setInterval(sendKeepAlive, 5000);
+                            }
+                        }
+                    });
+			        
+			    });
+			    
+			    
+			     btnPause.addEventListener('click',function(){
+			         
+			         
+			          $(this).addClass('d-none');
+			          resumebtn = $(this).closest("button").parent().find("#resume-btn");
+			          
+                    resumebtn.removeClass('d-none');
+
+                    clearInterval(timerInterval);
+			         
+			     });
+			     btnResume.addEventListener('click',function(){
+			         
+			        
+			         $(this).addClass('d-none');
+			         pausebtn = $(this).closest("button").parent().find("#pause-btn");
+                    pausebtn.removeClass('d-none');
+        
+                    timerInterval = setInterval(moveTimer, 1000);
+			         
+			     });
+			     btnEnd.addEventListener('click',function(){
+			        clearInterval(timerInterval);
+                    clearInterval(keepAliveInterval);
+                    $('input[name="duration"]').val(getTime());
+                    $('input[name="task_pk"]').val($(this).attr('data-value'));
+        
+                    $('#addTaskModal').modal({
+                        show: true,
+                        closeOnEscape: true
+                    });
+			     });
+			
+                
+                
+                
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+        })
+    </script>
+{% endblock content %}
+{% block script %}
+    <script>
+        function getTime() {
+            const second = parseInt($('#second').text());
+            const minute = parseInt($('#minute').text());
+            const hour = parseInt($('#hour').text());
+
+            return hour * 3600 + minute * 60 + second;
+        }
+
+        function zeroPad(nr, base) {
+            const len = (String(base).length - String(nr).length) + 1;
+            return len > 0 ? new Array(len).join('0') + nr : nr;
+        }
+
+        function moveTimer() {
+            let second = parseInt($('#second').text());
+            if (second < 59) {
+                $('#second').html(zeroPad(second + 1, 10));
+            } else {
+                $('#second').html(zeroPad(0, 10));
+
+                let minute = parseInt($('#minute').text());
+                if (minute < 59) {
+                    $('#minute').html(zeroPad(minute + 1, 10));
+                } else {
+                    $('#minute').html(zeroPad(0, 10));
+
+                    let hour = parseInt($('#hour').text());
+                    $('#hour').html(zeroPad(hour + 1, 10));
+                }
+            }
+        }
+
+        function sendKeepAlive() {
+            $.ajax({
+                url: "{% url 'total_time' %}",
+                type: "POST",
+                data: {
+                    'keep-alive': true,
+                    'duration': getTime(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data['success']) {
+                        console.log("SUCCESS")
+                    }
+                }
+            });
+        }
+
+      /*  $('#start-btn').on('click', () => {
+            $.ajax({
+                url: "{% url 'total_time' %}",
+                type: "POST",
+                data: {
+                    'start': true,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data['success']) {
+                        $('#before-play').addClass('d-none');
+                        $('#after-play').removeClass('d-none');
+                        timerInterval = setInterval(moveTimer, 1000);
+                        keepAliveInterval = setInterval(sendKeepAlive, 5000);
+                    }
+                }
+            });
+        });*/
+
+       /* $('#pause-btn').on('click', () => {
+            $('#pause-btn').addClass('d-none');
+            $('#resume-btn').removeClass('d-none');
+
+            clearInterval(timerInterval);
+        });*/
+
+       /* $('#resume-btn').on('click', () => {
+            $('#resume-btn').addClass('d-none');
+            $('#pause-btn').removeClass('d-none');
+
+            timerInterval = setInterval(moveTimer, 1000);
+        });*/
+
+      /*  $('#end-btn').on('click', () => {
+            clearInterval(timerInterval);
+            clearInterval(keepAliveInterval);
+            $('input[name="duration"]').val(getTime());
+            $('input[name="task_pk"]').val($('#end-btn').attr('data-value'));
+
+            $('#addTaskModal').modal({
+                show: true,
+                closeOnEscape: true
+            });
+        });*/
+
+        $('#modalClass').on('click', () => {
+            timerInterval = setInterval(moveTimer, 1000);
+            keepAliveInterval = setInterval(sendKeepAlive, 5000);
+        })
+    </script>
+
+    {% if unfinished_task %}
+        <script>
+            $('#before-play').addClass('d-none');
+            $('#after-play').removeClass('d-none');
+
+            $('#pause-btn').addClass('d-none');
+            $('#resume-btn').removeClass('d-none');
+
+            timerInterval = null;
+            keepAliveInterval = setInterval(sendKeepAlive, 5000);
+        </script>
+
+    {% endif %}
+{% endblock script %}
+</section>

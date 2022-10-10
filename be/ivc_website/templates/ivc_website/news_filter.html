@@ -1,0 +1,25 @@
+{% if news %}
+  
+                       {% for new in news %}
+                         <div class=" col-sm-12 col-md-6 col-lg-6 my-1">
+                              <div class="card">
+                                <div class="card-image-wrapper">
+                                  <img src="{{new.thumbnail.url}}" class="card-img-top img-fluid" alt="...">
+                                </div>
+                                <div class="card-body">
+                                  <h5 class="card-title">{{new.title|truncatechars:90}}</h5>
+                                  <h6>{{new.category_to_str}}</h6>
+                                  <h6>{{new.date}}</h6>
+                                  <div class="cardText" >
+                                      <p class="card-text">
+                                          {{new.description|truncatewords:35|safe}}
+                                      </p>
+                                  </div>
+                                  <a href="{% url 'news-detail' new.pk %}" class="btn btn-primary">Read more</a>
+                                </div>
+                              </div>
+                            </div>
+                        {% endfor %}
+                        
+
+{% endif %}

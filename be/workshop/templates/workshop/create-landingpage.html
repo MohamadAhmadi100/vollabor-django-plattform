@@ -1,0 +1,150 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+<html lang="en">
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+     <link rel="stylesheet" href="{% static 'workshop/css/bootstrap-clockpicker.min.css' %}">
+    <title>Workshop</title>
+    <style>
+        label{
+            color:#fff
+        }
+    </style>
+{% endblock css %}
+
+{% block content %}
+
+   
+
+    <div class="ws-content d-md-flex">
+     
+        <div class="workshop">
+            <div class="bc">
+                <h1 class="text-white">Workshop form</h1>
+                <!--<span class="bc-icon"> / </span>
+                <span> Create_Work</span>-->
+            </div>
+            <div class="container">
+                
+                {% if messages %}
+                    {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success"> {{ message|safe }}</div>
+                            {% else %}
+                                <div class="alert alert-danger"> {{ message|safe }}</div>
+                            {%endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="col-md-10 text-right text-black text-end pr-5 mt-2">
+                    <a class="btn btn-color6 bg-success text-black mb-1" href="{% url 'create-checkout-session' %}">
+                        Balance
+                        <span class="badge badge-black"> <i class="fa fa-dollar-sign bg-dark p-2 text-white" style="border-radius: 25px;"></i>{{user_balance}}</span>
+                    </a>
+                    
+                   
+                </div>
+            </div>
+            <div class="form-content">
+                <div class="ws-form">
+                    
+                    <form enctype='multipart/form-data' method="POST">
+                        
+                        {%csrf_token%}
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.direction.label }}</label>
+                            {{ form.direction }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.title.label }}</label>
+                            {{ form.title }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.coursetitles_title.label }}</label>
+                            {{ form.coursetitles_title }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.coursetitles.label }}</label>
+                            {{ form.coursetitles }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.courseclients_title.label }}</label>
+                            {{ form.courseclients_title }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.courseclients.label }}</label>
+                            {{ form.courseclients }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.certificate_title.label }}</label>
+                            {{ form.certificate_title }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.certificatedesc.label }}</label>
+                            {{ form.certificatedesc }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.content.label }}</label>
+                            {{ form.content }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.coursespeakers_title.label }}</label>
+                            {{ form.coursespeakers_title }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.coursespeakers.label }}</label>
+                            {{ form.coursespeakers }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.registeration_title.label }}</label>
+                            {{ form.registeration_title }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.registeration_content.label }}</label>
+                            {{ form.registeration_content }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.logo_image.label }}</label>
+                            {{ form.logo_image }}
+                        </div>
+
+                        <div class=" col-md-6 m-auto row ws-form-title d-md-flex justify-content-center text-white text-center">
+                            <label for="exampleInputEmail1">{{ form.banner_image.label }}</label>
+                            {{ form.banner_image }}
+                        </div> 
+                      
+                        {%for field in form%}
+                        {%endfor%}
+                        <button class="btn btn-success" type="submit">submit</button>
+                    </form>
+                </div>
+            </div>
+
+{% endblock content %}
+{% block script %} 
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"> </script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script> 
+{% endblock script %}
+</body>
+
+</html>

@@ -1,0 +1,124 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-color6 text-color8">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-map-pin"></i> Announcements</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ANNOUNCEMENTS -->
+<section id="announcements">
+    <div class="container mt-5">
+        {% if user|is_member_profile %}
+        {% if user.memberprofile.position == "Supervisor" or user.is_superuser %}
+        <div class="row">
+                <div class="col-md-3 ml-auto mb-2">
+                    <a href="#" class="btn btn-success btn-block" id="add-announcement"><i class="fa fa-plus"></i> Add Announcement</a>
+                </div>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% if messages %}
+                {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger"> {{ message }}</div>
+                        {%endif %}
+                {% endfor %}
+        {% endif %}
+        {% if announcements %}
+            {% for announcement in announcements %}
+            <div class="card text-white bg-info mb-3">
+                {% if announcement.owner == user %}
+                    <i class="fa fa-times-circle ml-auto delete-announcement pr-2 pt-2"
+                                                data-toggle="modal"
+                                               data-pk="{{announcement.pk}}"></i>
+                {% endif %}
+                  <div class="card-header">By:
+                      {% if announcement.owner|is_member_profile %}
+                      {{ announcement.owner.first_name}} {{announcement.owner.last_name}}
+                      {% else %}
+                      {{ announcement.owner.legalprofile.company_name}}
+                      {% endif %}
+                  </div>
+                  <div class="card-body">
+                    <h4 class="card-title">{{ announcement.title }}</h4>
+                    <p class="card-text">{{ announcement.description }}</p>
+                  </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="display-4">No announcement yet...</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- NEW ANNOUNCEMENT  MODAL -->
+<div class="modal" id="addAnnouncementModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">New Announcement</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <form method="post">
+          {% csrf_token %}
+          <div class="modal-body text-dark">
+                  {{ form|crispy }}
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success" type="submit">Publish</button>
+            <button class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE ANNOUNCEMENT  MODAL -->
+<div class="modal" id="deleteAnnouncementModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+        natural you want to delete this announcement?
+      </div>
+      <div class="modal-footer">
+        <form method="post">
+              {% csrf_token %}
+              <input type="text" class="input_pk d-none" name="data-pk">
+              <button class="btn btn-success" type="submit">Yes</button>
+          </form>
+        <button class="btn btn-danger" data-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    $('#add-announcement').on('click', function(){
+        $('#addAnnouncementModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+    })
+    $('.delete-announcement').on('click', function(){
+        $('#deleteAnnouncementModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+    })
+</script>
+{% endblock content %}

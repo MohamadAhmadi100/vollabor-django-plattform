@@ -1,0 +1,441 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="far fa-calendar-plus"></i> Create project <span style="font-size: 19px">Director</span></h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9 mt-3">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="">
+                        <div class="">
+                            <div class="modal-dialog modal-lg text-dark">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                        <div class="modal-title">Create a project</div>
+                                        <a href=""><button class="close" data-dismiss='modal'><span>&times;</span></button></a>
+                                    </div>
+                                    <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                        <div class="modal-body">
+                                        <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+
+
+                                        <div class="form-group col-md-12 mb-0">
+                                            <div id="div_id_status" class="form-group">
+                                                <input type="hidden" name="status" id="id_status" value="n" >
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-md-12 mb-0">
+                                            {{ form.money|as_crispy_field }}
+                                        </div>
+
+                                        <div class="form-group col-md-12 mb-0">
+                                            <div id="div_id_usus_value" class="form-group">
+                                                <label for="id_status_value" class=" requiredField">
+                                                Grade<span class="asteriskField">*</span>
+                                                </label>
+                                                <div class="">
+                                                        <select name="status_value" class="select form-control" id="id_status_value">
+                                                        <option value="hard">Gold</option>
+                                                        <option value="normal">Silver</option>
+                                                        <option value="easy">Bronze</option>
+                                                        </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h6>Are you sure to change the project new status ?</h6>
+
+                                        </div>
+                                            <button style="" type="submit" class="btn btn-primary">Create</button>
+				<a href="javascript: history.go(-1)" class="btn btn-danger" >Cancel</a>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mt-3">
+                <div style="box-shadow: 3px 3px #a5a5a55c; border: 1px solid #d4d4d4;" class="">
+                    <dl style="margin-top: 29px" class="dl-horizontal">
+                        <dt class="text-center">Expert suggestion</dt> <dd class="" >Grade: {{form_client.client_form.status_value}} <br>Value: $ {{form_client.client_form.valeu}} </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+{% if user|is_member_profile and user.memberprofile.is_technical_manager %}
+
+{% if selected_project.expert is None and not project_areas %}
+<script>
+    $('[data-toggle="tooltip"]').tooltip();
+</script>
+{% endif %}
+
+    <script>
+        $(document).ready(function () {
+            $("#btn-add").click(function () {
+                var ele = [];
+                $("input:checkbox[name=user]:checked").each(function () {
+                    ele.push($(this).val());
+                    document.getElementById("user-list").innerHTML = ele;
+                });
+            });
+        });
+    </script>
+<script>
+    function restore_accept_modal() {
+            $('input[type=radio][name=accept-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=accept-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('.acceptTemplate').addClass('d-none')
+            $('.acceptManual').addClass('d-none')
+    }
+
+    function restore_reject_modal() {
+            $('input[type=radio][name=reject-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=reject-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            // for area
+            $('.rejectTemplate').addClass('d-none');
+            $('.rejectManual').addClass('d-none');
+    }
+
+    $('.btn-accept-area').on('click', (event) => {
+        $('#acceptAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_accept_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-check');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="accept-area"]').val(area_pk);
+    });
+
+    $('.btn-accept-project-area').on('click', (event) => {
+        $('#acceptProjectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_accept_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-check');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+        $('input[name$="accept-project-area"]').val(area_pk);
+    });
+
+    $('.btn-reject-project-area').on('click', (event) => {
+        $('#rejectProjectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_reject_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="reject-project-area"]').val(area_pk);
+    });
+
+    $('.btn-reject-area').on('click', (event) => {
+        $('#rejectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_reject_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        console.log(area_pk);
+
+        $('input[name$="reject-area"]').val(area_pk);
+    });
+
+    $('input[type=radio][name=reject-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('.rejectTemplate').removeClass('d-none')
+            $('.rejectManual').addClass('d-none')
+        }
+        else {
+            $('.rejectTemplate').addClass('d-none')
+            $('.rejectManual').removeClass('d-none')
+        }
+    });
+
+    $('input[type=radio][name=accept-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('.acceptTemplate').removeClass('d-none')
+            $('.acceptManual').addClass('d-none')
+        }
+        else {
+            $('.acceptTemplate').addClass('d-none')
+            $('.acceptManual').removeClass('d-none')
+        }
+    });
+
+    $('.submit-reject-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=reject-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#reject-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-accept-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=accept-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#accept-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-accept-project-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=accept-project-area-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#accept-project-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-reject-project-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=reject-project-area-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#reject-project-area-form').submit();
+            }
+        });
+    })
+</script>
+{% endif %}
+
+{% if user|is_member_profile and user.memberprofile.is_technical_manager or user == selected_project.expert %}
+<script>
+    $( document ).ready( function() {
+        const errorMessage = "This field is required";
+
+        $( this ).find( "textarea" ).on( "input change propertychange", function() {
+
+            const hasError = !/.*\S+.*/.test($(this).val());
+            if ( typeof this.setCustomValidity === "function")
+            {
+                this.setCustomValidity( hasError ? errorMessage : "" );
+            }
+            else
+            {
+                $( this ).toggleClass( "error", !!hasError );
+                $( this ).toggleClass( "ok", !hasError );
+
+                if ( hasError )
+                {
+                    $( this ).attr( "title", errorMessage );
+                }
+                else
+                {
+                    $( this ).removeAttr( "title" );
+                }
+            }
+
+        });
+    });
+
+    function restore_add_modal() {
+            $('input[type=radio][name=add-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=add-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('#addFromTemplate').addClass('d-none')
+            $('#addManually').addClass('d-none')
+    }
+
+    function restore_remove_modal() {
+            $('input[type=radio][name=remove-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=remove-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('#removeFromTemplate').addClass('d-none')
+            $('#removeManually').addClass('d-none')
+    }
+
+    const manuallyAddAreaBtn = $('#btn-add-manually');
+    const selectAddAreaBtn = $('#btn-add-select');
+
+    manuallyAddAreaBtn.on('click', (event) => {
+        event.preventDefault();
+        if (manuallyAddAreaBtn.get(0).form.reportValidity()) {
+            const entered_value = $('#input-add-manually').val();
+            $('#addAreaModal').modal({
+              show:true,
+              closeOnEscape: true
+            });
+
+            restore_add_modal();
+
+            $('input[name$="add-industrial-area"]').val(entered_value);
+        }
+        else {
+            manuallyAddAreaBtn.get(0).form.checkValidity();
+        }
+    });
+
+    selectAddAreaBtn.on('click', (event) => {
+        event.preventDefault();
+        const entered_value = $('#select-add').val();
+        $('#addAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_add_modal();
+
+        $('input[name$="add-industrial-area"]').val(entered_value);
+    });
+
+    $('input[type=radio][name=add-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('#addFromTemplate').removeClass('d-none')
+            $('#addManually').addClass('d-none')
+        }
+        else {
+            $('#addFromTemplate').addClass('d-none')
+            $('#addManually').removeClass('d-none')
+        }
+    });
+
+    $('.btn-remove-area').on('click', (event) => {
+        $('#removeAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_remove_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="remove-area"]').val(area_pk);
+    });
+
+    $('input[type=radio][name=remove-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('#removeFromTemplate').removeClass('d-none')
+            $('#removeManually').addClass('d-none')
+        }
+        else {
+            $('#removeFromTemplate').addClass('d-none')
+            $('#removeManually').removeClass('d-none')
+        }
+    });
+
+    $('.submit-remove-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=remove-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#remove-area-form').submit();
+            }
+        });
+    });
+
+    $('.submit-add-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=add-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#add-area-form').submit();
+            }
+        });
+    });
+</script>
+{% endif %}
+
+{% endblock script %}

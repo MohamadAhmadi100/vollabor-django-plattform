@@ -1,0 +1,515 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1><i class="fa fa-eye"></i> Project view</h1>
+            </div>
+           
+                <div class="col-md-6 text-right">
+                    <!--<h5 class="btn btn-secondary fw-bold mb-1" style="font-weight:bold; color:#1AE8F9 ">-->
+                    <!--   Balance: ${{user.memberprofile.balance}}-->
+                    <!--    <br/>-->
+                    <!--    <a class="btn btn-warning btn-sm text-dark fw-bold px-4 my-1 mx-2" href="{% url 'create-checkout-session' %}"> -->
+                    <!--        <i class="fas fa-money-check-alt text-dark" style='font-size:14px'></i> Charge-->
+                    <!--    </a>-->
+                    <!--</h5>-->
+                    
+                </div>
+            
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}project{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is Defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation is sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is new</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row">
+            {% if selected_project.is_valid %}
+                {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                <div class="col-md-3 my-1">
+                        <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+<!-- new -->
+        <!-- new table theme -->
+        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+            <main class="container-fluid  ">
+                <div class="content my-4">
+                    <div class="px-4 py-2">
+                        <div class="col-md-12">
+                            <h2 style="overflow: hidden">{{selected_project.title}}</h2>
+                            {% if selected_project.fund > 0 %}
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="form-control">
+                                        ${{selected_project.fund}}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if selected_project.status == 'Rejected' %}
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="form-control">
+                                     
+                                    <span class="badge badge-danger">Reason of rejection</span>
+                                    {{selected_project.reject_reason}}                            
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% endif %}
+
+                            {% if project_areas %}
+                                <div class="col-md-12">
+                                    <label class="form-label">Project areas:</label>
+                                    <div class="form-group ">
+                                        <span class="text-info bold"></span>
+                                            {% for project_area in project_areas %}
+                                            <span class="badge
+                                            {% if project_area.is_confirmed %}
+                                                {% if project_area.area.confirmed %}
+                                                badge-success
+                                                {% else %}
+                                                badge-danger
+                                                {% endif %}
+                                            {% else %}
+                                                badge-warning
+                                            {% endif %}
+                                                ">{{project_area.area}}</span>
+                                                {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+        
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">      
+                                <div class="form-group ">
+                                    <label class="form-label">ID</label>
+                                    <input type="text" class="form-control" value="{{object.id_project}}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label class="form-label">Owner</label>
+                                    <input type="text" class="form-control" disabled value="{{object.name}}" >
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <div class="form-group ">
+                                    <label class="form-label">Title:</label>
+                                    <textarea class="form-control" required name="title">{{object.title}}</textarea>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                            <div class="form-group ">
+                                <label class="form-label"> Suggested start date</label>
+                                <input type="date" class="form-control" name="start_date" required value="{{object.start_date|date:'Y-m-d'}}" >
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group ">
+                                <label class="form-label"> Suggested end date</label>
+                                <input type="date" class="form-control" name="end_date" required value="{{object.end_date|date:'Y-m-d'}}" >
+                            </div>
+                        </div>
+                            
+                        </div>
+                        
+                        
+                        {% if object.status == 'withdrew' or object.project_created == True %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Submission date</label>
+                                        <input type="text" class="form-control" value="{{object.created}}" disabled>
+                                    </div>
+                                </div>
+                                {% if object.status == 'withdrew' %}
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="form-label">  Event date</label>
+                                        <input type="text" class="form-control" value="{{object.rejected_date|date}}" disabled>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label class="form-label">  Date of being changed to new status</label>
+                                        <input type="text" class="form-control" value="{{object.created_date|date}}" disabled>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>  
+                        
+                        
+                        
+                        {% endif %}
+                        
+                        
+                        
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Fund</label>
+                                    <input type="number" class="form-control" required name="fund" value="{{object.fund}}">
+                                </div>
+                            </div>
+
+                        
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label class="form-label">Dataset link</label>
+
+                                    {% if object.data_set_link  %}
+                                    <input type="text" class="form-control" required name="data_set_link" value="{{object.data_set_link}}" >
+                                    {% else %}
+                                    <input type="text" class="form-control" required name="data_set_link" value="There is no link" >
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">Abstract</label>
+                                    
+                                    <textarea class="form-control" rows="5" required name="abstrack" >{{object.abstrack}}</textarea>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="row">
+                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Equipment</label>
+                                    <textarea class="form-control" rows="5" name="equipment" >{{object.equipment}}</textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Requirement</label>
+                                    <textarea class="form-control" rows="5" name="requirement" >{{object.requirement}}</textarea>
+                                </div>
+                            </div>
+                            
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">Revision reason</label>
+                                    <textarea class="form-control" rows="5" disabled>{{object.reason_rejectd}}</textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                       
+                    <div class="row">
+                        {% if object.main_supervisor and object.forms_client.all %}
+                            {% for i in object.forms_client.all %}
+                                <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12" >
+                                    <div class="card text-info border-secondary bg-dark mb-3" style="height:170px">
+                                      <div class="card-header"><h5>Expert's information</h5></div>
+                                      <div class="card-body text-white">
+                                          <h6 >Email: {{i.expert.researchrole.expert_email_address}}</h6>
+                                      </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                        <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12" >
+                            <div class="card text-info border-secondary bg-dark mb-3" style="height:170px">
+                              <div class="card-header text-center"><h5>Contact information</h5></div>
+                              <div class="card-body text-white">
+                                  <h6 >Email: project@tecvico.com</h6>
+                              </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if object.status == 'send-contract-to-client' or object.status == 'revised-contract' %}
+                        <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12" >
+                            <div class="card text-info border-secondary bg-dark mb-3" style="height:170px">
+                              <div class="card-header text-center"><h5>Contract</h5></div>
+                              <div class="card-body text-white">
+                               <div class="row mt-5">
+                                   <button type="button" class="btn btn-danger btn-sm py-2 col-xl-4 col-lg-4 col-md-11 col-sm-11 mx-2"><a class="text-decoration-none text-white"  href="{{object.contract.url}}">Download</a></button>
+                                <button type="button" data-bs-toggle="modal"
+                                    data-bs-target="#send_contract_to_expert" class="btn btn-primary col-xl-7 col-lg-7 col-md-11 col-sm-11 btn-sm py-2 mx-2">
+                                    Send the signed contract
+                                </button>
+                                   
+                               </div>
+                                
+                               
+                              </div>
+                                
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                        
+                        <div class="col-md-6">
+                            <div>
+                                    
+                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                    data-bs-target="#resubmited_project" class="btn btn-success">
+                                    Resubmit
+                                </button>
+
+                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                    data-bs-target="#withdraw_project" class="btn btn-danger">
+                                    Withdraw
+                                </button>
+                                
+                                <a href="{% url 'dashboard-myprojects-reserach' %}">
+                                    <h5 class="btn btn-warning">Back</h5></a> 
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+                            {% if object.formclint.main_supervisor %}
+                            <div class="col-md-3 mt-3">
+                                <div style="box-shadow: 3px 3px #a5a5a55c; border: 1px solid #d4d4d4;" class="ibox-content">
+                                    <dl style="margin-top: 29px" class="dl-horizontal">
+                                        <a href="{{object.formclint.main_supervisor.url}}"><dt class="text-center">Download proposal</dt> </a>
+                                    </dl>
+                                <hr>
+                                </div>
+                                <hr>                            
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                    </div>
+            
+                </div>
+            </main>
+            <div class="modal fade" id="resubmited_project" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <h6 class="text-dark">Are sure submit the project?</h6>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Yes</button>
+                            <button type="button" id="closeBtnW" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>         
+        
+            <div class="modal fade" id="withdraw_project" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="POST" action="{% url 'industry:client-detail' object.pk %}" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="modal-body">
+                                <input type="hidden" name="status" value="withdraw">
+                                <label class="text-dark">Reason <span style="color:red">*</span></label>
+                                <textarea class="form-control" rows="4" name="reason" required></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger">Withdraw</button>
+                                <button type="button" id="closeBtnW" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        
+
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+<script>
+
+ function showMore() {
+    var moreDiv = document.getElementById("more");
+    var moreBtn = document.getElementById("MoreBtn");
+    var textmore = document.getElementById("textMore");
+
+      if(moreDiv.style.display === "none") {
+        moreDiv.style.display = "block";
+        moreBtn.classList.remove("fa-arrow-circle-down");
+        moreBtn.classList.add("fa-arrow-circle-up");
+       // textmore.textContent="Show more";
+        $('#textMore').text('Show less');
+        
+      } else {
+        moreDiv.style.display = "none";
+        moreBtn.classList.remove("fa-arrow-circle-up");
+        moreBtn.classList.add("fa-arrow-circle-down");
+        //textmore.textContent="Show less";
+        $('#textMore').text('Show more');
+      }
+      
+}
+
+
+
+    $( document ).ready( function() {
+        const errorMessage = "This field is required";
+         $('#send_contract_to_expert').modal({backdrop: 'static', keyboard: false});
+        
+        
+      /*   document.getElementById("sndcont").addEventListener("click",function(){
+           var contract = document.getElementById("contfile").value;
+           if(contract.length==0){
+               document.getElementById('contfile_error').innerHTML="Error:please select the contract file."
+           
+           }else if(CheckIndexAtt("contfile")==true){
+               document.getElementById("contfile_error").innerHTML='file index is NOT valid (valid index: pdf)';
+           }else{
+               document.getElementById('upform').submit();
+                document.getElementById('sndcont').disabled = true;
+                document.getElementById('closeBtn').disabled = true;
+                
+                
+           }
+           
+       });*/
+        
+        
+        
+
+      
+    });
+
+   
+   
+   function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+   
+}
+
+
+function CheckIndexAtt(id){
+    var file_status = false;
+    
+    var file_name   = document.getElementById(id).value;
+    var index_dot=file_name.lastIndexOf(".")+1;
+    var ext=file_name.substr(index_dot);
+    if(!(ext=='pdf')) {
+        
+        
+        file_status = true; 
+        
+    }   
+    
+    return file_status;
+        
+}
+ 
+    
+
+  
+</script>
+
+{% endblock script %}
+

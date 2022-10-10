@@ -1,0 +1,417 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'cartable/css/cartable_style.css' %}">
+{% endblock %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+
+{% block content %}
+
+    <header id="main-header" class="py-2 bg-success text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1><i class="fa fa-paper-plane"></i> Cartable: Send new letter</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+        <section id="cartable">
+            <div class="container">
+                {% if messages %}
+                {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                <div><a href="{% url 'cartable-main-panel' %}">Back to Cartable</a></div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="container">
+            </div>
+            <div class="cartable-container mt-4">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                <div class="row ">
+                                    <div class="col-12">
+                                        <h3 class="bg-light-coral text-white p-3">Specification</h3>
+                                        <div class="row">
+                                            <div class="col-md-6 d-flex">
+                                                <span class="bold">Security<span
+                                                        class="text-danger bold">*</span></span>
+                                                <select class="selectpicker" id="security-select" name="letter-security"
+                                                    data-style="bg-dark text-white" data-container="body">
+                                                    <option value="empty" class="d-none"></option>
+                                                    <option class="bg-dark text-white" value="Normal">Normal</option>
+                                                    <option class="bg-orange" value="Confidential">Confidential</option>
+                                                    <option class="bg-success text-white" value="Top Secret">Top Secret
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 d-flex">
+                                                <span class="bold">Priority<span
+                                                        class="text-danger bold">*</span></span>
+                                                <select class="selectpicker" id="priority-select" name="letter-priority"
+                                                    data-style="bg-dark text-white" data-container="body">
+                                                    <option value="empty" class="d-none"></option>
+                                                    <option class="bg-dark text-white" value="normal">Normal</option>
+                                                    <option class="bg-orange text-white" value="Immediate">Immediate
+                                                    </option>
+                                                    <option class="bg-danger text-white" value="instantaneous">
+                                                        instantaneous
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3 class="bg-light-coral text-white p-3">Receiver(s)</h3>
+                                        <div class="row">
+                                            <div class="col-md-4 border-right ">
+                                                <div class="text-center">
+                                                    <h5>Original</h5>
+                                                </div>
+                                                <a class="btn btn-success text-white bold" data-toggle="modal"
+                                                    data-target="#myOriginalModal" role="button"><i
+                                                        class="fa fa-plus"></i> Add</a>
+                                                        <span style="margin-left: 40px;">
+                                                            <ul class="d-inline-block">
+                                                            </ul>
+                                                        </span>
+                                                <div id="originalNames"></div>
+                                            </div>
+                                            <div class="col-md-4 border-right">
+                                                <div class="text-center">
+                                                    <h5>Copy</h5>
+                                                </div>
+                                                <a class="btn btn-success text-white bold myCopyBtn" data-toggle="modal"
+                                                data-target="#myCopyModal" role="button"><i
+                                                    class="fa fa-plus"></i> Add</a>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="text-center">
+                                                    <h5>Hidden Copy</h5>
+                                                </div>
+                                                <a class="btn btn-success text-white bold myHiddenBtn" data-toggle="modal"
+                                                data-target="#myHiddenCopyModal" role="button"><i
+                                                    class="fa fa-plus"></i> Add</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3 class="bg-light-coral text-white p-3">Information</h3>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <label for="title" class="bold">Title <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" name="title" id="title" class="form-control">
+                                                <br>
+                                                <label for="summary" class="bold">Summary<span style="color:red">*</span></label>
+                                                <textarea name="summary" id="summary" rows="5"
+                                                    class="form-control"></textarea>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="title" class="bold">Document <span
+                                                class="text-danger">*</span></label>
+                                        <div class="form-group form-control">
+                                            <input type="file" name="document" id="file" class="form-control-file" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="title" class="bold">Attachment<span style="color:red">*</span></label>
+                                        <div class="form-group form-control">
+                                            <input type="file" id="file" name="attachment" class="form-control-file" >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <a class="btn btn-success text-white bold" data-toggle="modal"
+                                            data-target="#mySendModal"><i class="fa fa-check"></i> Submit</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Original MODAL -->
+        <div class="modal" id="myOriginalModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Original </h5>
+                        <button class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="accordion" role="tablist">
+                            {% for section in section_list %}
+                            <div class="card ">
+                                <div class="card-header bg-white" role="tab" id="heading">
+                                    <h5 class="mb-0 "><a class=" text-dark  mylist"
+                                            href="#collapse1{{ forloop.counter }}" data-parent="#accordion"
+                                            data-toggle="collapse">
+                                            <i class="fa fa-chevron-down text-dark "></i> {{section}}
+                                        </a></h5>
+                                </div>
+                                <div id="collapse1{{ forloop.counter }}" class="collapse show">
+                                    <div class="card-body">
+                                            <div class="form-check">
+                                                {% for staff in staffs %}
+                                                {% if staff.section == section %}
+                                                <label class="form-check-label mr-2">
+                                                    <input type="checkbox" class="form-check-input" name="orginal" value={{ staff.user }}> <span> {{staff.position}} ({{ staff.user}})</span>
+                                                </label>
+                                                <br>
+                                                {% endif %}
+                                                {% endfor %}
+
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success my-2 submits" id="myOriginalBtn" type="button"> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Copy Modal -->
+        <div class="modal" id="myCopyModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Copy </h5>
+                        <button class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="accordionCopy" role="tablist">
+                            {% for section in section_list %}
+                            <div class="card ">
+                                <div class="card-header bg-white" role="tab" id="heading">
+                                    <h5 class="mb-0 "><a class=" text-dark  mylist"
+                                            href="#collapsec1{{ forloop.counter }}" data-parent="#accordionCopy"
+                                            data-toggle="collapse">
+                                            <i class="fa fa-chevron-down text-dark "></i> {{ section }}
+                                        </a></h5>
+                                </div>
+                                <div id="collapsec1{{ forloop.counter }}" class="collapse show">
+                                    <div class="card-body">
+                                            <div class="form-check">
+                                                {% for staff in staffs %}
+                                                {% if staff.section == section %}
+                                                <label class="form-check-label mr-2">
+                                                    <input type="checkbox" class="form-check-input"> <span> {{staff.position}} ({{ staff.user}})</span>
+                                                </label>
+                                                <br>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success my-2 submits" id="myCopyBtn" type="button"> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden Copy Modal -->
+        <div class="modal" id="myHiddenCopyModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Hidden Copy </h5>
+                        <button class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="accordionHiddenCopy" role="tablist">
+                            {% for section in section_list %}
+                            <div class="card ">
+                                <div class="card-header bg-white" role="tab" id="heading">
+                                    <h5 class="mb-0 "><a class=" text-dark  mylist"
+                                            href="#collapseh1{{ forloop.counter }}" data-parent="#accordionHiddenCopy"
+                                            data-toggle="collapse">
+                                            <i class="fa fa-chevron-down text-dark "></i> {{ section }}
+                                        </a></h5>
+                                </div>
+                                <div id="collapseh1{{ forloop.counter }}" class="collapse show">
+                                    <div class="card-body">
+                                            <div class="form-check">
+                                                {% for staff in staffs %}
+                                                {% if staff.section == section %}
+                                                <label class="form-check-label mr-2">
+                                                    <input type="checkbox" class="form-check-input"> <span> {{
+                                                        staff.position }} ({{ staff.user.last_name }}
+                                                        {{staff.user.last_name
+                                                        }})</span>
+                                                </label>
+                                                <br>
+                                                {% endif %}
+                                                {% endfor %}
+
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success my-2 submits" id="myHiddenCopyBtn" type="button"> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Final Modal -->
+        <div class="modal" id="mySendModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"> Are you sure ?</h5>
+                        <button class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Your letter with number <span> HR20210909001</span> will be sent by clicking transfer key .
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-secondary" data-dismiss="modal">Close and edit</button>
+                        <button class="btn btn-outline-success submits" type="submit" name="submit" id="subtrans"
+                            value="Submit">Submit
+                            and transfer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>
+
+    </script>
+
+    {% endblock content %}
+
+    {% block script %}
+    <script>
+        $('#security-select').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            let selectedItem = $(this).val();
+            let itemClasses = {
+                "Normal": "bg-dark text-white",
+                "Confidential": "bg-orange",
+                "Top Secret": "bg-success text-white",
+            };
+            $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+            $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+        });
+
+        $('#priority-select').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            let selectedItem = $(this).val();
+            let itemClasses = {
+                "Normal": "bg-dark text-white",
+                "Immediate": "bg-orange text-white",
+                "instantaneous": "bg-danger text-white",
+            };
+            $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+            $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+        });
+        $('.mylist').on('click', function () {
+            $('.fa', this)
+                .toggleClass('fa-chevron-right')
+                .toggleClass('fa-chevron-down');
+        });
+        $()
+
+        $('#myOriginalBtn').on('click', function () {
+            const container = document.querySelector('#originalNames');
+            removeAllChildNodes(container);
+            $('input[type=checkbox]').each(function () {
+                if (this.checked) {
+                    let newName = $(this).parents("label").children("span").text();
+                    let newpk = $(this).parents("label").children("input.d-none").val();
+                    //let newpk=20;
+                    let newvalue = $('<input  class="d-none">').text($(this).parents("label").children("input.d-none").val());
+                    let newSpan = $('<span class="badge bg-info d-block my-1 text-light"></span>').text(newName);
+                    let newdiv = $('<div></div>');
+                   // alert(newvalue);
+                    newdiv.append(newSpan);
+                    newdiv.append(newvalue);
+                    $("#originalNames").append(newdiv);
+                }
+            });
+            $()
+        });
+        $('#myCopyBtn').on('click', function () {
+            $('input[type=checkbox]:visible').each(function () {
+                if (this.checked) {
+                    let newName = $(this).parents("label").children("span").text();
+                    let newSpan = $('<span class="badge bg-purple d-block my-1 text-light"></span>').text(newName);
+                    $("#copyNames").append(newSpan);
+                }
+            });
+            $()
+        });
+        $('#myHiddenCopyBtn').on('click', function () {
+            $('input[type=checkbox]:visible').each(function () {
+                if (this.checked) {
+                    let newName = $(this).parents("label").children("span").text();
+                    let newSpan = $('<span class="badge bg-silver d-block my-1 text-light"></span>').text(newName);
+                    $("#hiddenNames").append(newSpan);
+                }
+            });
+            $()
+        });
+        $(".submits").on("click", function () {
+            $('#myOriginalModal').modal('hide');
+            $('#myCopyModal').modal('hide');
+            $('#myHiddenCopyModal').modal('hide');
+            $('#mySendModal').modal('hide');
+        })
+        
+         $("#subtrans").on("click", function () {
+             window.location.href = "cartable.html";
+             
+         })
+
+        function removeAllChildNodes(parent) {
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
+        }
+
+    </script>
+    {% endblock %}

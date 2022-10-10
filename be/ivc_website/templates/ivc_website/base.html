@@ -1,0 +1,552 @@
+{% load static %}
+{% load gtm_tags %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load calendar_convertor %}
+{% load seo_filter %}
+
+
+<html lang="en">
+<head>
+     {% gtm_head %}
+     <meta charset="UTF-8">
+    <link rel="canonical" href="https://tecvico.com{{request.path}}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if request.path|has_meta_index %}
+    {% with request.path|get_meta_index as meta_index %}
+    <meta name="robots" content="{{meta_index.index}}, {{meta_index.follow}}">
+    {% endwith %}
+    {% else %}
+    <meta name="robots" content="noindex, nofollow">
+    {% endif %}
+
+    {% if request.path|has_title_and_description %}
+        {% with request.path|get_title_and_description as meta_title_description %}
+        {% if meta_title_description.title %}
+        <title>{{meta_title_description.title}}</title>
+        {% else %}
+        <title>Tecvico</title>
+        {% endif %}
+        {% if meta_title_description.description %}
+        <meta name="description" content="{{meta_title_description.description}}">
+        {% endif %}
+        {% if meta_title_description.keyword %}
+        <meta name="keywords" content="{{meta_title_description.keyword}}">
+        {% endif %}
+        {% endwith %}
+    {% else %}
+    <title>Tecvico</title>
+    {% endif %}
+
+
+		
+	<link href="{% static 'ivc_website/css/normalize.css' %}" rel="stylesheet">
+	
+	
+	
+	<link href="{% static 'ivc_website/css/bootstrap.min.css' %}" rel="stylesheet" >
+	<link href="{% static 'ivc_website/css/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet" >
+	<link rel="stylesheet" href="{% static 'ivc_website/css/owl.carousel.min.css' %}">
+	<link rel="stylesheet" href="{% static 'ivc_website/css/owl.theme.default.min.css' %}">
+	<link href="{% static 'ivc_website/css/font-awesome.min.css' %}" rel="stylesheet" >
+	<link rel="shortcut icon" type="image/png" href="{% static 'favicon-v2.ico' %}"/>
+	<link href="{% static 'ivc_website/css/main_page.css' %}" rel="stylesheet">
+    <link href="{% static 'ivc_website/css/main_page2.css' %}" rel="stylesheet">
+    <link href="{% static 'ivc_website/css/helpbox.css' %}" rel="stylesheet">
+
+
+	
+    	{% block css %}{% endblock %}
+	 {% block style %}{% endblock %}
+    
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C0P9P0JS3S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-C0P9P0JS3S');
+    </script>
+    
+    
+    <script src="//www.google.com/recaptcha/api.js"></script>
+    
+    
+    
+    <!-- Hotjar Tracking Code for https://tecvico.com/ -->
+    <script>
+        (function(h,o,t,j,a,r){
+            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+            h._hjSettings={hjid:3151626,hjsv:6};
+            a=o.getElementsByTagName('head')[0];
+            r=o.createElement('script');r.async=1;
+            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+            a.appendChild(r);
+        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    </script>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</head>
+
+<body>
+ {% gtm_body %}
+  <!--<div id="preloader"></div> -->
+  <!--<div id="preloader"></div> -->
+  <a href="#" id="scroll" style="display: none;"><span></span></a>
+
+<!--<header id="header" class="fixed-top d-flex align-items-center" style="background:#F9F9F9;padding: 0px 0px !important;" >
+    <div class="container d-flex justify-content-between" style="margin-top:20px;padding:0px 0px !important;" >  
+        <div class="logo px-4">
+            <a class="mx-auto" href="/"><img src="{% static 'ivc_website/img/teclogo.png' %}" width="180" height="60" alt="logo" class="img-fluid" style="border-bottom:3px solid #cd9527;">
+                <small class="d-block mx-auto fw-bold" style="color:#cd9527;font-size: 11px;">Technological Virtual Collaboration</small>
+            </a>
+       </div> 
+       
+       
+    
+      
+      
+      
+     <nav id="navbar" class="navbar py-0" style="padding: 0px 0px !important;align-items:baseline !important;"  >
+  
+        <div class="align-top">
+        <ul style=" height:59%;" >
+           <li class="dropdown"><a href="#"><b>Project </b> <i class="bi bi-chevron-down"></i></a>
+            <ul class="text-dark " >
+              <li><a class="nav-link scrollto" href="{% url 'projects-page' %}"><i class="bi bi-card-checklist"></i><b style="padding-left: 10px;">Projects list</b></a></li>
+              {% if user.is_authenticated %}
+                 <li><a class="nav-link scrollto" href="{% url 'industry:form-clint' %}"><i class="bi bi-pencil-square"></i><b style="padding-left: 10px;">Define a project</b></a></li>
+                    {% else %}
+                <li><a class="nav-link scrollto" href="{% url 'login' %}"><i class="bi bi-pencil-square"></i><b style="padding-left: 10px;">Define a project</b></a></li>
+                {% endif %}
+              
+              
+            </ul>
+        </li>
+          
+         <li class="dropdown"><a href="#"><b>Workshop </b> <i class="bi bi-chevron-down"></i></a>
+             <ul class="text-white " >
+                 <li><a class="nav-link scrollto" href="{% url 'list-for-all' %}"><i class="bi bi-card-checklist"></i><b style="padding-left: 10px;">Workshops list</b></a></li>
+                 {% if user.is_authenticated %}
+                <li><a class="nav-link scrollto" href="{% url 'add-workshop-page' %}"><i class="bi bi-pencil-square"></i><b style="padding-left: 10px;">Define a workshop</b></a></li>
+                {%else%}
+                    <li><a class="nav-link scrollto" href="{% url 'login' %}"><i class="bi bi-pencil-square"></i><b style="padding-left: 10px;">Define a workshop</b></a></li>
+                {%endif%}
+              
+            </ul>
+        </li>
+ 
+         
+          <li class="dropdown"><a href="#"><b>Community </b> <i class="bi bi-chevron-down"></i></a>
+            <ul class="text-dark">
+              <li class="text-white" ><a href="{% url 'about-us' %}"><i class="bi bi-info-square"></i><b style="padding-left: 10px;">About us</b></a></li>
+              <li class="text-white" ><a href="{% url 'guideline' %}"><i class="bi bi-check-square"></i><b style="padding-left: 10px;">Guidelines</b></a></li>
+              <li class="text-white" ><a href="{% url 'videos-page' %}"><i class="bi bi-play-btn"></i><b style="padding-left: 10px;">Videos</b></a></li>
+              <li class="text-white" ><a href="{% url 'blog:blog-page' %}"><i class="bi bi-book"></i><b style="padding-left: 10px;">Blog</b></a></li>
+              <li class="text-white" ><a href="{% url 'news-page' %}"><i class="bi bi-newspaper"></i><b style="padding-left: 10px;">News</b></a></li>
+              <li class="text-white" ><a href="{% url 'forum:category' %}"><i class="bi bi-people"></i><b style="padding-left: 10px;">Forum</b></a></li>
+              <li class="text-white" ><a href="{% url 'FAQ-page' %}"><i class="bi bi-question-square"></i><b style="padding-left: 10px;">FAQ</b></a></li>
+              <li class="text-white" ><a href="{% url 'contact-us' %}"><i class="bi bi-telephone-inbound"></i><b style="padding-left: 10px;">Contact us</b></a></li>
+            </ul>
+          </li>
+       {% if user.is_authenticated %}
+             <li class="dropdown"><a href="#"><b>My dashboard </b> <i class="bi bi-chevron-down"></i></a>
+               <ul class="dropdown-menu dropdown-menu-right text-center p-2" style="min-width: 15rem;">
+                  li><a class="text-white dropdown-item" href="{% url 'dashboard-page' %}"><i class="bi bi-window-dock"></i><b style="padding-left: 10px;">My Dashboard</b></a></li>    
+                  <li><a class="text-white dropdown-item" href="{% url 'profile-page' %}"><i class="bi bi-person-square"></i><b style="padding-left: 10px;">My profile</b></a></li>
+                  <li><a class="text-white dropdown-item" href="{% url 'dashboard-myprojects-reserach' %}"><i class="bi bi-gear"></i><b style="padding-left: 10px;">My projects</b></a></li>
+                  <li><a class="text-white dropdown-item" href="{% url 'show-workshops-to-users' %}"><i class="bi bi-cast"></i><b style="padding-left: 10px;">My workshops</b></a></li>
+                  <li><a class="text-white dropdown-item" href="https://webmail.tecvico.com" target="_blank"><i class="bi bi-envelope-open"></i><b style="padding-left: 10px;">Mail</b></a></li>
+                  {% if request.user.staff_user.all %}
+                  <li><a class="text-white dropdown-item" href="https://tecvicoautomation.com" target="_blank"><i class="bi bi-building"></i><b style="padding-left: 10px;">Automation</b></a></li>
+                  {% endif %}
+                  <li>
+                    <div class="p-1 text-center bg-dark rounded " >
+                      <div class="text-amber">
+                          <b> Upgrade to Pro Account </b>
+                      </div>
+                      <div class="p-1 text-white text-center">
+                          <small> Get payment terms and more </small>
+                      </div>
+                       <div class=" text-center">
+                          <a href="{% url 'request:request' %}" type="button" class="btn text-white btn-success" >
+                            Upgrade
+                          </a>
+                      </div>
+                  </div>
+                  </li>
+                  
+                </ul> 
+               
+                   
+              </li>
+              
+             
+    
+     <li >
+             <a class="nav-link scrollto" href="{% url 'notification-page' %}"> 
+          
+            <i style="   font-size: 1.3rem;" class="fa fa-2x fa-bell"></i>
+            <span  class="badge rounded-pill badge-notification bg-danger"> {{notifications.count}}</span>
+             
+             </a>
+          
+          
+        </li>
+        
+           
+               
+    
+    
+            </ul>
+            </div>
+        <div style="float:right">
+            <ul>
+                <li><a  href="{% url 'logout' %}"> <b style="background-color:#cd9527; padding:2px 10px; border-radius:5px;">Logout</b> </a></li>
+            </ul>
+        </div>
+        {% else %}
+           
+            </div>
+        <div style="float:right">
+            <ul>
+                <li><a href="{% url 'login' %}"><b class="">  Sign in </b></a></li>
+                <li><a  href="{% url 'cv-upload-page' %}"><b style="background-color:#cd9527; padding:2px 10px; border-radius:5px; " class="">  Register </b></a></li>
+        
+            </ul>
+        </div>
+            
+        {% endif %}
+        
+        
+            
+          
+        
+ 
+        <i class="bi bi-list mobile-nav-toggle text-dark"></i>
+      </nav>
+
+    </div>
+  </header>-->
+  
+  
+  
+  <header id="header" class="fixed-top" style="background-color:#f9f9f9;margin:0px 0px 20px 0px;">
+    <!--<div class="container d-flex justify-content-between" style="margin-top:20px; padding:0px 0px !important; " >  -->
+          
+      
+     <nav id="navbar" class="navbar navbar-expand-lg navbar-light bg-light" >
+  
+        <div class="container-fluid">
+            <div class="logo px-4">
+                <a class="mx-auto" href="/"><img src="{% static 'ivc_website/img/teclogo.png' %}" width="150" height="50" alt="Tecvico" class="img-fluid" style="border-bottom:3px solid #cd9527;">
+                    <small class="d-block mx-auto fw-bold" style="color:#cd9527;font-size: 9px;">Technological Virtual Collaboration</small>
+                </a>
+            </div> 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon text-dark"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent" >
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0"  >
+          
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-number4" href="#" id="navbarDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false"><b>Project </b> <!--<i class="bi bi-chevron-down"></i>--></a>
+           
+         
+                        
+                        
+                        
+                        
+                        <ul class="dropdown-menu text-number5" aria-labelledby="navbarDropdown1" >
+                          <li><a class="dropdown-item " href="{% url 'projects-page' %}"><i class="bi bi-card-checklist"></i><b style="padding-left: 10px;">Projects list</b></a></li>
+                          {% if user.is_authenticated %}
+                             <li><a class="dropdown-item " href="{% url 'industry:form-clint' %}"><i class="bi bi-pencil-square"></i><b style="padding-left: 10px;">Define a project</b></a></li>
+                            
+                          {% else %}
+                            <li><a class="dropdown-item " href="{% url 'login' %}"><i class="bi bi-pencil-square"></i><b style="padding-left: 10px;">Define a project</b></a></li>
+                             
+                          {% endif %}
+                          
+                          
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-number4" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false"><b>Workshop</b> <!--<i class="bi bi-chevron-down"></i>--></a>
+                        <ul class="dropdown-menu text-number5" aria-labelledby="navbarDropdown2" >
+                            
+                          
+                           <li><a class="dropdown-item " href="{% url 'list-for-all' %}"><i class="bi bi-card-checklist"></i><b style="padding-left: 10px;">Workshops list</b></a></li>
+                          <li><a class="dropdown-item " href="{% url 'add-workshop-page' %}"><i class="bi bi-pencil-square"></i><b style="padding-left: 10px;">Define a workshop</b></a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-number4" href="#" id="navbarDropdown3" role="button" data-bs-toggle="dropdown" aria-expanded="false"><b>Commmunity </b> <!--<i class="bi bi-chevron-down"></i>--></a>
+                        <ul class="dropdown-menu text-number5" aria-labelledby="navbarDropdown3" >
+                            <li class="" ><a class="dropdown-item" href="{% url 'about-us' %}"><i class="bi bi-info-square"></i><b style="padding-left: 10px;">About us</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'guideline' %}"><i class="bi bi-check-square"></i><b style="padding-left: 10px;">Guidelines</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'videos-page' %}"><i class="bi bi-play-btn"></i><b style="padding-left: 10px;">Videos</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'blog:blog-page' %}"><i class="bi bi-book"></i><b style="padding-left: 10px;">Blog</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'news-page' %}"><i class="bi bi-newspaper"></i><b style="padding-left: 10px;">News</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'forum:category' %}"><i class="bi bi-people"></i><b style="padding-left: 10px;">Forum</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'FAQ-page' %}"><i class="bi bi-question-square"></i><b style="padding-left: 10px;">FAQ</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'contact-us' %}"><i class="bi bi-telephone-inbound"></i><b style="padding-left: 10px;">Contact us</b></a></li>
+                        </ul>
+                    </li>
+       {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-number4" href="#" id="navbarDropdown4" role="button" data-bs-toggle="dropdown" aria-expanded="false"><b>My dashboard </b> <!--<i class="bi bi-chevron-down"></i>--></a>
+                        <ul class="dropdown-menu text-number5" aria-labelledby="navbarDropdown4">
+                            <li><a class="dropdown-item" href="{% url 'dashboard-page' %}"><i class="bi bi-window-dock"></i><b style="padding-left: 10px;">My Dashboard</b></a></li>    
+                            <li><a class="dropdown-item" href="{% url 'profile-page' %}"><i class="bi bi-person-square"></i><b style="padding-left: 10px;">My profile</b></a></li>
+                            <li><a class="dropdown-item" href="{% url 'dashboard-myprojects-reserach' %}"><i class="bi bi-gear"></i><b style="padding-left: 10px;">My projects</b></a></li>
+                            <li><a class="dropdown-item" href="{% url 'show-workshops-to-users' %}"><i class="bi bi-cast"></i><b style="padding-left: 10px;">My workshops</b></a></li>
+                            <li><a class="dropdown-item" href="https://webmail.tecvico.com" target="_blank"><i class="bi bi-envelope-open"></i><b style="padding-left: 10px;">Mail</b></a></li>
+                          {% if request.user.staff_user.all %}
+                            <li><a class="dropdown-item" href="https://tecvicoautomation.com" target="_blank"><i class="bi bi-building"></i><b style="padding-left: 10px;">Automation</b></a></li>
+                          {% endif %}
+                            <li>
+                                <div class="p-1 text-center bg-dark rounded " >
+                                    <div class="text-amber">
+                                        <b> Upgrade to Pro Account </b>
+                                    </div>
+                                    <div class="p-1 text-white text-center">
+                                        <small> Get payment terms and more </small>
+                                    </div>
+                                    <div class=" text-center">
+                                        <a href="{% url 'request:request' %}" type="button" class="btn text-white btn-success" >
+                                            Upgrade
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                          
+                        </ul> 
+                        
+                    </li>
+                    <li class="nav-item">
+                         <a class="nav-link scrollto" href="{% url 'notification-page' %}"> 
+                      
+                        <i style="   font-size: 1.3rem;" class="fa fa-2x fa-bell"></i>
+                        <span  class="badge rounded-pill badge-notification bg-danger"> {{notifications.count}}</span>
+                         
+                         </a>
+                      
+                      
+                    </li>
+                </ul>
+            
+                <ul class="navbar-nav">
+                     <li class="nav-item"><a class="nav-link text-number4" href="{% url 'logout' %}" > <b style="background-color:#cd9527; padding:2px 10px; border-radius:5px;">Logout</b> </a></li>
+                     <li class="header-menu-item" >
+                         <a href="{% url 'profile-page' %}">
+                         <img style="border-radius: 100px; width: 26px; margin-left: 20px" src="{{request.user.memberprofile.image.url}}" class="img-fluid" alt="">
+                         </a>
+                     </li>
+                </ul>
+        {% else %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link text-number4" href="{% url 'login' %}"><b class="">  Sign in </b></a></li>
+                    <li class="nav-item"><a class="nav-link text-number4"  href="{% url 'cv-upload-page' %}"><b style="background-color:#cd9527; padding:2px 10px; border-radius:5px;" class="">  Register </b></a></li>
+                
+                </ul>
+        
+        {% endif %}
+            
+            </div>
+        
+        </div>   
+            
+        
+        
+        
+          
+        
+        
+        <!--<i class="bi bi-list mobile-nav-toggle text-dark"></i>-->
+       
+      </nav>
+
+   <!-- </div>-->
+  </header>
+  
+  
+
+<main>
+
+ {% block content %}{% endblock %}
+ 
+</main>
+
+
+<!--HELPBOX-->
+<div id="sy-whatshelp">
+<div class="sywh-services">
+{% comment %} <a class="messenger" data-tooltip="" data-placement="left" target="_blank">
+<i class="fa fa-comments"></i>
+</a> {% endcomment %}
+<a href="//web.whatsapp.com/send?phone=+989334908774" class="whatsapp" data-tooltip="WhatsApp" data-placement="left" target="_blank">
+<i class="fa fa-whatsapp"></i>
+</a>
+<a href="{% url 'contact-us' %}" class="Contact us" data-tooltip="Contact us" data-placement="left">
+<i class="fa fa-envelope" aria-hidden="true"></i>
+</a>
+</div>
+<a class="sywh-open-services p-3" data-placement="left">
+<i class="far-solid far-messages-question"></i>
+<i class="bi bi-headset" aria-hidden="true"></i>
+</a>
+</div>
+
+<footer class="mainfooter" role="contentinfo">
+
+  <div class="footer-middle px-5">
+  <div>
+    <div class="row">
+      <div class="col-md-3 col-12">
+        
+        <div class="footer-pad">
+         <div>
+			<a class="navbar-brand" href="#"><span><img class="img-fluid" src="{% static 'ivc_website/img/teclogo.png' %}" width="180" height="80" alt="logo" style="border-bottom:3px solid #cd9527;"></span></a>
+		  </div>
+		  <div>
+		    <a href="mailto:pr@tecvico.com"><p class="text-number6"><i class="fa fa-envelope" aria-hidden="true"></i> pr@tecvico.com</p></a>
+		  </div>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="footer-pad text-number5">
+          <h4 class="text-number6">Company</h4>
+          <ul class="list-unstyled">
+            <li><a href="{% url 'home-page' %}">Home</a></li>
+            <!--<li><a href="#">Features</a></li>-->
+            <li><a href="{% url 'cv-upload-page' %}">Join us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="footer-pad">
+          <h4 class="text-number6">About</h4>
+          <ul class="list-unstyled text-number5">
+            <li><a href="{% url 'about-us' %}">About us</a></li>
+            <!--<li><a href="{% url 'members-page' %}">Members</a></li>-->
+            <li><a href="{% url 'news-page' %}">News</a></li>
+            <li><a href="{% url 'FAQ-page' %}">FAQ</a></li>
+            <li>
+              <a href="#"></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+	  <div class="col-md-2 col-6">
+        <div class="footer-pad">
+          <h4 class="text-number6">Learn</h4>
+          <ul class="list-unstyled text-number5">
+            <li><a href="{% url 'forum:category' %}">Forum</a></li>
+            <li><a href="{% url 'videos-page' %}">Video</a></li>
+            <!--<li><a href="{% url 'documents-page' %}">Document</a></li>-->
+            <li><a href="{% url 'blog:blog-page' %}">Blog</a></li>
+            <li>
+              <a href="#"></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    	<div class="col-md-3">
+    		<h4 class="text-number6">Follow us</h4>
+            <ul class="social-network social-circle">
+             <li><a href="https://facebook.com/tecvico" class="icoFacebook" title="Facebook"><i class="fa fa-facebook"></i></a></li>
+			 <li><a href="https://instagram.com/tecvico" class="icoInstagram" title="Instagram"><i class="fa fa-instagram"></i></a></li>
+             <li><a href="https://www.linkedin.com/company/tecvico/" class="icoLinkedin" title="Linkedin"><i class="fa fa-linkedin"></i></a></li>
+			 <li><a href="https://t.me/tecvico" class="icoTelegram" title="Telegram"><i class="fa fa-telegram"></i></a></li>
+			 <li><a href="https://twitter.com/tecvico/" class="icoTiwtter" title="Tiwtter"><i class="fa fa-twitter"></i></a></li>
+            </ul>				
+		</div>
+    </div>
+	<div class="row mt-5">
+		<div class="col-md-12 copy">
+			<p class="text-center text-number5" >&copy; Copyright 2021 Tecvico Group - All Rights Reserved.</p>
+		</div>
+	</div>
+
+
+  </div>
+  </div>
+</footer>
+
+ 
+  
+  
+ 
+
+
+<script src="{% static 'ivc_website/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/popper.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/video.js' %}"></script>
+<script src="{% static 'ivc_website/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'ivc_website/header-footer/js/header.js' %}"></script>
+<script>
+    $('[data-toggle="tooltip"]').tooltip();
+</script>
+
+
+<script src="{% static 'ivc_website/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/glightbox.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/swiper-bundle.min.js' %}"></script>
+
+
+<script src="{% static 'ivc_website/js/base.js' %}"></script>
+
+
+<!--<script src="{% static 'ivc_website/js/homePage.js' %}"></script>-->
+<script src="{% static 'ivc_website/js/main2.js' %}"></script>
+<script>
+    
+    jQuery(function ($) {
+$('a.sywh-open-services').click(function () {
+if ($('.sywh-services').hasClass('active')) {
+$('.sywh-services').removeClass('active');
+$('a.sywh-open-services i.fa-times').hide();
+$('a.sywh-open-services i.fa-comments').show();
+$('a.sywh-open-services').removeClass('data-tooltip-hide');
+$('.sywh-services a:nth-child(1)').delay(0).fadeOut();
+$('.sywh-services a:nth-child(2)').delay(100).fadeOut();
+$('.sywh-services a:nth-child(3)').delay(200).fadeOut();
+$('.sywh-services a:nth-child(4)').delay(300).fadeOut();
+$('.sywh-services a:nth-child(5)').delay(400).fadeOut();
+} else {
+$('.sywh-services').addClass('active');
+$('a.sywh-open-services i.fa-comments').hide();
+$('a.sywh-open-services i.fa-times').show();
+$('a.sywh-open-services').addClass('data-tooltip-hide');
+$('.sywh-services a:nth-child(5)').delay(0).fadeIn();
+$('.sywh-services a:nth-child(4)').delay(100).fadeIn();
+$('.sywh-services a:nth-child(3)').delay(200).fadeIn();
+$('.sywh-services a:nth-child(2)').delay(300).fadeIn();
+$('.sywh-services a:nth-child(1)').delay(400).fadeIn();
+}
+});
+});
+    
+    
+    
+</script>
+
+
+ {% block script %}{% endblock %}
+ 
+</body>
+
+</html>

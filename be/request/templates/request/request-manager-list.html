@@ -1,0 +1,843 @@
+{% extends "request/base.html" %}
+{% block css %}
+
+<style>
+    .dropdown {
+  float: left;
+  overflow: visible;
+}
+
+.dropdown .dropbtn {
+  
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown .dropdown-content .dropbtn-rev {
+  font-size: 17px;    
+  border: none;
+  outline: none;
+  color: black;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.dropdown-content-rev {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content  a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content-rev  a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #555;
+  color: white;
+}
+
+.dropdown:hover .dropbtn-rev {
+  background-color: #555;
+  color: white;
+}
+
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.dropdown-content-rev a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropdown-content-rev {
+  display: block;
+}
+    
+</style>
+
+
+{% endblock %}
+{% block content %}
+<!-- table -->
+
+<section>
+    <div class="container">
+        <div class="py-3 px-2 mt-5 mb-5 bg-warning">
+            <h2 class="">Manager's page</h2>
+        </div>
+     
+        <div class="row text-center">
+            <div class="col-md-12 mb-4">
+                <div class="dropdown">
+                    <button class="btn btn-secondary mx-1 dropbtn">Badge<span class="badge badge-primary">{{badges_count}}</span> 
+                      <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        
+                        {% if request.GET.filter == "badge/status/new" %}
+                        <a href="{% url 'request:manager-list' %}?filter=badge/status/new" class="btn btn-light" style="background-color: #a3a1a1"> New <span class="badge badge-primary">{{badge_new_count}}</span></a>
+                        {% else %}
+                        <a href="{% url 'request:manager-list' %}?filter=badge/status/new" class="btn btn-light"> New <span class="badge badge-primary">{{badge_new_count}}</span></a>
+                        {% endif %}
+            
+                        {% if request.GET.filter == "badge/status/interviewer/review" %}
+                        <a href="{% url 'request:manager-list' %}?filter=badge/status/interviewer/review" class="btn btn-light" style="background-color: #a3a1a1"> Interview/review <span class="badge badge-primary">{{badge_interview_review_count}}</span></a>
+                        {% else %}
+                        <a href="{% url 'request:manager-list' %}?filter=badge/status/interviewer/review" class="btn btn-light"> Interview/review <span class="badge badge-primary">{{badge_interview_review_count}}</span></a>
+                        {% endif %}
+                        {% if request.GET.filter == "badge/history" or request.GET.filter == 'badge' %}
+                        <a href="{% url 'request:manager-list' %}?filter=badge/history" class="btn btn-light" style="background-color: #a3a1a1"> History <span class="badge badge-primary">{{badge_history_count}}</span></a>
+                        {% else %}
+                        <a href="{% url 'request:manager-list' %}?filter=badge/history" class="btn btn-light"> History <span class="badge badge-primary">{{badge_history_count}}</span></a>
+                        {% endif %}
+                     
+                    </div>
+                </div>
+                
+                
+                <div class="dropdown">
+                    <button class="btn btn-secondary mx-1 dropbtn">Supervisor <span class="badge badge-primary">{{supervisor_form_count}}</span> 
+                      <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        {% if request.GET.filter == "supervisor/status/new" %}
+                        <a href="{% url 'request:manager-list' %}?filter=supervisor/status/new" class="btn btn-light" style="background-color: #a3a1a1"> New <span class="badge badge-primary">{{supervisor_new_count}}</span></a>
+                        {% else %}
+                        <a href="{% url 'request:manager-list' %}?filter=supervisor/status/new" class="btn btn-light"> New <span class="badge badge-primary">{{supervisor_new_count}}</span></a>
+                        {% endif %}
+            
+                        {% if request.GET.filter == "supervisor/status/review" %}
+                        <a href="{% url 'request:manager-list' %}?filter=supervisor/status/review" class="btn btn-light" style="background-color: #a3a1a1"> Evaluation <span class="badge badge-primary">{{supervisor_reviewe_count}}</span></a>
+                        {% else %}
+                        <a href="{% url 'request:manager-list' %}?filter=supervisor/status/review" class="btn btn-light"> Evaluation <span class="badge badge-primary">{{supervisor_reviewe_count}}</span></a>
+                        {% endif %}
+            
+                        
+            
+                        {% if request.GET.filter == "supervisor/history" %}
+                        <a href="{% url 'request:manager-list' %}?filter=supervisor/history" class="btn btn-light" style="background-color: #a3a1a1"> History <span class="badge badge-primary" >{{supervisor_history_count}}</span></a>
+                        {% else %}
+                        <a href="{% url 'request:manager-list' %}?filter=supervisor/history" class="btn btn-light"> History <span class="badge badge-primary">{{supervisor_history_count}}</span></a>
+                        {% endif %}
+                        
+                     
+                     
+                      
+                     
+                    </div>
+                </div>
+                
+                
+                 <div class="dropdown">
+                    <button class="btn btn-secondary mx-1 dropbtn">Workshop <span class="badge badge-primary">{{workshop_form_count}}</span> 
+                      <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        {% if request.GET.filter == "workshop/status/new" %}
+                        <a href="{% url 'request:manager-list' %}?filter=workshop/status/new" class="btn btn-light" style="background-color: #a3a1a1"> New <span class="badge badge-primary">{{workshop_new_count}}</span></a>
+                        {% else %}
+                        <a href="{% url 'request:manager-list' %}?filter=workshop/status/new" class="btn btn-light"> New <span class="badge badge-primary">{{workshop_new_count}}</span></a>
+                        {% endif %}
+            
+                        {% if request.GET.filter == "workshop/status/review" %}
+                        <a href="{% url 'request:manager-list' %}?filter=workshop/status/review" class="btn btn-light" style="background-color: #a3a1a1"> Evaluation <span class="badge badge-primary">{{workshop_reviewe_count}}</span></a>
+                        {% else %}
+                        <a href="{% url 'request:manager-list' %}?filter=workshop/status/review" class="btn btn-light"> Evaluation <span class="badge badge-primary">{{workshop_reviewe_count}}</span></a>
+                        {% endif %}
+            
+            
+                        {% if request.GET.filter == "workshop/history" %}
+                        <a href="{% url 'request:manager-list' %}?filter=workshop/history" class="btn btn-light" style="background-color: #a3a1a1"> History <span class="badge badge-primary">{{workshop_hisotry_count}}</span></a>
+                        {% else %}
+                        <a href="{% url 'request:manager-list' %}?filter=workshop/history" class="btn btn-light"> History <span class="badge badge-primary">{{workshop_hisotry_count}}</span></a>
+                        {% endif %}
+                     
+                     
+                      
+                     
+                    </div>
+                </div>
+             
+            </div>
+        </div>
+
+        <div class="row">
+        {% if request.GET.filter == 'badge' or request.GET.filter == "badge/status/new" or request.GET.filter == "badge/status/interviewer/review" or request.GET.filter == "badge/history" %}
+
+
+            
+
+
+        {% if badges %}
+         <table class="table table-hover text-dark">
+            <thead class="table-success">
+                <tr>
+                    {% if request.GET.filter == "badge/status/new" %}
+                    <th colspan="8"><h5 style="font-weight:bold">Badge requests > <span>Pending for expert's response</span></h5></th>
+                    {% elif request.GET.filter == "badge/status/interviewer/review" %}
+                    <th colspan="8"><h5 style="font-weight:bold">Badge requests > <span>Interview / review</span></h5></th>
+                    {% elif request.GET.filter == 'badge' or request.GET.filter == "badge/history" %}
+                    <th colspan="8"><h5 style="font-weight:bold">Badge requests > <span>History</span></h5></th>
+                    {% endif %}
+                </tr>
+                <tr class="table-success" style="font-weight:bold">
+                    <td>ID</td>
+                    <td>User</td>
+                    <td>Skill</td>
+                    <td>Submission date</td>
+                    <td>State</td>
+                    <td>Status</td>
+                    <td>Expert's access</td>
+                    <td>Expert</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in badges %}
+                <tr>
+                    {% if request.GET.filter == "badge/status/new" %}
+                        {% if item.status == 'New' %}
+                            <td>{{item.unique_id}}</td>
+                            <td>{{item.user.get_full_name}}</td>
+                            <td>{{item.skills}}</td>
+                            <td>{{item.created.date}}</td>
+
+                            {% if item.position == 'Interview' %}
+                            <td class="">Interview</td>
+                            {% elif item.position == 'Review' %}
+                            <td class="">Review</td>
+                            {% else %}
+                            <td >---</td>
+                            {% endif %}
+
+                            <td><span class="mx-auto">Pending for expert's response</span></td>
+                            
+                            {% if item.access_accept_reject == True %}
+                            <td><i style="color: green">Access</i></td>
+                            {% else %}
+                            <td><i style="color: red">No access</i></td>
+                            {% endif %}
+                            <td>
+                            {{item.badge_expert.get.user.get_full_name}}
+                            <a href="{% url 'request:manager-change-expert' item.pk %}" class="badge badge-primary">View & change</a>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if request.GET.filter == "badge/status/interviewer/review" %}
+                        {% if item.status != 'New' and item.status != 'Accept' and item.status != 'Accept-manager' and item.status != 'Reject-badge-manager' and item.status != 'Reject-badge-expert' %}
+                            <td>{{item.unique_id}}</td>
+                            <td>{{item.user.get_full_name}}</td>
+                            <td>{{item.skills}}</td>
+                            <td>{{item.created.date}}</td>
+
+                            {% if item.position == 'Interview' %}
+                            <td class="">Interview</td>
+                            {% elif item.position == 'Review' %}
+                            <td class="">Review</td>
+                            {% else %}
+                            <td >---</td>
+                            {% endif %}
+
+                            {% if item.status == 'New' %}
+                            <td><span class="mx-auto">Pending for expert's response</span></td>
+                            {% elif item.status == 'Approve-decline' %}
+                            <td><span class="mx-auto">Pending for 
+                            {% if item.position == 'Interview' %}
+                            interviewer's
+                            {% else %}
+                            reviewer's
+                            {% endif %}
+                            approval</span></td>
+                            {% elif item.status == 'Set-session' %}
+                            <td><span class="mx-auto">Pending for setting an interviewing session</span></td>
+                            {% elif item.status == 'Interview' %}
+                            <td><span class="mx-auto">Pending for interviewing</span></td>
+                            {% elif item.status == 'Review' %}
+                            <td><span class="mx-auto">Pending for reviewing</span></td>
+                            {% elif item.status == 'Expert-view' %}
+                            <td><span class="mx-auto">The assesment has been done and pending for expert's decision</span></td>
+                            {% elif item.status == 'Reject' %}
+                            <td><span class="mx-auto">Revised by expert</span></td>
+                            {% elif item.status == 'revise_by_manager' %}
+                            <td><span class="mx-auto">Revised by you</span></td>
+                            {% elif item.status == 'send_manager' %}
+                            <td><span class="mx-auto">Pending for your response</span></td>
+                            {% elif item.status == 'decline-review-interview' %}
+                            <td><span class="mx-auto">Declined by 
+                                {% if item.position == 'Interview' %}
+                                    interviewer
+                                {% elif item.position == 'Review' %}
+                                    reviewer
+                                {% endif %}
+                            </span></td>
+                            {% else %}
+                            <td><span class="mx-auto">{{item.status}}</span></td>
+                            {% endif %}
+
+                            {% if item.access_accept_reject == True %}
+                            <td><i style="color: green">Access</i></td>
+                            {% else %}
+                            <td><i style="color: red">No access</i></td>
+                            {% endif %}
+                            <td>
+                                {{item.badge_expert.get.user.get_full_name}}
+                                {% if item.status == 'send_manager' %}
+                                <a href="{% url 'request:manager-change-expert' item.pk %}" class="badge badge-success">Accept/revise</a>
+                                {% else %}
+                                <a href="{% url 'request:manager-change-expert' item.pk %}" class="badge badge-primary">View & change</a>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if request.GET.filter == 'badge' or request.GET.filter == "badge/history" %}
+                        <td>{{item.unique_id}}</td>
+                        <td>{{item.user.get_full_name}}</td>
+                        <td>{{item.skills}}</td>
+                        <td>{{item.created.date}}</td>
+
+                        {% if item.position == 'Interview' %}
+                        <td class="">Interview</td>
+                        {% elif item.position == 'Review' %}
+                        <td class="">Review</td>
+                        {% else %}
+                        <td >---</td>
+                        {% endif %}
+
+
+                        {% if item.status == 'Approve-decline' %}
+                        <td><span class="mx-auto">Pending for 
+                        {% if item.position == 'Interview' %}
+                        interviewer's
+                        {% else %}
+                        reviewer's
+                        {% endif %}
+                        approval</span></td>
+                        {% elif item.status == 'Set-session' %}
+                        <td><span class="mx-auto">Pending for setting an interviewing session</span></td>
+                        {% elif item.status == 'New' %}
+                        <td><span class="mx-auto">Pending for expert's response	</span></td>
+                        {% elif item.status == 'Interview' %}
+                        <td><span class="mx-auto">Pending for interviewing</span></td>
+                        {% elif item.status == 'Review' %}
+                        <td><span class="mx-auto">Pending for reviewing</span></td>
+                        {% elif item.status == 'Expert-view' %}
+                        <td><span class="mx-auto">The assesment has been added and pending for expert's decision</span></td>
+                        {% elif item.status == 'Reject' %}
+                        <td><span class="mx-auto">Revised by expert</span></td>
+                        {% elif item.status == 'revise_by_manager' %}
+                        <td><span class="mx-auto">Revised by you</span></td>
+                        {% elif item.status == 'Accept' %}
+                        <td><span class="mx-auto">Accepted by expert</span></td>
+                        {% elif item.status == 'Accept-manager' %}
+                        <td><span class="mx-auto">Accepted by you</span></td>
+                        {% elif item.status == 'send_manager' %}
+                        <td><span class="mx-auto">Pending for your response</span></td>
+                        {% elif item.status == 'Reject-badge-manager' %}
+                        <td><span class="mx-auto">Rejected by you</span></td>
+                        {% elif item.status == 'Reject-badge-expert' %}
+                        <td><span class="mx-auto">Rejected by expert</span></td>
+                        {% elif item.status == 'decline-review-interview' %}
+                        <td><span class="mx-auto">Declined by 
+                            {% if item.position == 'Interview' %}
+                                interviewer
+                            {% elif item.position == 'Review' %}
+                                reviewer
+                            {% endif %}
+                        </span></td>
+                        {% else %}
+                        <td><span class="mx-auto">{{item.status}}</span></td>
+                        {% endif %}
+                        {% if item.access_accept_reject == True %}
+                        <td><i style="color: green" >Access</i></td>
+                        {% else %}
+                        <td><i style="color: red">No access</i></td>
+                        {% endif %}
+                        <td>
+                            {{item.badge_expert.get.user.get_full_name}}
+                            {% if item.status == 'send_manager' %}
+                            <a href="{% url 'request:manager-change-expert' item.pk %}" class="badge badge-success">Accept/revise</a>
+                            {% elif item.status == 'Accept' or item.status == 'Accept-manager' or item.status == 'Reject-badge-manager' or item.status == 'Reject-badge-expert' %}
+                            <a href="{% url 'request:manager-change-expert' item.pk %}" class="badge badge-primary">View</a>
+                            {% else %}
+                            <a href="{% url 'request:manager-change-expert' item.pk %}" class="badge badge-primary">View & change</a>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+
+
+
+
+<!--                     <td>{{item.unique_id}}</td>
+                    <td>{{item.user.get_full_name}}</td>
+                    <td>{{item.skills}}</td>
+                    <td>{{item.created.date}}</td>
+                    {% if item.status == 'New' %}
+                    <td><span class="mx-auto">Pending for expert's response</span></td>
+                    {% elif item.status == 'Approve-decline' %}
+                    <td><span class="mx-auto">Pending for interviewer/reviewer's approval</span></td>
+                    {% elif item.status == 'Set-session' %}
+                    <td><span class="mx-auto">Pending for interviewer to set the session</span></td>
+                    {% elif item.status == 'Interview' %}
+                    <td><span class="mx-auto">Pending for interviewing</span></td>
+                    {% elif item.status == 'Review' %}
+                    <td><span class="mx-auto">Pending for reviewing</span></td>
+                    {% elif item.status == 'Expert-view' %}
+                    <td><span class="mx-auto">The assesment has been added and pending for expert's decision</span></td>
+                    {% elif item.status == 'Accept' %}
+                    <td><span class="mx-auto">Accepted</span></td>
+                    {% elif item.status == 'Reject' %}
+                    <td><span class="mx-auto">Revised</span></td>
+                    {% elif item.status == 'send_manager' %}
+                    <td><span class="mx-auto">Pending for your response</span></td>
+                    {% else %}
+                    <td><span class="mx-auto">{{item.status}}</span></td>
+                    {% endif %}
+                    {% if item.access_accept_reject == True %}
+                    <td><i style="color: green" class="far fa-check-circle"></i></td>
+                    {% else %}
+                    <td><i style="color: red" class="far fa-times-circle"></i></td>
+                    {% endif %}
+                    <td>
+                        {{item.badge_expert.get.user.get_full_name}}
+                        {% if item.status == 'send_manager' %}
+                        <a href="{% url 'request:manager-change-expert' item.pk %}" class="badge badge-success">Accept/revise</a>
+                        {% else %}
+                        <a href="{% url 'request:manager-change-expert' item.pk %}" class="badge badge-primary">View & change</a>
+                        {% endif %}
+                    </td> -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>There is nothing to show.</p>
+        {% endif %}
+        
+        <!--===========================================================================================-->
+        
+        {% elif request.GET.filter == 'supervisor' or request.GET.filter == "supervisor/status/new" or request.GET.filter == "supervisor/status/review" or request.GET.filter == "supervisor/finished" or request.GET.filter == "supervisor/history" %}
+
+            
+
+
+        {% if supervisor_form %}
+         <table class="table table-hover">
+             <thead class="table-info">
+                <tr>
+                    {% if request.GET.filter == "supervisor/status/new" %}
+                    <th colspan="6"><h5 style="font-weight:bold">Supervisor requests > <span>New</span></h5></th>
+                    {% elif request.GET.filter == "supervisor/status/review" %}
+                    <th colspan="6"><h5 style="font-weight:bold">Supervisor requests > <span>Reviewer</span></h5></th>
+                    {% elif request.GET.filter == "supervisor/finished" %}
+                    <th colspan="6"><h5 style="font-weight:bold">Supervisor requests > <span>Done</span></h5></th>
+                    {% elif request.GET.filter == "supervisor/history" %}
+                    <th colspan="6"><h5 style="font-weight:bold">Supervisor requests > <span>History</span></h5></th>
+                    {% endif %}
+                </tr>
+               <tr class="table-info" style="font-weight:bold">
+                    <td>ID</td>
+                    <td>User</td>
+                    <td>Submission date</td>
+                    <td>Status</td>
+                    <td>Expert's access</td>
+                    <td>Expert</td>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in supervisor_form %}
+                <tr>
+
+                    {% if request.GET.filter == "supervisor/status/new" %}
+                        {% if item.status == 'New' %}
+                            <td>{{item.id_request}}</td>
+                            <td>{{item.user.get_full_name}}</td>
+                            <td>{{item.created.date}}</td>
+                            <td><span class="mx-auto">Pending for expert's response</span></td>
+
+                            {% if item.access_accept_reject == True %}
+                            <td><i style="color: green" >Access</i></td>
+                            {% else %}
+                            <td><i style="color: red">No access</i></td>
+                            {% endif %}
+
+                            <td>
+                                {{item.expert.get_full_name}}
+                                <a href="{% url 'request:manager-change-expert-supervisor' item.pk %}" class="badge badge-primary">View & change</a>
+                            </td>
+
+                        {% endif %}
+                    {% endif %}
+
+
+                    {% if request.GET.filter == "supervisor/status/review" %}
+                        {% if item.status != 'New' and item.status != 'accepted_by_manager' and item.status != 'accepted_by_expert' and item.status != 'rejected_by_manager' and item.status != 'rejected_by_expert' %}
+                            <td>{{item.id_request}}</td>
+                            <td>{{item.user.get_full_name}}</td>
+                            <td>{{item.created.date}}</td>
+
+                            {% if item.status == "accepted_by_manager" %}
+                            <td class="">Accepted by you</td>
+                            {% elif item.status == "accepted_by_expert" %}
+                            <td class="">Accepted by expert</td>
+                            {% elif item.status == "rejected_by_manager" %}
+                            <td class="">Rejected by you</td>
+                            {% elif item.status == "rejected_by_expert" %}
+                            <td class="">Rejected by expert</td>
+                            {% elif item.status == "revise_by_manager" %}
+                            <td class="">Revised by you</td>
+                            {% elif item.status == "revise_by_expert" %}
+                            <td class="">Revised by expert</td>
+                            {% elif item.status == "Review" %}
+                            <td class="">Pending for reviewer's approval</td>
+                            {% elif item.status == "reviewer_accept" %}
+                            <td class="">Pending for reviewer's evaluation</td>
+                            {% elif item.status == "reviewer_reject" %}
+                            <td class="">Declined by reviewer</td>
+                            {% elif item.status == "reviewer_evaluated" %}
+                            <td class="">The assessment has been done and pending for expert's decision </td>
+                            {% elif item.status == "send_to_manager" %}
+                            <td class="">Pending for your response </td>
+                            {% else %}
+                            <td class="">{{item.status}}</td>
+                            {% endif %}
+
+                            {% if item.access_accept_reject == True %}
+                            <td><i style="color: green">Access</i></td>
+                            {% else %}
+                            <td><i style="color: red" >No access</i></td>
+                            {% endif %}
+
+                            <td>
+                            {{item.expert.get_full_name}}
+                            {% if item.status == "send_to_manager" %}
+                                <a class="badge badge-success" href="{% url 'request:manager-detail-supervisor' item.pk %}">Accept/reject</a>
+                            {% else %}
+                                <a href="{% url 'request:manager-change-expert-supervisor' item.pk %}" class="badge badge-primary">View & change</a>
+                            {% endif %}
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+
+                    {% if request.GET.filter == "supervisor/history" %}
+                        <td>{{item.id_request}}</td>
+                        <td>{{item.user.get_full_name}}</td>
+                        <td>{{item.created.date}}</td>
+
+                        {% if item.status == "accepted_by_manager" %}
+                        <td class="">Accepted by you</td>
+                        {% elif item.status == "rejected_by_manager" %}
+                        <td class="">Rejected by you</td>
+                        {% elif item.status == "revise_by_manager" %}
+                        <td class="">Revised by you</td>
+                        {% elif item.status == "revise_by_expert" %}
+                        <td class="">Revised by expert</td>
+                        {% elif item.status == "accepted_by_expert" %}
+                        <td class="">Accepted by expert</td>
+                        {% elif item.status == "rejected_by_expert" %}
+                        <td class="">Rejected by expert</td>
+                        {% elif item.status == "Review" %}
+                        <td class="">Pending for reviewer's approval</td>
+                        {% elif item.status == "reviewer_accept" %}
+                        <td class="">Pending for reviewer's evaluation</td>
+                        {% elif item.status == "reviewer_reject" %}
+                        <td class="">Declined by reviewer</td>
+                        {% elif item.status == "reviewer_evaluated" %}
+                        <td class="">The assessment has been done and pending for expert's decision </td>
+                        {% elif item.status == "send_to_manager" %}
+                        <td class="">Pending for your response </td>
+                        {% elif item.status == "New" %}
+                        <td class="">Pending for expert's response </td>
+                        {% else %}
+                        <td class="">{{item.status}}</td>
+                        {% endif %}
+
+
+                        {% if item.access_accept_reject == True %}
+                        <td><i style="color: green">Access</i></td>
+                        {% else %}
+                        <td><i style="color: red">No access</i></td>
+                        {% endif %}
+
+
+                        <td>
+                        {{item.expert.get_full_name}}
+                        {% if item.status == "accepted_by_manager" or item.status == "rejected_by_manager" or item.status == "rejected_by_expert" or item.status == "accepted_by_expert" %}
+                            <a href="{% url 'request:manager-change-expert-supervisor' item.pk %}" class="badge badge-primary">View </a>
+                        </td>
+                        {% elif item.status == "send_to_manager" %}
+                            <a class="badge badge-success" href="{% url 'request:manager-detail-supervisor' item.pk %}">Accept/reject</a>
+                        {% else %}
+                            <a href="{% url 'request:manager-change-expert-supervisor' item.pk %}" class="badge badge-primary">View & change</a>
+                        {% endif %}
+                    {% endif %}
+
+
+
+<!--                     <td>{{item.id_request}}</td>
+                    <td>{{item.user.get_full_name}}</td>
+                    <td>{{item.created.date}}</td>
+                    {% if item.status == 'send_manager' %}
+                    <td><span class="mx-auto">Pending for your response</span></td>
+                    {% else %}
+                    <td class="">{{item.status}}</td>
+                    {% endif %}
+
+                    {% if item.access_accept_reject == True %}
+                    <td><i style="color: green" class="far fa-check-circle"></i></td>
+                    {% else %}
+                    <td><i style="color: red" class="far fa-times-circle"></i></td>
+                    {% endif %}
+
+                    <td>
+                    {{item.expert.get_full_name}}
+                    {% if item.status == "send_to_manager" %}
+                        <a class="badge badge-success" href="{% url 'request:manager-detail-supervisor' item.pk %}">Accept/reject</a>
+                    {% else %}
+                        {{item.expert.get_full_name}}
+                        <a href="{% url 'request:manager-change-expert-supervisor' item.pk %}" class="badge badge-primary">View & change</a>
+                    {% endif %}
+                    </td> -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>There is nothing to show.</p>
+        {% endif %}
+        
+        <!--=========================================================================================================--> 
+            
+        {% elif request.GET.filter == 'workshop' or request.GET.filter == "workshop/status/new" or request.GET.filter == "workshop/status/review" or request.GET.filter == "workshop/history" or request.GET.filter == "workshop/finished" %}
+
+
+
+            
+
+        {% if workshop_form %}
+        <table class="table table-hover">
+            <thead class="table-warning">
+                <tr>
+                    {% if request.GET.filter == "workshop/status/new" %}
+                    <th colspan="6"><h5 style="font-weight:bold">Workshop requests > <span>New</span></h5></th>
+                    {% elif request.GET.filter == "workshop/status/review" %}
+                    <th colspan="6"><h5 style="font-weight:bold">Workshop requests > <span>Interview / review</span></h5></th>
+                    {% elif request.GET.filter == "workshop/finished" %}
+                    <th colspan="6"><h5 style="font-weight:bold">Workshop requests > <span>Done</span></h5></th>
+                    {% elif request.GET.filter == "workshop/history" %}
+                    <th colspan="6"><h5 style="font-weight:bold">Workshop requests > <span>History</span></h5></th>
+                    {% endif %}
+                </tr>
+                 <tr class="table-warning" style="font-weight:bold">
+                    <td>ID</td>
+                    <td>User</td>
+                    <td>Submission date</td>
+                    <td>Status</td>
+                    <td>Expert's access</td>
+                    <td>Expert</td>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in workshop_form %}
+                <tr>
+
+
+
+
+                    {% if request.GET.filter == "workshop/status/new" %}
+                        {% if item.status == 'New' %}
+                            <td>{{item.id_request}}</td>
+                            <td>{{item.user.get_full_name}}</td>
+                            <td>{{item.created.date}}</td>
+                            <td><span class="mx-auto">Pending for expert's response</span></td>
+
+                            {% if item.access_accept_reject == True %}
+                            <td><i style="color: green">Access</i></td>
+                            {% else %}
+                            <td><i style="color: red">No access</i></td>
+                            {% endif %}
+
+                            <td>
+                                {{item.expert.get_full_name}}
+                                <a href="{% url 'request:manager-change-expert-workshop' item.pk %}" class="badge badge-primary">View & change</a>
+                            </td>
+
+                        {% endif %}
+                    {% endif %}
+
+
+                    {% if request.GET.filter == "workshop/status/review" %}
+                        {% if item.status != 'New' and item.status != 'accepted_by_manager' and item.status != 'rejected_by_manager' and item.status != 'accepted_by_expert' and item.status != 'rejected_by_expert' %}
+                            <td>{{item.id_request}}</td>
+                            <td>{{item.user.get_full_name}}</td>
+                            <td>{{item.created.date}}</td>
+
+                            {% if item.status == 'send_manager' %}
+                            <td><span class="mx-auto">Pending for your response</span></td>
+                            {% elif item.status == "revised_by_manager" %}
+                            <td class="">Revised by you</td>
+                            {% elif item.status == "revised_by_expert" %}
+                            <td class="">Revised by expert</td>
+                            {% elif item.status == "reviewer_reject" %}
+                            <td class="">Declined by reviewer</td>
+                            {% elif item.status == "Review" %}
+                            <td class="">Pending for reviewer's approval</td>
+                            {% elif item.status == "reviewer_evaluated" %}
+                            <td class="">The assesment has been done and pending for expert's decision </td>
+                            {% elif item.status == "send_to_manager" %}
+                            <td class="">Pending for your response </td>
+                            
+                            {% elif item.status == "reviewer_accept" %}
+                            <td class="">Pending for reviewer's evaluation </td>
+                            
+                            {% else %}
+                            <td class="">{{item.status}}</td>
+                            {% endif %}
+
+                            {% if item.access_accept_reject == True %}
+                            <td><i style="color: green">Access</i></td>
+                            {% else %}
+                            <td><i style="color: red">No access</i></td>
+                            {% endif %}
+
+
+                            <td>
+                            {{item.expert.get_full_name}}
+                            {% if item.status == "send_to_manager" %}
+                                <a class="badge badge-success" href="{% url 'request:manager-detail-workshop' item.pk %}">Accept/reject</a>
+                            {% else %}
+                                <a href="{% url 'request:manager-change-expert-workshop' item.pk %}" class="badge badge-primary">View & change</a>
+                            {% endif %}
+                            </td>
+                        {% endif %}
+                    {% endif %}
+
+
+                    {% if request.GET.filter == "workshop/history" %}
+                        <td>{{item.id_request}}</td>
+                        <td>{{item.user.get_full_name}}</td>
+                        <td>{{item.created.date}}</td>
+
+                        {% if item.status == "accepted_by_manager" %}
+                        <td class="">Accepted by you</td>
+                        {% elif item.status == "rejected_by_manager" %}
+                        <td class="">Rejected by you</td>
+                        {% elif item.status == "revised_by_manager" %}
+                        <td class="">Revised by you</td>
+
+                        {% elif item.status == "accepted_by_expert" %}
+                        <td class="">Accepted by expert</td>
+                        {% elif item.status == "rejected_by_expert" %}
+                        <td class="">Rejected by expert</td>
+                        {% elif item.status == "revised_by_expert" %}
+                        <td class="">Revised by expert</td>
+
+                        {% elif item.status == "Review" %}
+                        <td class="">Pending for reviewer's approval</td>
+                        {% elif item.status == "reviewer_accept" %}
+                        <td class="">Pending for reviewer's evaluation</td>
+                        {% elif item.status == "reviewer_reject" %}
+                        <td class="">Declined by reviewer</td>
+                        {% elif item.status == "reviewer_evaluated" %}
+                        <td class="">The assesment has been done and pending for expert's decision </td>
+                        {% elif item.status == "send_to_manager" %}
+                        <td class="">Pending for your response </td>
+                        {% elif item.status == "New" %}
+                        <td class="">Pending for expert's response </td>
+                        {% else %}
+                        <td class="">{{item.status}}</td>
+                        {% endif %}
+
+                        {% if item.access_accept_reject == True %}
+                        <td><i style="color: green" > Access</i></td>
+                        {% else %}
+                        <td><i style="color: red">No access</i></td>
+                        {% endif %}
+
+                        <td>
+                        {{item.expert.get_full_name}}
+                        {% if item.status == "send_to_manager" %}
+                            <a class="badge badge-success" href="{% url 'request:manager-detail-workshop' item.pk %}">Accept/reject</a>
+                        {% elif item.status == "accepted_by_manager"  or item.status == "rejected_by_manager" or item.status == "accepted_by_expert"  or item.status == "rejected_by_expert" %}
+                            <a href="{% url 'request:manager-change-expert-workshop' item.pk %}" class="badge badge-primary">View </a>
+                        {% else %}
+                            <a href="{% url 'request:manager-change-expert-workshop' item.pk %}" class="badge badge-primary">View & change</a>
+                        {% endif %}
+                        </td>
+                    {% endif %}
+
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+            
+        <!--=====================================================================================================================-->
+        {% endif %}
+            
+        </div>
+
+</div>
+</section>
+<div class="modal fade text-black" style="color:black" id="comment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <label>Reason of rejection:</label>
+                <textarea class="w-100 form-control" style="width: 350px;" id="showExpertComment" readonly></textarea>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $("#expertComment").click(function(){
+        var comment = $('#decline-comment').val();
+        $('#showExpertComment').html(comment);
+    });
+</script>
+
+{% endblock %}

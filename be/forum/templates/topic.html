@@ -1,0 +1,554 @@
+{% extends 'ivc_website/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block style %}
+
+    <link rel="stylesheet" href="{% static 'forum/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'forum/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'forum/css/select2.min.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<main id="forum" class="mt-5 pt-5">
+    <div id="carouselExampleIndicators" class="banner_top carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active ">
+                <div class="row">
+                    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h2 class="text-white ">
+                            Topic
+
+                        </h2>
+                        
+                    </div>
+                    <div class="col-md-6 position-relative">
+                        <img class="img-fluid" src="{% static 'forum/img/img-contact.png' %}"
+                             style="height: 300px;max-height: max-content"
+                             alt="">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="container p-3">
+        <div class="back-link d-flex align-items-center mt-3">
+            
+            <a href="{% url 'home-page' %}" class="">Home</a>
+            <i class="fa fa-angle-right  mx-2"></i>
+            <a href="{% url 'forum:category' %}" class="">Categories page</a>
+            <i class="fa fa-angle-right  mx-2"></i>
+            <a href="{% url 'forum:category-topic' object.categorys.slug %}" class="">{{object.categorys.title}}</a>
+            <i class="fa fa-angle-right  mx-2"></i>
+            <h6 class="active my-0">{{object.title}}</h6>
+        </div>
+    </div>
+    
+    <div class="container-fluid p-3">
+        <div class="text-center">
+            <h5>{{object.title}}</h5>
+        </div>
+    </div>
+    
+    <div class="container p-3">
+        <div class="wrapper d-flex justify-content-start">
+    
+            <!--<div class="content ms-2 d-flex flex-column ">-->
+                <!--<div class="text-center">
+                    <h5>{{object.title}}</h5>
+                </div>-->
+                <br>
+                {% if request.user.is_superuser or request.user.forumrole.delete_topic == True or request.user == object.author %}
+                <!--<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 text-start">-->
+                    <button class="btn btn-danger mx-1" data-bs-toggle="modal" href="#delete_topic">Delete</button>
+                <!--</div>-->
+                <!--</a>-->
+                {% endif %}
+
+                {% if request.user == object.author %}
+                <!--<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 text-start">-->
+                    <button class="btn btn-primary mx-1" data-bs-toggle="modal" href="#edit_topic">Edit</button>
+                <!--</div>-->
+                {% endif %}
+
+                
+
+                <div class="mx-1 d-flex align-items-center btn-topic">
+                    <fogrm action="{% url 'forum:topic-like' object.pk %}" method="POST" class="ui form">
+                        {% csrf_token %}
+                        <input type="hidden" name="status" value="topic">
+                        <button class="btn btn-success delete d-flex justify-content-center align-items-center"><i class="fa fa-heart-o mx-1"></i> {{object.like_topic.Active.count}}</button>
+                    </form>
+
+                    <strong></strong>
+                </div>
+        </div>
+    </div>
+                
+             <div class="container p-3">
+                <form method="POST">{% csrf_token %}
+                    <div class="insert_comment p-4">
+                        <textarea class="form-control w-100" placeholder="write here ..." rows="8" required name="description" id="description_id"></textarea>
+                        <button class="btn  mt-2" type="submit">Submit</button>
+                    </div>
+                </form>
+
+                
+                {% for i in comment_forum %} 
+
+                    <div class="comments p-4 my-2">
+                        <div class="info d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <img class="my-3 mx-3" src="{{i.user.memberprofile.image.url}}" alt="">
+                                <span>{{i.user.get_full_name}}</span>
+                                <span class="mx-2 text-muted"><small>{{i.created}} -- {{i.pk}}</small></span>
+                            </div>
+                            {% if request.user.is_superuser or request.user.forumrole.delete_comment_replycomment == True or request.user == object.author %}
+                           
+                            <div>
+                                <button class="btn btn-danger mx-auto"><a data-bs-toggle="modal" href="#delete_comment{{i.pk}}" style="text-decoration:none;color:white">Delete</a></button>
+                            </div>
+                           
+                            {% endif %}
+                        </div>
+                        <p>{{i.description}}.
+                        </p>
+                        <div class="action d-flex">
+                            <button class="btn btn-primary text-start me-auto"><a data-bs-toggle="modal" href="#InfoModal_reject{{i.pk}}">Reply</a></button>
+
+                            <form action="{% url 'forum:topic-like' i.pk %}" method="POST" class="ui form">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="comment">
+                                <button style="background-color: #fafafa; border-color: #fafafa;" class="btn btn-danger delete d-flex justify-content-center align-items-center">
+                                    <img src="{% static 'forum/img/like.svg' %}" alt="" onclick="SendLike({{i.id}},'like');"><span class="text-dark">{{i.like_comment.Active.count}}</span>
+                                </button>
+                            </form>
+
+
+
+                            <form action="{% url 'forum:comment-dislike' i.pk %}" method="POST" class="ui form">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="comment">
+                                <button style="background-color: #fafafa; border-color: #fafafa;" class="btn btn-danger delete d-flex justify-content-center align-items-center">
+                                    <img src="{% static 'forum/img/dislike.svg' %}" alt="" ><span class="text-dark">{{i.dislike_comment.Active.count}}</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    {% for r in ReplyComment %}
+                        {% if r.comment_int == i.pk %}
+                            <div class="comments p-4 my-2 comment-reply ms-auto" data-id="1">
+                                <div class="reply_info text-muted"></div>
+                                <div class="info d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <img class="my-3 mx-3" src="{{i.user.memberprofile.image.url}}" alt="">
+                                        <span>{{r.user.get_full_name}}</span>
+                                        <span class="mx-2 text-muted"><small>{{r.created}}</small></span>
+                                    </div>
+                                    {% if request.user.is_superuser or request.user.forumrole.delete_comment_replycomment == True or request.user == object.author %}
+                                    
+                                    <div>
+                                        <button class="btn btn-danger mx-auto"><a data-bs-toggle="modal" href="#delete_reply_comment{{i.pk}}" style="text-decoration:none;color:white">Delete</a></button>
+                                    </div>
+                                    
+                                    {% endif %}
+                                </div>
+                                <p>{{r.reply_comment}}.</p>
+                                <div class="action d-flex justify-content-end">
+
+                                    <form action="{% url 'forum:topic-like' r.pk %}" method="POST" class="ui form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="replycomment">
+                                        <button style="background-color: #fafafa; border-color: #fafafa;" class="btn btn-danger delete d-flex justify-content-center align-items-center">
+                                            <img src="{% static 'forum/img/like.svg' %}" alt=""><span class="text-dark">{{r.like_replycomment.Active.count}}</span>
+                                        </button>
+                                    </form>
+
+                                    <form action="{% url 'forum:comment-dislike' r.pk %}" method="POST" class="ui form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="replycomment">
+                                        <button style="background-color: #fafafa; border-color: #fafafa;" class="btn btn-danger delete d-flex justify-content-center align-items-center">
+                                            <img src="{% static 'forum/img/dislike.svg' %}" alt="" ><span class="text-dark">{{r.dislike_replycomment.Active.count}}</span>
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </div>
+
+
+                        {% endif %}
+
+
+                </div>
+
+                        <!----- Delete reply comment --- -->
+                        <div class="modal fade"  id="delete_reply_comment{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                            <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header modal-colored-header bg-secondary text-dark">
+                                      <h5 class="modal-title text-dark" id="InfoModalLabel">Deleted comment</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
+                                      
+                                    </div>
+                                    <form method="POST">{% csrf_token %}
+                                        <div class="modal-body text-dark">
+                                            <input type="hidden" name="replycomment_id" value="{{r.id}}">
+                                        </div>
+                                        <div class="row px-5">
+                                            <p id="selectedRole" class="text-dark"></p>
+                                            
+                                        </div>
+
+                                        
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+
+
+
+                    <!----- Reply comment --- -->
+                    <div class="modal fade"  id="InfoModal_reject{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                        <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header modal-colored-header bg-secondary text-dark">
+                                  <h5 class="modal-title text-dark" id="InfoModalLabel">Reply comment</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
+                                  
+                                </div>
+                                <form method="POST">{% csrf_token %}
+                                    <div class="modal-body text-dark">
+                                        <div class="form-group col-md-12 mb-0">
+                                            {{ form_reply.reply_comment|as_crispy_field }}
+                                        </div>
+                                        <input type="hidden" name="comment_id" value="{{i.pk}}">
+                                    </div>
+                                    <div class="row px-5">
+                                        <p id="selectedRole" class="text-dark"></p>
+                                        
+                                    </div>
+
+                                    
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!----- Delete comment --- -->
+                    <div class="modal fade"  id="delete_comment{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                        <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header modal-colored-header bg-secondary text-dark">
+                                  <h5 class="modal-title text-dark" id="InfoModalLabel">Deleted comment</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
+                                  
+                                </div>
+                                <form method="POST">{% csrf_token %}
+                                    <div class="modal-body text-dark">
+                                        <input type="hidden" name="comment__id" value="{{i.pk}}">
+                                    </div>
+                                    <div class="row px-5">
+                                        <p id="selectedRole" class="text-dark"></p>
+                                        
+                                    </div>
+
+                                    
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+
+
+                <!-- Delete topic -->
+                <div class="modal fade text-black" style="color:black" id="delete_topic" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form method="POST">{% csrf_token %}
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <input type="hidden" name="topic_id" id="id_topic_id" value="0">
+                                    <h6>Are you sure</h6>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+                <!----- Edit topic --- -->
+                <div class="modal fade"  id="edit_topic" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                    <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                        <div class="modal-content">
+                            <form method="POST">{% csrf_token %}
+                                <div class="modal-body text-dark">
+                                    <div class="row">
+                                        <div class="form-group col-xl-12 col-md-12 col-sm-12">
+                                            <label>Title</label>
+                                            <textarea class="txtara form-control" name="title" id="id_text">{{object.title}}</textarea>
+                                                        
+                                            <div id="id_abstrack_error" style="color:red;font-size: small;"></div>
+                                        </div>
+                                    
+                                    </div>
+                                    <div class="row px-5">
+                                        <p id="selectedRole" class="text-dark"></p>
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Submit</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="sidebar_bg ">
+    <div class="sidebar_right  ">
+        <a class=" btn clos">
+            <i class="fa fa-times-circle "></i>
+        </a>
+        <div class="filters">
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between ">
+                    <span>Search</span>
+                </a>
+                <input type="text" class="border border-dark form-control mt-2 mb-2" placeholder="search by title & keywords">
+
+            </div>
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between">
+                    <span>Categories</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <div class="preloader d-none">
+                    <i class="fa-filter"></i>
+                </div>
+                <ul class="unstyled centered" name="main[]">
+                    <li>
+                        <input class="styled-checkbox" id="cat-1-1" type="checkbox" value="Industry">
+                        <label for="cat-1-1">Industry</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="cat-1-2" type="checkbox" value="Research">
+                        <label for="cat-1-2">Research</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="cat-1-3" type="checkbox" value="Competition">
+                        <label for="cat-1-3">Competition</label>
+                    </li>
+                </ul>
+            </div>
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between">
+                    <span>Date</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <div class="preloader d-none">
+                    <i class="fa-filter"></i>
+                </div>
+                <ul class="unstyled centered" name="date[]">
+                    <li>
+                        <input class="styled-checkbox" id="date-1-1" type="checkbox" value="English">
+                        <label for="date-1-1">Next week</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-2" type="checkbox" value="English">
+                        <label for="date-1-2">Next month</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-3" type="checkbox" value="English">
+                        <label for="date-1-3">Next two month</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-4" type="checkbox" value="English">
+                        <label for="date-1-4">Last week</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-5" type="checkbox" value="English">
+                        <label for="date-1-5">Last month</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal justify-content-center" id="myModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Creating Topic</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body p-3">
+                <section>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="">
+                                <div class="form-area">
+                                    <div class="form-inner">
+                                        <form action="javascript:void(0);">
+                                            <div class="form-group floating-group">
+                                                <label class="floating-label">Title</label>
+                                                <input type="text" class="form-control floating-control"/>
+                                            </div>
+                                            <div class="form-group floating-group floating-diff">
+                                                <label class="floating-label">Select 1</label>
+                                                <select id="select1" name="select1"
+                                                        class="form-control floating-control">
+                                                    <option value="">Select1</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group floating-group floating-diff">
+                                                <label class="floating-label">Select 2</label>
+                                                <select id="select2" name="select1"
+                                                        class="form-control floating-control">
+                                                    <option value="">Select2</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group select2Part select2multiple w-100 floating-group">
+                                                <label class="floating-label">Select Multiple</label>
+                                                <select name="select_multiple" id="select_multiple"
+                                                        class="form-control customSelectMultiple floating-control"
+                                                        multiple>
+                                                    <option value="***">***</option>
+                                                    <option value="***">***1</option>
+                                                    <option value="***">***2</option>
+                                                    <option value="***">***3</option>
+                                                    <option value="***">***4</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group floating-group">
+                                                <label class="floating-label">Description</label>
+                                                <textarea name="" id="" rows="4"
+                                                          class="form-control floating-control"></textarea>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!------ js files ----->
+
+
+
+<script src="{% static 'forum/js/jquery-3.6.0.min.js' %}"></script>
+<!--<script src="{% static 'forum/js/bootstrap.bundle.min.js' %}"></script>-->
+<!--<script src="{% static 'forum/js/select2.full.min.js' %}"></script>-->
+
+<script src="{% static 'forum/js/main.js' %}"></script>
+<script>
+    
+    
+    
+    
+    
+function SendLike(id,action){
+    var position = action;
+ jQuery.ajax({
+		type: "POST",
+		url:"",
+		data:  {"position":position, "postID":id},
+		success: function(output){
+            
+			
+			
+		}, error: function (output){
+			
+				
+		}, complete: function(output){
+			
+		}
+				
+		
+	});
+
+    
+    
+    
+
+    
+});   
+    
+    
+    
+    
+    
+}
+}
+</script>
+{% endblock %}

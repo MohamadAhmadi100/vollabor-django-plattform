@@ -1,0 +1,641 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-eye"></i> Project view</h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}project{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is new</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row">
+            {% if selected_project.is_valid %}
+                {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                <div class="col-md-3 my-1">
+                        <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        <!-- new -->
+                <!-- new table theme -->         
+                <main class="container-fluid  ">
+                    <div class="content my-4">
+                        <div class="row px-4 py-2">
+                            <div class="col-md-12">
+                                <h2 style="overflow: hidden">{{selected_project.title}}</h2>
+                                {% if selected_project.fund > 0 %}
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="form-control">
+                                            ${{selected_project.fund}}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if selected_project.status == 'Rejected' %}
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="form-control">
+                                         
+                                        <span class="badge badge-danger">Reason of rejection</span>
+                                        {{selected_project.reject_reason}}                            
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                {% endif %}
+        
+                                {% if project_areas %}
+                                    <div class="col-md-12">
+                                        <label class="form-label">Project Areas:</label>
+                                        <div class="form-group ">
+                                            <span class="text-info bold"></span>
+                                                {% for project_area in project_areas %}
+                                                <span class="badge
+                                                {% if project_area.is_confirmed %}
+                                                    {% if project_area.area.confirmed %}
+                                                    badge-success
+                                                    {% else %}
+                                                    badge-danger
+                                                    {% endif %}
+                                                {% else %}
+                                                    badge-warning
+                                                {% endif %}
+                                                    ">{{project_area.area}}</span>
+                                                    {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}                                    
+        
+                            </div>
+                            <div class="col-md-12">
+
+                                <div class="form-group ">
+                                    <label class="form-label">Title</label>
+                                    <textarea class="form-control"  disabled>{{object.title}}</textarea>
+                                </div>
+                            </div>
+        
+                            <!--<div class="col-md-12">
+        
+                                <div class="form-group ">
+                                    <label class="form-label">Title:</label>
+                                    <input type="text" class="form-control" value="{{object.title}}" disabled>
+                                </div>
+                            </div>-->
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label class="form-label">Owner</label>
+                                    <input type="text" class="form-control" value="{{object.name}}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label class="form-label"> Rejection date</label>
+                                    <input type="text" class="form-control" value=" {{object.rejected_date|date}}" disabled>
+                                </div>
+                            </div>
+                           
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label">Submition date</label>
+                                    <input type="text" class="form-control" value="${{object.created}}" disabled>
+                                </div>
+                            </div>
+        
+                            <div class="col-md-4">
+                                <div class="form-group ">
+                                    <label class="form-label">Suggested start date</label>
+                                    <input type="text" class="form-control" value="{{object.start_date}}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group ">
+                                    <label class="form-label"> Suggested end date</label>
+                                    <input type="text" class="form-control" value=" {{object.end_date}}" disabled>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Fund</label>
+                                    <input type="text" class="form-control" value="${{object.fund}}" disabled>
+                                </div>
+                            </div>
+                            
+
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label class="form-label">Dataset link</label>
+                                    <div class="form-control">
+                                        {% if object.data_set_link  %}
+                                        <a href="{{object.data_set_link}}">Click</a>
+                                        {% else %}
+                                        <h6>There is no link</h6>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">Abstract</label>
+                                    <textarea class="form-control" rows="5" disabled>{{object.abstrack}}</textarea>
+                                </div>
+                            </div>
+                
+                            <!--<div class="col-md-12">
+                                <div class="form-group ">
+                                    <label class="form-label">Abstract:</label>
+                                    <input type="text" class="form-control" value=" {{object.abstrack}}" disabled>
+                                </div>
+                            </div>-->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Equipment</label>
+                                    <textarea class="form-control" rows="5" disabled>{{object.equipment}}</textarea>
+                                </div>
+                            </div>
+                            <!--<div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Equipment:</label>
+                                    <div class="form-control d-flex align-items-center flex-wrap">
+                                        {{object.equipment}}
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Requirement</label>
+                                    <textarea class="form-control" rows="5" disabled>{{object.requirement}}</textarea>
+                                </div>
+                            </div>
+                
+                            <!--<div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Requirement:</label>
+                                    <div class="form-control">
+                                        {{object.requirement}}
+                                    </div>
+                                </div>
+                            </div>-->
+                            {% if object.status != 'withdrew' %}
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Rejection reason</label>
+                                        <textarea class="form-control" rows="5" disabled>{{object.reason_rejectd}}</textarea>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'dashboard-myprojects-reserach' %}" class="btn btn-warning">Back</a>
+
+                            <!--<button  type="button"  data-bs-toggle="modal"-->
+                            <!--    data-bs-target="#exampleModal3" class="btn btn-danger">-->
+                            <!--    Delete-->
+                            <!--</button>-->
+                        </div>
+                
+                    </div>
+                </main>
+                
+                <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!--<div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel" style="color: black">Send to supervisors</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                            </div>-->
+                            <form method="POST">{% csrf_token %}
+                                <div class="modal-body">
+                                        <div class="modal-body">
+                                            <input type="hidden" name="status" id="id_status" value="r" >
+                                        </div>
+                                        <h6>Are you sure?</h6>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Send</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+        </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+{% if user|is_member_profile and user.memberprofile.is_technical_manager %}
+
+{% if selected_project.expert is None and not project_areas %}
+<script>
+    $('[data-toggle="tooltip"]').tooltip();
+</script>
+{% endif %}
+
+<script>
+    function restore_accept_modal() {
+            $('input[type=radio][name=accept-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=accept-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('.acceptTemplate').addClass('d-none')
+            $('.acceptManual').addClass('d-none')
+    }
+
+    function restore_reject_modal() {
+            $('input[type=radio][name=reject-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=reject-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            // for area
+            $('.rejectTemplate').addClass('d-none');
+            $('.rejectManual').addClass('d-none');
+    }
+
+    $('.btn-accept-area').on('click', (event) => {
+        $('#acceptAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_accept_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-check');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="accept-area"]').val(area_pk);
+    });
+
+    $('.btn-accept-project-area').on('click', (event) => {
+        $('#acceptProjectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_accept_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-check');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+        $('input[name$="accept-project-area"]').val(area_pk);
+    });
+
+    $('.btn-reject-project-area').on('click', (event) => {
+        $('#rejectProjectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_reject_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="reject-project-area"]').val(area_pk);
+    });
+
+    $('.btn-reject-area').on('click', (event) => {
+        $('#rejectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_reject_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        console.log(area_pk);
+
+        $('input[name$="reject-area"]').val(area_pk);
+    });
+
+    $('input[type=radio][name=reject-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('.rejectTemplate').removeClass('d-none')
+            $('.rejectManual').addClass('d-none')
+        }
+        else {
+            $('.rejectTemplate').addClass('d-none')
+            $('.rejectManual').removeClass('d-none')
+        }
+    });
+
+    $('input[type=radio][name=accept-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('.acceptTemplate').removeClass('d-none')
+            $('.acceptManual').addClass('d-none')
+        }
+        else {
+            $('.acceptTemplate').addClass('d-none')
+            $('.acceptManual').removeClass('d-none')
+        }
+    });
+
+    $('.submit-reject-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=reject-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#reject-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-accept-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=accept-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#accept-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-accept-project-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=accept-project-area-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#accept-project-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-reject-project-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=reject-project-area-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#reject-project-area-form').submit();
+            }
+        });
+    })
+</script>
+{% endif %}
+
+{% if user|is_member_profile and user.memberprofile.is_technical_manager or user == selected_project.expert %}
+<script>
+    $( document ).ready( function() {
+        const errorMessage = "This field is required";
+
+        $( this ).find( "textarea" ).on( "input change propertychange", function() {
+
+            const hasError = !/.*\S+.*/.test($(this).val());
+            if ( typeof this.setCustomValidity === "function")
+            {
+                this.setCustomValidity( hasError ? errorMessage : "" );
+            }
+            else
+            {
+                $( this ).toggleClass( "error", !!hasError );
+                $( this ).toggleClass( "ok", !hasError );
+
+                if ( hasError )
+                {
+                    $( this ).attr( "title", errorMessage );
+                }
+                else
+                {
+                    $( this ).removeAttr( "title" );
+                }
+            }
+
+        });
+    });
+
+    function restore_add_modal() {
+            $('input[type=radio][name=add-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=add-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('#addFromTemplate').addClass('d-none')
+            $('#addManually').addClass('d-none')
+    }
+
+    function restore_remove_modal() {
+            $('input[type=radio][name=remove-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=remove-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('#removeFromTemplate').addClass('d-none')
+            $('#removeManually').addClass('d-none')
+    }
+
+    const manuallyAddAreaBtn = $('#btn-add-manually');
+    const selectAddAreaBtn = $('#btn-add-select');
+
+    manuallyAddAreaBtn.on('click', (event) => {
+        event.preventDefault();
+        if (manuallyAddAreaBtn.get(0).form.reportValidity()) {
+            const entered_value = $('#input-add-manually').val();
+            $('#addAreaModal').modal({
+              show:true,
+              closeOnEscape: true
+            });
+
+            restore_add_modal();
+
+            $('input[name$="add-industrial-area"]').val(entered_value);
+        }
+        else {
+            manuallyAddAreaBtn.get(0).form.checkValidity();
+        }
+    });
+
+    selectAddAreaBtn.on('click', (event) => {
+        event.preventDefault();
+        const entered_value = $('#select-add').val();
+        $('#addAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_add_modal();
+
+        $('input[name$="add-industrial-area"]').val(entered_value);
+    });
+
+    $('input[type=radio][name=add-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('#addFromTemplate').removeClass('d-none')
+            $('#addManually').addClass('d-none')
+        }
+        else {
+            $('#addFromTemplate').addClass('d-none')
+            $('#addManually').removeClass('d-none')
+        }
+    });
+
+    $('.btn-remove-area').on('click', (event) => {
+        $('#removeAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_remove_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="remove-area"]').val(area_pk);
+    });
+
+    $('input[type=radio][name=remove-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('#removeFromTemplate').removeClass('d-none')
+            $('#removeManually').addClass('d-none')
+        }
+        else {
+            $('#removeFromTemplate').addClass('d-none')
+            $('#removeManually').removeClass('d-none')
+        }
+    });
+
+    $('.submit-remove-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=remove-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#remove-area-form').submit();
+            }
+        });
+    });
+
+    $('.submit-add-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=add-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#add-area-form').submit();
+            }
+        });
+    });
+</script>
+{% endif %}
+
+{% endblock script %}
+

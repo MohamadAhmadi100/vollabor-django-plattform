@@ -1,0 +1,335 @@
+{% extends "request/base.html" %}
+{% block content %}
+
+
+<div class="container">
+    <div class="detail-title mt-5 pt-5">
+        <h2 style="margin-top: 5px;">Requested for workshop</h2>
+        
+    </div>
+    <hr>
+    <div class="detail-body mt-3">
+        {% if form.status == 'New' or form.status == 'reviewer_reject' %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="">
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Applicant:</h6></div>
+                    <div class="col-9"><h6>{{form.user.get_full_name}}</h6></div>
+                </div>
+                 <div class="row" id="view-box">
+                    <div class="col-3"><h6>Submission date:</h6></div>
+                    <div class="col-9"><h6>{{form.created.date}}</h6></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Email:</h6></div>
+                    <div class="col-9"><h6>{{form.user.email}}</h6></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Latest degree document:</h6></div>
+                    <div class="col-9"><a class="badge badge-primary" href="{{form.latest_degree.url}}" target="_blank">Download</a></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Identification card:</h6></div>
+                    <div class="col-9"><a class="badge badge-primary" href="{{form.identification.url}}" target="_blank">Download</a></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Previous workshop experience\certificate:</h6></div>
+                    <div class="col-9"><a class="badge badge-primary" href="{{form.certificate.value.url}}" target="_blank">Download</a></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Job letter:</h6></div>
+                    <div class="col-9"><a class="badge badge-primary" href="{{form.valid_evidence.url}}" target="_blank">Download</a></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Latest resume:</h6></div>
+                    <div class="col-9"><a class="badge badge-primary" href="{{form.latest_resume.url}}" target="_blank">Download</a></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>State of purpose(SOP):</h6></div>
+                    
+                </div>
+                <div class="row mb-2" id="view-box">
+                    <div class="col-9"><textarea class="form-control" disabled rows="3">{{form.state_of_purpose}}</textarea></div>
+                </div>
+                
+                <div id="div_id_reviewer" class="form-group">
+                    <label for="id_reviewer" class=" requiredField">
+                    Select reviewer<span style="color:red">*</span>
+                    </label>
+                    <div class="">
+                        <select name="reviewer" class="select form-control col-9" id="id_reviewer" onchange="ClearErr('id_reviewer')">
+                           <option value="0">--------</option>
+                        {% for person in reviewer %}
+                            <option value="{{person.id}}">{{person.user.get_full_name}}</option>
+                        {% endfor %}
+                        </select>
+                        <div id="id_reviewer_error" style="color:red"></div>
+                    </div>   
+                </div>
+                
+                {% if form.status == 'reviewer_reject' %}
+                    {% for i in form.workshop_request.all %}
+                        <div class="row" id="view-box">
+                            <div class="col-3"><h6>Reviewer name:</h6></div>
+                            <div class="col-9">{{i.user.get_full_name}}</div>
+                        </div>
+
+                        <div class="row" id="view-box">
+                            <div class="col-3"><h6>Decline Reason:</h6></div>
+                            
+                        </div>
+                        <div class="row mb-2" id="view-box">
+                            <div class="col-9"><textarea class="form-control" disabled rows="3">{{i.comment}}</textarea></div>
+                        </div>
+
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="inputBox w100 mb-3" style="margin-top: 30px;">
+                <input type="number" class="d-none" name="form_id" value="{{form.id}}">
+                <input type="text" class="d-none" name="status" value="reviewer">
+                <button type="button" id="assignBtn" class="btn btn-primary " value="declined" >Select</button>
+                
+                {% if form.status == 'New' %}
+                <button type="button" class="btn btn-danger ml-1" value="declined" data-bs-toggle="modal" data-bs-target="#reject">Reject</button>
+                {% endif %}
+
+
+                <div class="modal fade text-black" style="color:black" id="Assign" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <h6>Are you sure to select the reviewer?</h6>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                <input type="submit" class="btn btn-primary px-4" value="Yes">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        {% else %}
+        <div class="detail-grid-2">
+            <div class="row" id="expert-box">
+                <div class="col-3"><h6>Applicant:</h6></div>
+                <div class="col-9"><h6>{{form.user.get_full_name}}</h6></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Email:</h6></div>
+                <div class="col-9"><h6>{{form.user.email}}</h6></div>
+            </div>
+            
+            {% if form.status == 'accepted_by_manager' or form.status == 'accepted_by_expert' %}
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Status:</h6></div>
+                <div class="col-9"><h6>Accepted</h6></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Accepeted date:</h6></div>
+                <div class="col-9"><h6>{{form.accepted_date}}</h6></div>
+            </div>
+            {% elif  form.status == 'rejected_by_manager' or form.status == 'rejected_by_expert'  %}
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Status:</h6></div>
+                <div class="col-9"><h6>Rejected</h6></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Rejection date:</h6></div>
+                <div class="col-9"><h6>{{form.rejected_date}}</h6></div>
+            </div>
+
+            <div class="row mt-2" id="view-box">
+                <div class="col-3 "><h6>Rejection resaon:</h6></div>
+                 
+            </div>
+            <div class="row mb-2" id="view-box">
+               
+                 <div class="col-9 "><textarea class="form-control" disabled rows="3">{{form.comment}}</textarea></div>
+            </div>
+            {% elif  form.status == 'revised_by_manager' or form.status == 'revised_by_expert'  %}
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Status:</h6></div>
+                <div class="col-9"><h6>Revised</h6></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Revised date:</h6></div>
+                <div class="col-9"><h6>{{form.revised_date}}</h6></div>
+            </div>
+            {% endif %}
+        
+            <div class="row" id="expert-box">
+                <div class="col-3"><h6>Submission date:</h6></div>
+                <div class="col-9"><h6>{{form.created.date}}</h6></div>
+            </div>
+            
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Latest degree document:</h6></div>
+                <div class="col-9"><a class="badge badge-primary" href="{{form.latest_degree.url}}" target="_blank">Download</a></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Identification card:</h6></div>
+                <div class="col-9"><a class="badge badge-primary" href="{{form.identification.url}}" target="_blank">Download</a></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Recommendation letter:</h6></div>
+                <div class="col-9"><a class="badge badge-primary" href="{{form.recommendation_letter.url}}" target="_blank">Download</a></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Job letter:</h6></div>
+                <div class="col-9"><a class="badge badge-primary" href="{{form.valid_evidence.url}}" target="_blank">Download</a></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>Latest resume:</h6></div>
+                <div class="col-9"><a class="badge badge-primary" href="{{form.latest_resume.url}}" target="_blank">Download</a></div>
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-3"><h6>State of purpose(SOP):</h6></div>
+                
+            </div>
+            <div class="row" id="view-box">
+                <div class="col-9"><textarea class="form-control" disabled="" rows="3">{{form.state_of_purpose}}</textarea></div>
+            </div>
+            <br>
+            
+            {% for i in form.workshop_request.all %}
+                {% if i.status == 'reject' %}
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Last reviewer:</h6></div>
+                    <div class="col-9"><h6>{{i.user.get_full_name}}</h6></div>
+                    <hr>
+                </div>
+                {% else %}
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Reviewer:</h6></div>
+                    <div class="col-9"><h6>{{i.user.get_full_name}}</h6></div>
+                    <hr>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <a href="{% url 'request:expert' %}" class="btn btn-warning">Back</a>
+        {% endif %}
+    </div>
+
+    <div class="modal fade text-black" style="color:black" id="reject" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="{% url 'request:workshop-reject' %}" id="rejform" method="POST">{% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <input type="hidden" name="id_request" value="{{form.pk}}">
+                        <input type="hidden" name="position" value="expert">
+                        <label>Revision reason<span style="color:red">*</span></label>
+                        <textarea class="w-100 form-control" name="comment" id="comment"  oninput="ClearErr('comment')" style="width: 350px;"></textarea>
+                        <div id="comment_error" class="text-danger"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="rejclsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" id="rejBtn" class="btn btn-danger" >Reject</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+
+
+<script>
+
+$(document).ready(function(){
+
+
+    if(document.getElementById("rejBtn")){
+    document.getElementById("rejBtn").addEventListener("click",function(){
+              
+            var rejcomment=document.getElementById("comment").value;
+            
+            
+            if(rejcomment=="" || rejcomment.length==0){
+                    document.getElementById("comment_error").innerHTML="Error: please enter the comment.";
+            }else{
+               document.getElementById('rejform').submit();
+               document.getElementById("rejBtn").disable=true;
+               document.getElementById("rejclsBtn").disable=true;
+               
+            }
+          
+        });
+        
+    }
+    
+    
+    
+     if(document.getElementById("assignBtn")){
+    document.getElementById("assignBtn").addEventListener("click",function(){
+              
+            var reviewerVal=document.getElementById("id_reviewer").value;
+            
+            
+            if(reviewerVal=="0"){
+                    document.getElementById("id_reviewer_error").innerHTML="Error: please select an option.";
+            }else{
+               $('#Assign').modal({backdrop: 'static', keyboard: false})  
+                $('#Assign').modal('show');
+               
+            }
+          
+        });
+        
+    }
+
+
+});
+
+
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+}
+
+
+
+
+
+
+
+
+
+
+    let reviewer = document.querySelector('.reviewer');
+    let interviewer = document.querySelector('.interviewer')
+    let dropdown = document.querySelector('.dropdown')
+
+    function show(skill) {
+        reviewer.classList.add('d-none')
+        interviewer.classList.add('d-none')
+        document.querySelector('.textBox').value = skill
+        if (skill == "reviewer"){
+            reviewer.classList.remove('d-none')
+        }
+        else{
+            interviewer.classList.remove('d-none')
+        }
+    }
+
+    reviewer.onclick = function(){
+        reviewer.classList.toggle('active')
+    }
+
+    interviewer.onclick = function(){
+        interviewer.classList.toggle('active')
+    }
+
+    dropdown.onclick = function(){
+        dropdown.classList.toggle('active')
+    }
+</script>
+{% endblock %}

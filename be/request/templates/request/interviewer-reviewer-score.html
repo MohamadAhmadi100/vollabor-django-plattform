@@ -1,0 +1,293 @@
+{% extends "request/base.html" %}
+{% block content %}
+<!-- table -->
+<section>
+    <div class="container">
+        <div class="mt-5 pt-5">
+                <h5 class="table-info p-3">Information</h5>
+                
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Applicant: </h6></div>
+                    <div class="col-9"><h6>{{form.user.get_full_name}}</h6></div>
+                </div>
+                {% if reviewer_info.badge %}
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Badge:</h6></div>
+                    <div class="col-9"><h6>{{form.skills}}</h6></div>
+                </div>
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Resume:</h6></div>
+                    <div class="col-9"><a href="{{form.user.memberprofile.cv_file.url}}" class="badge badge-primary" target="_blank">Download</a></div>
+                </div>
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Degree:</h6></div>
+                    <div class="col-9"><h6>{{form.user.memberprofile.degree}}</h6></div>
+                </div>
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>About me:</h6></div>
+                    
+                </div>
+                <div class="row" id="expert-box">
+                    
+                    <div class="col-9"><textarea class="form-control" disabled rows="3">{{form.user.memberprofile.about_me}}</textarea></div>
+                </div>
+                
+                {% if form.status == 'Interview' %}
+                {% for i in session_obj %}
+                    <div class="row mt-2" id="expert-box">
+                        <div class="col-3"><h6>Interview Time:</h6></div>
+                        <div class="col-9"><h6>{{i.start_at}}</h6></div>
+                    </div>
+                    <div class="row" id="expert-box">
+                        <div class="col-3"><h6>Time zone:</h6></div>
+                        <div class="col-9"><h6>{{i.time_zone}}</h6></div>
+                    </div>
+                    <div class="row" id="expert-box">
+                        <div class="col-3"><h6>Interview link:</h6></div>
+                        <div class="col-9"><h6><a href="{{i.meeting_link}}" class="badge badge-primary" target="_blank">View</a></h6></div>
+                    </div>
+                    <div class="row" id="expert-box">
+                        <div class="col-3"><h6>Interview message:</h6></div>
+                        
+                    </div>
+                    <div class="row mb-2" id="expert-box">
+                       
+                        <div class="col-9"><textarea class="form-control" disabled rows="3">{{i.description}}</textarea></div>
+                    </div>
+                {% endfor %}
+                {% endif %}
+                
+                <div class="row mt-2" id="expert-box">
+                    <div class="col-3"><h6>Expert:</h6></div>
+                    <div class="col-9"><h6>{{expert_obj.user.get_full_name}}</h6></div>
+                </div>
+                <div class="row " id="expert-box">
+                    <div class="col-3"><h6>Expert's email:</h6></div>
+                    <div class="col-9"><h6>{{expert_obj.user.researchrole.expert_email_address}}</h6></div>
+                </div>
+
+                {% if form.status == 'Reject' or form.status == 'revise_by_manager'  %}
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Revised date:</h6></div>
+                    <div class="col-9"><h6>{{form.revised_date}}</h6></div>
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Request for:</h6></div>
+                    <div class="col-9"><h6>Supervisor</h6></div>
+                </div>
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Latest_degree:</h6></div>
+                    <div class="col-9"><a class="btn btn-primary" href="{{form.latest_degree.url}}" target="_blank"> Download</a></div>
+                </div>
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Valid_evidence:</h6></div>
+                    <div class="col-9"><a class="btn btn-primary" href="{{form.valid_evidence.url}}" target="_blank"> Download</a></div>
+                </div>
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Identification:</h6></div>
+                    <div class="col-9"><a class="btn btn-primary" href="{{form.identification.url}}" target="_blank"> Download</a></div>
+                </div>
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Latest_resume:</h6></div>
+                    <div class="col-9"><a  class="btn btn-primary" href="{{form.latest_resume.url}}" target="_blank"> Download</a></div>
+                </div>
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Recommendation_letter:</h6></div>
+                    <div class="col-9"><a  class="btn btn-primary" href="{{form.recommendation_letter.url}}" target="_blank"> Download</a></div>
+                </div>
+                {% endif %}
+                
+            </div>
+     
+        <div class="">
+            <h5 class="table-warning p-3" style="margin-top: 10px;">Assessment</h5>
+            <div class="mb-3">
+                 <div id="div_error" class="mb-2" style="color:red"></div>
+                {% if form.status ==  'decline-review-interview' or form.status == 'Expert-view' %}
+                <a href="{% url 'request:review-interview' %}" class="btn btn-warning">Back</a>
+                {% else %}
+                
+                    {% if reviewer_info.score == 0 %}
+                        {% if form.status ==  'Reject' or form.status ==  'revise_by_manager' or form.status ==  'Interview' or form.status ==  'Review' %}
+                        <div class="row">
+                            <input type="hidden" id="chkscore" value="false">
+                            <p class="mt-2 ml-3">For assessing the request, please click on evaluation button<span style="color:red">*</span></p>
+                            {% if reviewer_info.badge %}
+                            <a class="btn btn-primary mx-2" href="{% url 'request:add-score-detail' reviewer_info.pk 'badge' %}">Evaluation</a>
+                            {% endif %}
+                            
+                        </div>
+                        {% endif %}
+                        
+                        
+                        
+                    {% else %}
+                    <div class="row mb-2">
+                        <input type="hidden" id="chkscore" value="true">
+                        <p class="col-4">Averaged score: <span>{{reviewer_info.score}}</span></p>
+                        <button class="btn btn-primary mr-1" data-bs-toggle="modal" data-bs-target="#test1" id="testBtn">Subscores</button>
+                        {% if form.status ==  'Reject' or form.status ==  'revise_by_manager' %}
+                        <a class="btn btn-primary mx-2" href="{% url 'request:add-score-detail' reviewer_info.pk 'badge' %}">Evaluation</a>
+                        {% endif %}
+                    
+                    </div>
+                    
+                    {% if form.status == 'Reject' or form.status == 'revise_by_manager' %}
+                    <div class="row" id="expert-box">
+                        <div class="col-3"><h6>Revision reason:</h6></div>
+                        
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-9"><textarea class="form-control" disabled rows="3">{{reviewer_info.comment}}</textarea></div>
+                        
+                    </div>
+                    
+                    
+                    {% endif %}
+                    {% if form.status == 'Expert-view' or form.status == 'Accept' or form.status == 'Accept-manager' %}
+                    <div class="row" id="expert-box">
+                        <div class="col-3"><h6>Your comment:</h6></div>
+                        
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-9"><textarea class="form-control" disabled rows="3">{{reviewer_info.comment}}</textarea></div>
+                        
+                    </div>
+                    <a href="{% url 'request:review-interview' %}" class="btn btn-warning">Back</a>
+                    
+                    {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% if form.status == 'Reject' or form.status == 'revise_by_manager' or form.status == 'Interview' or form.status == 'Review' or form.status == 'Approve-decline' %}
+            <form method="post" id="comform">
+                {% csrf_token %}
+                <div class="formBox">
+                    <!--<div class="inputBox w50">
+                        <input type="number" class="d-none" name="score">
+                        <span>Insert your score here</span>
+                    </div>-->
+                    
+                    <div class="inputBox w100">
+                        <label>Comment <span style="color: red">*</span></label>
+                        <textarea class="form-control col-9" rows="3" name="comment" id="comment" placeholder="Write your comment here" oninput="ClearErr('comment')"></textarea>
+                        <div id="comment_error" style="color:red"></div>
+                    </div>
+                    <div class="inputBox mt-3 w100">
+                        <input type="number" class="d-none" name="form_id" value="{{form.id}}">
+                        <input type="button" id="sndBtn" class="btn btn-success" value="Send to the expert">
+                    </div>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+        
+        <div class="modal fade" id="test1" tabindex="-1" aria-labelledby="test1Label" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="test1Label">Subscores</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-0 py-0">
+                            <div class="col-9"><p>Related education/training (degree/certification, coursework):</p></div>
+                            <div class="col-3">{{reviewer_info.score_1}}</div>
+                        </div>
+                    
+                    
+                        <div class="row mb-0 py-0">
+                            <div class="col-9"><p>Related experience (work history and patents/publications):</p></div>
+                            <div class="col-3">{{reviewer_info.score_2}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9"> <p>Collaborative experience (teamwork, and international collaboration):</p></div>
+                            <div class="col-3">{{reviewer_info.score_3}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9">  <p>Technical & Management skills (software skills and how much s/he is expert in each software?):</p></div>
+                            <div class="col-3">{{reviewer_info.score_4}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9">  <p>Communication (clarity of ideas, direct answers, comprehension):</p></div>
+                            <div class="col-3">{{reviewer_info.score_5}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9">  <p>Initiative skill:</p></div>
+                            <div class="col-3">{{reviewer_info.score_6}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9">   <p>Innovative skill:</p></div>
+                            <div class="col-3">{{reviewer_info.score_7}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9"> <p>Candidate interest (motivation and reason to apply for the job):</p></div>
+                            <div class="col-3">{{reviewer_info.score_8}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9">  <p>Time management:</p></div>
+                            <div class="col-3">{{reviewer_info.score_9}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9"> <p>Personal score of interviewer:</p></div>
+                            <div class="col-3">{{reviewer_info.score_10}}</div>
+                        </div>
+                    
+                    
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<script>
+ $(document).ready(function() {
+     document.getElementById("sndBtn").addEventListener("click",function(){
+        var has_error_score = "No";
+        var has_error_com = "No";
+        if(document.getElementById("chkscore")) {
+            var chkScore = document.getElementById("chkscore").value;   
+            if(chkScore=="false"){
+                document.getElementById("div_error").innerHTML="Error: You must first assess the request.";
+                has_error_score = "Yes";
+            }
+        }  
+        var commentxt=document.getElementById("comment").value;
+        if(commentxt.length==0){
+            document.getElementById("comment_error").innerHTML="Error: please enter the your comment.";
+            has_error_com = "Yes";
+        }
+        
+        if(has_error_score =="No" && has_error_com == "No"){
+            document.getElementById('comform').submit();
+            document.getElementById('sndBtn').disabled = true;
+             
+        }
+          
+    });  
+     
+     
+ });
+ 
+ 
+ function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+}
+</script>
+{% endblock %}

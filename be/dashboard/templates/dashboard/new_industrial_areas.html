@@ -1,0 +1,158 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+{% block content %}
+
+<header id="main-header" class="py-2 bg-color5 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-industry"></i> New Industrial Areas</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- PROJECTS -->
+<section id="industrial-areas">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content" style="overflow-x:auto;">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    {% for project in project_items %}
+                                    {% if request.GET.project == project.pk|to_str %}
+                                    <a href="./" class="btn btn-dark">
+                                    {% else %}
+                                    <a href="?project={{project.pk}}" class="btn btn-outline-dark">
+                                    {% endif %}
+                                        {{project.title}}
+                                    </a>
+                                    {% endfor %}
+                                    {% if project_areas %}
+                                    <hr>
+                                    {% for project_area in project_areas %}
+                                        {% if request.GET.area == project_area.area.area %}
+                                            <a href="?project={{request.GET.project}}"
+                                               class="btn {% if project_area|form_is_completed%}btn-dark{%else%}btn-danger{%endif%}">
+                                        {% else %}
+                                            <a href="?project={{request.GET.project}}&area={{project_area.area}}"
+                                               class="btn {% if project_area|form_is_completed%}btn-outline-dark{%else%}btn-outline-danger{%endif%}">
+                                        {% endif %}
+                                            {{project_area.area}}
+                                        </a>
+                                    {% endfor %}
+                                    <div class="row">
+                                        <div class="col-12 text-right">
+                                            <a href="{% url 'dashboard-project-view-page' project_primary_key=request.GET.project %}" class="btn btn-info">View project details</a>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content" style="overflow-x:auto;">
+                            <div class="row">
+                                <div class="col-12">
+                                    {% if request.GET.area %}
+                                    <div class="row">
+                                        <div class="col-2 ml-auto">
+                                            <span class="badge badge-success">Agree</span>
+                                        </div>
+                                        <div class="col-2 ml-0">
+                                            <span class="badge badge-danger">Disagree</span>
+                                        </div>
+                                    </div>
+                                    <form method="post" id="question-form">
+                                        {% csrf_token %}
+                                        <input type="text" name="form-items-has-been-submitted" class="d-none" value="1">
+                                        {% for question in form_questions %}
+                                        <div class="row">
+                                            <div class="col-8">
+                                                    <span class="p-4"><b>{{forloop.counter}}.</b> {{question.item}}</span>
+                                            </div>
+                                            <div class="col-2">
+                                                <input class="form-check-input ml-3" type="radio" name="question-{{question.pk}}" value="agree"
+                                                {% if question.agree is True %}checked {% endif %}>
+                                            </div>
+                                            <div class="col-2">
+                                                <input class="form-check-input ml-4" type="radio" name="question-{{question.pk}}" value="disagree"
+                                                {% if question.agree is False %}checked {% endif %}>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        {% endfor %}
+                                        <textarea name="comment" placeholder="Comment (Optional)" class="form-control">{% if comment %}{{comment}} {% endif %}</textarea>
+                                        <button class="btn btn-outline-success mt-2 mb-5"
+                                                id="question-submit" title="Select all the items"><i class="fa fa-check"></i> Submit</button>
+                                    </form>
+                                    {% elif request.GET.project %}
+                                    <h5>Now select an area from above</h5>
+                                    {% else %}
+                                    <h5>Please select a project from above options</h5>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('#question-submit').on('click', function (e) {
+        e.preventDefault();
+        let there_is_unchecked = false;
+        let radio_checked_numbers = 0;
+        $('input:radio').each(function (){
+            if ($(this).is(':checked'))
+                radio_checked_numbers++;
+        })
+        if (radio_checked_numbers !== $('input:radio').length / 2)
+            there_is_unchecked = true;
+
+        if (there_is_unchecked)
+            $('#question-submit').tooltip('show');
+        else {
+            $('#question-form').submit();
+        }
+    });
+
+    $('input:radio').on('click', function () {
+        $('#question-submit').tooltip('dispose');
+    });
+</script>
+{% endblock script %}

@@ -1,0 +1,35 @@
+{% extends 'emails/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block main %}
+<div style="padding-left: 220px; padding-right: 220px" class="col-md-12">
+    <div class="card card-primary">
+        
+        <div class="container">
+            <div class="row">
+                
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Submission date</th>
+                            <th>Information</th>
+                            <th>The date of the event</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for workshop in workshops %}
+                        <tr>
+                            <td>{{workshop.title}}</td>
+                            <td>{{workshop.created.date}}</td>
+                            <td><a href="{% url 'ad-form' workshop.pk %}" class="btn btn-success">View</a></td>
+                            <td>{{workshop.date_event}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-5 pt-5">
+        <div class="col-12">
+            
+           <label>Change expert</label>
+            <select class="form-control" name="expert" id="id_expert" onchange="SelectExpert();">
+                <option value="0">--------</option>
+                {% for expert in experts %}
+                    {% if expert.user.get_full_name != obj_workshop.expert.get_full_name %}
+                        <option  value={{expert.user.id}}>{{expert.user.get_full_name}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+
+        </div>
+        
+    </div>
+    <hr class="mb-3">
+    <div class="" id='information'>
+        <div class="row" id="expert-box">
+            <div class="col-3"><h6>Expert name:</h6></div>
+            <div class="col-9"><h6>{{expert_obj.get_full_name}}</h6></div>
+        </div>
+        
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Email:</h6></div>
+            <div class="col-9"><h6>{{obj_workshop.user.email}}</h6></div>
+        </div>
+        
+
+        <br>
+        <hr>
+
+        <table class="table table-hover  table-dark table-striped ">
+            <thead class="table-primary text-dark">
+            <tr class="text-center">
+                <th scope="col">Project ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Fund</th>
+                <th scope="col">Submission date </th>
+                <th scope="col">Suggested start date</th>
+                <th scope="col">Suggested end date</th>
+                <th scope="col">Owner</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-center">Action</th>
+            </tr>
+            </thead>
+
+            <tbody >
+            {% for project in object_list %}
+            <tr class="text-center">
+                <td class="P-name">
+                    <p style="overflow: hidden; width: 150px">{{project.id_project}}</p>
+                </td>
+                
+                <td class="P-name">
+                    <p style="overflow: hidden; width: 200px">{{project.title|truncatechars:50}}</p>
+                </td>
+
+                <td class="p-name">  ${{project.fund}}</td>
+                
+                <td class="p-name"> {{project.created|date:'m-d-Y'}}</td>
+                <td class="p-name"> {{project.start_date}}</td>
+                <td class="p-name"> {{project.end_date}}</td>
+                
+                <td class="p-name"> {{project.user.get_full_name}}
+                {% if project.main_supervisor %}
+                <span style="color: green;">Main Supervisor</span>
+                {% endif %}
+                </td>
+                <td class="p-name"> Pending for selecting an expert</td>
+                <td class="text-right">
+                    <a href="{% url 'industry:industry-view-edit' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                        <i class="fa fa-eye"></i> View 
+                    </a>
+                </td>
+                
+            </tr>
+            {% endfor %}
+    
+            </tbody>
+        </table>
+
+
+    </div>
+
+    <!-- <button type="button" class="btn btn-sm btn-warning text-dark" data-bs-toggle="modal" data-bs-target="#area{{i.pk}}" > View</button> -->
+
+    <div class="modal fade" id="area{{i.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-white" id="exampleModalLabel">CV</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12">
+                            <table class="table table-dark table-bordered">
+                                <tbody class="">
+                                    <tr class="table-info text-dark">
+                                        <td>Area:</td>
+                                        <td>Action</td>
+                                    </tr>
+                                    {% for a in i.user.researchrole.area.all %}
+                                    <tr class="text-dark">
+                                        <td style="width: 400px">
+                                            <h6>
+                                                {{a}}
+                                            </h6>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger" value="declined" data-bs-toggle="modal" data-bs-target="#deleted">Delete</button>
+                                        </td>
+                                    </tr>
+
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 text-start">
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add{{i.pk}}"> <i class="fas fa-plus"></i> </button>
+                            
+                        </div>   
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <!-- Add -->
+    <div class="modal fade" id="add{{i.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true" >
+        <div class="modal-dialog modal-dialog-centered modal-xl modal-lg">
+            <div class="modal-content" >
+                <form method="post">{% csrf_token %}
+                    <div class="modal-body text-dark table-responsive">
+                        <div class="">
+                            <input type="hidden" name="position" value="add">
+                            <input type="hidden" name="id_user" value={{i.id}}>
+                            <select name="id_area" class="select form-control" i>
+                                <option value="0" selected disabled>Choose a area...</option>
+                                {% for a in areas %}
+                                    <option value="{{a.id}}">{{a.title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script>
+
+    function SelectExpert(){
+        var expert_id = document.getElementById("id_expert").value;
+        alert(expert_id);
+         $.ajax({
+                    type: 'POST',
+                    url: "{% url 'industry:project-information-expert-ajax' %}",
+                    data: {
+                        'expert_id': expert_id,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(data){
+                      $('#information').html(data)
+                    },
+                    error: function (request, errors) {
+                    alert(errors.responseText);
+                    }
+                })
+        
+    }    
+        
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,555 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-color8 text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-cogs"></i> Technical Manager </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="technical-manager">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-3 text-center">
+                {% if request.GET.filter == "new_industrial_projects" %}
+                <a href="./" class="btn btn-dark">
+                {% else %}
+                <a href="?filter=new_industrial_projects" class="btn btn-outline-dark">
+                {% endif %}
+                    New Industrial Projects
+                    <span class="badge badge-danger">{{new_industrial_project_numbers}}</span>
+                </a>
+
+                {% if request.GET.filter == "report_of_evaluation" %}
+                <a href="./" class="btn btn-dark">
+                {% else %}
+                <a href="?filter=report_of_evaluation" class="btn btn-outline-dark">
+                {% endif %}
+                    Report of Evaluation
+                    <span class="badge badge-danger">{{report_of_evaluation_numbers}}</span>
+                </a>
+
+                {% if request.GET.filter == "main_supervisor_approval" %}
+                <a href="./" class="btn btn-dark">
+                {% else %}
+                <a href="?filter=main_supervisor_approval" class="btn btn-outline-dark">
+                {% endif %}
+                    Main Supervisor Approval
+                    <span class="badge badge-danger">{{main_supervisor_approval_numbers}}</span>
+                </a>
+
+                {% if request.GET.filter == "contracts" %}
+                <a href="./" class="btn btn-dark">
+                {% else %}
+                <a href="?filter=contracts" class="btn btn-outline-dark">
+                {% endif %}
+                    Contracts
+                    <span class="badge badge-danger">{{contract_numbers}}</span>
+                </a>
+
+                {% if request.GET.filter == "report_of_evaluation" %}
+                    {# SELECTING THE PROJECT AND AREA, DETAILS WILL BE SHOWN ON THE SUBSEQUENT DIV WITH THE CLASS ROW #}
+                <div class="row">
+                    <div class="col-md-12 mt-4">
+                        <div class="wrapper wrapper-content animated fadeInUp">
+                            <div class="ibox">
+                                <div class="ibox-content text-lefts">
+                                    {% if evaluation_projects %}
+                                    {% for evaluation_project in evaluation_projects %}
+                                    {% if request.GET.project == evaluation_project.pk|to_str %}
+                                    <a href="?filter=report_of_evaluation" class="btn btn-dark">
+                                    {% else %}
+                                    <a href="?filter=report_of_evaluation&project={{evaluation_project.pk}}" class="btn btn-outline-dark">
+                                    {% endif %}
+                                        {{evaluation_project.title}}
+                                    </a>
+                                    {% endfor %}
+
+
+                                    {% if request.GET.project %}
+                                    <hr>
+                                    {% for evaluation_project_area in evaluation_project_areas %}
+                                    {% if request.GET.area == evaluation_project_area.area.area %}
+                                    <a href="?filter=report_of_evaluation&project={{evaluation_project_area.project.pk}}" class="btn btn-dark">
+                                    {% else %}
+                                    <a href="?filter=report_of_evaluation&project={{evaluation_project_area.project.pk}}&area={{evaluation_project_area.area}}" class="btn btn-outline-dark">
+                                    {% endif %}
+                                        {{evaluation_project_area.area}}
+                                    </a>
+                                    {% endfor %}
+                                    <hr>
+                                    <div class="text-right">
+                                        <a href="{% url 'dashboard-project-view-page' project_primary_key=request.GET.project %}" class="btn btn-outline-info btn-xs">
+                                                     <i class="fa fa-eye"></i> View
+                                        </a>
+                                        <button class="btn btn-outline-success" id="accept-project-btn">
+                                            <i class="fa fa-handshake"></i> Accept the project
+                                        </button>
+                                        <button class="btn btn-outline-danger" id="reject-project-btn">
+                                            <i class="fa fa-times"></i> Reject the project
+                                        </button>
+                                    </div>
+                                    {% endif %}
+                                    {% else %}
+                                        <h3>There is no project ...</h3>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% elif request.GET.filter == "main_supervisor_approval" %}
+                    <div class="row">
+                        <div class="col-md-12 mt-4">
+                            <div class="wrapper wrapper-content animated fadeInUp">
+                                <div class="ibox">
+                                    <div class="ibox-content text-lefts">
+                                        {% if chosen_main_supervisors %}
+                                            {% for chosen_main_supervisor in chosen_main_supervisors %}
+                                                {% if request.GET.main_supervisor_project == chosen_main_supervisor.pk|to_str %}
+                                                <a href="?filter=main_supervisor_approval" class="btn btn-dark">
+                                                {% else %}
+                                                <a href="?filter=main_supervisor_approval&main_supervisor_project={{chosen_main_supervisor.pk}}" class="btn btn-outline-dark">
+                                                {% endif %}
+                                                    {{chosen_main_supervisor.project.title}}
+                                                </a>
+                                            {% endfor %}
+                                            {% if selected_main_supervisor %}
+                                                <hr>
+                                                <div class="text-right">
+                                                    <a href="{% url 'dashboard-project-view-page' project_primary_key=selected_main_supervisor.project.pk %}" class="btn btn-outline-info">
+                                                        <i class="fa fa-eye"></i> View project
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% elif request.GET.filter == "contracts" %}
+                    <div class="row">
+                        <div class="col-md-12 mt-4">
+                            <div class="wrapper wrapper-content animated fadeInUp">
+                                <div class="ibox">
+                                    <div class="ibox-content text-lefts">
+                                        {% if contracts %}
+                                            {% for contract in contracts %}
+                                                {% if request.GET.chosen_contract == contract.pk|to_str %}
+                                                <a href="?filter=contracts" class="btn btn-dark">
+                                                {% else %}
+                                                <a href="?filter=contracts&chosen_contract={{contract.pk}}" class="btn btn-outline-dark">
+                                                {% endif %}
+                                                    {{contract.project.title}}
+                                                </a>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mt-2">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content mb-5" style="overflow-x:auto;">
+                            {% if request.GET.filter == "new_industrial_projects" %}
+                            <table class="table table-hover p-table">
+                                <thead>
+                                <tr>
+                                    <th>Project Name</th>
+                                    <th>Owner</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for project in new_industrial_projects %}
+                                    <tr>
+                                        <td class="p-name">
+                                            <p style="overflow: hidden; width: 500px">{{project.title}}</p>
+                                        </td>
+                                        <td class="p-name">
+                                            {{project.owner.legalprofile.company_name}}
+                                        </td>
+                                         <td class="text-right">
+                                             <a href="{% url 'dashboard-project-view-page' project_primary_key=project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                                 <i class="fa fa-eye"></i> View & Edit
+                                             </a>
+                                         </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            {% elif request.GET.filter == "report_of_evaluation" and request.GET.area %} {# FOR REPORT OF EVALUATION AFTER CHOOSING THE AREA  #}
+                                <table class="table table-hover p-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Question</th>
+                                        <th>Agree</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for area_item in evaluation_project_area_items %}
+                                        <tr>
+                                            <td class="p-name">
+                                                {{area_item.item}}
+                                            </td>
+                                             <td class="p-name">
+                                                 {% if area_item.agree %}
+                                                 <i class="fa fa-check text-success"></i>
+                                                 {% else %}
+                                                 <i class="fa fa-times text-danger"></i>
+                                                 {% endif %}
+                                             </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <hr>
+                                {% if evaluation_project_area.comment %}
+                                <div class="mb-4">
+                                    <span class="bold text-info"><i class="fa fa-comment"></i>Comment:</span>
+                                    {{evaluation_project_area.comment|linebreaksbr}}
+                                </div>
+                                {% endif %}
+                            {% elif request.GET.filter == "main_supervisor_approval" %}
+                                {% if selected_main_supervisor %}
+                                    <h5 class="text-info">To observe the scores in greater detail, click on the desired score in the table.</h5>
+                                    <table class="table table-hover p-table mt-4">
+                                        <thead>
+                                        <tr>
+                                            <th>Supervisor Applicant</th>
+                                            {% for project_reviewer in project_reviewers %}
+                                            <th class="p-team">
+                                                <a class="text-dark" style="font-size:16px" data-toggle='tooltip' data-placement='top'
+                                                   href="{% url 'dashboard-profile-page' user_id=project_reviewer.user.id %}"
+                                                   title='{{project_reviewer.user.first_name}} {{project_reviewer.user.last_name}}'>
+                                                    <img alt="image" class="m-1" src="{{project_reviewer.user.memberprofile.image.url}}">
+                                                </a>
+                                            </th>
+                                            {% endfor %}
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for proposal in total_submitted_proposals %}
+                                        <tr>
+                                            <td class="p-name w-50">
+                                                {% if proposal.project_supervisor != selected_main_supervisor %}
+                                                    {{proposal.project_supervisor.supervisor.first_name}} {{proposal.project_supervisor.supervisor.last_name}}
+                                                {% else %}
+                                                    <div>
+                                                        <span class="bold">
+                                                            <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                            href="{% url 'dashboard-profile-page' user_id=proposal.project_supervisor.supervisor.id %}">
+                                                            {{proposal.project_supervisor.supervisor.first_name}} {{proposal.project_supervisor.supervisor.last_name}}
+                                                            </a>
+                                                        </span>
+                                                        <span class="badge badge-success">Recommended</span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="bold text-danger">Reason:</span>
+                                                        {{selected_main_supervisor.accept_reason}}
+                                                    </div>
+                                                {% endif %}
+                                            </td>
+                                            {% for project_reviewer in project_reviewers %}
+                                            <td>
+                                                {% with proposal|get_mean_score:project_reviewer as score %}
+                                                    {% if score <= 3.33 %}
+                                                        <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                            <span class="badge badge-danger">{{score}}</span>
+                                                        </a>
+                                                    {% elif score <= 6.66 %}
+                                                        <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                            <span class="badge badge-warning">{{score}}</span>
+                                                        </a>
+                                                    {% elif score <= 10 %}
+                                                        <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                            <span class="badge badge-success">{{score}}</span>
+                                                        </a>
+                                                    {% else %}
+                                                        <span class="badge badge-info">{{score}}</span>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </td>
+                                            {% endfor %}
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                    <div class="text-right">
+                                        <button class="btn btn-outline-success" onclick="$('#acceptMainSupervisorModal').modal({show:true,closeOnEscape: true});"><i class="fa fa-check"></i> Accept the recommended supervisor</button>
+                                        <button class="btn btn-outline-danger my-2" onclick="$('#rejectMainSupervisorModal').modal({show:true,closeOnEscape: true});"><i class="fa fa-times"></i> Reject the recommended supervisor</button>
+                                    </div>
+                                {% else %}
+                                    {% if main_supervisor_approval_numbers > 0 %}
+                                    <h5>Select a project from above</h5>
+                                    {% endif %}
+                                {% endif %}
+                            {% elif request.GET.filter == "contracts" %}
+                                {% if chosen_contract %}
+                                    <h5>Contract that is signed by <span class="badge badge-success">{{chosen_contract.user.first_name}} {{chosen_contract.user.last_name}}</span></h5>
+                                    <a href="{{chosen_contract.contract_file.url}}" target="_blank" class="btn btn-info">
+                                        <i class="fa fa-eye"></i> View Contract
+                                    </a>
+                                    <a href="{% url 'dashboard-project-view-page' project_primary_key=chosen_contract.project.pk %}" class="btn btn-primary btn-xs">
+                                        <i class="fa fa-eye"></i> View Project
+                                    </a>
+                                    <div class="text-right">
+                                        <button class="btn btn-success" onclick="$('#acceptContractModal').modal({show:true,closeOnEscape: true});"><i class="fa fa-check"></i> Accept and make main supervisor</button>
+                                        <a href="{% url 'dashboard-profile-page' user_id=chosen_contract.user.id %}"
+                                           class="btn btn-warning text-dark"><i class="fa fa-address-book"></i>
+                                            View profile to contact
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    {% if contract_numbers > 0 %}
+                                    <h5>Now select a project from above</h5>
+                                    {% endif %}
+                                {% endif %}
+                            {% elif request.GET.project %} {# REPORT OF EVALUATION GUIDANCE AFTER CHOOSING A PROJECT #}
+                                <h5>Now select an area from one of the projects above</h5>
+                            {% elif request.GET.filter == "report_of_evaluation" %} {# REPORT OF EVALUATION GUIDANCE BEFORE CHOOSING A PROJECT #}
+                                <h5>Now select a project from one of the projects above</h5>
+                            {% else %}
+                            <h5>Please select from the items above</h5>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- EDIT AND ACCEPT MODAL -->
+<div class="modal fade" id="EditAndAcceptModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header bg-color8 text-white">
+                <div class="modal-title">Edit and Accept</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <h6>Option1: Selecting from existing areas</h6>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" name="selected-area" class="d-none">
+                        <select class="selectpicker" name="accept-as-new-area"
+                                                data-live-search="true">
+                            {% for industrial_area in industrial_areas %}
+                            {% if industrial_area != 'Other' %}
+                            <option>{{industrial_area}}</option>
+                            {% endif %}}
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-success"><i class="fa fa-check"></i> Accept</button>
+                    </form>
+                    <hr>
+                    <h6>Option2: Typing new area (In case if it does not exist)</h6>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" name="selected-area" class="d-none">
+                        <input type="text" class="form-control w-75 d-inline mb-2" name="accept-as-new-area" required>
+                        <button class="btn btn-success mb-2"><i class="fa fa-check"></i> Accept</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ACCEPT MODAL-->
+<div class="modal" id="acceptModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+          <p>Are you sure you want to accept this project?</p>
+      </div>
+      <div class="modal-footer">
+          <form method="post">
+              {% csrf_token %}
+              <input type="text" class="d-none" name="accept-project-to-be-new" value="1">
+              <button class="btn btn-success" type="submit">Yes</button>
+          </form>
+        <button class="btn btn-danger" data-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REJECT MODAL-->
+<div class="modal" id="rejectModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+          <p>Are you sure you want to reject this project?</p>
+          <form method="post">
+              {% csrf_token %}
+              <input type="text" class="d-none" name="reject-project-to-be-new" value="1">
+              <textarea name="reject-reason" class="form-control" rows="10" placeholder="Reject reason (Client can see that)" required></textarea>
+              <button class="btn btn-danger mt-2" type="submit">Reject</button>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ACCEPT MAIN SUPERVISOR MODAL-->
+<div class="modal" id="acceptMainSupervisorModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-success">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+          <p>Are you sure you want to accept this main supervisor?</p>
+      </div>
+      <div class="modal-footer">
+          <form method="post">
+              {% csrf_token %}
+              <input type="text" class="d-none" name="accept-main-supervisor" value="{{selected_main_supervisor.pk}}">
+              <button class="btn btn-success" type="submit">Accept</button>
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACCEPT CONTRACT MODAL-->
+<div class="modal" id="acceptContractModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-success">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+          <p>Are you sure you want to accept this contract and make him main supervisor?</p>
+      </div>
+      <div class="modal-footer">
+          <form method="post">
+              {% csrf_token %}
+              <input type="text" class="d-none" name="accept-contract" value="{{chosen_contract.pk}}">
+              <button class="btn btn-success" type="submit">Accept</button>
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REJECT MAIN SUPERVISOR MODAL-->
+<div class="modal" id="rejectMainSupervisorModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+          <p>Are you sure you want to reject this main supervisor?</p>
+          <form method="post">
+              {% csrf_token %}
+              <input type="text" class="d-none" name="reject-main-supervisor" value="{{selected_main_supervisor.pk}}">
+              <textarea name="reject-reason" class="form-control" rows="10" placeholder="Reject reason (Corresponding expert can see that)" required></textarea>
+              <button class="btn btn-danger mt-2" type="submit">Reject</button>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('#accept-project-btn').on('click', function () {
+        $('#acceptModal').modal({
+              show:true,
+              closeOnEscape: true
+        });
+    });
+
+    $('#reject-project-btn').on('click', function () {
+        $('#rejectModal').modal({
+              show:true,
+              closeOnEscape: true
+        });
+    });
+
+    $('.edit-and-accept').on('click', function () {
+        let area_pk = $(this).attr('area-pk');
+        $('input[name$="selected-area"]').val(area_pk);
+        $('#EditAndAcceptModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+    })
+
+    $('.assign-selected-expert').on('click', function () {
+        let project_id = $(this).attr('id');
+        let expert_pk = $(`#select-${project_id}`).val();
+        $(`#accept-${project_id}`).val(expert_pk);
+        $(`#form-${project_id}`).submit();
+    });
+
+    $('.reject-project').on('click', function () {
+        let project_pk = $(this).attr('project-pk')
+        $('input[name="project-reject-pk"]').val(project_pk);
+        $('#RejectReasonModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+    });
+</script>
+{% endblock script %}

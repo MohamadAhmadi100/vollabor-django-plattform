@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% block title %}Create Discount{% endblock %}
+{% block main %}
+
+<div class="m-auto col-md-8">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="col-md-2 form-group">
+          <label for="exampleInputEmail1">*Discount name:</label>
+          <input required type="text" class="form-control" name='name'>
+    <!--      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+        </div>
+
+        <div class="col-md-2 form-group">
+            <label for="exampleInputEmail1">Discount type:</label>
+            <select type="se" class=" form-control" name='use_status'>
+                <option value="real">real</option>
+                <option value="percent">percent</option>
+            </select>
+          </div>
+
+          <div  class=" col-md-2 form-group">
+            <label for="exampleInputEmail1">*Usable number:</label>
+            <div style="display:inline-grid">
+                <input required value="" type="number" class="form-control" name='max_uses'>
+            </div>
+          </div>
+
+
+          <div  class=" col-md-2 form-group">
+            <label for="exampleInputEmail1">*Amount:</label>
+            <div style="display:inline-grid">
+                <input required  value="" type="number" class="form-control" name='amount'>
+            </div>
+          </div>
+
+          <div  class=" col-md-2 form-group">
+            <label for="exampleInputEmail1">*Expire date:</label>
+            <div style="display:inline-grid">
+                <input required  value="" type="date" class="form-control" name='exp_date'>
+            </div>
+          </div>
+
+
+          <div  class=" col-md-4 form-group">
+            <label for="exampleInputEmail1">*Discount code:</label>
+            <div style="display:inline-grid">
+                <input required id="discount_code" value="" type="text" class="form-control" name='discount_code'>
+                <a id="generate_code" class="btn btn-success">Generate code</a>
+            </div>
+          </div>
+
+
+
+          <div  class=" col-md-4 form-group">
+              <h3>Where to use it?</h3>
+            <label for="exampleInputEmail1">General</label>
+            <input style="float:right" id="is_all" value="" type="checkbox"></br>
+            <input style="float:right" id="is_all_input" value="0" type="hidden"  name='is_all'></br>
+            <label for="exampleInputEmail1">All project</label>
+            <input style="float:right" id="is_all_project"  type="checkbox"></br>
+            <input style="float:right" id="is_all_project_input" value="0" type="hidden"  name='is_all_project'></br>
+            <label for="exampleInputEmail1">All badge request</label>
+            <input style="float:right" id="is_all_badge" value="" type="checkbox"></br>
+            <input style="float:right" id="is_all_badge_input" value="0" type="hidden"  name='is_all_badge'></br>
+            <label for="exampleInputEmail1">All workshop</label>
+            <input style="float:right" id="is_all_workshop" value="" type="checkbox"></br>
+            <input style="float:right" id="is_all_workshop_input" value="0" type="hidden"  name='is_all_workshop'></br>
+            <label for="exampleInputEmail1">All supervisor request</label>
+            <input style="float:right" id="is_all_supervisorrequest" value="" type="checkbox"></br>
+            <input style="float:right" id="is_all_supervisorrequest_input" value="0" type="hidden"  name='is_all_supervisorrequest'></br>
+            <label for="exampleInputEmail1">All workshop request</label>
+            <input style="float:right" id="is_all_workshoprequest" value="" type="checkbox"></br>
+            <input style="float:right" id="is_all_workshoprequest_input" value="0" type="hidden"  name='is_all_workshoprequest'></br>
+          </div>
+
+          <h3>Use for special places</h3>
+
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#project" type="button" role="tab" aria-controls="home" aria-selected="true">Projects</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#workshop" type="button" role="tab" aria-controls="profile" aria-selected="false">Workshop</button>
+            </li>
+          </ul>
+
+
+          
+        <div class="m-5 tab-content" id="myTabContent">
+
+
+            <!--Projects-->
+               <div class="tab-pane fade show active" id="project" role="tabpanel" aria-labelledby="home-tab">
+
+                    <input id="project_input_list" name='project_input_list' class="form-control col-md-8 m-auto" type="text" placeholder="You can select projects by id and seprate with ` , ` ">
+
+                    <div class="accordion  m-auto col-md-8" id="accordionProjects">
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#showprojects" aria-expanded="true" aria-controls="collapseOne">
+                             Select projects by title
+                            </button>
+                          </h2>
+                          <div id="showprojects" class="accordion-collapse collapse " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+
+                                {% for project in projects %}
+                                <input class="projects_checkbox     check_checkboxes"  id="{{project.id}}" type="checkbox">{{project.title}}</br>
+                                    
+                                {%endfor%}
+
+                            </div>
+                          </div>
+                        </div>                  
+                    </div>
+                </div>
+
+
+
+            <!--workshop-->
+            <div class="tab-pane fade" id="workshop" role="tabpanel" aria-labelledby="profile-tab">
+
+
+                <input id="workshop_input_list" name='workshop_input_list' class="form-control col-md-8 m-auto" type="text" placeholder="You can select workshops by id and seprate with ` , ` ">
+
+                <div class="accordion  m-auto col-md-8" id="accordionWorkshop">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#showworkshop" aria-expanded="true" aria-controls="collapseOne">
+                         Select workshops by title
+                        </button>
+                      </h2>
+                      <div id="showworkshop" class="accordion-collapse collapse " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+
+                            {% for workshop in workshops %}
+                            <input class="workshops_checkbox check_checkboxes"  id="{{workshop.id}}" type="checkbox">{{workshop.unique_id}}</br>
+                                
+                            {%endfor%}
+
+
+                        </div>
+                      </div>
+                    </div> 
+                </div>
+
+            </div>
+
+
+
+ 
+            
+            
+        </div>
+
+        <button type="submit" class="btn btn-success">Create discount coupon</button>
+          
+    </form>
+
+
+
+</div>
+<script>
+$(document).ready(function() {
+
+
+    $('#generate_code').click(function(e){
+        $.ajax({
+            type:'POST',
+            url:"{% url 'accounting:generate-code' %}",
+            data:{csrfmiddlewaretoken: '{{ csrf_token }}'},
+            success:function(res){
+                $('#discount_code').val(res.code)
+            },
+            error:function(){
+
+            }
+        })
+    })
+
+
+
+
+    $('#is_all').click(function(){check_checkboxes(this,is_all_input)})
+    $('#is_all_project').click(function(){check_checkboxes(this,is_all_project_input)})
+    $('#is_all_badge').click(function(){check_checkboxes(this,is_all_badge_input)})
+    $('#is_all_workshop').click(function(){check_checkboxes(this,is_all_workshop_input)})
+    $('#is_all_supervisorrequest').click(function(){check_checkboxes(this,is_all_supervisorrequest_input)})
+    $('#is_all_workshoprequest').click(function(){check_checkboxes(this,is_all_workshoprequest_input)})
+
+
+    $('.check_checkboxes').click(get_checkboxes_list)
+   
+})
+
+
+function get_checkboxes_list(){
+    
+        
+        let project_ids=document.querySelectorAll('input[type=checkbox].projects_checkbox:checked');
+        let workshop_ids=document.querySelectorAll('input[type=checkbox].workshops_checkbox:checked');
+        let badge_ids=document.querySelectorAll('input[type=checkbox].badges_checkbox:checked');
+        let project_ids_list=[]
+        let workshop_ids_list=[]
+        let badge_ids_list=[]
+        for(let i=project_ids.length-1;i>=0;i--){
+            project_ids_list.push(project_ids[i].id)
+        }
+        for(let i=workshop_ids.length-1;i>=0;i--){
+            workshop_ids_list.push(workshop_ids[i].id)
+        }
+        for(let i=badge_ids.length-1;i>=0;i--){
+            badge_ids_list.push(badge_ids[i].id)
+        }
+
+        $('#project_input_list').val(project_ids_list)
+        $('#workshop_input_list').val(workshop_ids_list)
+        $('#badges_input_list').val(badge_ids_list)
+        
+}
+function check_checkboxes(element,inputid){
+    if($(element)[0].checked == true){
+      $(inputid).val('1')
+    }
+    else{
+      $(inputid).val('0')
+    }
+}
+</script>
+{% endblock %}

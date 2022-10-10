@@ -1,0 +1,536 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+{% endblock %}
+
+<head>
+    <link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+</head>
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-eye"></i> Project detail</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}project{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is new</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container ">
+        <div class="row">
+            {% if selected_project.is_valid %}
+                {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                <div class="col-md-3 my-1">
+                        <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <!-- new table theme -->         
+        <main class="container-fluid  ">
+            <div class="content my-4">
+                <div class="row px-4 py-2">
+                    <div class="col-md-12">
+                        <h2 style="">{{selected_project.title}}</h2>
+                        {% if selected_project.fund > 0 %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                    ${{selected_project.fund}}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if selected_project.status == 'Rejected' %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                 
+                                <span class="badge badge-danger">Reason of rejection</span>
+                                {{selected_project.reject_reason}}                            
+                                </div>
+                            </div>
+                        </div>
+
+                        {% endif %}
+
+                        {% if project_areas %}
+                            <div class="col-md-12">
+                                <label class="form-label">Project Areas:</label>
+                                <div class="form-group ">
+                                    <span class="text-info bold"></span>
+                                        {% for project_area in project_areas %}
+                                        <span class="badge
+                                        {% if project_area.is_confirmed %}
+                                            {% if project_area.area.confirmed %}
+                                            badge-success
+                                            {% else %}
+                                            badge-danger
+                                            {% endif %}
+                                        {% else %}
+                                            badge-warning
+                                        {% endif %}
+                                            ">{{project_area.area}}</span>
+                                            {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+    
+
+                        {% if object.client_form.formclint.main_supervisor %}
+                            
+                            <p class="badge badge-success">Main supervisor</p>
+            
+                        {% endif %}
+
+                    </div>
+                </div>
+                <div class="row px-4 py-2">
+                    <div class="col-md-12">
+                        <div class="form-group ">
+                            <label class="form-label">Title</label>
+                            <textarea class="form-control"  disabled>{{object.formclint.title}}</textarea>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="row px-4 py-2">
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">ID</label>
+                            <input type="text" class="form-control" value="{{object.formclint.id_project}}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">Owner</label>
+                            <input type="text" class="form-control" value="{{object.formclint.name}}" disabled>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="row px-4 py-2">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Submission date</label>
+                            <input type="text" class="form-control" value="{{object.formclint.created}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group ">
+                            <label class="form-label">  Suggested start date</label>
+                            <input type="text" class="form-control" value="{{object.formclint.start_date}}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group ">
+                            <label class="form-label"> Suggested end date</label>
+                            <input type="text" class="form-control" value=" {{object.formclint.end_date}}" disabled>
+                        </div>
+                    </div>
+                    
+                    
+                </div>    
+                    
+                <div class="row px-4 py-2">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Fund</label>
+                            <input type="text" class="form-control" value="${{object.formclint.fund}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">Dataset link:</label>
+                            <div class="form-control">
+                                {% if object.formclint.data_set_link %}
+                                <a href="{{object.formclint.data_set_link}}">Click</a>
+                                {% else %}
+                                <h6>There is no link</h6>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+                    
+                 <div class="row px-4 py-2">
+                     <div class="col-md-12">
+                        <div class="form-group ">
+                            <label class="form-label">Abstract</label>
+                            <textarea  class="form-control"  rows="3" disabled>{{object.formclint.abstrack}}</textarea>
+                        </div>
+                    </div>
+                     
+                 </div>  
+                    
+                  <div class="row px-4 py-2">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Equipment</label>
+                            <textarea class="form-control" rows="3" disabled>{{object.formclint.equipment}}</textarea>
+                        </div>
+                    </div>
+        
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Requirement</label>
+                            <textarea class="form-control" rows="3" disabled>{{object.formclint.requirement}}</textarea>
+                        </div>
+                    </div>
+
+                
+                    {% if object.formclint.pri_file %}
+                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12" >
+                        <div class="cardy border-primary bg-dark mb-3" style="height:170px; color: white">
+                          <div class="card-header"><h6>PRI file</h6></div>
+                          <div class="card-body text-danger">
+                            
+                            <a target="_blank" style="text-decoration:none;color:none" href="{{object.formclint.pri_file.url}}">
+                                <h6 id="AddExpertBtn3" class="btn btn-outline-success m-1 text-center text-white"><i class="fa fa-check"></i> Download </h6>
+                            </a>
+
+                          </div>
+                        </div>
+                    </div>
+                    {% endif %} 
+                    {% if object.formclint.status == 'revise-contract-by-director' %}
+                     <div class="col-md-12">
+                        <div class="form-group ">
+                            <label class="form-label">Revision reason</label>
+                            <textarea  class="form-control"  rows="3" disabled>{{object.formclint.reason_rejectd}}</textarea>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if object.formclint.contract and object.formclint.signed_contract %}
+                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12" >
+                        <div class="card text-info border-secondary bg-dark mb-3" style="height:180px">
+                          <div class="card-header text-center"><h5>Contract</h5></div>
+                          <div class="card-body text-light">
+                          </div>
+                          <div class="row mb-2">
+                              <button type="button" class="btn btn-primary col-5 mx-auto text-white"> <a style="text-decoration:none;color:#fff" href="{{object.formclint.contract.url}}" target="_blank">Contract</a></button>
+                            <button type="button" class="btn btn-danger col-5 mx-auto text-white"> <a style="text-decoration:none;color:#fff" href="{{object.formclint.signed_contract.url}}" target="_blank">Signed contract</a></button>
+                       
+                          </div>
+                        </div>
+                    </div>   
+                    {% endif %}
+                      
+                  </div> 
+                    
+                    
+        
+                    
+                     <div class="row px-4 py-2">
+                    <div class="col-md-6">
+                        <div>
+                            {% if object.formclint.status == 'accept-contract-by-director' %}
+                                <button type="button"  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal3" class="btn btn-primary">
+                                    Send to supervisors
+                                </button>
+                            {% elif object.status == 'n' %}
+                            <a href="{% url 'industry:research-expert-send-reviewer' object.pk %}" class="btn text-decoration-none color-dark">Send to the reviewer</a>
+
+                            {% elif object.formclint.signed_contract %}
+                                <button type="button"  data-bs-toggle="modal"
+                                    data-bs-target="#send_to_director" class="btn btn-success">
+                                    Send to the director
+                                </button>
+
+                                <button type="button"  data-bs-toggle="modal"
+                                    data-bs-target="#revised_contract" class="btn btn-danger">
+                                    Revise the contract
+                                </button>
+                            {% else %}
+                                <button type="button"  data-bs-toggle="modal"
+                                    data-bs-target="#send_contract" class="btn btn-primary">
+                                    Send contract to the client
+                                </button>
+                            {% endif %}
+<!-- 
+                            <a href="{% url 'industry:research-expert-send-reviewer' object.pk %}">
+                            <h5 style="margin-top: 10px" class="btn btn-warning">Send to reviewers</h5></a> -->
+
+                            <div class="modal fade" id="send_to_director" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        
+                                        <form method="POST" action="{% url 'industry:send-contract-client-to-director' %}" enctype="multipart/form-data" >{% csrf_token %}
+                                            <div class="modal-body">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="status" value="send-contract-to-director">
+                                                        <input type="hidden" name="id_project" value="{{object.formclint.id}}">
+                                                        <lable class="text-dark">Comment <span style="color:red">*</span></lable>
+                                                        <textarea class="form-control" rows="4" required name="comment"></textarea>
+                                                    </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit"  class="btn btn-success" >Send</button>
+                                                <button type="button" id="closeBtncom" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="revised_contract" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        
+                                        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                            <div class="modal-body">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="form_id" id="id_form_id" value="22" >
+                                                        <lable class="text-dark">Comment <span style="color:red">*</span></lable>
+                                                        <textarea class="form-control" rows="4" name="comment"></textarea>
+                                                        <hr>
+
+                                                        <lable class="text-dark">Contract</lable>
+                                                        <br>
+                                                        <input type="file" name="Contract" >
+                                                    </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit"  class="btn btn-success" >Send</button>
+                                                <button type="button" id="closeBtncont" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="send_contract" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        
+                                        <form method="POST" id="contform" enctype="multipart/form-data">{% csrf_token %}
+                                            <div class="modal-body">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="form_id" id="id_form_id" value="22" >
+                                                        <lable class="text-dark">Contract<span style="color:red">*</span></lable>
+                                                        <input type="file" id="contfile" name="Contract" class="form-control" onchange="ClearErr('contfile')">
+                                                        <div id="contfile_error" style="color:red"></div>
+                                                        <input type="hidden" name="status" value="dwadwa">
+                                                    </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="sndcont" class="btn btn-success" >Send</button>
+                                                <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        
+                                        <form method="POST">{% csrf_token %}
+                                            <div class="modal-body">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="form_id" id="id_form_id" value="22" >
+                                                        <lable class="text-dark">Set deadline<span style="color:red">*</span></lable>
+                                                        <input type="date" name="deadline" required class="date form-control disInp" id="id_deadline" oninput="ClearErr('id_deadline')">
+                                                        <div id="id_deadline_error" style="color:red"></div>
+                                                    </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success" >Send</button>
+                                                <button type="button" id="closeBtndead" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    </div>
+                </div>
+        
+            </div>
+        </main>
+        
+        <div class="d-flux mt-2 mx-2">
+            {% if object.formclint.main_supervisor %}
+                <div class="d-flux mt-2 mx-2">
+                    <a href="{{object.formclint.main_supervisor.url}}"><dt class="text-center">Download proposal</dt> </a>
+                </div>
+            {% endif %}
+        </div>            
+ 
+    </div>
+
+    
+
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+
+
+
+<script>
+    $( document ).ready( function() {
+        
+        $('#exampleModal3').modal({backdrop: 'static', keyboard: false});
+        
+      /*  document.getElementById("sendBtn").addEventListener("click",function(){
+            var date_dead = document.getElementById("id_deadline").value;
+            if(date_dead==""){
+                document.getElementById('id_deadline_error').innerHTML = "Error: please select date."
+            }else{
+                document.getElementById('dform').submit();
+                document.getElementById('sendBtn').disabled = true;  
+                document.getElementById('closeBtn').disabled = true;  
+                
+                
+            }
+            
+            
+            
+            
+          
+        });*/
+       
+       
+       document.getElementById("sndcont").addEventListener("click",function(){
+           var contract = document.getElementById("contfile").value;
+           if(contract.length==0){
+               document.getElementById('contfile_error').innerHTML="Error:please select the contract file."
+           
+           }else if(CheckIndexAtt("contfile")==true){
+               document.getElementById("contfile_error").innerHTML='file index is NOT valid (valid index: pdf)';
+           }else{
+               document.getElementById('contform').submit();
+                document.getElementById('sndcont').disabled = true;
+                document.getElementById('closeBtn').disabled = true;
+                
+                
+           }
+           
+       });
+       
+       
+    });
+    
+    
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+   
+}
+
+
+function CheckIndexAtt(id){
+    var file_status = false;
+    
+    var file_name   = document.getElementById(id).value;
+	var index_dot=file_name.lastIndexOf(".")+1;
+	var ext=file_name.substr(index_dot);
+	if(!(ext=='pdf')) {
+		
+		
+		file_status = true;	
+		
+	}   
+	
+	return file_status;
+        
+}
+
+    
+</script>
+
+
+{% endblock script %}
+

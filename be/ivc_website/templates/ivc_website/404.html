@@ -1,0 +1,39 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECVICO|404</title>
+
+    	<link href="{% static 'ivc_website/css/font-awesome.min.css' %}" rel="stylesheet" >
+    	<link href="{% static 'ivc_website/css/normalize.css' %}" rel="stylesheet">
+        <link href="{% static 'ivc_website/css/bootstrap.min.css' %}" rel="stylesheet" >
+        <link rel="stylesheet" href="{%static 'ivc_website/css/error_page.css' %}">
+{% endblock %}
+{% block content %}
+<!-- just copy main tag and css -->
+<main>
+    <section id="404">
+        <div class="description">
+            <div class="row p-0 justify-content-center align-items-center">
+                <div class="col-lg-6 d-flex justify-content-center  ">
+                    <img class="img-fluid" src="{% static 'ivc_website/img/404-1.gif' %}" alt="">
+                </div>
+                <div class="col-lg-6">
+                    <h1>Why am i Here ?</h1>
+                    <p>we are very sorry for the inconvience .it looks like you re trying to acess a page that either has been
+                        deleted or never even existed</p>
+                    <a href="https://tecvico.com/" class="btn">TAKE ME HOME</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!------ js files ----->
+<script src="{% static 'ivc_website/js/jquery.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/bootstrap.bundle.min.js' %}"></script>
+
+{% endblock %}

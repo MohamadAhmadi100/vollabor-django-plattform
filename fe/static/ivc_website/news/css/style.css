@@ -1,0 +1,54 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background: #F8F8F8;
+}
+a{
+    text-decoration: none;
+}
+
+.t-header{
+    max-width: 100%;
+    background:#29489B ;
+    height: 400px;
+    overflow: hidden;
+    background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgb(41, 72, 155)),
+    url("../img/news-header.jpg");
+    background-size: cover;
+    background-position:center;
+}
+.t-header > .row {
+    position: relative;
+    top: 100px;
+}
+.desc-header{
+    width: 90%;
+    padding-left: 3rem;
+    padding-top: 1rem;
+    color: white;
+}
+
+.desc-header > .title_page{
+    letter-spacing: 10px;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.desc-header > .title_single_page{
+    font-size: 36px;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    text-transform: capitalize;
+}
+
+.single_page p {
+    text-align: justify !important;
+}
+
+.desc-header > p {
+    margin-top: 1.5rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+

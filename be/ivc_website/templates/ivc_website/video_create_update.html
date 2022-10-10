@@ -1,0 +1,84 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+{% block content %}
+
+
+<header class="bg-primary text-white py-2 w-100">
+    <div class="container">
+        <h1 class="px-4"><i class="far fa-edit"></i> <span> Video</span></h1>
+    </div>
+</header>
+<div class="col-md-12">
+    <div class="card card-primary">
+        <div class="card-body" style="margin-left:100px ;">
+            <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                <div class="row">
+                    <div class="col-6">
+                        {{ video.title|as_crispy_field }}
+                    </div>
+                    <div class="col-6">
+                        {{ video.category|as_crispy_field }}
+                    </div>
+                    <div class="col-12">
+                        {{ video.description|as_crispy_field }}
+                    </div>
+                    <div class="col-6">
+                        {{ video.image|as_crispy_field }}
+                    </div>
+                    <div class="col-6">
+                        {{ video.link|as_crispy_field }}
+                    </div>
+                    {% if author.is_super_author %}
+                        <div class="col-6">
+                            {{ video.status|as_crispy_field }}
+                        </div>
+                        <div class="col-6">
+                            {{ video.is_top|as_crispy_field }}
+                        </div>
+                    {% else %}
+                        <div class="col-6">
+                            <div id="div_id_status" class="form-group">
+                                <label for="id_status" class=" requiredField">
+                                Status<span class="asteriskField">*</span>
+                                </label>
+                                <div class="">
+                                    <select name="status" class="select form-control" required="" id="id_status">
+                                        <option value="">---------</option>
+                                        <option value="d">Draft</option>
+                                        <option value="i">Send to top manager</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="is_top" class="d-none" value=False>
+                    {% endif %}
+                </div>
+                <button class="btn btn-success">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"> 
+    </script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+
+{% endblock content %}

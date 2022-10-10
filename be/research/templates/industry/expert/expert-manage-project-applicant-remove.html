@@ -1,0 +1,944 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-eye"></i> Project view </h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}project{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation is sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is new</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row">
+            {% if selected_project.is_valid %}
+                {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                <div class="col-md-3 my-1">
+                        <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <!-- new table theme -->         
+        <main class="container-fluid  ">
+            <div class="content my-4">
+                <div class="row px-4 py-2">
+                    <div class="col-md-12">
+                        <h2 style="overflow: hidden">{{selected_project.title}}</h2>
+                        {% if selected_project.fund > 0 %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                    ${{selected_project.fund}}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if selected_project.status == 'Rejected' %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                 
+                                <span class="badge badge-danger">Reason of rejection</span>
+                                {{selected_project.reject_reason}}                            
+                                </div>
+                            </div>
+                        </div>
+
+                        {% endif %}
+
+                        {% if project_areas %}
+                            <div class="col-md-12">
+                                <label class="form-label">Project areas:</label>
+                                <div class="form-group ">
+                                    <span class="text-info bold"></span>
+                                        {% for project_area in project_areas %}
+                                        <span class="badge
+                                        {% if project_area.is_confirmed %}
+                                            {% if project_area.area.confirmed %}
+                                            badge-success
+                                            {% else %}
+                                            badge-danger
+                                            {% endif %}
+                                        {% else %}
+                                            badge-warning
+                                        {% endif %}
+                                            ">{{project_area.area}}</span>
+                                            {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+    
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="form-group ">
+                            <label class="form-label">ID</label>
+                            <input type="text" class="form-control" value="{{project_obj.project.client_form.formclint.id_project}}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+
+                        <div class="form-group ">
+                            <label class="form-label">Title</label>
+                            <textarea class="form-control"  disabled>{{project_obj.project.client_form.formclint.title}}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!--<div class="col-md-6">
+
+                        <div class="form-group ">
+                            <label class="form-label">Title:</label>
+                            <input type="text" class="form-control" value="{{project_obj.project.client_form.formclint.title}}" disabled>
+                        </div>
+                    </div>-->
+                    
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">Owner</label>
+                            <input type="text" class="form-control" value="{{project_obj.project.client_form.formclint.name}}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Submission date</label>
+                            <input type="text" class="form-control" value="{{project_obj.project.client_form.formclint.created|date:'m-d-Y'}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">  Suggested start date</label>
+                            <input type="text" class="form-control" value="{{project_obj.project.client_form.formclint.start_date}}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label"> Suggested end date</label>
+                            <input type="text" class="form-control" value=" {{project_obj.project.client_form.formclint.end_date}}" disabled>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Fund</label>
+                            <input type="text" class="form-control" value="${{project_obj.project.client_form.formclint.fund}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">Dataset link</label>
+                            <div class="form-control">
+                                
+
+                                {% if project_obj.project.client_form.formclint.data_set_link %}
+                                <a href="{{project_obj.project.client_form.formclint.data_set_link}}">Clickt</a>
+                                {% else %}
+                                <h6>There is no link</h6>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="form-label">Abstract</label>
+                            <textarea class="form-control" rows="5" disabled>{{project_obj.project.client_form.formclint.abstrack}}</textarea>
+                        </div>
+                    </div>
+
+                  
+        
+                    <!--<div class="col-md-12">
+                        <div class="form-group ">
+                            <label class="form-label">Abstract</label>
+                            <input type="text" class="form-control" value=" {{project_obj.project.client_form.formclint.abstrack}}" disabled>
+                        </div>
+                    </div>-->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Equipment</label>
+                            <textarea class="form-control" rows="5" disabled>{{project_obj.project.client_form.formclint.equipment}}</textarea>
+                        </div>
+                    </div>
+                    <!--<div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Equipment</label>
+                            <div class="form-control d-flex align-items-center flex-wrap">
+                                {{project_obj.project.client_form.formclint.equipment}}
+                            </div>
+                        </div>
+                    </div>-->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Requirement</label>
+                            <textarea class="form-control" rows="5" disabled>{{project_obj.project.client_form.formclint.requirement}}</textarea>
+                        </div>
+                    </div>
+
+                    <table class="table table-hover table striped">
+                        <thead class="text-dark" style="background-color:#ADD8E6">
+                            <tr>
+                                <th>Full name</th>
+                                <th>Email</th>
+                                <th>Position</th>
+                                <th>Event date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class=" table-dark">
+                            
+                            <!-- Advisor -->
+                            {% for i in project_obj.supervisors_project.Accepted %}
+                                <tr>
+                                    <td>{{i.user.get_full_name}} </td>
+                                    <td>{{i.user.email}}</td>
+                                    <td>Member </td>
+                                    <td>{{i.event_date}}</td>
+                                    <td>
+                                        {% if i.status_remove == 'request-remove' %}
+                                            The main supervisor requested to remove the applicant and pending for your decision
+
+                                        {% elif i.status_remove == 'request-remove-send-to-the-director' %}
+                                            You sent applicant removal request to director
+                                            
+                                        {% elif i.status_remove == 'request-reject-by-director' %}
+                                            Rejected by the director
+                                            
+                                        {% elif i.status_remove == 'request-accpet-by-director' %}
+                                            Removed by the director
+                                            
+                                        {% elif i.status_remove == 'request-accpet-by-expert' %}
+                                            Removed by you
+                                            
+                                        {% elif i.status_remove == 'request-reject-by-expert' %}
+                                            Rejected by you
+
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if i.status_remove == 'request-remove' %}
+                                            {% if project_obj.project.client_form.remove_applicant == True %}
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#accept_request{{i.id}}" class="btn btn-success">
+                                                    Accept
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#reject_request{{i.id}}" class="btn btn-danger">
+                                                    Reject
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                    Reason
+                                                </button>
+                                            {% else %}
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#send_to_director{{i.id}}" class="btn btn-primary">
+                                                    Send to the director
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                    Reason
+                                                </button>
+                                            {% endif %}
+
+                                        {% elif i.status_remove == 'request-remove-send-to-the-director' %}
+                                            <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                data-bs-target="#comment{{i.id}}" class="btn btn-primary">
+                                                Comment
+                                            </button>
+                                            <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                Reason
+                                            </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+
+                                <!-- Send to the director -->
+                                <div class="modal fade" id="send_to_director{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="advisor">
+                                                    <input type="hidden" name="status" value="send-to-the-director">
+
+                                                    <label class="text-dark">Comment<span style="color:red">*</span></label>
+                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Send</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Rejected applicant -->
+                                <div class="modal fade" id="reject_request{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="advisor">
+                                                    <input type="hidden" name="status" value="request-reject-by-expert">
+                                                        <label class="text-dark">Comment<span style="color:red">*</span></label>
+                                                        <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Accepted applicant -->
+                                <div class="modal fade" id="accept_request{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="advisor">
+                                                    <input type="hidden" name="status" value="request-accpet-by-expert">
+                                                    <label class="text-dark">Reason<span style="color:red">*</span></label>
+                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Accept</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Comment -->
+                                <div class="modal fade" id="comment{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <textarea class="form-control" disabled name="reason_rejection">{{i.comment}}</textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- reason -->
+                                <div class="modal fade" id="view_reason{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <textarea class="form-control" disabled name="reason_rejection">{{i.reason_rejection}}</textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            
+                            <!-- Mentor -->
+                            {% for i in project_obj.mentor_project.Accepted %}
+                                <tr>
+                                    <td>{{i.user.get_full_name}} </td>
+                                    <td>{{i.user.email}}</td>
+                                    <td>Member </td>
+                                    <td>{{i.event_date}}</td>
+                                    <td>
+                                        {% if i.status_remove == 'request-remove' %}
+                                            The main supervisor requested to remove the applicant and pending for your decision
+
+                                        {% elif i.status_remove == 'request-remove-send-to-the-director' %}
+                                            You sent applicant removal request to director
+                                            
+                                        {% elif i.status_remove == 'request-reject-by-director' %}
+                                            Rejected by the director
+                                            
+                                        {% elif i.status_remove == 'request-accpet-by-director' %}
+                                            Removed by the director
+                                            
+                                        {% elif i.status_remove == 'request-accpet-by-expert' %}
+                                            Removed by you
+                                            
+                                        {% elif i.status_remove == 'request-reject-by-expert' %}
+                                            Rejected by you
+
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if i.status_remove == 'request-remove' %}
+                                            {% if project_obj.project.client_form.remove_applicant == True %}
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#accept_request{{i.id}}" class="btn btn-success">
+                                                    Accept
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#reject_request{{i.id}}" class="btn btn-danger">
+                                                    Reject
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                    Reason
+                                                </button>
+                                            {% else %}
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#send_to_director{{i.id}}" class="btn btn-primary">
+                                                    Send to the director
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                    Reason
+                                                </button>
+                                            {% endif %}
+
+                                        {% elif i.status_remove == 'request-remove-send-to-the-director' %}
+                                            <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                data-bs-target="#comment{{i.id}}" class="btn btn-primary">
+                                                Comment
+                                            </button>
+                                            <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                Reason
+                                            </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+
+                                <!-- Send to the director -->
+                                <div class="modal fade" id="send_to_director{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="mentor">
+                                                    <input type="hidden" name="status" value="send-to-the-director">
+
+                                                    <label class="text-dark">Comment<span style="color:red">*</span></label>
+                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Send</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Rejected applicant -->
+                                <div class="modal fade" id="reject_request{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="mentor">
+                                                    <input type="hidden" name="status" value="request-reject-by-expert">
+                                                        <label class="text-dark">Comment<span style="color:red">*</span></label>
+                                                        <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Accepted applicant -->
+                                <div class="modal fade" id="accept_request{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="mentor">
+                                                    <input type="hidden" name="status" value="request-accpet-by-expert">
+                                                    <label class="text-dark">Reason<span style="color:red">*</span></label>
+                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Accept</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Comment -->
+                                <div class="modal fade" id="comment{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <textarea class="form-control" disabled name="reason_rejection">{{i.comment}}</textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- reason -->
+                                <div class="modal fade" id="view_reason{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <textarea class="form-control" disabled name="reason_rejection">{{i.reason_rejection}}</textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            
+                            <!-- Member -->
+                            {% for i in project_obj.mmber_project.Accepted %}
+                                <tr>
+                                    <td>{{i.user.get_full_name}} </td>
+                                    <td>{{i.user.email}}</td>
+                                    <td>Member </td>
+                                    <td>{{i.event_date}}</td>
+                                    <td>
+                                        {% if i.status_remove == 'request-remove' %}
+                                            The main supervisor requested to remove the applicant and pending for your decision
+
+                                        {% elif i.status_remove == 'request-remove-send-to-the-director' %}
+                                            You sent applicant removal request to director
+                                            
+                                        {% elif i.status_remove == 'request-reject-by-director' %}
+                                            Rejected by the director
+                                            
+                                        {% elif i.status_remove == 'request-accpet-by-director' %}
+                                            Removed by the director
+                                            
+                                        {% elif i.status_remove == 'request-accpet-by-expert' %}
+                                            Removed by you
+                                            
+                                        {% elif i.status_remove == 'request-reject-by-expert' %}
+                                            Rejected by you
+
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if i.status_remove == 'request-remove' %}
+                                            {% if project_obj.project.client_form.remove_applicant == True %}
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#accept_request{{i.id}}" class="btn btn-success">
+                                                    Accept
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#reject_request{{i.id}}" class="btn btn-danger">
+                                                    Reject
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                    Reason
+                                                </button>
+                                            {% else %}
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#send_to_director{{i.id}}" class="btn btn-primary">
+                                                    Send to the director
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                    Reason
+                                                </button>
+                                            {% endif %}
+
+                                        {% elif i.status_remove == 'request-remove-send-to-the-director' %}
+                                            <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                data-bs-target="#comment{{i.id}}" class="btn btn-primary">
+                                                Comment
+                                            </button>
+                                            <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                Reason
+                                            </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+
+                                <!-- Send to the director -->
+                                <div class="modal fade" id="send_to_director{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="member">
+                                                    <input type="hidden" name="status" value="send-to-the-director">
+
+                                                    <label class="text-dark">Comment<span style="color:red">*</span></label>
+                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Send</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Rejected applicant -->
+                                <div class="modal fade" id="reject_request{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="member">
+                                                    <input type="hidden" name="status" value="request-reject-by-expert">
+                                                        <label class="text-dark">Comment<span style="color:red">*</span></label>
+                                                        <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Accepted applicant -->
+                                <div class="modal fade" id="accept_request{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="member">
+                                                    <input type="hidden" name="status" value="request-accpet-by-expert">
+                                                    <label class="text-dark">Reason<span style="color:red">*</span></label>
+                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Accept</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Comment -->
+                                <div class="modal fade" id="comment{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <textarea class="form-control" disabled name="reason_rejection">{{i.comment}}</textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- reason -->
+                                <div class="modal fade" id="view_reason{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <textarea class="form-control" disabled name="reason_rejection">{{i.reason_rejection}}</textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            
+                            <!-- Learner -->
+                            {% for i in project_obj.lerner_project.Accepted %}
+                                <tr>
+                                    <td>{{i.user.get_full_name}} </td>
+                                    <td>{{i.user.email}}</td>
+                                    <td>Member </td>
+                                    <td>{{i.event_date}}</td>
+                                    <td>
+                                        {% if i.status_remove == 'request-remove' %}
+                                            The main supervisor requested to remove the applicant and pending for your decision
+
+                                        {% elif i.status_remove == 'request-remove-send-to-the-director' %}
+                                            You sent applicant removal request to director
+                                            
+                                        {% elif i.status_remove == 'request-reject-by-director' %}
+                                            Rejected by the director
+                                            
+                                        {% elif i.status_remove == 'request-accpet-by-director' %}
+                                            Removed by the director
+                                            
+                                        {% elif i.status_remove == 'request-accpet-by-expert' %}
+                                            Removed by you
+                                            
+                                        {% elif i.status_remove == 'request-reject-by-expert' %}
+                                            Rejected by you
+
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if i.status_remove == 'request-remove' %}
+                                            {% if project_obj.project.client_form.remove_applicant == True %}
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#accept_request{{i.id}}" class="btn btn-success">
+                                                    Accept
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#reject_request{{i.id}}" class="btn btn-danger">
+                                                    Reject
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                    Reason
+                                                </button>
+                                            {% else %}
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#send_to_director{{i.id}}" class="btn btn-primary">
+                                                    Send to the director
+                                                </button>
+                                                <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                    data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                    Reason
+                                                </button>
+                                            {% endif %}
+
+                                        {% elif i.status_remove == 'request-remove-send-to-the-director' %}
+                                            <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                data-bs-target="#comment{{i.id}}" class="btn btn-primary">
+                                                Comment
+                                            </button>
+                                            <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                                data-bs-target="#view_reason{{i.id}}" class="btn btn-warning">
+                                                Reason
+                                            </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+
+                                <!-- Send to the director -->
+                                <div class="modal fade" id="send_to_director{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="learner">
+                                                    <input type="hidden" name="status" value="send-to-the-director">
+
+                                                    <label class="text-dark">Comment<span style="color:red">*</span></label>
+                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Send</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Rejected applicant -->
+                                <div class="modal fade" id="reject_request{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="learner">
+                                                    <input type="hidden" name="status" value="request-reject-by-expert">
+                                                        <label class="text-dark">Comment<span style="color:red">*</span></label>
+                                                        <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Accepted applicant -->
+                                <div class="modal fade" id="accept_request{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="obj_id" value="{{i.id}}">
+                                                    <input type="hidden" name="position_user" value="learner">
+                                                    <input type="hidden" name="status" value="request-accpet-by-expert">
+                                                    <label class="text-dark">Reason<span style="color:red">*</span></label>
+                                                    <textarea class="form-control" required name="reason_rejection"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Accept</button>
+                                                    <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Comment -->
+                                <div class="modal fade" id="comment{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <textarea class="form-control" disabled name="reason_rejection">{{i.comment}}</textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- reason -->
+                                <div class="modal fade" id="view_reason{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <textarea class="form-control" disabled name="reason_rejection">{{i.reason_rejection}}</textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    </div>
+                        <div class="col-md-6">
+                            <div>
+                                <a href="{% url 'industry:research-expert-manage-project' %}">
+                                    <h5 class="btn btn-danger">Back</h5></a> 
+                            </div>
+                        </div>
+                    </div>
+
+ 
+            </div>
+        </main>
+
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+
+
+{% endblock script %}
+

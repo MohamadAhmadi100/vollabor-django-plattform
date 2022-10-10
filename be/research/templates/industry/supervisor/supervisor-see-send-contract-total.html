@@ -1,0 +1,582 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+{% load base %}
+{% block css %}
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-star-half-alt"></i> Evaluation & scores view</h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}project{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is new</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row">
+            {% if selected_project.is_valid %}
+                {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                <div class="col-md-3 my-1">
+                        <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-md-12 mt-3">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="">
+                        <div class="">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="m-b-md">
+                                        <h2 style="overflow: hidden">{{selected_project.title}}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-lg-5">
+
+                                </div>
+                                {% if selected_project.fund > 0 %}
+                                <div class="col-lg-7">
+                                    <dl class="dl-horizontal">
+                                        <p><span class="badge badge-success"><i class="fa fa-dollar-sign"></i> Fund</span> <span class="bold">${{selected_project.fund}}</span></p>
+                                    </dl>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {% if selected_project.status == 'Rejected' %}
+                                    <p><span class="badge badge-danger">Reason of rejection</span>
+                                        {{selected_project.reject_reason}}
+                                    </p>
+                                    {% endif %}
+
+                                    {% if project_areas %}
+                                    <p><span class="text-info bold">Project Areas:</span>
+                                        {% for project_area in project_areas %}
+                                        <span class="badge
+                                        {% if project_area.is_confirmed %}
+                                            {% if project_area.area.confirmed %}
+                                            badge-success
+                                            {% else %}
+                                            badge-danger
+                                            {% endif %}
+                                        {% else %}
+                                            badge-warning
+                                        {% endif %}
+                                        ">{{project_area.area}}</span>
+                                        {% endfor %}
+                                    </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% for i in reviewer %}
+                              <div class="w-100 d-flex justify-content-center mt-5">
+                                <table class="table table-dark table-hover table-striped">
+                                  <thead>
+                                    <tr>
+                                      <th>#</th>
+                                      <th style="width:35%">Category title</th>
+                                      <th style="width:50%">Description</th>
+                                      <th style="width:15%">Score</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <th>1</th>
+                                      <td>Understanding the problem</td>
+                                      <td>Understanding of the work to be performed and all its associated tasks.</td>
+                                      <td>{{i.score}} / 100</td>
+                                    </tr>
+                                    <tr>
+                                      <th>2</th>
+                                      <td>Approach to Solving the problem/td>
+                                      <td>Completeness and reliability of the indicated procedures/techniques to perform and manage the stated work.Inclusion and adequacy of alternate methods and materials.
+
+                                      </td>
+                                      <td>{{i.score_1}} / 100</td>
+                                    </tr>
+                                    <tr>
+                                      <th>3</th>
+                                      <td>Availability/Quality of data</td>
+                                      <td>Size of data, capability of reproducing the study, quality of data, and diversify data
+                                        <br>
+                                        <b>-</b> Number of datapoints
+                                        <br>
+                                        <b>-</b> Kinds of data accessibility 
+                                        <br>
+                                        <b>-</b> Preprocessing effort
+                                        <br>
+                                        <b>-</b> Diversity of datapoints
+                                    </td>
+                                      <td>{{i.score_2}} / 100</td>
+                                    </tr>
+                                    <tr>
+                                      <th>4</th>
+                                      <td>Probability of success</td>
+                                      <td>Completion of all tasks on time.
+                                        <br>
+                                        <b>-</b> detailed and logical work plan with major tasks and key milestones for technical and logistical factors indicated
+                                        <br>
+                                        <b>-</b> reasonableness of project schedule
+                                      </td>
+                                      <td>{{i.score_3}} / 100</td>
+                                    </tr>
+                                    <tr>
+                                      <th>5</th>
+                                      <td>Qualifications and experience of key personnel/td>
+                                      <td>Principal investigator’s and key personnel’s academic and professional credentials in a relevant field of research (as demonstrated by their level of academic and professional achievement/honors). Past experience of principal investigator or key personnel in conducting similar research.</td>
+                                      <td>{{i.score_4}} / 100</td>
+                                    </tr>
+                                    <tr>
+                                      <th>6</th>
+                                      <td>Quality of facilities to perform the work</td>
+                                      <td>
+                                        <b>-</b> Adequacy of facilities
+                                        <br>
+                                        <b>-</b> Availability of facilities</td>
+                                      <td>{{i.score_5}} / 100</td>
+                                    </tr>
+                                    <tr>
+                                      <th>7</th>
+                                      <td>Limitation of study</td>
+                                      <td>Sufficient related background, multiple final and statistical evaluation methods, requirement to equipment.
+                                      <br>
+                                          <b>-</b> Literature
+                                      <br>
+                                          <b>-</b> Robustness (evaluation) of findings 
+                                      <br>
+                                          <b>-</b> Requiring instrument
+                                      </td>
+                                      <td>{{i.score_6}} / 100</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                                <br>
+                                <h6 class="badge badge-primary"> Score: {{ i | total_score }} / 700</h6>
+                                <br>
+                              <hr style="background-color: black;">
+                              {% endfor %}
+
+                            <a href="{% url 'industry:industry-supervisor-see-contract' object.pk %}">
+                            <h5 class="btn btn-danger">Back</h5></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!--  -->
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+{% if user|is_member_profile and user.memberprofile.is_technical_manager %}
+
+{% if selected_project.expert is None and not project_areas %}
+<script>
+    $('[data-toggle="tooltip"]').tooltip();
+</script>
+{% endif %}
+
+<script>
+    function restore_accept_modal() {
+            $('input[type=radio][name=accept-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=accept-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('.acceptTemplate').addClass('d-none')
+            $('.acceptManual').addClass('d-none')
+    }
+
+    function restore_reject_modal() {
+            $('input[type=radio][name=reject-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=reject-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            // for area
+            $('.rejectTemplate').addClass('d-none');
+            $('.rejectManual').addClass('d-none');
+    }
+
+    $('.btn-accept-area').on('click', (event) => {
+        $('#acceptAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_accept_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-check');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="accept-area"]').val(area_pk);
+    });
+
+    $('.btn-accept-project-area').on('click', (event) => {
+        $('#acceptProjectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_accept_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-check');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+        $('input[name$="accept-project-area"]').val(area_pk);
+    });
+
+    $('.btn-reject-project-area').on('click', (event) => {
+        $('#rejectProjectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_reject_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="reject-project-area"]').val(area_pk);
+    });
+
+    $('.btn-reject-area').on('click', (event) => {
+        $('#rejectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_reject_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        console.log(area_pk);
+
+        $('input[name$="reject-area"]').val(area_pk);
+    });
+
+    $('input[type=radio][name=reject-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('.rejectTemplate').removeClass('d-none')
+            $('.rejectManual').addClass('d-none')
+        }
+        else {
+            $('.rejectTemplate').addClass('d-none')
+            $('.rejectManual').removeClass('d-none')
+        }
+    });
+
+    $('input[type=radio][name=accept-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('.acceptTemplate').removeClass('d-none')
+            $('.acceptManual').addClass('d-none')
+        }
+        else {
+            $('.acceptTemplate').addClass('d-none')
+            $('.acceptManual').removeClass('d-none')
+        }
+    });
+
+    $('.submit-reject-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=reject-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#reject-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-accept-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=accept-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#accept-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-accept-project-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=accept-project-area-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#accept-project-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-reject-project-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=reject-project-area-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#reject-project-area-form').submit();
+            }
+        });
+    })
+</script>
+{% endif %}
+
+{% if user|is_member_profile and user.memberprofile.is_technical_manager or user == selected_project.expert %}
+<script>
+    $( document ).ready( function() {
+        const errorMessage = "This field is required";
+
+        $( this ).find( "textarea" ).on( "input change propertychange", function() {
+
+            const hasError = !/.*\S+.*/.test($(this).val());
+            if ( typeof this.setCustomValidity === "function")
+            {
+                this.setCustomValidity( hasError ? errorMessage : "" );
+            }
+            else
+            {
+                $( this ).toggleClass( "error", !!hasError );
+                $( this ).toggleClass( "ok", !hasError );
+
+                if ( hasError )
+                {
+                    $( this ).attr( "title", errorMessage );
+                }
+                else
+                {
+                    $( this ).removeAttr( "title" );
+                }
+            }
+
+        });
+    });
+
+    function restore_add_modal() {
+            $('input[type=radio][name=add-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=add-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('#addFromTemplate').addClass('d-none')
+            $('#addManually').addClass('d-none')
+    }
+
+    function restore_remove_modal() {
+            $('input[type=radio][name=remove-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=remove-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('#removeFromTemplate').addClass('d-none')
+            $('#removeManually').addClass('d-none')
+    }
+
+    const manuallyAddAreaBtn = $('#btn-add-manually');
+    const selectAddAreaBtn = $('#btn-add-select');
+
+    manuallyAddAreaBtn.on('click', (event) => {
+        event.preventDefault();
+        if (manuallyAddAreaBtn.get(0).form.reportValidity()) {
+            const entered_value = $('#input-add-manually').val();
+            $('#addAreaModal').modal({
+              show:true,
+              closeOnEscape: true
+            });
+
+            restore_add_modal();
+
+            $('input[name$="add-industrial-area"]').val(entered_value);
+        }
+        else {
+            manuallyAddAreaBtn.get(0).form.checkValidity();
+        }
+    });
+
+    selectAddAreaBtn.on('click', (event) => {
+        event.preventDefault();
+        const entered_value = $('#select-add').val();
+        $('#addAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_add_modal();
+
+        $('input[name$="add-industrial-area"]').val(entered_value);
+    });
+
+    $('input[type=radio][name=add-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('#addFromTemplate').removeClass('d-none')
+            $('#addManually').addClass('d-none')
+        }
+        else {
+            $('#addFromTemplate').addClass('d-none')
+            $('#addManually').removeClass('d-none')
+        }
+    });
+
+    $('.btn-remove-area').on('click', (event) => {
+        $('#removeAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_remove_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="remove-area"]').val(area_pk);
+    });
+
+    $('input[type=radio][name=remove-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('#removeFromTemplate').removeClass('d-none')
+            $('#removeManually').addClass('d-none')
+        }
+        else {
+            $('#removeFromTemplate').addClass('d-none')
+            $('#removeManually').removeClass('d-none')
+        }
+    });
+
+    $('.submit-remove-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=remove-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#remove-area-form').submit();
+            }
+        });
+    });
+
+    $('.submit-add-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=add-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#add-area-form').submit();
+            }
+        });
+    });
+</script>
+{% endif %}
+
+{% endblock script %}
+

@@ -1,0 +1,38 @@
+Machine learning classification
+Machine learning regression 
+Machine learning clustring
+Dimension reduction algorithms
+Object detection
+Deep learning classification 
+Deep learning regression
+Deep learning segmentation
+python
+R
+Matlab
+Image processing
+Metal forming 
+Machine tools 
+CAT CAM
+Material science 
+Material allowing 
+Tool design 
+Drawing 
+Simulation 
+Optimization theories 
+Conceptual design 
+Design of experiment for validation
+Synthesis
+Spectroscopy
+Physical Organic Chemistry
+Phytochemistry
+Separation
+Extraction
+Nanochemistry
+Photochemistry
+Computational and Theoretical Chemistry
+Quantum Chemistry
+Spectroscopy
+Chemical Kinetic
+Statistical Thermodynamic
+Pharmaceutical Chemistry
+Applied Chemistry

@@ -1,0 +1,342 @@
+{% extends 'ivc_website/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% block style %}
+    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/css/intlTelInput.css" rel="stylesheet"
+        media="screen">-->
+    <link rel="stylesheet" href="https://cdn.tutorialjinni.com/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+    <link rel="stylesheet" href="{% static 'users/css/JoinUs.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/phone.css' %}">
+    
+   
+{% endblock %}
+{% block content %}
+
+<div class="user">
+     {% if messages %}
+                {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger"> {{ message }}</div>
+                        {%endif %}
+                {% endfor %}
+            {% endif %}
+		<div class="user_options-container" >
+		      
+		    
+		<!--	<div class="user_options-text">
+    			      
+				  
+				 <div class="user_options-registered">
+					
+					<h3 class="user_company-text text-warning">Registration as a company</h3>
+					<button class="user_registered-login text-warning" id="corporation-button">Sign up</button>
+				  </div>
+				  <div class="user_options-unregistered">
+					<h3 class="user_individual-text text-info">Registration as an individual</h3>
+					<button class="user_individual-signup text-info" id="individual-button">Sign up</button>
+				  </div>
+			</div>-->
+			<div class="user_options-forms py-0" id="user_options-forms">
+				<div class="user_forms-individual m-0 py-0" id="user_forms-individual">
+					<h3 class="text-center bg-dark text-info my-1 p-2">Individual registration form</h3>
+					<form method="post" class="forms_form" enctype="multipart/form-data" id="natural-form">
+					    {% csrf_token %}
+					  <fieldset class="forms_fieldset">
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <input type="text" id="first_name" name="first_name" placeholder="First name" class="forms_field-input"  autofocus />
+							  <div id="first_name_error" class="text-danger small"></div>
+						    </div>
+						    
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <input type="text" id="last_name" name="last_name" placeholder="Last name" class="forms_field-input"  autofocus />
+							  <div id="last_name_error" class="text-danger small"></div>
+						    </div>
+						    
+						</div>
+						<div class="row">
+						    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 py-1">
+								{{form.phone}}
+								{{form.phone_region}}
+						          {% comment %} <input type="text" name="phone" id="phone" > {% endcomment %}
+						           {% comment %} <input type="text" name="phone_region" id="natural_phone_region" class="d-none"> {% endcomment %}
+							    {% comment %} <input name="phone" type="text" id="phone"/> {% endcomment %}
+							  <!--<select class="forms_field-input" required autofocus>
+								<option disabled selected>Phone</option>
+							  </select>-->
+							  <div id="phone_error" class="text-danger small"></div>
+						    </div>
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 py-2">
+							  <input type="email" name="email" id="email" placeholder="Email" class="forms_field-input"  autofocus />
+							  <div id="email_error" class="text-danger small"></div>
+						    </div>
+							
+						</div>
+						
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <select name="field_of_study" id="field_of_study" class="forms_field-input" required autofocus >
+							      <option selected disabled value="0" class="text-secondary"> Field of study </option>
+							     {% for i in form.field_of_study %}
+								   {{i}}
+								 {% endfor %}
+							  
+							  </select>
+							  <div id="field_of_study_error" class="text-danger small"></div>
+						    </div>
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <select name="degree" id="degree" class="forms_field-input" required autofocus >
+									<option selected disabled value="0"> Degree</option>
+									{% for i in form.degree %}
+								       {{i}}
+								    {% endfor %}
+							  </select>
+							  <div id="degree_error" class="text-danger small"></div>
+						    </div>
+						</div>
+						<!--<div class="row">-->
+						<!--	<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">-->
+						<!--	  <select name="status" id="status" class="forms_field-input" required autofocus >-->
+						<!--			<option selected disabled value="0">Status</option>-->
+						<!--				{% for i in form.status %}-->
+						<!--		           {{i}}-->
+						<!--		        {% endfor %}-->
+						<!--	  </select>-->
+						<!--	  <div id="status_error" class="text-danger small"></div>-->
+						<!--    </div>-->
+						<!--	<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">-->
+						<!--	  <select name="referred_by" id="referred_by" class="forms_field-input" required autofocus >-->
+						<!--			<option selected disabled value="0">Referred by</option>-->
+						<!--			{% for i in form.referred_by %}-->
+						<!--		            {{i}}-->
+						<!--		    {% endfor %}-->
+									
+						<!--	  </select>-->
+						<!--	  <div id="referred_by_error" class="text-danger small"></div>-->
+						<!--    </div>-->
+						<!--</div>-->
+												
+						<!--<div class="row my-2">-->
+							
+						<!--	<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 px-3">-->
+						<!--		<div class="form-check">-->
+						<!--		  <input class="form-check-input" name="is_internship" type="checkbox" value="" id="flexCheckDefault">-->
+						<!--		  <label class="form-check-label" for="flexCheckDefault">-->
+						<!--			Internship-->
+						<!--		  </label>-->
+						<!--		</div>-->
+						<!--	</div>-->
+						<!--</div>-->
+						
+						<!--<div class="row">-->
+						<!--	<div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 px-2">-->
+								
+						<!--	  <input type="file" id="cv_file" placeholder="CV File" name="cv_file" class="form-control py-3 " required autofocus />-->
+						<!--	  <div id="cv_file_error" class="text-danger small"></div>-->
+						<!--    </div>-->
+						<!--	<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 py-0 px-0">-->
+						<!--	    <a href="/static/CV_Sample.docx" class="btn btn-sm btn-secondary py-3" target="_blank">Download CV sample</a>-->
+							  
+						<!--    </div>-->
+						<!--</div>-->
+						<div class="g-recaptcha my-3" data-sitekey="6LfNkwsaAAAAALzFdst8DfNe0qxir5VResjWdJhf"></div>
+					  </fieldset>
+					  <div class="row mt-2">
+						  <div class="forms_buttons mx-auto my-3">
+							<input type="submit"  id="SignBtn" value="Sign up" class="forms_buttons-action">
+						  </div>
+					  </div>
+					</form>
+				</div>
+				<!--<div class="user_forms-corporation" id="user_forms-corporation">
+					<h3 class="text-center bg-dark text-warning p-2 my-1">Company registration form</h3>
+					<form class="forms_form" method="POST" enctype="multipart/form-data" id="legal-form">
+					    {% csrf_token %}
+					  <fieldset class="forms_fieldset">
+						<div class="forms_field">
+							<div class="row">
+								<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								  <input type="text" name="first_name" placeholder="Agent first name" class="forms_field-input" required autofocus />
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								  <input type="text" name="last_name" placeholder="Agent last name" class="forms_field-input" required autofocus />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								  <input type="text" name="company_name" placeholder="Company name" class="forms_field-input" required autofocus />
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								  <input type="email" name="email" placeholder="Email" class="forms_field-input" required autofocus />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								    <input name="phone" type="text" id="phone2"/> 
+								    <input type="text" name="phone_region" id="legal_phone_region" class="d-none">
+								  <select class="forms_field-input" required autofocus>
+								<option disabled selected>Phone</option>
+							  </select>
+								</div>
+								
+							</div>
+							<div class="g-recaptcha my-3" data-sitekey="6LfNkwsaAAAAALzFdst8DfNe0qxir5VResjWdJhf"></div>
+							<div class="row">
+								<div class="forms_buttons">
+									<input type="submit" value="Sign up" class="forms_buttons-action">
+							    </div>
+							</div>
+						  
+						</div>
+						
+					  </fieldset>
+					  
+					</form>
+				</div>-->
+			</div>
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</div>
+		
+	</div>
+
+
+    
+    <!--<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>-->
+	<script src="{% static 'ivc_website/js/intlTelInput.min.js' %}"></script>
+	<script src="{% static 'ivc_website/js/utils.js' %}"></script>
+	<script src="{% static 'ivc_website/js/phone.js' %}"></script>
+	<!--<script src="{% static 'dashboard/js/bootstrap-select.min.js' %}"></script>-->
+    <script>
+    
+    
+//     $(document).ready(function(){
+//         const SignBtn = document.getElementById('SignBtn');
+//         SignBtn.addEventListener('click', () => {
+           
+//             var hasErr = false;
+//             var firstName = document.getElementById("first_name").value;
+//             var lastName = document.getElementById("last_name").value;
+//             var phone = document.getElementById("phone").value;
+//             var email = document.getElementById("email").value;
+//             var field = document.getElementById("field_of_study").value;
+//             var degree = document.getElementById("degree").value;
+//             var status = document.getElementById("status").value;
+//             var refer = document.getElementById("referred_by").value;
+//             var CV = document.getElementById("cv_file").value;
+            
+//              //alert(firstName);
+//             if(firstName==""){
+                
+//                 document.getElementById("first_name_error").innerHTML = "Error: please enter the first name.";
+//                 hasErr = true;
+                
+//             }
+//             if(lastName==""){
+                
+//                 document.getElementById("last_name_error").innerHTML = "Error: please enter the last name.";
+//                 hasErr = true;
+                
+//             }
+//             if(phone==""){
+                
+//                 document.getElementById("phone_error").innerHTML = "Error: please enter the phone number.";
+//                 hasErr = true;
+                
+//             }
+//             if(email==""){
+                
+//                 document.getElementById("email_error").innerHTML = "Error: please enter the email.";
+//                 hasErr = true;
+                
+//             }
+            
+//             if(field=="0"){
+                
+//                 document.getElementById("field_of_study_error").innerHTML = "Error: please select the field of study.";
+//                 hasErr = true;
+                
+//             }
+            
+//             if(degree=="0"){
+                
+//                 document.getElementById("degree_error").innerHTML = "Error: please select the degree.";
+//                 hasErr = true;
+                
+//             }
+            
+//             // if(status=="0"){
+                
+//             //     document.getElementById("status_error").innerHTML = "Error: please select the status.";
+//             //     hasErr = true;
+                
+//             // }
+            
+//             // if(refer=="0"){
+                
+//             //     document.getElementById("referred_by_error").innerHTML = "Error: please select the method of acquaintance.";
+//             //     hasErr = true;
+                
+//             // }
+            
+//             // if(CV==""){
+                
+//             //     document.getElementById("cv_file_error").innerHTML = "Error: please select the cv file.";
+//             //     hasErr = true;
+                
+//             // }
+            
+            
+//             if(hasErr == false){
+//                 document.getElementById("natural-form").submit();
+                
+//             }
+ 
+// }, false)
+        
+        
+        
+        
+//     });
+    
+    
+    
+        var input1 = document.querySelector("#phone");
+           var iti=window.intlTelInput(input1, {
+              separateDialCode: true
+            });
+            
+       // var input2 = document.querySelector("#phone2");
+    //    window.intlTelInput(input2, {
+     //     separateDialCode: true
+      //  });
+        input1.addEventListener("countrychange", function() {
+            region = iti.getSelectedCountryData().iso2
+            $('#natural_phone_region').attr('value',region);
+        });
+        
+      //  input2.addEventListener("countrychange", function() {
+          //  $('#natural_phone_region_error').remove()
+        //    let region = iti.getSelectedCountryData().iso2
+         //   $('#legal_phone_region').val(region);
+        //});
+        
+        
+        
+        
+    </script>
+
+{% endblock %}

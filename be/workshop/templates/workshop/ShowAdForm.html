@@ -1,0 +1,113 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block content %}
+<header id="main-header" class="py-2 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Advertisement form</h2>
+            </div>
+        </div>
+    </div>
+</header>
+{% if WorkForm %}
+<section id="project-view">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <h3>image:</h3>
+                <img src="{{WorkForm.image.url}}" style="width:300px; height:300px;">
+            </div>
+            <div class="col-6" style="margin-top: 50px;">
+                <form method="POST" action="{% url 'generate-pdf-ad' %}">
+                    {% csrf_token %}
+                    <input type="text" name="pk" class="d-none" value={{WorkForm.pk}}>
+                    <div>
+                        <button type="submit" name="submit" class="btn btn-primary">Export to pdf</button>
+                    </div>
+                </form>
+                <div style="margin-top: 20px;">
+                    <a class="btn btn-primary" href="{{WorkForm.image.url}}" download>Download image</a>
+                </div>
+            </div>
+            <div class="col-6">
+                <h3>title:</h3>
+                <p>{{WorkForm.title}}</p>
+
+                <h3>date:</h3>
+                <p>{{WorkForm.date}}</p>
+            </div>
+            <div class="col-6">
+                <h3>Start at:</h3>
+                <p>{{WorkForm.time_to_start}}</p>
+
+                <h3>Duration: </h3>
+                <p>{{WorkForm.duration}}</p>
+            </div>
+            <div class="col-6">
+                <h3>speaker:</h3>
+                <p>{{WorkForm.speaker}}</p>
+
+                <h3>Suggested country:</h3>
+                <p>{{WorkForm.suggest_country}}</p>
+            </div>
+            <div class="col-6">
+                <h3>email:</h3>
+                <p>{{WorkForm.top_user.email}}</p>
+
+                <h3>phone number:</h3>
+                <p>{{user_phone.phone}}</p>
+            </div>
+
+            <div class="col-6">
+                <h3>keyword:</h3>
+                <p>{{WorkForm.keyword}}</p>
+
+                <h3>skills:</h3>
+                <p>{{WorkForm.skills}}</p>
+            </div>
+            <div class="col-6">
+                <h3>price:</h3>
+                <p>{{WorkForm.price}}</p>
+
+                <h3>address:</h3>
+                <p>{{WorkForm.address}}</p>
+            </div>
+            <div class="col-12">
+                <h3>description:</h3>
+                <p>{{WorkForm.description}}</p>
+            </div>
+            <div class="col-12">
+                <h3 class="fw-bold d-flex justify-content-between align-items-center">
+                    <span>Time Table :</span>
+                </h3>
+                <table class="table table-hover my-4">
+                    <thead>
+                    <tr>
+                        <th scope="col">date</th>
+                        <th scope="col">title</th>
+                        <th scope="col">start</th>
+                        <th scope="col">end</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for time in time_table %}
+                    <tr>
+                        <th scope="row">{{time.start_date}}</th>
+                        <td>{{time.title}}</td>
+                        <td>{{time.start_time}}</td>
+                        <td>{{time.end_time}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock content %}

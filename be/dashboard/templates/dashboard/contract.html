@@ -1,0 +1,295 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/checkbox.css' %}">
+{% endblock %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-brown text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-handshake"></i> {{contract_type}} Contract: {{selected_project.title}}</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="contract">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            {% if contract_type == "Ownership" %}
+                            <form method="post" id="ownership-form" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="header text-center">
+                                    <h1 class="display-4">Tecvico term and serviccs</h1>
+                                    <hr>
+                                </div>
+                                {% if mandatory_items %}
+                                <div class="row">
+                                    <div class="col-3 ml-auto">
+                                        <span class="badge badge-success">Agree</span>
+                                    </div>
+                                </div>
+                                {% for item in mandatory_items %}
+                                <div class="row">
+                                    <div class="col-9">
+                                        <span class="p-4"><b>{{forloop.counter}}.</b> {{item.item}}</span>
+                                        <hr>
+                                    </div>
+                                    <div class="col-3 py-1 pl-3">
+                                        {% if user.is_superuser or contract.ready_to_be_printed %}
+                                        <i class="fa fa-check ml-2"></i>
+                                        {% else %}
+                                        <input type="checkbox" class="checkbox mandatory-item-checkbox"
+                                               name="agree-mandatory-{{item.pk}}" checked>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% endif %}
+                                {% if optional_items %}
+                                <div class="row">
+                                    <div class="col-2 ml-auto">
+                                        <span class="badge badge-success">Agree</span>
+                                    </div>
+                                    <div class="col-2 ml-0">
+                                        <span class="badge badge-danger">Disagree</span>
+                                    </div>
+                                </div>
+                                {% for item in optional_items %}
+                                <div class="row">
+                                    <div class="col-8">
+                                        <span class="p-4"><b>{{forloop.counter|add:mandatory_items.count}}.</b> {{item.item}}</span>
+                                        <hr>
+                                    </div>
+                                    <div class="col-2">
+                                        {% if user.is_superuser or contract.ready_to_be_printed %}
+                                        {% if item.agree %}
+                                        <i class="fa fa-check ml-2"></i>
+                                        {% endif %}
+                                        {% else %}
+                                        <input class="form-check-input ml-3" type="radio" name="optional-{{item.pk}}" value="agree"
+                                        {% if item.agree %} checked {% endif %}>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-2">
+                                        {% if user.is_superuser or contract.ready_to_be_printed %}
+                                        {% if item.disagree %}
+                                        <i class="fa fa-check ml-4"></i>
+                                        {% endif %}
+                                        {% else %}
+                                        <input class="form-check-input ml-4" type="radio" name="optional-{{item.pk}}" value="disagree"
+                                        {% if item.disagree %} checked {% endif %}>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% endif %}
+                                <div class="header text-center">
+                                    <h1 class="display-4">Your terms</h1>
+                                </div>
+                                <hr>
+                                {% if not request.user.is_superuser and not contract.ready_to_be_printed %}
+                                <div id="insert-new-label" class="mb-3 ml-4 d-inline-block">
+                                    <i class="fa fa-plus text-success"></i> <b>Insert New</b>
+                                </div>
+                                {% endif %}
+                                {% if company_items %}
+                                <div class="row">
+                                    <div class="col-2 ml-auto">
+                                        <span class="badge badge-success">Agree</span>
+                                    </div>
+                                    <div class="col-2 ml-0">
+                                        <span class="badge badge-danger">Disagree</span>
+                                    </div>
+                                </div>
+                                <div id="company-items">
+                                    {% for company_item in company_items %}
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <span class="p-4"><b>{{forloop.counter}}. {{company_item.item}}</b></span>
+                                            <textarea name="disagreement-{{company_item.pk}}" placeholder="specify the reason..." class="form-control d-none">{% if company_item.disagreement_reason %}{{company_item.disagreement_reason}}{% endif %}</textarea>
+                                        </div>
+                                        <div class="col-2">
+                                        {% if user.is_superuser %}
+                                        <input class="form-check-input ml-3 company-agreement" type="radio"
+                                               name="company-item-{{company_item.pk}}" value="agree" item-pk="{{company_item.pk}}"
+                                        {% if company_item.agree %} checked {% endif %}>
+                                        {% else %}
+                                        {% if company_item.agree %}
+                                        <i class="fa fa-check ml-2"></i>
+                                        {% endif %}
+                                        {% endif %}
+                                        </div>
+                                        <div class="col-2">
+                                            {% if user.is_superuser %}
+                                            <input class="form-check-input ml-3 company-disagreement"
+                                                   item-pk="{{company_item.pk}}" type="radio"
+                                                   name="company-item-{{company_item.pk}}" value="disagree"
+                                                   {% if company_item.disagree %} checked {% endif %}>
+                                            {% else %}
+                                            {% if company_item.disagree %}
+                                            <i class="fa fa-check ml-2"></i>
+                                            {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% if not request.user.is_superuser and not contract.ready_to_be_printed %}
+                                <div id="insert-new-container"></div>
+                                {% endif %}
+                                {% if contract.ready_to_be_printed %}
+                                <a href="{{contract.contract_file.url}}" class="btn btn btn-info ml-4 my-2" target="_blank"><i class="fa fa-download"></i> Download contract file</a>
+                                {% if user == contract.project.owner %}
+                                <input type="text" name="owner-send-contract-reply" class="d-none" value="true">
+                                <div class="ml-4">{{reply_form|crispy}}</div>
+                                {% endif %}
+                                {% endif %}
+                                <button class="btn btn-success mb-5 mt-3 ml-4 d-block" id="ownership-submit" type="submit"
+                                title="You have to check all the items">
+                                    <i class="fa fa-check"></i> Submit
+                                </button>
+                            </form>
+                            {% else %}
+                            <div class="row mb-4">
+                                <div class="col-lg-12 text-center">
+                                    <a href="{{contract.contract_file.url}}" target="_blank"
+                                       class="btn btn-brown text-white"><i class="fa fa-eye"></i> View Contract</a>
+                                    {% if contract_response %}
+                                    <a href="{{contract_response.contract_file.url}}"
+                                       class="btn btn-success text-white"><i class="fa fa-eye"></i> View your
+                                        response</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+<!--                            <div class="row mb-4">-->
+<!--                                <div class="col-lg-12">-->
+<!--                                    {% lorem %}!-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            {% if eligible_to_send_contract %}
+                            <div class="row mb-4">
+                                <div class="col-lg-12">
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        {{reply_form|crispy}}
+                                        <button class="btn btn-success"><i class="fa fa-check"></i> Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{% block script %}
+<script>
+    {% if not request.user.is_superuser and not contract.ready_to_be_printed %}
+    $('#insert-new-label').on('click', function () {
+        let term_number = $('#insert-new-container input').length + 1;
+        $('#insert-new-container').append(
+            $('<div>')
+                .addClass('row')
+                    .addClass(`term${term_number}-row`)
+                .append(
+                    $('<div>')
+                        .addClass('col-8')
+                        .addClass('ml-4')
+                        .addClass('mb-2')
+                        .append(
+                            $('<input>')
+                                .attr('name', `term-${term_number}`)
+                                .attr('placeholder', 'Your term here...')
+                                .addClass('form-control')
+                        )
+                )
+                .append(
+                    $('<div>')
+                        .addClass('col-2')
+                        .append(
+                            $('<i>')
+                                .addClass('fa')
+                                .addClass('fa-times')
+                                .addClass('text-danger')
+                                .addClass('remove-item')
+                                .on('click', function () {
+                                    $(`.term${term_number}-row`).remove();
+                                    let new_term_number = 1;
+                                    $('#insert-new-container').children().each(function () {
+                                        let input = $(this).children().first().children().first()
+                                        input.attr('name', `term-${new_term_number}`);
+                                        new_term_number++;
+                                    })
+                                })
+                        )
+                )
+        )
+    });
+
+    $('#ownership-submit').on('click', function (e) {
+        e.preventDefault();
+        let there_is_unchecked = false;
+        $('.mandatory-item-checkbox').each(function () {
+           if(!$(this).is(':checked')){
+                there_is_unchecked = true;
+            }
+        });
+        let radio_checked_numbers = 0;
+        $('input:radio').each(function (){
+            if ($(this).is(':checked'))
+                radio_checked_numbers++;
+        })
+        if (radio_checked_numbers !== $('input:radio').length / 2)
+            there_is_unchecked = true;
+
+        if (there_is_unchecked)
+            $('#ownership-submit').tooltip('show');
+        else {
+            $('#ownership-form').submit();
+        }
+    });
+    {% endif %}
+
+    $('.mandatory-item-checkbox').on('click', function () {
+        $('#ownership-submit').tooltip('dispose');
+    });
+
+    $('.company-disagreement').on('click', function () {
+        let item_pk = $(this).attr('item-pk');
+        $(`textarea[name="disagreement-${item_pk}"]`).removeClass('d-none');
+    });
+
+    $('.company-agreement').on('click', function () {
+        let item_pk = $(this).attr('item-pk');
+        $(`textarea[name="disagreement-${item_pk}"]`).addClass('d-none');
+    })
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block content %}
+<!-- HEADER SECTION -->
+<header id="error-header-section">
+    <div class="dark-overlay">
+        <div class="error-header-inner">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">400 Bad Request</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="error-section" class="bg-light text-dark py-5 px-3">
+    <div class="container">
+            <h3 class="text-muted text-center">Sorry! An error has occurred</h3>
+    </div>
+</section>
+
+{% endblock content %}

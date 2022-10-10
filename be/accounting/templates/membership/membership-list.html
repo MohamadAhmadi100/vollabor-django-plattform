@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{%load static %}
+{% block title %}Membership list{% endblock %}
+{% block main %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div id="ajax_message" class="container">
+
+</div>
+<div class="m-auto col-md-12">
+
+  <table id="discount-table" class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+          <th>Name</th>
+          <th>code</th>
+          <th>created</th>
+          <th>duration</th>
+          <th>is all</th>
+          <th>is workshop</th>
+          <th>is project</th>
+          <th>is badge request</th>
+        </tr>
+    </thead>
+    <tbody>
+      {%for d in memberships%}
+      <tr class="text-center">
+        <td>{{d.name}}</td>
+        <td>{{d.membership_code}}</td>
+        <td>{{d.created}}</td>
+        <td>{{d.duration}}</td>
+          {%if d.is_all%}
+            <td><i class="fa-solid fa-check"></i> </td>
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i></td>
+          {%endif%}
+          {%if d.is_workshop%}
+            <td><i class="fa-solid fa-check"></i> </td>
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i></td>
+          {%endif%}
+          {%if d.is_project%}
+            <td><i class="fa-solid fa-check"></i> </td>
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i></td>
+          {%endif%}
+          {%if d.is_badge_request%}
+            <td><i class="fa-solid fa-check"></i> 
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i>
+          {%endif%}
+          {% comment %} {%if d.is_all_supervisorrequests%}
+            <td><i class="fa-solid fa-check"></i> </td>
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i></td>
+          {%endif%}
+          {%if d.is_all_workshoprequest%}
+            <td><i class="fa-solid fa-check"></i> 
+          {%else%}
+            <td><i class="fa-solid fa-xmark"></i>
+          {%endif%} {% endcomment %}
+          <div style="display: flex;float: right;">
+            <button class="btn btn-sm btn-warning " id="m_{{d.id}}" data-toggle="modal" data-target="#show_more_{{d.id}}"><i class="fa-solid fa-circle-info"></i></button>        
+        
+            <a href="{% url 'accounting:edit-membership' pk=d.id %}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+            <form method="POST">
+              {% csrf_token %}
+              <input value="{{d.id}}" name="object_id" type="hidden">
+              <button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-ban"></i></button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {%endfor%}
+    </tbody>
+  </table>
+
+{% for d in memberships%}
+          <!-- Modal -->
+          <div id="show_more_{{d.id}}" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-lg modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Show details</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div style="height: auto;width: 100%;" class="modal-body">
+                  <table class="table">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col">usabel number of all</th>
+                        <th scope="col">usabel number of workshops</th>
+                        <th scope="col">amount for workshops</th>
+                        <th scope="col">usabel number of projects</th>
+                        <th scope="col">amount for projects</th>
+                        <th scope="col">usabel number of badge request</th>
+                        <th scope="col">amount for badge request</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                          {%if d.usabel_number_all == -1%}
+                            <td>Infinity</td>
+                          {%else%}
+                            <td>{{d.usabel_number_all}}</td>
+                          {%endif%}
+                          {%if d.usabel_number_workshop == -1%}
+                            <td>Infinity</td>
+                          {%else%}
+                            <td>{{d.usabel_number_workshop}}</td>
+                          {%endif%}
+                          <td>{{d.workshop_amount}}{% if d.type == 'percent' %} % {% else %}${% endif %}</td>
+                          {%if d.usabel_number_project == -1%}
+                            <td>Infinity</td>
+                          {%else%}
+                            <td>{{d.usabel_number_project}}</td>
+                          {%endif%}
+                          <td>{{d.project_amount}}{% if d.type == 'percent' %} % {% else %}${% endif %}</td>
+                          {%if d.usabel_number_badge_rquest == -1%}
+                            <td>Infinity</td>
+                          {%else%}
+                            <td>{{d.usabel_number_badge_rquest}}</td>
+                          {%endif%}
+                          <td>{{d.badge_request_amount}}{% if d.type == 'percent' %} % {%else%}${%endif%}</td>
+                        </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+{%endfor%}
+
+
+
+  
+</div>
+
+<script>
+$(document).ready(function() {
+  $('#discount-table').DataTable();
+
+
+})
+</script>
+{% endblock %}

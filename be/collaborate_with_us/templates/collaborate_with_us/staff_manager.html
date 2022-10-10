@@ -1,0 +1,175 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+
+{% block css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+<header id="main-header" class="py-2 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-users"></i> Manage Staff</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="staff-manager">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+    <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <div class="row mb-3">
+                                <div class="col-lg-12 text-center">
+                                    <h3><i class="fas fa-clock-o"></i> Set new deadline</h3>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-lg-8 mx-auto">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        {{deadline_form|crispy}}
+                                        <button class="btn btn-success" type="submit"><i class="fa fa-check"></i> Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+                <div class="col-md-12 mt-4 mb-5">
+                    <div class="wrapper wrapper-content animated fadeInUp">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                <div class="row mb-3">
+                                    <div class="col-lg-12 text-center">
+                                        <h3><i class="fas fa-plus"></i> Current applications</h3>
+                                    </div>
+                                </div>
+                                <hr>
+                                {% for application in applications %}
+                                <p class="mb-0"><b>Candidate name:</b> {{application.first_name}} {{application.last_name}}</p>
+                                <p class="mb-0"><b>City:</b> {{application.city}}</p>
+                                <p class="mb-0"><b>Email:</b> {{application.email}}</p>
+                                <p class="mb-0"><b>Phone:</b> <span class="badge badge-success">{{application.phone_region|upper}}</span> {{application.phone}}</p>
+                                <p class="mb-0"><b>CV:</b> <a href="{{application.cv.url}}" target="_blank">Download here</a></p>
+                                <p class="mb-0"><b>Eligibility Reason:</b> {{application.about|linebreaks}}</p>
+                                <p class="mb-0"><b>Time can spend:</b> {{application.time_spend}} Hours</p>
+                                <p class="mb-0"><b>Interest:</b></p>
+                                {% for staff_interest in application.collaboratestaffinterest_set.all %}
+                                <ul>
+                                    <li>{{staff_interest.interest}}</li>
+                                </ul>
+                                {% endfor %}
+                                {% if application.recommendation %}
+                                <p class="mb-0"><b>Recommendation:</b> {{application.recommendation}} </p>
+                                {% endif %}
+                                <p class="mb-0"><b>Is member:</b> {{application.is_member}}</p>
+                                {% if application.is_member %}
+                                <p class="mb-0"><b>Projects:</b></p>
+                                {% if application.without_project %}
+                                <p class="badge badge-danger">Without project</p>
+                                {% else %}
+                                {% for staff_project in application.collaboratestaffproject_set.all %}
+                                {% if staff_project.project.status == "Ongoing" %}
+                                <p class='badge badge-primary'>{{staff_project.project.title}}</p> <br>
+                                {% elif staff_project.project.status == "New"%}
+                                <p class='badge badge-secondary'>{{staff_project.project.title}}</p> <br>
+                                {% elif staff_project.project.status == "Pending" %}
+                                <p class='badge badge-info'>{{staff_project.project.title}}</p> <br>
+                                {% elif staff_project.project.status == "On Hold" %}
+                                <p class='badge badge-danger'>{{staff_project.project.title}}</p> <br>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                                {% endif %}
+                                <hr style="border: 2px solid goldenrod">
+
+                                {% endfor %}
+                                <div class="row">
+                                    <nav class="mx-auto">
+                                        <ul class="pagination">
+                                            {% if applications.has_previous %}
+                                                <li class="page-item">
+                                                    <a href="?=page1" class="page-link">First</a>
+                                                </li>
+                                                <li class="page-item">
+                                                    <a href="?=page={{applications.previous_page_number}}" class="page-link">Previous</a>
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item disabled">
+                                                    <a href="#" class="page-link">First</a>
+                                                </li>
+                                                <li class="page-item disabled">
+                                                    <a href="#" class="page-link">Previous</a>
+                                                </li>
+                                            {% endif %}
+                                            {% for num in applications.paginator.page_range %}
+                                                {% if applications.number ==  num %}
+                                                    <li class="page-item active">
+                                                        {% if url_filters != "" %}
+                                                        <a href="?page={{num}}&{{url_filters}}" class="page-link">{{num}}</a>
+                                                        {% else %}
+                                                        <a href="?page={{num}}" class="page-link">{{num}}</a>
+                                                        {% endif %}
+                                                    </li>
+                                                {% elif num > applications.number|add:'-3' and  num < applications.number|add:'3' %}
+                                                     <li class="page-item">
+                                                        {% if url_filters != "" %}
+                                                        <a href="?page={{num}}&{{url_filters}}" class="page-link">{{num}}</a>
+                                                        {% else %}
+                                                        <a href="?page={{num}}" class="page-link">{{num}}</a>
+                                                        {% endif %}
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if applications.has_next %}
+                                                <li class="page-item">
+                                                    <a href="?page={{applications.next_page_number}}&{{url_filters}}" class="page-link">Next</a>
+                                                </li>
+                                                <li class="page-item">
+                                                    <a href="?page={{applications.paginator.num_pages}}&{{url_filters}}" class="page-link">Last</a>
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item disabled">
+                                                    <a href="#" class="page-link">Next</a>
+                                                </li>
+                                                <li class="page-item disabled">
+                                                    <a href="#" class="page-link">Last</a>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+{% endblock content %}

@@ -1,0 +1,91 @@
+{% extends 'emails/base.html' %}
+
+
+{% block main %}
+
+        
+        <div class="container">
+            <div class="row ml-5">
+                <div class="col-xl-11 col-lg-11 col-md-12 col-sm-12 text-center">
+                
+                <table class="table table-hover table-striped table-bordered">
+                    <thead class="bg-warning">
+                        <tr>
+                            <th>Project name</th>
+                            <th>ID project</th>
+                            <th>Created</th>
+                            <th>Status</th>
+                            <th>Paper / conference</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                     <tbody class="table-dark">
+                    {% for i in object_list %}
+                        <tr>
+                          <td class="text-left" style="width:75%">{{i.project.client_form.formclint.title}}</td>
+                          <td class="text-left" style="width:75%">{{i.project.client_form.formclint.id_project}}</td>
+                          <td style="width:15%">{{i.project.client_form.formclint.created|date:"M-d-Y"}}</td>
+                          <td style="width:15%">{{i.status|title}}</td>
+                          <td style="width:10%">
+                              <button class='btn btn-success'>View</button>
+                          </td>
+                          <td style="width:10%">
+                              <a href="{% url 'industry:industry-view-adverstiment' i.project.pk %}" class="btn btn-primary"> <h6>View</h6></a>
+                          </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    
+                    
+                    
+                </table>
+                    <nav aria-label="Page navigation example" class="d-flex justify-content-center my-5">
+                        {% if page_obj.has_other_pages %}
+                        <ul  class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{% url 'email:research-list-ad' page_obj.previous_page_number %}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+        
+                            {% for i in paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#">
+                                        {{ i }}
+                                        </a>
+                                    </li>   
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{% url 'email:research-list-ad' i %}">
+                                            {{ i }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+        
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{% url 'email:research-list-ad' page_obj.next_page_number %}">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        {% endif %}
+                    </nav>
+                </div>
+                
+            </div>
+            
+        </div>
+ 
+{% endblock %}

@@ -1,0 +1,695 @@
+{% extends 'emails/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %} Detail institute {{object.institute_name}} {% endblock %}
+{% block main %}
+<link rel="stylesheet" href="{% static 'emails/dist/css/jquery.tagsinput-revisited.css' %}">
+<style>
+	.tag{
+		position: relative;
+		background: #556270;
+		display: block;
+		max-width: 100%;
+		word-wrap: break-word;
+		color: #fff;
+		padding: 5px 30px 5px 5px;
+		border-radius: 2px;
+		margin: 0 5px 5px 0;
+	}
+</style>
+<div class="container">
+	<div class="row">
+		<div class="col-xl-5 col-lg-5 col-md-5 col-sm-12">
+			<div class="card card-primary">
+				<div class="card-header" >
+					<div class="row">
+					<h4 class="col-8">{{object.title}}</h4>
+
+					{% if request.user.is_superuser or request.user.adrole.edit_delete_institute == True %}
+						<span class="col-4 text-end">
+							<a data-bs-toggle="modal" href="#edit_email" style="float: right;" id="{{ i.pk }}" class="d-inline-block mx-3 info"><i class="far fa-edit"></i></i></a>	
+							<a data-bs-toggle="modal" href="#DeleteEmail" style="float: right;" id="{{ object.pk }}" class="d-inline-block mx-3 info"><i class="fas fa-trash-alt"></i></a>
+						</span>
+						
+						
+						
+					{% endif %}
+					<span class="col-4 text-right ">
+					
+				{% if request.user.is_superuser or request.user.adrole.create_email_institute == True %}
+					<a data-bs-toggle="modal" href="#CreateEmail" style="float: right;" id="{{ object.pk }}" class="d-inline-block mx-3 info"><i class="fas fa-plus">Add Email</i></a>
+					<a data-bs-toggle="modal" href="#filterbylinkdin" style="float: right;" class="btn btn-sm btn-success info">Filter by linkdin</a>
+				{% endif %}
+					</span>
+					</div>
+				</div>
+				<div class="card-body">
+						<ul>		    
+					{% for i in emails %}
+							<li class="my-2" style="list-style-type: none;">
+								<span class="">{{i}}</span>
+								{% if request.user.is_superuser or request.user.adrole.edit_delete_email_institute == True %}
+	<!-- 							<a href="{% url 'email:update-email' i.pk %}" style="float: right;" class="d-inline-block mx-3"><i class="far fa-edit"></i></a> -->
+								<a data-bs-toggle="modal" href="#update_email{{i.pk}}" style="float: right;" id="{{ i.pk }}" class="d-inline-block mx-3 info"><i class="far fa-edit"></i></i></a>
+
+								<a data-bs-toggle="modal" href="#DeleteEmail{{i.pk}}" style="float: right;" id="{{ i.pk }}" class="d-inline-block mx-3 info"><i class="fas fa-trash-alt"></i></i></a>
+								{% endif %}
+								<a data-bs-toggle="modal" href="#InfoModal{{i.pk}}" style="float: right;" id="{{ i.pk }}" class="d-inline-block mx-3 info"><i class="fas fa-info-circle"></i></i></a>
+								{% if i.send  %}
+								<a data-bs-toggle="modal" href="#Historymodal{{i.pk}}" style="float: right;" id="{{ i.pk }}" class="d-inline-block mx-3 info"><i class="fa fa-history" aria-hidden="true"></i></i></a>
+								{%endif%}
+							</li>
+
+							<!-- Delete email -->
+							<div class="modal fade"  id="DeleteEmail{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+								<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+									<div class="modal-content">
+										<div class="modal-header modal-colored-header bg-secondary text-white">
+										  <h5 class="modal-title text-white" id="InfoModalLabel">Delete {{i}}</h5>
+										  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+										<form method="post" enctype="multipart/form-data">{% csrf_token %}
+											<div class="form-row">
+												<div class="form-group col-md-12 mb-0">
+													<div id="div_id_status" class="form-group">
+														<input type="hidden" name="status" id="id_status" value="deleted" >
+													</div>
+													<input type="hidden" name="email_id" id="id_email_id" value="{{i.id}}" >
+													<h6>Are you sure?</h6>
+												</div>
+											</div>
+										</div>
+										<button class="btn btn-danger" type="submit">Delete</button>
+									</form>
+										
+										
+									</div>
+								</div>
+							</div>
+							
+							<div class="modal fade"  id="InfoModal{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+								<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+									<div class="modal-content">
+										<div class="modal-header modal-colored-header bg-secondary text-white">
+										  <h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+										  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<ul class="list-group list-group-flush">
+												<li class="list-group-item">Full name: <span class="text-secondary">{{i.full_name}}</span></li>
+
+
+												<li class="list-group-item">Position: <span class="text-secondary">{{i.position}}</span></li>
+
+												<li class="list-group-item">Degree: <span class="text-secondary">{{i.degree}}</span></li>
+
+												<li class="list-group-item">Gender: <span class="text-secondary">{{i.gender}}</span></li>
+
+												<li class="list-group-item">Email address: <span class="text-secondary">{{i.email_address}}</span></li>
+
+												<li class="list-group-item">Laboratory website: <span class="text-secondary">{{i.laboratory_website}}</span></li>
+
+												<li class="list-group-item">Google scholar: <span class="text-secondary">{{i.google_scholar}}</span></li>
+
+												<li class="list-group-item">Department: <span class="text-secondary">{{i.department}}</span></li>
+
+											</ul>
+										</div>
+										
+										
+									</div>
+								</div>
+							</div>
+
+
+							{% if i.send  %}
+							
+										<!--History Modal-->
+										<div class="modal fade"  id="Historymodal{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+											<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+												<div class="modal-content">
+													<div class="modal-header modal-colored-header bg-secondary text-white">
+													<h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+													<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+													</div>
+													<div class="modal-body">
+														<table class="table">
+															<thead class="thead-dark">
+															<tr>
+																<th scope="col">Date</th>
+																<th scope="col">subject</th>
+																<th scope="col">Sending status</th>
+															</tr>
+															</thead>
+															<tbody>
+															{% for h in i.send %}
+															<tr>
+																<th scope="row">{{h.history.created}}</th>
+																<td>{{h.history.subject}}</td>
+																<td>{%if h.sent%}<i class="text-success fa fa-check-circle" aria-hidden="true"></i>{%else%}<i class="text-danger fa fa-times" aria-hidden="true"></i>{%endif%}</td>
+															</tr>
+															{%endfor%}
+															</tbody>
+														</table>
+													</div>
+													
+													
+												</div>
+											</div>
+										</div>
+							{%endif%}
+
+
+
+							<div class="modal fade"  id="update_email{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+								<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+									<div class="modal-content">
+										<div class="modal-header modal-colored-header bg-secondary text-white">
+										  <h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+										  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+										<form method="post" action="{% url 'email:edit-email-institute' %}" enctype="multipart/form-data">{% csrf_token %}
+
+										<div class="form-row">
+
+											<div class="form-group col-md-6 mb-0">
+												<label class="form-label">Full name:</label>
+												<input class="form-control" value="{{ i.full_name|stringformat:'s' }}" name="full_name" id="full_name"  required>
+											</div>
+
+											<div id="departmanselectbox_{{i.pk}}" class=" form-group col-md-6 mb-0">
+												<label class="form-label">Department:</label>
+												{% comment %} <input class="form-control" value="{{ i.department|stringformat:'s' }}" name="department" id="department" required> {% endcomment %}
+												<select class="form-control" name="department" id="department" required>
+													{%for department in departments%}
+													<option>{{department.name}}</option>
+													{%endfor%}
+												</select>
+												<a class="other btn" id="{{i.pk}}"><i class=" fas fa-plus" >others</i></a>
+												<a style="display:none" class="btn btn-success add_departments_btn">add</a>
+											</div>
+
+											<div class="form-group col-md-6 mb-0">
+												<label class="form-label">Position:</label>
+												<input class="form-control" value="{{ i.position|stringformat:'s' }}" name="position" id="position" required>
+											</div>
+
+											<div class="form-group col-md-6 mb-0">
+												<div id="div_id_gender" class="form-group">
+													<label for="id_gender" class=" requiredField">
+													Degree<span class="asteriskField">*</span>
+													</label>
+													<div class="">
+													    
+															<select name="degree" class="select form-control" id="degree">
+															    {% if i.degree == 'Diploma' %}
+                												<option value="Diploma">Diploma</option>
+                												<option value="Bachelor's degree">Bachelor's degree</option>
+                												<option value="Master's degree">Master's degree</option>
+                												<option value="Doctoral degree">Doctoral degree</option>
+                												<option value="Other">Other</option>
+																
+															    {% elif i.degree == 'Bachelor' %}
+																<option value="Bachelor's degree">Bachelor's degree</option>		
+                												<option value="Diploma">Diploma</option>
+                												<option value="Master's degree">Master's degree</option>
+                												<option value="Doctoral degree">Doctoral degree</option>
+                												<option value="Other">Other</option>
+                																
+															    {% elif i.degree == 'Doctoral degree' %}
+																<option value="Doctoral degree">Doctoral degree</option> 
+                												<option value="Diploma">Diploma</option>
+                												<option value="Bachelor's degree">Bachelor's degree</option>
+                												<option value="Master's degree">Master's degree</option>
+                												<option value="Other">Other</option>
+																
+															    {% elif i.degree == 'Other' %}
+																<option value="Other">Other</option>
+                												<option value="Diploma">Diploma</option>
+                												<option value="Bachelor's degree">Bachelor's degree</option>
+                												<option value="Master's degree">Master's degree</option>
+                												<option value="Doctoral degree">Doctoral degree</option>
+                												
+                												{% else %}
+																<option value="Master's degree">Master's degree</option>	    
+                												<option value="Diploma">Diploma</option>
+                												<option value="Bachelor's degree">Bachelor's degree</option>
+                												<option value="Doctoral degree">Doctoral degree</option>
+                												<option value="Other">Other</option>
+																{% endif %}
+																
+															</select>
+													</div>
+												</div>
+											</div>
+
+											<div class="form-group col-md-6 mb-0">
+												<div id="div_id_gender" class="form-group">
+													<label for="id_gender" class=" requiredField">
+													Gender<span class="asteriskField">*</span>
+													</label>
+													<div class="">
+															<select name="gender" class="select form-control" id="id_gender">
+															    {% if i.gender == 'Male' %}
+																<option value="Male">Male</option>
+																<option value="Female">Female</option>
+																{% else %}
+																<option value="Female">Female</option>
+																<option value="Male">Male</option>
+																{% endif %}
+															</select>
+													</div>
+												</div>
+											</div>
+
+											<div class="form-group col-md-6 mb-0">
+												<label class="form-label">Email address:</label>
+												<input class="form-control"  value="{{ i.email_address|stringformat:'s' }}" name="email_address" id="email_address" required>
+											</div>
+
+											<div class="form-group col-md-6 mb-0">
+												<label class="form-label">Laboratory website:</label>
+												<input class="form-control"  value="{{ i.laboratory_website|stringformat:'s' }}" name="laboratory_website" id="laboratory_website">
+											</div>
+
+											<div class="form-group col-md-6 mb-0">
+												<label class="form-label">Google scholar:</label>
+												<input class="form-control"  value="{{ i.google_scholar|stringformat:'s' }}" name="google_scholar" id="google_scholar">
+											</div>
+
+											<div class="form-group col-md-6 mb-0">
+												<label class="form-label">Linkedin:</label>
+												<input value="{{i.linkdin}}" class="form-control" name="linkdin" id="google_scholar">
+											</div>
+				
+											<div class="form-group col-md-6 mb-0">
+												<label class="form-label">Linkedin nick:</label>
+												<input value="{{i.linkdin_nick}}" class="form-control" name="linkdin_nick" id="google_scholar">
+											</div>
+
+											<div class="card border-info mb-3" style="width: 100%;">
+												<div class="card-header">Tags used</div>
+												<div style="display:flex" class="card-body text-info">
+													{% for tag in tags %}
+													<a  id="{{tag.id}}"><span class="tag"><span class="select tag-text">{{tag.name}}</span></span></a>
+													{%endfor%}
+												</div>
+											  </div>
+
+											<div class="form-group col-md-6 mb-0">
+												<label class="form-label">Tags:</label>
+												<input id="edit_Tag" name="tags" type="text" value="{{i.tags}}">
+											</div>
+				
+
+											<input type="hidden" name="id_institute" value="{{object.pk}}">
+											<input type="hidden" name="id_email" value="{{i.pk}}">
+
+										</div>
+
+
+										</div>
+										<button class="btn btn-success" type="submit">Save</button>
+									</form>
+										
+										
+									</div>
+								</div>
+							</div>
+
+							
+					{% endfor %}
+					</ul>
+				</div>
+				
+			
+				
+			</div>
+		</div>
+
+		<!-- Add email -->
+		<div class="modal fade"  id="CreateEmail" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+				<div class="modal-content">
+					<div class="modal-header modal-colored-header bg-secondary text-white">
+					  <h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+					  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+					<form action="{% url 'email:create-email-institute' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+						<div class="form-row">
+
+							<div class="form-group col-md-6 mb-0">
+								<label class="form-label">Full name<span class="text-red">*</span></label>
+								<input class="form-control" name="full_name" id="full_name"  required>
+							</div>
+
+							<div id="departmanselectbox_create" class="form-group col-md-6 mb-0">
+								<label class="form-label">Department<span class="text-red">*</span></label>
+								<select class="form-control" name="department" id="department" required>
+									{%for department in departments%}
+									<option>{{department.name}}</option>
+									{%endfor%}
+								</select>
+								<a class="other btn" id="create"><i class="fas fa-plus " >others</i></a>
+								<a style="display:none" class="btn btn-success add_departments_btn">add</a>
+							</div>
+
+							<div style="display:none" id="add_department" class="form-group col-md-6 mb-0">
+								<label class="form-label">add new department<span class="text-red"></span></label>
+								<input type="text" class="form-control" name="position" >
+								<button class="btn btn-success">add</button>
+							</div>
+							
+
+							<div class="form-group col-md-6 mb-0">
+								<label class="form-label">Position<span class="text-red">*</span></label>
+								<input class="form-control" name="position" id="position" required>
+							</div>
+
+							<div class="form-group col-md-6 mb-0">
+								<div id="div_id_gender" class="form-group">
+									<label for="id_gender" class=" requiredField">
+									Degree<span class="text-red">*</span>
+									</label>
+									<div class="">
+											<select name="degree" class="select form-control" id="degree">
+												<option value="Diploma">Diploma</option>
+												<option value="Bachelor's degree">Bachelor's degree</option>
+												<option value="Master's degree">Master's degree</option>
+												<option value="Doctoral degree">Doctoral degree</option>
+												<option value="Other">Other</option>
+											</select>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group col-md-6 mb-0">
+								<div id="div_id_gender" class="form-group">
+									<label for="id_gender" class=" requiredField">
+									Gender<span class="text-red">*</span>
+									</label>
+									<div class="">
+											<select name="gender" class="select form-control" id="id_gender">
+												<option value="Male">Male</option>
+												<option value="Female">Female</option>
+											</select>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group col-md-6 mb-0">
+								<label class="form-label">Email address<span class="text-red">*</span></label>
+								<input id="check_email" class="form-control" name="email_address" id="email_address" required>
+								<div style="display:none" class="alert alert-danger" role="alert">
+									This email has already been received
+								  </div>
+							</div>
+
+							<div class="form-group col-md-6 mb-0">
+								<label class="form-label">Laboratory website:</label>
+								<input class="form-control" name="laboratory_website" id="laboratory_website">
+							</div>
+
+							<div class="form-group col-md-6 mb-0">
+								<label class="form-label">Google scholar:</label>
+								<input class="form-control" name="google_scholar" id="google_scholar">
+							</div>
+
+							<div class="form-group col-md-6 mb-0">
+								<label class="form-label">Linkedin:</label>
+								<input class="form-control" name="linkdin" id="google_scholar">
+							</div>
+
+							<div class="form-group col-md-6 mb-0">
+								<label class="form-label">Linkedin nick:</label>
+								<input class="form-control" name="linkdin_nick" id="google_scholar">
+							</div>
+
+							<div class="card border-info mb-3" style="width: 100%;">
+								<div class="card-header">Tags used</div>
+								<div style="display:flex" class="card-body text-info">
+									{% for tag in tags %}
+									<a  id="{{tag.id}}"><span class="tag"><span class="select tag-text">{{tag.name}}</span></span></a>
+									{%endfor%}
+								</div>
+							  </div>
+
+							<div class="form-group col-md-6 mb-0">
+								<label class="form-label">Tags:</label>
+								<input id="create_tag" name="tags" type="text" value="">
+							</div>
+
+
+							<input type="hidden" name="id_institute" value="{{object.pk}}">
+
+						</div>
+					</div>
+					<button id="institute_create_email" class="btn btn-primary" type="submit">Create</button>
+				</form>
+					
+					
+				</div>
+			</div>
+		</div>
+		
+		<!--linkdin Modal-->
+		<div class="modal fade"  id="filterbylinkdin" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+				<div class="modal-content">
+					<div class="modal-header modal-colored-header bg-secondary text-white">
+					<h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body table-responsive">
+						<table class="table small">
+							<thead class="thead-dark">
+							<tr>
+								<th scope="col">Number</th>
+								<th scope="col">Email</th>
+								<th scope="col">Department</th>
+								<th scope="col">Fullname</th>
+								<th scope="col">Position</th>
+								<th scope="col">Linkdin</th>
+							</tr>
+							</thead>
+							<tbody>
+							{% for l in linkdins %}
+								<tr>
+									<th scope="row">{{forloop.counter}}</th>
+									<th scope="row">{{l.email_address}}</th>
+									<th scope="row">{{l.department}}</th>
+									<th scope="row">{{l.full_name}}</th>
+									<th scope="row">{{l.position}}</th>
+									<th scope="row">{{l.linkdin}}</th>
+								</tr>
+							{%endfor%}
+							</tbody>
+						</table>
+					</div>
+					
+					
+				</div>
+			</div>
+		</div>
+
+
+		<div class="modal fade"  id="DeleteEmail{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+				<div class="modal-content">
+					<div class="modal-header modal-colored-header bg-secondary text-white">
+					  <h5 class="modal-title text-white" id="InfoModalLabel">Delete institute {{object.institute_name}}</h5>
+					  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+					<form method="post" enctype="multipart/form-data">{% csrf_token %}
+						<div class="form-row">
+							<div class="form-group col-md-12 mb-0">
+								<div id="div_id_status" class="form-group">
+									<input type="hidden" name="status" id="id_status" value="deleted" >
+								</div>
+								<input type="hidden" name="email_id" id="id_email_id" value="{{i.id}}" >
+								<h6>Are you sure?</h6>
+							</div>
+						</div>
+					</div>
+					<button class="btn btn-danger" type="submit">Delete</button>
+				</form>
+					
+					
+				</div>
+			</div>
+		</div>
+
+		<!-- Edit company -->
+		<div class="modal fade"  id="edit_email" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-lg" id="modalinfo" role="document">
+				<div class="modal-content">
+					<div class="modal-header modal-colored-header bg-secondary text-white">
+					  <h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+					  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+					<form action="{% url 'email:edit-institute' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+
+
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Institute name:</label>
+                            <input value={{object.institute_name}} class="form-control" name="institute_name" id="institute_name"  required>
+                            
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Mailing address:</label>
+                            <input value={{object.location}} class="form-control" name="location" id="location" required>
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                            <label class="form-label">Web address:</label>
+                            <input value={{object.web_address}} class="form-control" name="web_address" id="web_address" required>
+                        </div>
+
+                        {% comment %} <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                            <label class="form-label">Web page:</label>
+                            <input class="form-control" name="web_page" id="web_page" required>
+                        </div> {% endcomment %}
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                            <div id="div_id_country" class="form-group">
+                                <label for="id_country" class=" requiredField">
+                                Country<span class="asteriskField">*</span>
+                                </label>
+                                <div class="">
+                                        <select name="country" class="select form-control" id="country">
+                                            {% comment %} <option value="{{obj_institute_country.id}}" selected disabled>{{obj_institute_country.title}}</option> {% endcomment %}
+                                        {% for i in country %}
+											{% if i.id == obj_institute_country.id %}
+												<option selected value="{{i.id}}">{{i.title}}</option>
+											{% else %}
+                                            <option value="{{i.id}}">{{i.title}}</option>
+											{% endif %}										
+                                        {% endfor %}
+                                        </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					<input type="hidden" name="id_institute" value="{{object.pk}}">
+
+
+					</div>
+					<button class="btn btn-primary" type="submit">Save</button>
+				</form>
+					
+					
+				</div>
+			</div>
+		</div>
+
+		<div class="col-xl-7 col-lg-7 col-md-7 col-sm-12">
+			<div class="card card-success">
+				<div class="card-header" >
+					<h4>Details</h4>
+				</div>
+				<div class="card-body">
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">Institute name: <span class="text-secondary">{{object.institute_name}}</span></li>
+						<li class="list-group-item">Country: <span class="text-secondary">{{object.country.title}}</span></li>
+						<li class="list-group-item">Mailing address: <span class="text-secondary">{{object.location}}</span></li>
+						<li class="list-group-item">Website: <span class="text-secondary">{{object.web_address}}</span></li>
+				</div>
+				 
+			</div>
+			 
+		</div>
+	</div>
+	
+	
+	
+   
+	
+	
+	
+	
+</div>
+<script src="{% static 'emails/dist/js/jquery.tagsinput-revisited.js' %}"></script>
+<script>
+
+	$('#create_tag,#edit_Tag').tagsInput();
+	$(document).ready(function () {
+		$("body").on("keyup", "#check_email", function(e){
+			let email_name=$(this).val()
+			$.ajax({
+				type: "POST",
+				enctype: 'multipart/form-data',
+				url: "{% url 'email:check-email-institute' %}",
+				data:{csrfmiddlewaretoken: '{{ csrf_token }}','email_name':email_name},
+				success:function(res){
+					let allow=res.result
+					if(allow==true){
+						$('.alert').css('display','none')
+						$('#institute_create_email').unbind('click')
+					}
+					else{
+						$('.alert').css('display','block')
+						$('#institute_create_email').click(function(submit){
+							submit.preventDefault() 
+						})
+					}
+
+
+				},
+				error:function(){
+
+				}
+			})
+		})
+	   
+		
+	$('.other').click(function(e){
+		id=$(this).attr('id')
+		console.log(id)
+		console.log('departmanselectbox_'+id)
+		$('#departmanselectbox_'+id).append('<input class="add_departments form-control" type="text"></input>')
+		$('.add_departments_btn').css('display','block')
+		e.preventDefault()
+	})
+		
+	$('.add_departments_btn').click(function(){
+		let departments=[]
+		var alldepartments = $(".add_departments").map(function() {
+			departments.push(this.value)
+			return this;
+		}).get();
+		console.log(departments)
+		$.ajax({
+			type:'POST',
+			url:"{% url 'email:create-new-department' %}",
+			data:{'departments':departments,csrfmiddlewaretoken:'{{csrf_token}}'},
+			success:function(res){
+				if(res.res==true){
+					location.reload();
+				}
+
+			},
+			error:function(){
+
+			}
+		})
+	})
+		
+	});
+	
+
+
+
+	
+	
+</script>
+
+
+
+{% endblock %}

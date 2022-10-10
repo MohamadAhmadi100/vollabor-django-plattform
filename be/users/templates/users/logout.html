@@ -1,0 +1,24 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!-- HEADER SECTION -->
+<div id="login-header-section" style="padding:120px 5px 80px 5px; background:#00262b" >
+    <div class="">
+        <div class="row">
+            <div class="col-12 pt-5 text-center">
+                <h1 class="text-white fw-bold">{% trans "Log Out" %}</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<section id="logout-section" class="bg-light text-dark py-5 px-3">
+    <div class="container py-5">
+            <h3 class="text-muted text-center">{% trans "You logged out successfully" %}</h3>
+    </div>
+</section>
+
+{% endblock content %}

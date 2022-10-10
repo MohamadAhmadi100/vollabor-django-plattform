@@ -1,0 +1,91 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+<header id="main-header" class="py-2 bg-warning text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-dollar-sign"></i> Responsibility Fee Checkout</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="contract">
+    <div class="container">
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <div class="alert alert-success"> {{ message }}</div>
+        {% else %}
+        <div class="alert alert-danger"> {{ message }}</div>
+        {%endif %}
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <h3>Current balance: <span
+                                    class="badge badge-success">$ {{user.memberprofile.balance}}</span></h3>
+                            <hr>
+                            <form method="post">
+                                {% csrf_token %}
+                                <h5>Charge amount:</h5>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="input-group">
+                                            <span class="input-group-prepend"><span
+                                                    class="input-group-text">$</span></span>
+                                            <input type="text" name="coin-quantity" class="form-control" value="{{default_value}}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h5>Payment Method:</h5>
+                                <input type="radio" id="html" name="payment_method" value="Stripe" checked>
+                                <label for="html">Stripe</label><br>
+                                <input type="radio" id="css" name="payment_method" value="Paypal">
+                                <label for="css">Paypal</label><br>
+                                <button class="btn btn-success mt-2"><i class="fa fa-check"></i> Checkout</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{% block script %}
+<script>
+    let responsibility_fee_value = {{responsibility_fee_value}};
+
+    $(document).ready(function () {
+        let current_coin_value = $('input[name="coin-quantity"]').val();
+    });
+
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $('input[name="coin-quantity"]').keypress(function (evt) {
+        let entered_value = evt.originalEvent.key;
+        let next_value = $(evt.currentTarget).val() + entered_value;
+        if (!isNumeric(entered_value) || parseFloat(next_value) <= 0) {
+            evt.preventDefault();
+        }
+    }).keyup(function (evt) {
+        let current_value = $(evt.currentTarget).val();
+    });
+
+</script>
+{% endblock script %}

@@ -1,0 +1,126 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.cs' %}">
+    <!--<link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">-->
+    <link rel="stylesheet" href="{% static 'workshop/css/ws-details.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+
+
+{% block content %}
+
+
+<section class="bg-dark">
+	<div class="container py-4">
+		<h1 class="h1 text-center texh-white" id="pageHeaderTitle">Advertising form</h1>
+
+		<form id="send_contract_form" class="row form-group  col-xl-12 col-lg-12 col-md-12 col-sm-12" method="POST" ENCTYPE="multipart/form-data">
+			{%csrf_token%}
+			{% for item in form%}
+				<div class="row col-xl-6 col-lg-6 col-md-12 col-sm-12">
+					<div class="">
+						<article class=" postcard dark">
+								<div class="col-md-12 postcard__text">
+									<h3 class="postcard__title text-success">{{item.label}}</h3>
+										
+									<div class="postcard__preview-txt text-white"> 
+											{{item}} 
+											{% for error in item.errors %} 
+												
+											{% endfor %}     				    
+									</div>       				
+								</div>
+						</article>
+					</div>		    		    
+				</div>
+			{%endfor%}
+			<input type="hidden" name="workshop_id" value={{workshop.id}}>
+			<div class="row  col-xl-6 col-lg-6 col-md-12 col-sm-12">
+				{% comment %} <div class="">
+					<article class=" postcard dark">
+							<div class="col-md-12 postcard__text">
+									<h3 class="postcard__title text-success">Logo's Image</h3>
+									<input name="logo_image" requred type="file"  accept="image/png, image/jpeg" >  
+									{%if form.logo_image_error%}
+									<div class="alert alert-danger">
+										<strong>{{ form.logo_image_error }}</strong>
+									</div>
+									{%endif%}
+							</div>
+					</article>
+				</div>		    		    
+			</div> 
+			 <div class="row  col-xl-6 col-lg-6 col-md-12 col-sm-12">
+				<div class="">
+					<article class=" postcard dark">
+							<div class="col-md-12 postcard__text">
+									<h3 class="postcard__title text-success">Contract</h3>
+									<input  name="contract" requred type="file" >    				
+							</div>
+					</article>
+				</div>		    		    
+			</div>  {% endcomment %}
+			
+			<div class="row {% if forloop.counter == 1%} col-xl-12 col-lg-12 {%else%} col-xl-6 col-lg-6 {% endif %} col-md-12 col-sm-12">
+				<div class="">
+							<div class="col-md-12 postcard__text">
+								<a style="width: 100px;" data-bs-toggle="modal" id="send_contract_submit"
+								data-bs-target="#send_contract" class=" co-md-4 m-5 btn btn-success" >Submit</a>
+							</div>
+				</div>		    		    
+			</div>
+
+		</form>		        
+
+		
+		
+<!--  -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-. Modal -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-->
+	
+<!--SEND MODAL-->
+<div class="modal fade text-black" style="color:black" id="send_contract" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<h4>Are you shure?</h4>
+				</div>
+				<div class="modal-footer">
+						<button id="send_contract_submit" type="submit" class="btn btn-primary">Send</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				</div>
+			</div>
+	</div>
+</div>	
+
+
+	</div>		
+</section>
+
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+<script>
+	$("#send_contract_submit").click(function(e){
+		e.preventDefualt()
+		$("#send_contract_form").submit()
+	})
+	$( "input[name*='logo_image']" ).attr( "required",true )
+	$( "input[name*='contracts']" ).attr( "required",true )
+	$( "#logo_image-clear_id" ).removeAttr( "required" )
+	$( "#contracts-clear_id" ).removeAttr( "required" )
+	$( "#contracts-clear_id" ).removeAttr( "required" )
+	$( "#id_logo_image" ).removeAttr( "required" )
+	$( "#id_contracts" ).removeAttr( "required" )
+</script>
+{% endblock content %}

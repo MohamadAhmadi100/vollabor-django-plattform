@@ -1,0 +1,71 @@
+{% extends 'emails/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} Create a workshop{% endblock %}
+{% block main %}
+<div style="padding-left: 220px; padding-right: 220px" class="col-md-12">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"></h3>
+        </div>
+            <div style="padding-bottom: 150px;" class="card-body">
+                <form method="post" enctype="multipart/form-data" id="CompanyForm" name="CompanyForm">{% csrf_token %}
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Company name:</label>
+                            <input class="form-control" name="speakers_name" id="company_name"  required>
+                            
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Title:</label>
+                            <input class="form-control" name="title" id="title" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">ID workshop:</label>
+                            <input type="text" class="form-control" name="id_workshop" id="id_workshop" required>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="form-label">Cost:</label>
+                            <input type="number" class="form-control" name="cost" id="cost" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                            <label class="form-label">Helding Date:</label>
+                            <input type="date" class="form-control" name="helding_date" id="helding_date" required>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                            <label class="form-label">Helding time:</label>
+                            <input type="time" class="form-control" name="helding_time" id="helding_time" required>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                            <div id="div_id_country" class="form-group">
+                                <label for="id_country" class=" requiredField">
+                                Country<span class="asteriskField">*</span>
+                                </label>
+                                <div class="">
+                                    <select name="country" class="select form-control" id="country">
+                                        <option value="0" selected disabled>Choose a field...</option>
+                                    {% for i in country %}
+                                        <option value="{{i.id}}">{{i.title}}</option>
+                                    {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button style="margin-left: 275px" class="btn btn-primary" type="submit">Create</button>
+                </form>
+            </div>
+    </div>
+</div>
+
+<script>
+
+</script>
+
+
+
+
+{% endblock %}

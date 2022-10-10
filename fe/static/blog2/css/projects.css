@@ -1,0 +1,205 @@
+/* drop down */
+
+.categories {
+    background: linear-gradient(94.23deg, #EEAE3F 3.17%, rgba(228, 195, 129, 0.3) 190.75%);
+    border: 0.2px solid #FFFFFF;
+    box-sizing: border-box;
+    color: white;
+    border-radius: 15px;
+}
+
+.buttons_header button:hover {
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+.dropdown.buttons_header ul li > a.active {
+    background-color: #EEAE3F !important;
+    color: white;
+    font-weight: bold;
+
+}
+
+/* owl */
+.top_article .owl-nav.disabled {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    bottom: 64%;
+}
+.owl-carousel { position: relative}
+
+.top_article .owl-nav.disabled > button {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #ffff;
+    border: 0.5px solid #EEAE3F;
+    box-sizing: border-box;
+    overflow-y: hidden;
+    transition: all 0.3s;
+}
+
+.top_article .owl-nav.disabled > button > span {
+    font-size: 50px;
+    position: relative;
+    bottom: 27px;
+}
+
+.top_article .owl-nav.disabled > button:hover {
+    background: linear-gradient(157.53deg, #EEAE3F -9.9%, rgba(228, 195, 129, 0.3) 147.5%);
+    border: 0.5px solid #FFFFFF;
+}
+
+.card-top-article > img {
+    border-radius: 12px;
+}
+
+ .title .box {
+    width: 100px;
+    height: 25px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 32px;
+}
+ .title .box.blue{
+    color: #5793AB;
+    background: #C9E7F3;
+}
+ .title .box.red{
+    background-color: #F9EAE7;
+    color: #D47F6E;
+}
+ .title .box.gold{
+    background-color: #FAEDDB;
+    color: #DBB978;
+
+}
+
+
+.card-top-article .desc {
+    text-align: justify;
+}
+
+ .border-btn > a {
+    width: 100px !important;
+    height: 35px!important;
+    background: linear-gradient(157.09deg, #EEAE3F 42.52%, rgba(228, 195, 129, 0.31) 127.12%);
+    border-radius: 7px;
+    color: white;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+     overflow-y: hidden;
+     transition: all 0.3s;
+}
+ .border-btn > a:hover {
+    transform: scale(0.95);
+}
+
+
+/*
+    end owl
+ */
+
+/* Buttons Category */
+.buttons-category > button{
+    width: 150px;
+    height: 50px;
+    background: #FFFFFF;
+    border: 0.2px solid #EEAE3F;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(204, 148, 40, 0.16);
+    border-radius: 50px;
+    font-weight: bold;
+    margin: 0 8px 0 8px;
+    transition: all 0.4s;
+}
+.buttons-category > button.active{
+    background: linear-gradient(94.23deg, #EEAE3F 3.17%, rgba(228, 195, 129, 0.3) 190.75%);
+    border: 0.2px solid #FFFFFF;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(204, 148, 40, 0.29);
+}
+
+
+/*
+    blog item
+ */
+
+.blog-items .col-md-6 {
+    margin-top: 1rem;
+}
+
+.blog-item p {
+    text-align: justify;
+}
+.blog-item img {
+    border-radius: 12px;
+    height: 95%;
+    align-items: center;
+}
+
+/*
+    pagination
+ */
+
+.pagination ul {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    background: #f9f9f9;
+    padding: 8px;
+    border-radius: 50px;
+    box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pagination ul li {
+    color: #186ACB;
+    list-style: none;
+    line-height: 45px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+}
+
+.pagination ul li.numb {
+    list-style: none;
+    height: 45px;
+    width: 45px;
+    margin: 0 3px;
+    line-height: 45px;
+    border-radius: 50%;
+}
+
+.pagination ul li.numb.first {
+    margin: 0px 3px 0 -5px;
+}
+
+.pagination ul li.numb.last {
+    margin: 0px -5px 0 3px;
+}
+
+.pagination ul li.dots {
+    font-size: 22px;
+    cursor: default;
+}
+
+.pagination ul li.btn {
+    padding: 0 20px;
+    border-radius: 50px;
+}
+
+.pagination li.active,
+.pagination ul li.numb:hover,
+.pagination ul li:first-child:hover,
+.pagination ul li:last-child:hover {
+    color: #fff;
+    background: #186ACB;
+}

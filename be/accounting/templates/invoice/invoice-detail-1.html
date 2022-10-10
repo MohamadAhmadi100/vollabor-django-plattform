@@ -1,0 +1,411 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block content %}
+  <link rel="stylesheet" href="{% static 'accounting/css/allstyle.css' %}">
+  {% comment %} <link rel="stylesheet" href="{% static 'accounting/css/fontawesome.css' %}"> {% endcomment %}
+  <style>
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: linear-gradient(239.32deg, rgba(168, 43, 188, 0.89) -7.77%, rgba(43, 16, 152, 0.82) 19.29%, rgba(45, 41, 180, 0.723057) 64.3%, rgba(34, 96, 188, 0.73) 98.87%);
+  }
+  .user-name{
+    font-size: 11px;
+  }
+  
+  </style>
+
+
+
+<div id="ajax_message" class="container">
+    {% if messages %}
+        {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                    <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+        {% endfor %}
+    {% endif %}
+</div>
+<body>
+    <div class="container">
+      <div class="wallet row">
+        <aside class="left-wallet col-xl-4 col-lg-4 col-md-4 col-sm-12">
+          <div class="wallet-head">
+            {% comment %} <h1>{{invoice.user.username}}</h1>           {% endcomment %}
+          </div>
+          
+          <div class="cc-select">
+            <h6 style=" color: #575d60;font-weight: 700;">Your balance:<span style="float: right;" id="user_balance" class="badge badge-success">${{invoice.user.memberprofile.balance}}</span></h6>          
+          </div>
+          <div class="info-box px-2">
+            <h6 style="text-align: center;" class="user-name">{{invoice.user.get_full_name}}</h6> 
+
+            <h6 class="user-name">
+                Gender:
+                <span style="float: right;">{{invoice.user.memberprofile.gender}}</span>
+            </h6>
+
+            <h6 class="user-name">
+                Birthday:
+                <span style="float: right;">{{invoice.user.memberprofile.birthday}}</span>
+            </h6>
+
+            <h6 class="user-name">
+                Country:
+                <span style="float: right;">{{invoice.user.memberprofile.country}}</span>
+            </h6> 
+
+            <h6 class="user-name">
+                Phone:
+                <span style="float: right;">{{invoice.user.memberprofile.phone}}</span>
+            </h6>
+            
+            <h6 class="user-name">
+                Email:
+                <span style="float: right;">{{invoice.user.email}}</span>
+            </h6> 
+
+            <h6 class="user-name">
+                University:
+                <span style="float: right;">{{invoice.user.memberprofile.university}}</span>
+            </h6> 
+
+
+            <h6 class="user-name">
+                Degree:
+                <span style="float: right;">{{invoice.user.memberprofile.degree}}</span>
+            </h6> 
+
+           
+            
+          </div>
+        </aside>
+        <content class="right-trans col-xl-8 col-lg-8 col-md-8 col-sm-12">
+            <div class=" text-center brand-wrapper mt-1">
+                <img src="{% static 'payment/images/teclogo.png' %}" alt="logo" class="logo">
+              </div>
+              <!--<div class="invoice-number">Invoice number:TEC-000{{invoice.id}}</div> -->
+              <div {% if invoice.is_paid %} style="transform: perspective(500px) scaleX(1);" {% endif %}  id="tracking_code">
+                  <h1 style="color:#fff">Tracking code:</h1>
+            
+                  <div class="trans-list">          
+                  </div>
+                  <h6 id="tracking_code_content" >{{invoice.fallow_code}}</h6>
+              </div>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped">
+            <thead>
+              <tr class="thead">
+                <th scope="col">ID</th>
+                <th scope="col">About</th>
+                <th scope="col">Date</th>
+                <th scope="col">Currently balance</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody class="tbody">
+                <tr id="is_pay_tr">
+                    {% if invoice.service.service_name == 'P' %}
+                        <td>{{invoice.service.project.id_project}}</td>
+                        <td>{{invoice.service.project.title}}</td>
+                    {%elif invoice.service.service_name == 'W' %}
+                        <td>{{invoice.service.workshop.unique_id}}</td>
+                        <td>{{invoice.service.workshop.title}}</td>
+                        {%elif invoice.service.service_name == 'BR' %}
+                        <td>{{invoice.service.badge.unique_id}}</td>
+                        <td>{{invoice.service.badge.skills}}</td>
+                        {%elif invoice.service.service_name == 'SR' %}
+                        <td>{{invoice.service.badgesupervisor.id_request}}</td>
+                        <td>Supervisor request</td>
+                        {%elif invoice.service.service_name == 'WR' %}
+                        <td>{{invoice.service.badgeworkshop.id_request}}</td>
+                        <td>Workshop request</td>
+                    {%endif%}
+                    
+                    <td>{{invoice.create_date}}</td>
+
+                    {%if invoice.is_paid%}
+                      <td>${{invoice.user_balance}}</td>
+                    {%else%}
+                      <td>${{invoice.user.memberprofile.balance}}</td>
+                    {%endif%}
+                    
+                   
+                    <td id="invoice_amount">${{invoice.amount}}</td>
+                    
+                    {%if invoice.is_paid == True%}
+                    <td id="is_pay" style="color:#78cd51">Paid</td>
+                    {%else%}
+                    <td id="is_pay" style="color:#dc3545">Unpaid</td>
+                    {%endif%}
+                </tr>
+            </tbody>
+        </table>
+            
+            
+            
+        </div>
+        
+        <div class="row m-auto col-md-12 input-group mb-3 mt-3">
+            <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12">
+                 <label for="discount_code" class="text-center mx-auto" style="color:#fff;margin-top: 22px;">Your discount code</label>
+            </div>
+         <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12">
+             <input value=""  id="discount_code" name="discount_code" type="text" class="form-control mx-1 mt-3" placeholder="..." aria-label="discount" aria-describedby="basic-addon2">
+           
+         </div>
+         
+           <div class="input-group-append col-xl-2 col-lg-2 col-md-12 col-sm-12">
+              <button id="discount_check" class="btn btn-success mt-3 mx-auto" type="button">Apply</button>
+            </div>
+            <span style="color:#fff" class="alert col-md-12 text-center message_discount"></span>
+          </div>
+
+          <table style="width:50%" class="m-auto  table table-dark">
+            <thead>
+              <tr class="thead">            
+              </tr>
+            </thead>
+            <tbody class="tbody">
+                <tr>
+                    <td>Balance</td>
+                    {%if invoice.is_paid%}
+                      <td>${{invoice.user_balance}}</td>
+                    {%else%}
+                      <td>${{invoice.user.memberprofile.balance}}</td>
+                    {%endif%}
+                </tr>
+                <tr>
+                    <td>Amount</td>
+                    <td>${{invoice.amount}}</td>
+                </tr>
+                <tr>
+                    <td >Discount</td>
+                    {%if invoice.is_paid%}
+                      <td>${{invoice.discount}}</td>
+                    {%else%}
+                        {%if invoice.session_discount == 0%}
+                            <td>$<span id="discount_value">0</span></td>
+                        {%else%}
+                            <td>$<span id="discount_value">{{invoice.session_discount}}</span></td>
+                        {%endif%}
+                    {%endif%}
+                </tr>
+                <tr style="background:transparent;color:#fff" class="payment_amount">
+                  <td>Payment amount</td>
+                  {%if invoice.is_paid%}
+                  <td >$<span id="payment_amount"><span></td>
+                    {%else%}
+                  <td >$<span id="payment_amount">{{invoice.amount}}<span></td>
+                    {%endif%}
+              </tr>
+                <tr style="background:transparent;color:#fff"  class="remaining">
+                  {% if remaining < 0 %}{%else%}
+                  <td>Remaining</td>
+                    <td >$<span id="remaining_value">{{remaining}}<span></td>
+                      {%endif%}
+                </tr>
+            </tbody>
+        </table>
+       <div id="row buttons_box" class="m-2 text-center">
+        {% if request.user.memberprofile.balance >= invoice.amount%}
+          {%if invoice.service.service_name == 'W'%}
+              {%if invoice.service.action == 'buy' %}
+                  {% if invoice.is_paid%}
+                    <a href="../../workshop/show-workshops-to-users/?filter=my-workshop"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+                  {%else%}
+                    <a href="../../workshop/show-workshops-to-users/?filter=notpayworkshops"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+                  {%endif%}
+              {%elif invoice.service.action == 'create'%}
+                  <a href="../../workshop/my-workshops-status/"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+              {%endif%}
+          {%elif invoice.service.service_name == 'BR' %}  
+                  <a href="../../request/"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+          {%elif invoice.service.service_name == 'SR' %}            
+                  <a href="../../request/"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+          {%elif invoice.service.service_name == 'WR' %}
+                  <a href="../../request/"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+          {%endif%}
+          {% if invoice.is_paid%}
+            <!--<button disable  id="agree" class=" btn btn-primary">Paid</button>-->
+            {% comment %} <a href="{% url 'accounting:create-pdf' pk=invoice.id %}"  id="create_pdf" class="pdf_icon btn btn-warning"><i class="fa-solid fa-file-pdf fa-2xl"></i></a> {% endcomment %}
+          {%else%}
+            <button id="pay" type="button" id="agree" class=" btn btn-success">Apply</button>
+            <a href="{% url 'accounting:remove-invoice' pk=invoice.id %}" id="remove" type="button" id="agree" class=" btn btn-danger">Remove</a>
+          {%endif%}
+        {%else%}
+          {%if invoice.service.service_name == 'W'%}
+              {%if invoice.service.action == 'buy' %}
+                {% if invoice.is_paid%}
+                  <a href="../../workshop/show-workshops-to-users/?filter=my-workshop"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+                {%else%}
+                  <a href="../../workshop/show-workshops-to-users/?filter=notpayworkshops"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+                {%endif%}
+              {%elif invoice.service.action == 'create'%}
+                 <a href="../../workshop/my-workshops-status/"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+              {%endif%}
+          {%elif invoice.service.service_name == 'BR' %}  
+                 <a href="../../request/"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+          {%elif invoice.service.service_name == 'SR' %}            
+                 <a href="../../request/"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+          {%elif invoice.service.service_name == 'WR' %}
+                <a href="../../request/"  type="button" id="pay_back" class=" btn btn-danger">Exit</a>
+          {%endif%}
+          {% if invoice.is_paid%}
+            {% comment %} <a href="{% url 'accounting:create-pdf' pk=invoice.id %}"  id="create_pdf" class="pdf_icon btn btn-warning"><i class="fa-solid fa-file-pdf fa-2xl"></i></a> {% endcomment %}
+          {%else%}
+          <a href="{% url 'accounting:remove-invoice' pk=invoice.id %}" id="remove" type="button" id="agree" class=" btn btn-danger">Remove</a>
+          <button  style="margin-top: 10px!important;" id="pay" type="button" id="agree" class="m-auto btn btn-success d-none">Apply</button>
+            <a href="../../international-payment/create-checkout-session/" id="increase_balance" type="button" id="agree" class=" btn btn-success">Pay</a></br>
+            <notice id="notice" style="color:#f1c500">notice:You must increase your balance. Please press "pay" button to continue.</notice>            
+          {%endif%}
+        {%endif%}
+       </div>
+        </content>
+      </div>
+    </div>
+
+
+
+
+  <!--loading modal-->
+  <div class="modal" id="modal-loading" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <div class="loading-spinner mb-2"></div>
+           <div>Loading</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock content %}
+{% block script %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script>
+let all_discounts=parseInt('{{invoice.discount}}')+parseInt('{{invoice.session_discount}}')
+let payment_amount=parseInt('{{invoice.amount}}')- all_discounts
+console.log(payment_amount)
+$('#payment_amount').html(payment_amount)
+$('#invoice_amount').html(payment_amount)
+$('#invoice_amount').attr('value',payment_amount)
+
+if(payment_amount <= '{{request.user.memberprofile.balance}}'){
+          $('#increase_balance').remove()
+          //$('#pay').css('display','block')
+          $( "#pay" ).removeClass( "d-none" )
+          $('#notice').remove()
+        }
+      
+        //$('#invoice_amount').html(parseInt('{{invoice.amount}}'))
+        //$('#invoice_amount').attr('value',parseInt('{{invoice.amount}}'))
+
+$('#pay').click(function(e){
+  $('#modal-loading').modal('show');
+  $("#pay").attr("disabled", true);
+    $.ajax({
+        type:'POST',
+        url:"{% url 'accounting:invoice-pay' %}",
+        data:{
+         csrfmiddlewaretoken: '{{ csrf_token }}',
+        'invoice_id':'{{invoice.id}}',
+        'discount':parseInt($('#discount_value').html()),
+        'discount_code':$('#discount_code').attr('value'),
+        'amount':$('#invoice_amount').attr('value')
+      },
+        success:function(res){
+            $('#modal-loading').modal('hide');
+            let user_balance=res.user_balance
+            if(res.result==true){
+              $('#user_balance').html(user_balance)
+              $('#is_pay').remove()
+              $('#is_pay_tr').append('<td id="is_pay" class="badge badge-success">Paid</td>')
+              $('#ajax_message').html('<div class="alert alert-success">'+res.msg+'</div>')
+              if(res.back_url==''){
+                $('#buttons_box').html('<a href="'+ document.referrer +'"  type="button" id="agree" class=" btn btn-warning">Exit</a>')
+               }
+              else{
+                $('#buttons_box').html('<a href="'+ res.back_url +'"  type="button" id="agree" class=" btn btn-warning">Exit</a>')
+              }
+              $('#buttons_box').append('<a href="/dashboard"  type="button" id="agree" class=" btn btn-success">Dashboard</a>')
+              $('#tracking_code_content').html(res.tracking_id)
+              $('#tracking_code').css('transform','perspective(500px) scaleX(1)')
+              $('#pay').remove()
+              $('#remove').remove()
+              window.scrollTo(0, 0);
+            }
+            else{
+              $('#ajax_message').html('<div class="alert alert-danger">'+res.msg+'</div>')
+              $('#discount_value').html(0)
+              $('#remaining_value').html(parseInt('{{remaining}}'))
+            }
+           
+        },
+        error:function(){
+      $('#modal-loading').modal('hide');
+      $('#ajax_message').html('<div class="alert alert-danger">Payment failed</div>')
+            window.scrollTo(0, 0);
+
+        }
+    })
+})
+
+
+$('#discount_check').click(function(){
+  $('#modal-loading').modal('show');
+  let discount_code=$('#discount_code').val()
+  $('#discount_code').attr('value',discount_code)
+  let invoice_id="{{invoice.id}}"
+  $.ajax({
+    type:"POST",
+    url:"{% url 'accounting:check-discount' %}",
+    data:{csrfmiddlewaretoken: '{{ csrf_token }}','invoice_id':'{{invoice.id}}','discount_code':discount_code},
+    success:function(res){
+      $('#modal-loading').modal('hide');
+      let discount=res.amount
+      if (discount == 0){
+        $('.message_discount').html(res.msg )
+        $('.message_discount').css('color','#ff6c60' )
+        $('#discount_value').html(0)
+        $('#remaining_value').html(parseInt('{{remaining}}'))
+      }
+      else{
+          if(parseInt('{{invoice.session_discount}}')==0){
+              if(parseInt($('#payment_amount').html() - discount) <= '{{request.user.memberprofile.balance}}'){
+                 $('#increase_balance').remove()
+                 //$('#pay').css('display','block')
+                 $( "#pay" ).removeClass( "d-none" )
+                 $('#notice').remove()
+            }
+            $('#invoice_amount').html(parseInt('{{invoice.amount}}')-discount)
+            $('#invoice_amount').attr('value',parseInt('{{invoice.amount}}')-discount)
+          }
+        
+
+        
+        $('#invoice_amount').html(parseInt('{{invoice.amount}}')-discount)
+        $('#invoice_amount').attr('value',parseInt('{{invoice.amount}}')-discount)
+        $('.message_discount').html(res.msg )
+        $('.message_discount').css('color','#78cd51' )
+        $('#discount_value').html(discount)
+        $('#payment_amount').html(parseInt('{{invoice.amount}}')-discount)
+        $('#remaining_value').html(parseInt('{{remaining}}')+discount)
+      }
+      
+    },
+    error:function(){
+      $('#modal-loading').modal('hide');
+      $('#ajax_message').html('<div class="alert alert-danger">Connection lost</div>')
+      window.scrollTo(0, 0);
+    }
+  })
+})
+$('#main-footer').css('display','none')
+</script>
+{% endblock script %}
+</body>
+</html>

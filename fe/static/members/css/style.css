@@ -1,0 +1,452 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+div, h1, h5, h2, h4, h3, h6 {
+    overflow: hidden !important;
+}
+
+body {
+    background: #F8F8F8;
+}
+
+a {
+    text-decoration: none;
+}
+
+.t-header {
+    max-width: 100%;
+    background: #29489B;
+    height: 400px;
+    overflow: hidden;
+    background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgb(41, 72, 155)),
+    url("../img/news-header.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+.t-header > .row {
+    position: relative;
+    top: 100px;
+}
+
+.desc-header {
+    width: 90%;
+    padding-left: 3rem;
+    padding-top: 1rem;
+    color: white;
+}
+
+.desc-header > .title_page {
+    letter-spacing: 10px;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.desc-header > p {
+    margin-top: 1.5rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/*
+ */
+
+.card-members > div > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-member {
+    width: 100%;
+    height: 400px;
+    background-color: #f3f3f3;
+    position: relative;
+    border-radius: 0 0 12px 12px;
+}
+
+.card-members .col-md-4 {
+    margin-top: 2.5rem !important;
+}
+
+.avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    bottom: 30%;
+}
+
+.avatar div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar > div {
+    width: 180px;
+    height: 180px;
+    border: 2px solid rgba(255, 229, 161, 0.57);
+    border-radius: 50%;
+
+}
+
+.avatar > div > div {
+    width: 165px;
+    height: 165px;
+    border: 2px solid rgba(235, 170, 44, 0.75);
+    border-radius: 50%;
+}
+
+.avatar > div > div > div {
+    width: 150px;
+    height: 150px;
+    border: 2px solid rgba(242, 157, 58, 0.95);
+    border-radius: 50%;
+}
+
+.avatar > img {
+    border-radius: 50%;
+    width: 135px;
+    height: 135px;
+}
+
+.card-member .card_body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    bottom: 35%;
+}
+
+.card_body .line {
+    background: linear-gradient(180deg, #F1BA79 0%, rgba(175, 110, 62, 0) 100%);
+    height: 3px;
+    width: 80%;
+}
+
+.card_body .line + p {
+    font-size: 12px;
+}
+
+.content-back > div > p {
+    font-size: 9px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-top: 30px;
+    width: 85% !important;
+}
+
+.content-back img {
+    position: absolute;
+    top: 43px;
+}
+
+.content-back .card-member > div {
+    position: absolute;
+    bottom: 3%;
+}
+
+.card-inner {
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    backface-visibility: hidden;
+    transition: .9s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.card-inner:hover .card-front {
+    transform: rotateY(-180deg);
+}
+
+.card-inner:hover .card-back {
+    transform: rotateY(0deg);
+}
+
+.card-inner .card-front, .card-inner .card-back {
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    backface-visibility: hidden;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+/*
+
+ */
+
+
+.content-inner {
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    backface-visibility: hidden;
+    transition: .9s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.content-inner .content-front {
+    box-shadow: -2px 1px 8px rgba(0, 0, 0, 0.25);
+}
+
+
+@media screen and (max-width: 768px) {
+    .content-inner {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 486px) {
+    .avatar, .card-member .card_body {
+        bottom: 18%;
+    }
+    .card-title{
+        font-size: 14px;
+    }
+    .card-title + h6 {
+        font-size: 12px;
+    }
+
+
+}
+
+.content-inner:hover .content-front {
+    transform: rotateY(-180deg);
+}
+
+.content-inner:hover .content-back {
+    transform: rotateY(0deg);
+}
+
+.content-inner .content-front, .content-inner .content-back {
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    backface-visibility: hidden;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.content-front {
+    background: #292929;
+}
+
+.content-inner > * {
+    transition: .9s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.content-inner .cf-inner {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    width: 100%;
+    padding: 150px 30px;
+}
+
+.content-front .cf-inner:before, .content-front .cf-inner:after {
+    content: "";
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    z-index: 10;
+}
+
+.content-front .cf-inner:before {
+    top: 20px;
+    left: 20px;
+    border-left: 1px dotted;
+    border-top: 1px dotted;
+    border-color: rgba(255, 255, 255, .6);
+}
+
+.content-front .cf-inner:after {
+    bottom: 20px;
+    right: 20px;
+    border-right: 1px dotted;
+    border-bottom: 1px dotted;
+    border-color: rgba(255, 255, 255, .6);
+}
+
+.bg {
+    background-image: url('../img/bg-back.png');
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-position: center;
+    background-size: cover;
+    background-position-y: top;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: 0.4;
+    z-index: 3;
+}
+
+.content-inner .cf-inner .inner {
+    align-items: stretch;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    backface-visibility: hidden;
+    transform: translateZ(95px) scale(0.81);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.content-inner .cf-inner .inner h2 {
+    position: relative;
+    font-size: 22px;
+    font-weight: 800;
+    padding-bottom: 20px;
+    color: #fff;
+}
+
+.content-inner .cf-inner .inner h2:before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    width: 20px;
+    height: 2px;
+    margin-left: -10px;
+}
+
+.content-inner .cf-inner .inner h2:after {
+    content: "";
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    width: 50px;
+    height: 2px;
+    margin-left: -25px;
+    background: #C19D60;
+}
+
+.content-inner .cf-inner .inner h4 {
+    display: inline-block;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin: 0 4px;
+}
+
+.serv-num {
+    position: absolute;
+    bottom: 20px;
+    left: 30px;
+    color: #fff;
+    z-index: 3;
+    font-size: 20px;
+}
+
+.content-inner .content-back {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    transform: rotateY(180deg);
+    background: #292929;
+}
+
+.content-back .dec-icon {
+    top: -20px;
+}
+
+.dec-icon {
+    position: relative;
+    display: inline-table;
+    width: 80px;
+    height: 80px;
+}
+
+.dec-icon:before {
+    left: -15px;
+    top: 12px;
+}
+
+.dec-icon:after {
+    right: -15px;
+    bottom: 12px;
+}
+
+.dec-icon:before, .dec-icon:after {
+    content: "";
+    position: absolute;
+    width: 60px;
+    height: 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .1);
+}
+
+.dec-icon i {
+    color: #C19D60;
+    z-index: 3;
+}
+
+.content-back i {
+    font-size: 54px;
+    position: relative;
+}
+
+.content-back:after {
+    color: #C19D60;
+    position: absolute;
+    content: "\25CF\25CF\25CF";
+    width: 50px;
+    left: 50%;
+    bottom: 30px;
+    margin-left: -25px;
+    font-size: 9px;
+    letter-spacing: 4px;
+}
+
+.fas {
+    font-weight: 300;
+    font-family: 'Font Awesome\ 5 Free';
+}
+
+.fa-utensils:before {
+    content: "\f2e7";
+}
+
+.content-inner .cf-inner .inner p {
+    color: #fff;
+    font-size: 13px;
+    line-height: 24px;
+    padding-bottom: 10px;
+    font-weight: 400;
+}
+
+.card-member i {
+    font-size: 32px;
+    color: white;
+    transition: all 0.2s;
+}
+
+.card-member a:hover > i.fa-linkedin {
+    color: #2768e7;
+}
+
+.card-member a:hover > i.fa-google {
+    color: #FBBC05;
+}

@@ -1,0 +1,51 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<header id="main-header" class="py-2 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{{project.title}}</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- ACTIONS -->
+    <section id="action" class="py-4 mb-4 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 mr-auto">
+                    <a href="{% url 'dashboard-projects-page' project_type=project.project_type %}" class="btn btn-light btn-block"><i class="fa fa-arrow-left"></i> Back To My Projects</a>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-success btn-block"><i class="fa fa-check"></i> Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="card mb-5">
+                        <div class="card-header">
+                            <h4>Edit Project</h4>
+                        </div>
+                        <div class="card-body">
+                                {{form|crispy}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+{% endblock content %}

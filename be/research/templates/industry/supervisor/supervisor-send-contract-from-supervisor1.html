@@ -1,0 +1,164 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-paper-plane"></i> Send contract </h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div style="margin-left: 150px;" class="col-md-9 mt-3">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="">
+                        <div class="">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content content">
+                                    <div class="modal-header text-white bg-success text-right" >
+                                    <div class="col-12 text-right">
+                                        <h5 class="btn btn-secondary fw-bold mb-1 text-right" style="font-weight:bold; color:#1AE8F9 ">
+                                           Balance: ${{request.user.memberprofile.balance}}
+                                            <br/>
+                                            <a class="btn btn-warning btn-sm text-dark fw-bold px-4 my-1 mx-2" href="{% url 'create-checkout-session' %}"> 
+                                                <i class="fas fa-money-check-alt text-dark" style='font-size:14px'></i> Charge
+                                            </a>
+                                        </h5>
+                                    </div>
+                                        
+                   
+                                    </div>
+                                    <form method="POST" id="conform" enctype="multipart/form-data">{% csrf_token %}
+                                        <div class="modal-body">
+                                        <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+
+                                        <div class="form-group col-md-12 mb-0">
+                                            <div id="div_id_status" class="form-group">
+                                                <input type="hidden" name="status" id="id_status" value="g" >
+                                            </div>
+                                        </div>
+                                         
+                                        <div class="form-group col-md-12 mb-0">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <label class="form-label">Upload the signed contract (PDF)<span style="color:red">*</span></label>
+                                                    <input type="file" name="contract_supervisor" id="contract_supervisor" class="form-control-file" oninput="CheckIndexAtt('contract_supervisor')" >
+                                                    <div id="contract_supervisor_error" style="color:red"></div>
+                                                </div>
+                                                <div class="col-6 pt-4">
+                                                    <button  type="button" id="sendBtn" class="btn btn-primary">Send</button>
+                                                    <a href="javascript: history.go(-1)" id="canBtn" class="btn btn-danger" >Cancel</a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    {% if not value_supervisor == 0 or object.contract_supervisor %}
+                                                     <h6 class="text-warning">Note: ${{value_supervisor}} will be deducted from your balance!</h6>
+
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+<script>
+var file_status;
+$(document).ready(function(){
+    
+    document.getElementById("sendBtn").addEventListener("click",function(){
+            var contract_file = document.getElementById("contract_supervisor").value;
+            
+            if(contract_file==""){
+                
+                document.getElementById("contract_supervisor_error").innerHTML="Error: please select contract file."
+            
+            }else if(file_status==true){
+                document.getElementById("contract_supervisor_error").innerHTML="Error: file index is NOT valid (valid only pdf)."
+            
+            }else{
+                 document.getElementById('conform').submit();
+                 document.getElementById('sendBtn').disabled = true; 
+                 document.getElementById('canBtn').style.pointerEvents= "none";
+                 
+                 
+            }
+                
+            
+        
+             
+            
+           
+            
+          
+        });
+        
+    
+    
+    
+});
+
+
+function CheckIndexAtt(id){
+    file_status = false;
+    document.getElementById(id + "_error").innerHTML = '';
+    var file_name   = document.getElementById(id).value;
+	var index_dot=file_name.lastIndexOf(".")+1;
+	var ext=file_name.substr(index_dot);
+	if(!(ext=='pdf' )) {
+		document.getElementById(id + "_error").innerHTML = '';
+		document.getElementById(id + "_error").innerHTML='Error: file index is NOT valid (valid only pdf)';
+		document.getElementById(id + "_error").style.color = "red";
+		
+		file_status = true;	
+		
+	}   
+	
+	return file_status;
+        
+}
+    
+    
+    
+</script>
+
+{% endblock script %}

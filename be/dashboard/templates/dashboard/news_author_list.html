@@ -1,0 +1,107 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+{% block content %}
+
+
+    <header class="bg-danger text-white py-2 w-100">
+        <div class="container">
+            <h1 class="px-4"><i class="far fa-edit"></i> <span> News List</span></h1>
+        </div>
+    </header>
+    <div>
+        <div class="col-12 mt-3 text-center">
+            <a href="{% url 'news-create' %}" class="btn btn-outline-dark">
+                Create News
+            </a>
+            <a href="{% url 'category-create' %}" class="btn btn-outline-dark">
+                Create Category
+            </a>
+        </div>
+    </div>
+    <div>
+        <div class="mt-5 w-100 d-flex justify-content-center main-ws">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="col-1">#</th>
+                        <th class="col-2">Picture</th>
+                        <th class="col-2">Title</th>
+                        <th class="col-4">description</th>
+                        <th class="col-3">Category</th>
+                        <th class="col-2">Date</th>
+                        <th class="col-2">Author</th>
+                        <th class="col-1">Status</th>
+                        <th class="col-1">Home</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for new in news %}
+                    <tr>
+                        <th class="col-1">{{i}}</th>
+                        <td class="col-2"><img src="{{new.thumbnail.url}}" style="width: 80px; height: 80px;"></td>
+                        <td class="col-2">
+                            {% if new.status in 'bd'|make_list or author.is_super_author %}
+                                <a href="{% url 'news-update' new.pk %}">{{new.title}}</a>
+                            {% else %}
+                                {{new.title}}
+                            {% endif %}
+                        </td>
+                        <td class="col-4">{{new.description|truncatewords:10|safe}}</td>
+                        <td class="col-3">{{new.category_to_str}}</td>
+                        <td class="col-2">{{new.date}}</td>
+                        <td class="col-2">{{new.author}}</td>
+                        <td>
+                        {% if new.status == 'p' %}
+                            <span class="badge badge-success">Published</span>
+                            <a target="_blank" class="badge badge-primary" href="{% url 'news-detail' new.pk %}">Show</a>
+                        {% elif new.status == 'i' %}
+                            <span class="badge badge-primary">Investigation</span>
+                            {% if new.author.is_super_author %}
+                            <a target="_blank" class="badge badge-secondary" href="{% url 'news-preview' new.pk %}">Preview</a>
+                            {% endif %}
+                        {% else %}
+                            {% if new.status == 'd' %}
+                                <span class="badge badge-danger">Draft</span>
+                            {% else %}
+                                <span class="badge badge-warning">Back</span>
+                            {% endif %}
+                            <a target="_blank" class="badge badge-secondary" href="{% url 'news-preview' new.pk %}">Preview</a>
+                        {% endif %}
+                        {% if author.is_super_author %}
+                          <a class="badge text-danger" href="{% url 'news-delete' new.pk %}">Delete</a>
+                        {% endif %}
+                        </td>
+                        <td class="col-1">
+                            {% if new.home == True %}
+                              <i class="fa fa-check-circle" style="color: green;"></i>
+                            {% else %}
+                              <i class="fa fa-minus-circle" style="color: red;"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+{% endblock content %}

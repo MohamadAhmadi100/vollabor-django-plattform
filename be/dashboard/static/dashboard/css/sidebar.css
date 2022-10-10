@@ -1,0 +1,152 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Titillium WebLight'), local('TitilliumWeb-Light'), url(http://themes.googleusercontent.com/static/fonts/titilliumweb/v2/anMUvcNT0H1YN4FII8wpr24bNCNEoFTpS2BTjF6FB5E.woff) format('woff');
+}
+
+.main-menu a {
+    text-decoration: none;
+    display: inline-block;
+    color: #999;
+    width: 100%;
+}
+
+.main-menu li {
+    list-style-type: none;
+    display: block;
+    width: 230px;
+}
+
+.main-menu {
+    width: 60px;
+    height: 100%;
+    background-color: rgb(0, 0, 0);
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: width 0.6s linear;
+    z-index: 100;
+}
+
+.main-menu .icon {
+    width: 60px;
+    font-size: 20px;
+    margin: 12px 0px;
+    text-align: center;
+}
+
+.main-menu .nav-text {
+    margin-left: 5px;
+    font-family: 'Titillium Web', sans-serif;
+}
+
+.main-menu>ul {
+    margin: 8px 0 48px 0;
+    padding: 0;
+}
+
+.main-menu:hover {
+    width: 230px;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+
+.main-menu .header-menu-item:hover > a {
+    color: #fff;
+}
+
+.header-menu-item.active > a {
+    font-weight: bold;
+    color: #fff;
+}
+
+.main-menu .header-menu-item:hover > a{
+    background-color: #5fa2db;
+}
+
+.header-menu-item ul {
+    padding-left: 0;
+    background-color: #212529!important;
+    font-size: 14px;
+}
+
+.dropdown-container ul li:hover a{
+    background-color: #5fa2db!important;
+    color: #fff;
+}
+
+.dropdown-container .drop-icon{
+    font-size: 14px;
+    margin: 8px 0px;
+    width: 60px;
+    text-align: center;
+}
+
+.notif-count-outer {
+    position: absolute;
+}
+.notif-count{
+    position: relative;
+    left: -40px;
+    font-size: 10px;
+    color: #fff;
+    padding: .25rem;
+    border-radius: 50%;
+    background-color: #dc3545;
+}
+
+.header-menu-burger-btn {
+    position: fixed;
+    bottom: 50px;
+    z-index: 10;
+    background-color: #000;
+    border-radius: 5px;
+    color: #fff;
+    width: 60px;
+    font-size: 24px;
+    padding: 12px 0;
+    text-align: center;
+    display: none;
+}
+
+.dropdown-container {
+    display: none;
+}
+
+.show{
+    display: block !important;
+}
+
+.dark-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  height: 100%;
+  width: 100%;
+  background-color: rgb(0, 0, 0);
+}
+
+@media (max-width:767.98px) {
+    .header-menu-burger-btn{
+        display: inline-block;
+    }
+    .header-menu{
+        display: none;
+    }
+    .main-menu{
+        position: fixed;
+        width: 100%;
+        height: 0;
+        overflow: visible;
+    }
+}
+

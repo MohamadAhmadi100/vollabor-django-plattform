@@ -1,0 +1,106 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load calendar_convertor %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+<html lang="en">
+{% block css %}
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/timeline.css' %}">
+{% endblock css %}
+
+{% block content %}
+<main class="single_page">
+    <div class="t-header">
+        <div class="row justify-content-center">
+            <div class="col-md-6 d-flex justify-content-center">
+                <div class="desc-header">
+                    <h1 class="title_single_page text-center">
+                        {{event.title}}
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="mt-3 p-5">
+        <div class="container d-flex justify-content-center align-items-center flex-column">
+            <div class="row my-3">
+                <div class="col-md-6">
+                    <h4 style="color: #0b5ed7"></h4>
+                    <p>
+                        {{event.description|safe}}
+                    </p>
+                </div>
+                <div class="col-md-6 d-flex justify-content-center ">
+                    <img src="{{event.thumbnail.url}}" class="img-fluid w-100" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+<script src="{% static 'ivc_website/news/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/main.js' %}"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+</html>
+<script>
+    $(document).ready(function () {
+        const searchFocus = document.getElementById('search-focus');
+        const keys = [
+            {keyCode: 'AltLeft', isTriggered: false},
+            {keyCode: 'ControlLeft', isTriggered: false},
+        ];
+        window.addEventListener('keydown', (e) => {
+            keys.forEach((obj) => {
+                if (obj.keyCode === e.code) {
+                    obj.isTriggered = true;
+                }
+            });
+
+            const shortcutTriggered = keys.filter((obj) => obj.isTriggered).length === keys.length;
+
+            if (shortcutTriggered) {
+                searchFocus.focus();
+            }
+        });
+        window.addEventListener('keyup', (e) => {
+            keys.forEach((obj) => {
+                if (obj.keyCode === e.code) {
+                    obj.isTriggered = false;
+                }
+            });
+        });
+
+        /* drop down */
+
+
+        $('.dropdown.buttons_header ul li a').click(function () {
+            $('.dropdown.buttons_header ul li a').removeClass('active');
+            $(this).addClass('active');
+            let text = $(this).text();
+            console.log(text)
+            $('#categories').html(text)
+        })
+        $('#date_start').datepicker({
+            format: 'dd-mm-yyyy',
+            startDate: '+1d'
+        });
+        $('#date_end').datepicker({
+            format: 'dd-mm-yyyy',
+            startDate: '+1d'
+        });
+    })
+</script>
+
+{% endblock content %}

@@ -1,0 +1,189 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block content %}
+<!-- HEADER SECTION -->
+<header id="cv-header-section">
+    <div class="dark-overlay">
+        <div class="cv-header-inner">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">CV List</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="cv-list-section" class="bg-light text-dark py-5 px-3">
+    <div class="container">
+            {% if applicants %}
+                <h1>Natural Applicants</h1>
+                <table class="table table-sm table-hover border border-dark">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Field of study</th>
+                            <th>Degree</th>
+                            <th>CV</th>
+                            <th>Join As</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for applicant in applicants %}
+                        {% if applicant.is_valid %}
+                            <tr>
+                                <td>{{ applicant.first_name }}</td>
+                                <td>{{ applicant.last_name }}</td>
+                                <td><a href="mailto:{{ applicant.email }}">{{ applicant.email }}</a></td>
+                                <td>{{ applicant.field_of_study }}</td>
+                                <td>{{ applicant.degree }}</td>
+                                <td>
+                                    <a href="{{ applicant.cv_file.url }}"
+                                       class="btn btn-primary btn-sm"
+                                        target="_blank">
+                                    Download PDF
+                                    </a>
+                                </td>
+                                <td>
+                                    <select class="custom-select" id="inputGroupSelect01">
+                                        <option value="Learner">Learner</option>
+                                        <option value="Member">Member</option>
+                                        <option value="Mentor">Mentor</option>
+                                        <option value="Supervisor">Supervisor</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="fa fa-check-circle accept-applicant"
+                                       data-toggle="modal" data-target="#acceptModal" data-email="{{applicant.email}}"
+                                       applicant-type="natural"></i>
+                                    <i class="fa fa-times-circle delete-applicant"
+                                        data-toggle="modal" data-target="#rejectModal" data-email="{{applicant.email}}"
+                                        applicant-type="natural"></i>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <h3 class="text-muted text-center">There's no natural applicant..</h3>
+            {% endif %}
+
+            {% if legal_applicants %}
+                <h1>Legal Applicants</h1>
+                <table class="table table-sm table-hover border border-dark">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Company</th>
+                            <th>Email</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for applicant in legal_applicants %}
+                        {% if applicant.is_valid %}
+                            <tr>
+                                <td>{{ applicant.first_name }}</td>
+                                <td>{{ applicant.last_name }}</td>
+                                <td>{{ applicant.company_name }}</td>
+                                <td><a href="mailto:{{ applicant.email }}">{{ applicant.email }}</a></td>
+                                <td>
+                                    <i class="fa fa-check-circle accept-applicant"
+                                       data-toggle="modal" data-target="#acceptModal" data-email="{{applicant.email}}"
+                                       applicant-type="legal"></i>
+                                    <i class="fa fa-times-circle delete-applicant"
+                                        data-toggle="modal" data-target="#rejectModal" data-email="{{applicant.email}}"
+                                        applicant-type="legal">
+                                    </i>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <h3 class="text-muted text-center">There's no legal applicant..</h3>
+            {% endif %}
+    </div>
+</section>
+
+
+
+
+<!-- ACCEPT MODAL -->
+<div class="modal" id="acceptModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+        Are you sure you want to accept this applicant?
+      </div>
+      <div class="modal-footer">
+        <form method="post">
+              {% csrf_token %}
+              <input type="text" class="input_accept_email d-none" name="data-accept-email">
+              <input type="text" class="applicant_accept_type d-none" name="applicant-type">
+              <input type="text" class="selected_position d-none" name="selected-position">
+              <button class="btn btn-success" type="submit">Yes</button>
+          </form>
+        <button class="btn btn-danger" data-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REJECT MODAL -->
+<div class="modal" id="rejectModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+        <form method="post">
+          {% csrf_token %}
+          <div class="modal-body text-dark">
+            Are you sure you want to reject this applicant?
+          <div class="form-group my-3">
+                  <textarea name="reject-reason" rows="10" class="form-control"
+                            placeholder="Specify your reason. (The user see this in an email)" required></textarea>
+          </div>
+          </div>
+          <div class="modal-footer">
+                  <input type="text" class="input_reject_email d-none" name="data-reject-email">
+              <input type="text" class="applicant_reject_type d-none" name="applicant-type">
+                  <button class="btn btn-success" type="submit">Yes</button>
+
+              <button class="btn btn-danger" data-dismiss="modal">No</button>
+          </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+<script>
+    $(".fa-times-circle").click(function() {
+        var clicked_element = $(this);
+        var data_email = clicked_element.attr('data-email');
+        var applicant_type = clicked_element.attr('applicant-type');
+        $('.input_reject_email').val(data_email);
+        $('.applicant_reject_type').val(applicant_type);
+    });
+    $(".fa-check-circle").click(function() {
+        var selected_position = $(this).parent().siblings().eq(6).children().eq(0).val();
+        var clicked_element = $(this);
+        var data_email = clicked_element.attr('data-email');
+        var applicant_type = clicked_element.attr('applicant-type');
+        $('.input_accept_email').val(data_email);
+        $('.applicant_accept_type').val(applicant_type);
+        $('.selected_position').val(selected_position);
+    });
+</script>
+{% endblock content %}

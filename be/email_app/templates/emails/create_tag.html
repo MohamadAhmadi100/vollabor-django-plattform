@@ -1,0 +1,37 @@
+{% extends 'emails/base.html' %}
+{%load static %}
+{% load crispy_forms_tags %}
+{% block title %} Create tag {% endblock %}
+{% block main %}
+<div style="margin-left: 450px; margin-bottom: 10px">
+
+</div>
+<div style="padding-left: 220px; padding-right: 220px" class="col-md-12">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"></h3>
+        </div>
+            <div style="padding-bottom: 150px;" class="card-body">
+                <form method="post" >{% csrf_token %}
+                    <div class="form-row">
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            <label>Name</label>
+                            <input type="text" name='name' class="form-control" value="{% if request.GET.edit %}{{object.name}}{%endif%}">
+                        </div>
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            <label>Description</label>
+                            <input type="text" name='description' class="form-control" value="{% if request.GET.edit %}{{object.description}}{%endif%}">
+                        </div>
+                    </div>
+                    <button style="margin-left: 275px" class="btn btn-primary" type="submit">Save</button>
+                </form>
+            </div>
+    </div>
+</div>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'emails/dist/js/jquery.tagsinput-revisited.js' %}"></script>
+<script>
+    $('#id_tags').tagsInput();
+</script>
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-info text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-users"></i> Weekly Meeting Attendees</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- TABLE -->
+<section id="weekly-meeting-attendees">
+    <div class="container">
+        {% if messages %}
+                {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success my-3"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger my-3"> {{ message }}</div>
+                        {%endif %}
+                {% endfor %}
+        {% endif %}
+        <div class="row">
+            <div class="col-12 text-center my-3">
+                <p><b>Project:</b> {{selected_project}}</p>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+
+            <div class="col-12 text-center">
+                <h2>Weekly meeting day:</h2>
+                <p>
+                    {% if selected_project.week_day %}
+                    {{selected_project.week_day}} - {{selected_project.meeting_time }}
+                        {% if selected_project.meeting_timezone %}
+                        ({{selected_project.meeting_timezone}} time)
+                        {% endif %}
+                    {% else %}
+                        Not determined
+                {% endif %}
+                </p>
+                <a href="{% url  'edit-meeting' project_pk=selected_project.pk %}" class="btn btn-success mb-4"><i class="fa fa-pencil-alt"></i> Change</a>
+            </div>
+        </div>
+        <section class="panel" style="overflow-x: auto; width: 100%;">
+            <table class="table  table-bordered p-table mb-5">
+                <thead>
+                <tr>
+                    <th class="text-center px-5">Time</th>
+                    {% for collaborator in collaborators %}
+                    <th class="p-team text-center">
+                        <a data-toggle='tooltip' data-placement='top' title='{% if collaborator|is_member_profile %}{{collaborator.first_name}} {{collaborator.last_name}}{% else %}{{collaborator.legalprofile.company_name}}{% endif %}'>
+                                    <img alt="image" class="m-1" src="{% if collaborator|is_member_profile %}{{collaborator.memberprofile.image.url}}{% else %}{{collaborator.legalprofile.image.url}}{% endif %}">
+                        </a>
+                    </th>
+                    {% endfor %}
+                </tr>
+
+                </thead>
+                <tbody>
+                    {% for time in times %}
+                    <tr>
+                        <td class="p-name text-center">
+                        {{time.weekly_meeting_time}}
+                            <i class="fa fa-times text-danger d-block pointer_hover" time_pk="{{time.pk}}"></i>
+                        </td>
+                        {% for collaborator in collaborators %}
+                        <td class="text-center">
+                            <input type="text" class="d-none" name="collaborator-pk" value="{{collaborator.pk}}">
+                            <input type="text" class="d-none" name="time-pk" value="{{time.pk}}">
+
+                            <select name="time-check" id="select_time">
+                                {% if not time|is_attended:collaborator and not time|has_acceptable_absence:collaborator %}
+                                <option value="Absence" selected>Absence</option>
+                                {% else %}
+                                <option value="Absence">Absence</option>
+                                {% endif %}
+                                {% if time|is_attended:collaborator %}
+                                <option value="Presence" selected>Presence</option>
+                                {% else %}
+                                <option value="Presence">Presence</option>
+                                {% endif %}
+                                {% if time|has_acceptable_absence:collaborator %}
+                                <option value="Acceptable Absence"selected>Acceptable Absence</option>
+                                {% else %}
+                                <option value="Acceptable Absence">Acceptable Absence</option>
+                                {% endif %}
+                            </select>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <div class="row">
+            <div class="col-12 mb-5 pb-5">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="text" class="d-none" name="add-next">
+                    <button class="btn btn-info" type="submit"><i class="fa fa-plus"></i> Add Row</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- REMOVE MODAL -->
+<div class="modal" id="deleteRowModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+        Are you sure you want to remove this row?
+      </div>
+      <div class="modal-footer">
+        <form method="post">
+              {% csrf_token %}
+              <input type="text" class="d-none" name="remove-time-pk">
+              <button class="btn btn-success" type="submit">Yes</button>
+          </form>
+        <button class="btn btn-danger" data-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="testModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">Confirmation</h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+        Are you sure you want to remove this row?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" data-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    $('.pointer_hover').on('click', function() {
+        let time_pk = $(this).attr('time_pk');
+        $('input[name$="remove-time-pk"]').val(time_pk);
+        $('#deleteRowModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+    });
+
+    $('select[name ="time-check"]').on('change', function (e) {
+        var collaborator_pk = $(this).siblings()[0].value;
+        var time_pk = $(this).siblings()[1].value;
+        var value_selected = this.value;
+
+        $.ajax({
+                type: "POST",
+                data: {
+                    'collaborator-pk': collaborator_pk,
+                    'time-pk': time_pk,
+                    'value-selected': value_selected,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+        });
+    });
+</script>
+{% endblock content %}

@@ -1,0 +1,1275 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-info text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-eye"></i> Project View</h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}research{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is Defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation is sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is NEW</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row">
+            {% if selected_project.is_valid %}
+                {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                <div class="col-md-3 my-1">
+                        <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-md-9 mt-3">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="m-b-md">
+                                        <h2 style="overflow: hidden">{{selected_project.title}}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-lg-5">
+                                    <dl class="dl-horizontal">
+                                        <p><span class="bold">Status:</span>
+                                        {% if selected_project.status == 'New' %}
+                                            <span class="label text-secondary"><strong>New</strong></span>
+                                        {% elif selected_project.status == 'Inspecting' %}
+                                            <span class="label text-secondary"><strong>Inspecting</strong></span>
+                                        {% elif selected_project.status == 'Waiting For Signature' %}
+                                            <span class="label text-secondary"><strong>Waiting For Signature</strong></span>
+                                        {% elif selected_project.status == 'Pending' %}
+                                            <span class="label text-info"><strong>Pending</strong></span>
+                                        {% elif selected_project.status == 'Ongoing' %}
+                                            <span class="label text-primary"><strong>Ongoing</strong></span>
+                                        {% elif selected_project.status == 'On Hold' %}
+                                            <span class="label text-danger"><strong>On Hold</strong></span>
+                                        {% elif selected_project.status == 'Done' %}
+                                            <span class="label text-success"><strong>Done</strong></span>
+                                        {% elif selected_project.status == 'Rejected' %}
+                                            <span class="label text-danger"><strong>Rejected</strong></span>
+                                        {% else %}
+                                            <span class="label text-secondary"><strong>{{selected_project.status}}</strong></span>
+                                        {% endif %}</p>
+                                    </dl>
+                                </div>
+                                {% if selected_project.fund > 0 %}
+                                <div class="col-lg-7">
+                                    <dl class="dl-horizontal">
+                                        <p><span class="badge badge-success"><i class="fa fa-dollar-sign"></i> Fund</span> <span class="bold">${{selected_project.fund}}</span></p>
+                                    </dl>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {% if selected_project.status == 'Rejected' %}
+                                    <p><span class="badge badge-danger">Reject Reason</span>
+                                        {{selected_project.reject_reason}}
+                                    </p>
+                                    {% endif %}
+
+                                    {% if project_areas %}
+                                    <p><span class="text-info bold">Project Areas:</span>
+                                        {% for project_area in project_areas %}
+                                        <span class="badge
+                                        {% if project_area.is_confirmed %}
+                                            {% if project_area.area.confirmed %}
+                                            badge-success
+                                            {% else %}
+                                            badge-danger
+                                            {% endif %}
+                                        {% else %}
+                                            badge-warning
+                                        {% endif %}
+                                        ">{{project_area.area}}</span>
+                                        {% endfor %}
+                                    </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <dl class="dl-horizontal">
+                                        <dt>Created by:</dt> <dd>
+                                        {% if selected_project.owner|is_member_profile %}
+                                             <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=selected_project.owner.id %}">
+                                                 {{selected_project.owner.first_name}} {{selected_project.owner.last_name}}
+                                             </a>
+                                        {% else %}
+                                            <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=selected_project.owner.id %}">
+                                                {{selected_project.owner.legalprofile.company_name}}
+                                             </a>
+                                        {% endif %}
+                                        </dd>
+                                        <dt>Start date:</dt> <dd> 	{{selected_project.start_date}} </dd>
+
+                                        {% if selected_project.status == 'Done' %}
+                                        <dt>Paper link:</dt>
+                                        {% if selected_project.paper_url %}
+                                        <dd> {{selected_project.paper_url}} </dd>
+                                        {% else %}
+                                            Not Determined
+                                        {% endif%}
+                                        {% endif %}
+                                        {% if selected_project.is_valid %}
+                                            {% if user.is_superuser or user in selected_project|get_collaborators %}
+                                            <dt>Slack Workspace:</dt>
+                                            <dd>
+                                            {% if selected_project.slack_workspace_address %}
+                                                <a href="{{selected_project.slack_workspace_address}}" target="_blank">Click to open</a>
+                                            {% else %}
+                                                Not determined
+                                            {% endif %}
+                                            </dd>
+                                            <dt>Skype:</dt>
+                                            <dd>
+                                            {% if selected_project.skype_address %}
+                                                <a href="{{selected_project.skype_address}}" target="_blank">Click to open</a>
+                                            {% else %}
+                                                Not determined
+                                            {% endif %}
+                                            </dd>
+                                            {% endif %}
+                                        {% endif %}
+                                    </dl>
+                                </div>
+                                <div class="col-lg-7" id="cluster_info">
+                                    <dl class="dl-horizontal">
+                                        {% if selected_project.is_valid %}
+                                        <dt>Collaborators:</dt>
+                                        <dd class="p-team">
+                                        {% for collaborator in selected_project|get_collaborators %}
+                                            {% if collaborator|is_member_profile %}
+                                            <a data-toggle='tooltip' data-placement='top' title='{{collaborator.first_name}} {{collaborator.last_name}}'>
+                                                <img alt="image" class="m-1" src="{{collaborator.memberprofile.image.url}}">
+                                            </a>
+                                            {% else %}
+                                            <a data-toggle='tooltip' data-placement='top' title='{{collaborator.legalprofile.company_name}}'>
+                                                <img alt="image" class="m-1" src="{{collaborator.legalprofile.image.url}}">
+                                            </a>
+                                            {% endif %}
+                                        {% endfor %}
+                                        </dd>
+                                        {% endif %}
+                                        <dt>End date:</dt> <dd> 	{{selected_project.end_date}} </dd>
+
+                                        {% if selected_project.status == 'Done' %}
+                                        <dt>Code link:</dt>
+                                        {% if selected_project.code_url %}
+                                        <dd> {{selected_project.code_url}} </dd>
+                                        {% else %}
+                                            Not Determined
+                                        {% endif%}
+                                        {% endif %}
+
+                                        {% if selected_project.is_valid %}
+                                            {% if user.is_superuser or user in selected_project|get_collaborators %}
+                                            <dt>Slack channel:</dt>
+                                            {% if selected_project.slack_channel_address %}
+                                                <a href="{{selected_project.slack_channel_address}}" target="_blank">Click to open</a>
+                                            {% else %}
+                                                Not determined
+                                            {% endif %}
+                                            </dd>
+                                            <dt>Google Drive:</dt>
+                                            <dd>
+                                            {% if selected_project.google_drive_address %}
+                                                <a href="{{selected_project.google_drive_address}}" target="_blank">Click to open</a>
+                                            {% else %}
+                                                Not determined
+                                            {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                {% if user|is_member_profile and selected_project.project_type == "Industrial" %}
+                                    {% if user.memberprofile.is_technical_manager or user == selected_project.expert and selected_project.expert_is_accepted %}
+                                        <div class="col-12">
+                                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                              <li class="nav-item">
+                                                <a class="nav-link active" id="pills-history-tab" data-toggle="pill" href="#pills-history" role="tab" aria-controls="pills-history" aria-selected="true">History</a>
+                                              </li>
+                                              {% if unconfirmed_industrial_areas.count > 0 %}
+                                              <li class="nav-item">
+                                                <a class="nav-link" id="pills-new-area-tab" data-toggle="pill" href="#pills-new-area" role="tab" aria-controls="pills-new-area" aria-selected="false">Unconfirmed areas</a>
+                                              </li>
+                                              {% endif %}
+                                              {% if unconfirmed_project_areas.count > 0 %}
+                                                  <li class="nav-item">
+                                                    <a class="nav-link" id="pills-new-project-area-tab" data-toggle="pill" href="#pills-new-project-area" role="tab" aria-controls="pills-new-project-area" aria-selected="false">Expert requests</a>
+                                                  </li>
+                                              {% endif %}
+                                              {% if selected_project.status != 'Rejected' and not selected_project.is_valid and selected_project.step <= 2 %}
+                                              <li class="nav-item">
+                                                <a class="nav-link" id="pills-add-area-tab" data-toggle="pill" href="#pills-add-area" role="tab" aria-controls="pills-add-area" aria-selected="false">Add areas</a>
+                                              </li>
+                                              <li class="nav-item">
+                                                <a class="nav-link" id="pills-remove-area-tab" data-toggle="pill" href="#pills-remove-area" role="tab" aria-controls="pills-remove-area" aria-selected="false">Remove areas</a>
+                                              </li>
+                                                {% if selected_project.expert is None %}
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="pills-project-acceptance-tab" data-toggle="pill" href="#pills-project-acceptance" role="tab" aria-controls="pills-project-acceptance" aria-selected="false">Project Acceptance</a>
+                                                </li>
+                                                {% endif %}
+                                              {% endif %}
+                                            </ul>
+                                            <div class="tab-content mb-5" id="pills-tabContent">
+                                              <div class="tab-pane fade show active" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
+                                                  {% if not histories %}
+                                                  <h3>No history yet ...</h3>
+                                                  {% endif %}
+                                                  {% for history in histories %}
+                                                    <div class="row">
+                                                        <div class="col-8">
+                                                             {% if history.action == "accept" %}
+                                                             <i class="fa fa-check text-success"></i>
+                                                             {% elif history.action == "reject" %}
+                                                             <i class="fa fa-times text-danger"></i>
+                                                             {% elif history.action == "add" %}
+                                                             <i class="fa fa-plus text-success"></i>
+                                                             {% elif history.action == "remove" %}
+                                                             <i class="fa fa-minus text-danger"></i>
+                                                             {% endif %}
+                                                             <span>
+                                                                <span class="bold">{{history.user.first_name}} {{history.user.last_name}}</span>
+                                                                {{history.action}}{% if history.action == "remove" %}d{% else %}ed{% endif %}
+                                                                <span class="text-info bold">{{history.area}}</span>
+                                                             </span>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <span class="text-primary bold">{{history.opinion_date}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div><span class="bold badge badge-danger">Reason</span>
+                                                                {% if '<br>' in history.reason|linebreaksbr %} {# if reason has more than one line #}
+                                                                    {{history.reason|linebreaksbr}} {# we consider the line breaks #}
+                                                                {% else %}
+                                                                    {{history.reason}}
+                                                                {% endif %}</div>
+                                                        </div>
+                                                    </div>
+                                                  <hr>
+                                                  {% endfor %}
+                                              </div>
+
+                                              {% if unconfirmed_industrial_areas.count > 0 %}
+                                              <div class="tab-pane fade" id="pills-new-area" role="tabpanel" aria-labelledby="pills-new-area-tab">
+                                                  <p class="text-info bold">In order to fix typo errors, you have to reject the area from here and add it manually from "Add areas" tab</p>
+                                                  <table class="table table-hover p-table">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Unconfirmed Area</th>
+                                                            <th></th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% for unconfirmed_industrial_area in unconfirmed_industrial_areas %}
+                                                            <tr>
+                                                                <td class="p-name">
+                                                                    {{unconfirmed_industrial_area.area}}
+                                                                </td>
+                                                                 <td class="text-right">
+                                                                     <button class="btn btn-success btn-xs mb-1 btn-accept-area"
+                                                                             area-pk="{{unconfirmed_industrial_area.pk}}">
+                                                                         <i class="fa fa-check"></i> Accept
+                                                                     </button>
+                                                                     <button class="btn btn-danger btn-xs mb-1 btn-reject-area"
+                                                                             area-pk="{{unconfirmed_industrial_area.pk}}">
+                                                                         <i class="fa fa-times"></i> Reject
+                                                                     </button>
+                                                                 </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                  </table>
+                                              </div>
+                                              {% endif %}
+
+                                              {% if unconfirmed_project_areas.count > 0 %}
+                                              <div class="tab-pane fade" id="pills-new-project-area" role="tabpanel" aria-labelledby="pills-new-project-area-tab">
+                                                  <p class="text-info bold">In order to fix typo errors, you have to reject the area from here and add it manually from "Add areas" tab</p>
+                                                  <table class="table table-hover p-table">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Area</th>
+                                                            <th>Action</th>
+                                                            <th></th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% for unconfirmed_project_area in unconfirmed_project_areas %}
+                                                            <tr>
+                                                                <td class="p-name">
+                                                                    {{unconfirmed_project_area.area.area}}
+                                                                </td>
+                                                                <td>
+                                                                    {% if unconfirmed_project_area.action == 'add' %}
+                                                                        <span class="badge badge-success">Add</span>
+                                                                    {% elif unconfirmed_project_area.action == 'remove' %}
+                                                                        <span class="badge badge-danger">Remove</span>
+                                                                    {% endif %}
+                                                                </td>
+                                                                 <td class="text-right">
+                                                                     <button class="btn btn-success btn-xs mb-1 btn-accept-project-area"
+                                                                             area-pk="{{unconfirmed_project_area.pk}}">
+                                                                         <i class="fa fa-check"></i> Accept
+                                                                     </button>
+                                                                     <button class="btn btn-danger btn-xs mb-1 btn-reject-project-area"
+                                                                             area-pk="{{unconfirmed_project_area.pk}}">
+                                                                         <i class="fa fa-times"></i> Reject
+                                                                     </button>
+                                                                 </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                  </table>
+                                              </div>
+                                              {% endif %}
+
+                                              {% if selected_project.status != 'Rejected' and not selected_project.is_valid %}
+                                              <div class="tab-pane fade" id="pills-add-area" role="tabpanel" aria-labelledby="pills-add-area-tab">
+                                                  <h6>Option1: Selecting from existing areas</h6>
+                                                  <form class="mb-2">
+                                                    <select class="selectpicker" id="select-add"
+                                                                            data-live-search="true">
+                                                        {% for industrial_area in industrial_areas %}
+                                                        {% if industrial_area != 'Other' %}
+                                                        <option>{{industrial_area}}</option>
+                                                        {% endif %}}
+                                                        {% endfor %}
+                                                    </select>
+                                                    <button id="btn-add-select" class="btn btn-success"><i class="fa fa-check"></i> Accept</button>
+                                                  </form>
+                                                  <h6>Option2: Typing new area (In case if it does not exist)</h6>
+                                                  <form>
+                                                    <input type="text" class="form-control w-75 d-inline mb-2" id="input-add-manually" required>
+                                                    <button id="btn-add-manually" class="btn btn-success mb-2"><i class="fa fa-check"></i> Accept</button>
+                                                  </form>
+                                              </div>
+                                              <div class="tab-pane fade" id="pills-remove-area" role="tabpanel" aria-labelledby="pills-remove-area-tab">
+                                                  {% if project_areas %}
+                                                  <table class="table table-hover p-table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Current Area</th>
+                                                        <th></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for project_area in project_areas %}
+                                                        {% if project_area.is_confirmed %}
+                                                        <tr>
+                                                            <td class="p-name">
+                                                                {{project_area.area}}
+                                                            </td>
+                                                             <td class="text-right">
+                                                                 <button class="btn btn-danger btn-xs mb-1 btn-remove-area"
+                                                                         area-pk="{{project_area.pk}}">
+                                                                     <i class="fa fa-times"></i> Remove
+                                                                 </button>
+                                                             </td>
+                                                        </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </tbody>
+                                                  </table>
+                                                  {% else %}
+                                                  <h5>There is no project area, please add one from "Add areas" tab</h5>
+                                                  {% endif %}
+                                              </div>
+                                              <div class="tab-pane fade" id="pills-remove-area" role="tabpanel" aria-labelledby="pills-remove-area-tab">
+                                                  {% if project_areas.count == 1 %}
+                                                  <h6 class="text-danger">Areas should be more than one otherwise it is not feasible to remove an area</h6>
+                                                  {% endif %}
+                                                  <table class="table table-hover p-table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Current Area</th>
+                                                        <th></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for project_area in project_areas %}
+                                                        <tr>
+                                                            <td class="p-name">
+                                                                {{project_area.area}}
+                                                            </td>
+                                                             <td class="text-right">
+                                                                 {% if project_areas.count > 1 %}
+                                                                 <button class="btn btn-danger btn-xs mb-1 btn-remove-area"
+                                                                         area-pk="{{project_area.pk}}">
+                                                                     <i class="fa fa-times"></i> Remove
+                                                                 </button>
+                                                                 {% endif %}
+                                                             </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                  </table>
+                                              </div>
+                                                {% if selected_project.expert is None %}
+                                                <div class="tab-pane fade" id="pills-project-acceptance" role="tabpanel" aria-labelledby="pills-project-acceptance-tab">
+                                                    {% if not project_areas %}
+                                                    <h5 class="text-danger">You have to add an area from "Add area" tab before assigning an expert to this project.</h5>
+                                                    {% endif %}
+                                                    {% if there_is_unconfirmed_area %}
+                                                    <h5 class="text-danger">You have to accept or reject unconfirmed areas from "Unconfirmed areas" tab before assigning an expert to this project.</h5>
+                                                    {% endif %}
+                                                    <h6>Select project expert from here:</h6>
+                                                    <form method="post">
+                                                        {% csrf_token %}
+                                                        <select class="selectpicker" name="assign-project-corresponding-expert"
+                                                                data-live-search="true" data-container="body">
+                                                            {% for expert in experts %}
+                                                            <option data-content="<img src='{{expert.user.memberprofile.image.url}}' style='height: 25px;'> {{expert.user.first_name}} {{expert.user.last_name}}">{{expert.pk}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                        <div class="div text-right">
+                                                            <button class="btn btn-success btn-xs mb-1" type="submit"
+                                                                    {% if not project_areas or there_is_unconfirmed_area %} disabled {% endif %}>
+                                                                 <i class="fa fa-check"></i> Assign selected expert
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                    <div class="div text-right">
+                                                        <button class="btn btn-danger btn-xs mb-1"
+                                                        onclick="$('#rejectProjectModal').modal({show:true,closeOnEscape: true});">
+                                                             <i class="fa fa-times"></i> Reject
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                              {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% elif user|is_member_profile and selected_project.project_type == "Research" and selected_project.status != "Rejected" %}
+                                    {% if user.memberprofile.is_research_director and selected_project.expert is None %}
+                                        <div class="col-12">
+                                            <ul class="nav nav-pills mb-3" id="pills-tab-research" role="tablist">
+                                              <li class="nav-item">
+                                                <a class="nav-link active" id="pills-research-expert-tab" data-toggle="pill" href="#pills-research-expert" role="tab" aria-controls="pills-research-expert" aria-selected="true">Assign Research Expert</a>
+                                              </li>
+                                            </ul>
+                                            <div class="tab-content mb-5" id="pills-tabContent-research">
+                                              <div class="tab-pane fade show active" id="pills-research-expert" role="tabpanel" aria-labelledby="pills-research-expert-tab">
+                                                  <h6>Select project expert from here:</h6>
+                                                  <form method="post">
+                                                      {% csrf_token %}
+                                                      <select class="selectpicker" name="assign-project-research-expert"
+                                                              data-live-search="true" data-container="body">
+                                                          {% for expert in research_experts %}
+                                                          <option data-content="<img src='{{expert.user.memberprofile.image.url}}' style='height: 25px;'> {{expert.user.first_name}} {{expert.user.last_name}}">{{expert.pk}}</option>
+                                                          {% endfor %}
+                                                      </select>
+                                                      <div class="div text-right">
+                                                          <button class="btn btn-success btn-xs mb-1" type="submit">
+                                                              <i class="fa fa-check"></i> Assign selected expert
+                                                          </button>
+                                                      </div>
+                                                  </form>
+                                                  <div class="div text-right">
+                                                      <button class="btn btn-danger btn-xs mb-1"
+                                                              onclick="$('#rejectProjectModal').modal({show:true,closeOnEscape: true});">
+                                                          <i class="fa fa-times"></i> Reject
+                                                      </button>
+                                                  </div>
+                                              </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mt-3">
+                <div class="wrapper wrapper-content project-manager">
+                    <h4>Description</h4>
+                    <p class="small">
+                        {{selected_project.description|linebreaks}}
+                    </p>
+                    {% if selected_project.project_requirements %}
+                    <h4>Project Requirements</h4>
+                    <p class="small">
+                        {{selected_project.project_requirements|linebreaks}}
+                    </p>
+                    {% endif %}
+                    {% if selected_project.project_equipment %}
+                    <h4>Project Equipments</h4>
+                    <p class="small">
+                        {{selected_project.project_equipment|linebreaks}}
+                    </p>
+                    {% endif %}
+                    {% if selected_project.project_information %}
+                    <a href="{{selected_project.project_information.url}}" target="_blank" class="d-block">
+                        <i class="fa fa-cloud"></i> Download information
+                    </a>
+                    {% endif %}
+                    {% if selected_project.project_rfp %}
+                    <a href="{{selected_project.project_rfp.url}}" target="_blank">
+                        <i class="fa fa-cloud"></i> Download RFP
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if user|is_member_profile and user.memberprofile.is_technical_manager or user == selected_project.expert %}
+<!-- ADD AREA MODAL -->
+<div class="modal fade" id="addAreaModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <div class="modal-title">Add Reason</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+                <div class="modal-body">
+                    <input type="radio" id="addTemplate" name="add-reason-method" value="From Template">
+                    <label for="addTemplate">Choose from template</label><br>
+                    <input type="radio" id="addManual" name="add-reason-method" value="Manual">
+                    <label for="addManual">Write reason manually</label><br>
+                    <div id="addFromTemplate" class="d-none">
+                        <hr>
+                        <form method="post" id="add-area-form">
+                            {% csrf_token %}
+                            <input type="text" name="add-industrial-area" class="d-none">
+                            {% for add_area_reason in add_area_reasons %}
+                            <input type="checkbox" name="add-reason" value="{{add_area_reason.pk}}"> {{add_area_reason.reason}}<br>
+                            {% endfor %}
+                            <button class="btn btn-success submit-add-area-template my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                    <div id="addManually" class="d-none">
+                        <hr>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="text" name="add-industrial-area" class="d-none">
+                            <textarea name="manual-add-reason" class="form-control" placeholder="Write your reason here!..." required></textarea>
+                            <button class="btn btn-success my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
+
+<!-- REMOVE AREA MODAL -->
+<div class="modal fade" id="removeAreaModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header btn-danger text-white">
+                <div class="modal-title">Remove Reason</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+                <div class="modal-body">
+                    <input type="radio" id="removeTemplate" name="remove-reason-method" value="From Template">
+                    <label for="removeTemplate">Choose from template</label><br>
+                    <input type="radio" id="removeManual" name="remove-reason-method" value="Manual">
+                    <label for="removeManual">Write reason manually</label><br>
+                    <div id="removeFromTemplate" class="d-none">
+                        <hr>
+                        <form method="post" id="remove-area-form">
+                            {% csrf_token %}
+                            <input type="text" name="remove-area" class="d-none">
+                            {% for remove_area_reason in remove_area_reasons %}
+                            <input type="checkbox" name="remove-reason" value="{{remove_area_reason.pk}}"> {{remove_area_reason.reason}}<br>
+                            {% endfor %}
+                            <button class="btn btn-success submit-remove-area-template my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                    <div id="removeManually" class="d-none">
+                        <hr>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="text" name="remove-area" class="d-none">
+                            <textarea name="manual-remove-reason" class="form-control" placeholder="Write your reason here..."
+                                      required></textarea>
+                            <button class="btn btn-success my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+{% if user|is_member_profile and user.memberprofile.is_technical_manager %}
+
+
+<!-- REJECT PROJECT MODAL-->
+<div class="modal fade" id="rejectProjectModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <div class="modal-title">Reject Reason</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" name="reject-project" class="d-none" value="1">
+                        <textarea name="reject-reason" class="form-control my-2"
+                                  placeholder="Write reject reason here (Client can see that)" required></textarea>
+                        <button class="btn btn-danger">Reject</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ACCEPT AREA MODAL -->
+<div class="modal fade" id="acceptAreaModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <div class="modal-title">Accept Reason</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+                <div class="modal-body">
+                    <input type="radio" id="acceptTemplate" name="accept-reason-method" value="From Template">
+                    <label for="acceptTemplate">Choose from template</label><br>
+                    <input type="radio" id="acceptManual" name="accept-reason-method" value="Manual">
+                    <label for="acceptManual">Write reason manually</label><br>
+                    <div class="d-none acceptTemplate">
+                        <hr>
+                        <form method="post" id="accept-area-form">
+                            {% csrf_token %}
+                            <input type="text" name="accept-area" class="d-none">
+                            {% for accept_area_reason in accept_area_reasons %}
+                            <input type="checkbox" name="accept-reason" value="{{accept_area_reason.pk}}"> {{accept_area_reason.reason}}<br>
+                            {% endfor %}
+                            <button class="btn btn-success submit-accept-area-template my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                    <div class="d-none acceptManual">
+                        <hr>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="text" name="accept-area" class="d-none">
+                            <textarea name="manual-accept-reason" class="form-control"
+                                      placeholder="Write your reason here..." required></textarea>
+                            <button class="btn btn-success my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
+
+<!-- ACCEPT PROJECT AREA MODAL -->
+<div class="modal fade" id="acceptProjectAreaModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <div class="modal-title">Accept Reason</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+                <div class="modal-body">
+                    <input type="radio" id="projectAreaAcceptTemplate" name="accept-reason-method" value="From Template">
+                    <label for="projectAreaAcceptTemplate">Choose from template</label><br>
+                    <input type="radio" id="projectAreaAcceptManual" name="accept-reason-method" value="Manual">
+                    <label for="projectAreaAcceptManual">Write reason manually</label><br>
+                    <div class="d-none acceptTemplate">
+                        <hr>
+                        <form method="post" id="accept-project-area-form">
+                            {% csrf_token %}
+                            <input type="text" name="accept-project-area" class="d-none">
+                            {% for accept_area_reason in accept_area_reasons %}
+                            <input type="checkbox" name="accept-project-area-reason" value="{{accept_area_reason.pk}}"> {{accept_area_reason.reason}}<br>
+                            {% endfor %}
+                            <button class="btn btn-success submit-accept-project-area-template my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                    <div class="d-none acceptManual">
+                        <hr>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="text" name="accept-project-area" class="d-none">
+                            <textarea name="manual-accept-reason" class="form-control"
+                                      placeholder="Write your reason here..." required></textarea>
+                            <button class="btn btn-success my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
+
+<!-- REJECT AREA MODAL -->
+<div class="modal fade" id="rejectAreaModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header btn-danger text-white">
+                <div class="modal-title">Reject Reason</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+                <div class="modal-body">
+                    <input type="radio" id="template" name="reject-reason-method" value="From Template">
+                    <label for="template">Choose from template</label><br>
+                    <input type="radio" id="manual" name="reject-reason-method" value="Manual">
+                    <label for="manual">Write reason manually</label><br>
+                    <div id="rejectFromTemplate" class="d-none rejectTemplate">
+                        <hr>
+                        <form method="post" id="reject-area-form">
+                            {% csrf_token %}
+                            <input type="text" name="reject-area" class="d-none">
+                            {% for reject_area_reason in reject_area_reasons %}
+                            <input type="checkbox" name="reject-reason" value="{{reject_area_reason.pk}}"> {{reject_area_reason.reason}}<br>
+                            {% endfor %}
+                            <button class="btn btn-success submit-reject-area-template my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                    <div class="d-none rejectManual">
+                        <hr>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="text" name="reject-area" class="d-none">
+                            <textarea name="manual-reject-reason" class="form-control"
+                                      placeholder="Write your reason here..." required></textarea>
+                            <button class="btn btn-success my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
+
+<!-- REJECT PROJECT AREA MODAL -->
+<div class="modal fade" id="rejectProjectAreaModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header btn-danger text-white">
+                <div class="modal-title">Reject Reason</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+                <div class="modal-body">
+                    <input type="radio" id="projectAreaRejectTemplate" name="reject-reason-method" value="From Template">
+                    <label for="projectAreaRejectTemplate">Choose from template</label><br>
+                    <input type="radio" id="projectAreaRejectManual" name="reject-reason-method" value="Manual">
+                    <label for="projectAreaRejectManual">Write reason manually</label><br>
+                    <div class="d-none rejectTemplate">
+                        <hr>
+                        <form method="post" id="reject-project-area-form">
+                            {% csrf_token %}
+                            <input type="text" name="reject-project-area" class="d-none">
+                            {% for reject_area_reason in reject_area_reasons %}
+                            <input type="checkbox" name="reject-project-area-reason" value="{{reject_area_reason.pk}}"> {{reject_area_reason.reason}}<br>
+                            {% endfor %}
+                            <button class="btn btn-success submit-reject-project-area-template my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                    <div class="d-none rejectManual">
+                        <hr>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="text" name="reject-project-area" class="d-none">
+                            <textarea name="manual-reject-reason" class="form-control"
+                                      placeholder="Write your reason here..." required></textarea>
+                            <button class="btn btn-success my-2" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+{% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+<!-- ACCEPT PROJECT CONFIRMATION MODAL -->
+<div class="modal fade" id="acceptProjectConfirmationModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <div class="modal-title">Confirmation</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <p>Are you sure you want to be the corresponding expert?</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" name="accept-being-in-the-project" class="d-none" value="1">
+                        <button class="btn btn-success" type="submit">Yes</button>
+                    </form>
+                    <button class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- EXPERT REJECT PROJECT MODAL -->
+<div class="modal fade" id="expertRejectProjectModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header btn-danger text-white">
+                <div class="modal-title">Reject Reason</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+                <div class="modal-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" name="reject-area" class="d-none">
+                        <textarea name="reject-being-in-the-project" class="form-control"
+                                  placeholder="Write your reason here..." required></textarea>
+                        <button class="btn btn-success my-2" type="submit">Submit</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock content %}
+
+
+{% block script %}
+
+{% if user|is_member_profile and user.memberprofile.is_technical_manager %}
+
+{% if selected_project.expert is None and not project_areas %}
+<script>
+    $('[data-toggle="tooltip"]').tooltip();
+</script>
+{% endif %}
+
+<script>
+    function restore_accept_modal() {
+            $('input[type=radio][name=accept-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=accept-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('.acceptTemplate').addClass('d-none')
+            $('.acceptManual').addClass('d-none')
+    }
+
+    function restore_reject_modal() {
+            $('input[type=radio][name=reject-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=reject-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            // for area
+            $('.rejectTemplate').addClass('d-none');
+            $('.rejectManual').addClass('d-none');
+    }
+
+    $('.btn-accept-area').on('click', (event) => {
+        $('#acceptAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_accept_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-check');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="accept-area"]').val(area_pk);
+    });
+
+    $('.btn-accept-project-area').on('click', (event) => {
+        $('#acceptProjectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_accept_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-check');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+        $('input[name$="accept-project-area"]').val(area_pk);
+    });
+
+    $('.btn-reject-project-area').on('click', (event) => {
+        $('#rejectProjectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_reject_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="reject-project-area"]').val(area_pk);
+    });
+
+    $('.btn-reject-area').on('click', (event) => {
+        $('#rejectAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_reject_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        console.log(area_pk);
+
+        $('input[name$="reject-area"]').val(area_pk);
+    });
+
+    $('input[type=radio][name=reject-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('.rejectTemplate').removeClass('d-none')
+            $('.rejectManual').addClass('d-none')
+        }
+        else {
+            $('.rejectTemplate').addClass('d-none')
+            $('.rejectManual').removeClass('d-none')
+        }
+    });
+
+    $('input[type=radio][name=accept-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('.acceptTemplate').removeClass('d-none')
+            $('.acceptManual').addClass('d-none')
+        }
+        else {
+            $('.acceptTemplate').addClass('d-none')
+            $('.acceptManual').removeClass('d-none')
+        }
+    });
+
+    $('.submit-reject-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=reject-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#reject-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-accept-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=accept-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#accept-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-accept-project-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=accept-project-area-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#accept-project-area-form').submit();
+            }
+        });
+    })
+
+    $('.submit-reject-project-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=reject-project-area-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#reject-project-area-form').submit();
+            }
+        });
+    })
+</script>
+{% endif %}
+
+{% if user|is_member_profile and user.memberprofile.is_technical_manager or user == selected_project.expert %}
+<script>
+    $( document ).ready( function() {
+        const errorMessage = "This field is required";
+
+        $( this ).find( "textarea" ).on( "input change propertychange", function() {
+
+            const hasError = !/.*\S+.*/.test($(this).val());
+            if ( typeof this.setCustomValidity === "function")
+            {
+                this.setCustomValidity( hasError ? errorMessage : "" );
+            }
+            else
+            {
+                $( this ).toggleClass( "error", !!hasError );
+                $( this ).toggleClass( "ok", !hasError );
+
+                if ( hasError )
+                {
+                    $( this ).attr( "title", errorMessage );
+                }
+                else
+                {
+                    $( this ).removeAttr( "title" );
+                }
+            }
+
+        });
+    });
+
+    function restore_add_modal() {
+            $('input[type=radio][name=add-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=add-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('#addFromTemplate').addClass('d-none')
+            $('#addManually').addClass('d-none')
+    }
+
+    function restore_remove_modal() {
+            $('input[type=radio][name=remove-reason-method]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('input[type=checkbox][name=remove-reason]').each((index, input) => {
+                input.checked = false;
+            })
+
+            $('#removeFromTemplate').addClass('d-none')
+            $('#removeManually').addClass('d-none')
+    }
+
+    const manuallyAddAreaBtn = $('#btn-add-manually');
+    const selectAddAreaBtn = $('#btn-add-select');
+
+    manuallyAddAreaBtn.on('click', (event) => {
+        event.preventDefault();
+        if (manuallyAddAreaBtn.get(0).form.reportValidity()) {
+            const entered_value = $('#input-add-manually').val();
+            $('#addAreaModal').modal({
+              show:true,
+              closeOnEscape: true
+            });
+
+            restore_add_modal();
+
+            $('input[name$="add-industrial-area"]').val(entered_value);
+        }
+        else {
+            manuallyAddAreaBtn.get(0).form.checkValidity();
+        }
+    });
+
+    selectAddAreaBtn.on('click', (event) => {
+        event.preventDefault();
+        const entered_value = $('#select-add').val();
+        $('#addAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_add_modal();
+
+        $('input[name$="add-industrial-area"]').val(entered_value);
+    });
+
+    $('input[type=radio][name=add-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('#addFromTemplate').removeClass('d-none')
+            $('#addManually').addClass('d-none')
+        }
+        else {
+            $('#addFromTemplate').addClass('d-none')
+            $('#addManually').removeClass('d-none')
+        }
+    });
+
+    $('.btn-remove-area').on('click', (event) => {
+        $('#removeAreaModal').modal({
+          show:true,
+          closeOnEscape: true
+        });
+
+        restore_remove_modal();
+
+        const clicked_on_tick_icon = $(event.target).hasClass('fa-times');
+        if (clicked_on_tick_icon) {
+            var area_pk = $(event.target).parent().attr('area-pk');
+        }
+        else {
+            var area_pk = $(event.target).attr('area-pk');
+        }
+
+        $('input[name$="remove-area"]').val(area_pk);
+    });
+
+    $('input[type=radio][name=remove-reason-method]').change(function() {
+        if (this.value === "From Template") {
+            $('#removeFromTemplate').removeClass('d-none')
+            $('#removeManually').addClass('d-none')
+        }
+        else {
+            $('#removeFromTemplate').addClass('d-none')
+            $('#removeManually').removeClass('d-none')
+        }
+    });
+
+    $('.submit-remove-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=remove-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#remove-area-form').submit();
+            }
+        });
+    });
+
+    $('.submit-add-area-template').on('click', (event) => {
+        event.preventDefault();
+        $('input[type=checkbox][name=add-reason]').each((index, input) => {
+            if (input.checked) {
+                $('#add-area-form').submit();
+            }
+        });
+    });
+</script>
+{% endif %}
+
+{% endblock script %}
+

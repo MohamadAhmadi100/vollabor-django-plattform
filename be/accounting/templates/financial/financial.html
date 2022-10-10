@@ -1,0 +1,344 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load blog_filter %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+
+{% block css %}
+<style>
+.dataTables_info{
+    display:none!important
+}
+body{background:#212429!important;}
+.card{
+    background: #2C3034;
+    box-shadow: 0px 0px 4px 0px #fff;
+}
+.card-body{color:#fff}
+.active_filter{
+    background:#2dcf2d
+}
+.active_card{
+    background: #FDBF30;
+}
+.filtering:hover{
+    background:#dc3545!important;
+    cursor:pointer
+}
+
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="{% static 'accounting/css/datatabels.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<header id="main-header" class="py-2 bg-danger text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>
+                    <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+                   Financial
+                </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="blog-manager">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message|safe }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message|safe }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div style="flex-wrap: wrap;display:flex" class="container">
+        <a style="text-decoration:none" href="{% url 'accounting:financial' %}?filter=Balance"
+          class="{% if request.GET.filter == 'Balance' or request.GET.filter == None %}active_card{%endif%} m-2 card col-md-3 text-center">
+            <div class="text-center card-body">
+                <p  class="text-white">Transactions</p>
+            </div>              
+        </a>
+        <a style="text-decoration:none" href="{% url 'accounting:financial' %}?filter=Request" 
+         class="{% if request.GET.filter == 'Request' %}active_card{%endif%} m-2 card col-md-3 text-center">
+            <div class="text-center card-body">
+                <p class="text-white">Request for money</p>
+            </div>              
+        </a>
+        <a style="text-decoration:none" href="{% url 'accounting:financial' %}?filter=Financial"
+          class="{% if request.GET.filter == 'Financial' %}active_card{%endif%} m-2 card col-md-3 text-center">
+            <div class="text-center card-body">
+                <p class="text-white">Financial transactions</p>
+            </div>              
+        </a>
+    </div>
+<hr>
+{% if request.GET.filter == 'Balance' or request.GET.filter == None %}
+<h3 class="text-center text-white">Filtering</h3>
+    <div style="flex-wrap: wrap;display:flex;background: #2C3034;
+    box-shadow: 0px 0px 4px 0px #fff" class=" container">
+
+        <a id="all"   class="filtering m-auto card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class="text-white">All</p>
+            </div>              
+        </a>
+        <a id="project"  class="filtering m-auto card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class=" text-white">Project</p>
+            </div>              
+        </a>
+        <a id="workshop"  class="filtering m-auto card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class=" text-white">Workshop</p>
+            </div>              
+        </a>
+        <a id="request" class="filtering m-auto card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class=" text-white">Badge requests</p>
+            </div>              
+        </a>
+        <a id="payment" class="filtering m-auto card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class=" text-white">Payment</p>
+            </div>              
+        </a>
+        <a id="returned" class="filtering m-auto card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class=" text-white">Returned</p>
+            </div>              
+        </a>
+    <div>
+        
+</section>
+
+<!--Tabels -->
+<div class="mt-5 container">
+    <table id="financial" class="text-white col-md-10 table table-hover table-sm table-striped" style="width:100%">
+        <thead class="text-whit">
+            <tr>
+                <th>Invoice number</th>
+                <th>Pay date</th>
+                <th>Reason</th>
+                <th>Discount</th>
+                <th>Amount</th>
+                <th>Action</th>
+                <th>Payment/Returned</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in datas%}
+            <tr >
+                <td>TEC-00{{data.id}}</td>
+                <td>{{data.pay_date}}</td>
+                <td>
+                    {% if data.service.service_name == 'UN' %}unknow
+                    {%elif data.service.service_name == 'P' %}project
+                    {%elif data.service.service_name == 'W' %}workshop
+                    {%elif data.service.service_name == 'BR' %}badgerequest
+                    {%elif data.service.service_name == 'SR' %}supervisorrequest
+                    {%elif data.service.service_name == 'WR' %}workshoprequest
+                    {%endif%}
+                </td>
+                <td>{{data.discount}}</td>
+                <td>{{data.amount}}</td>
+                <td>{{data.service.action}}</td>
+                <td>
+                    {%if data.fallow_code == 'TEC-REJECT'%}
+                        <span class="badge badge-danger">Returned</span>
+                    {%else%}
+                        <span class="badge badge-success">Payment</span>
+                    {%endif%}
+                </td>
+
+            </tr>
+            {%endfor%}
+
+        </tbody>
+    </table>
+
+</div>
+{% elif request.GET.filter == 'Request'%}
+<h3 class="text-center text-white">Filtering</h3>
+    <div style="flex-wrap: wrap;display:flex;background: #2C3034;
+    box-shadow: 0px 0px 4px 0px #fff" class=" container">
+
+        <a id="all"   class="filtering  card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class="text-white">All</p>
+            </div>              
+        </a>
+        <a id="picked"  class="filtering  card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class=" text-white">picked up</p>
+            </div>              
+        </a>
+        <a id="process"  class="filtering  card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class=" text-white">Under process</p>
+            </div>              
+        </a>      
+    <div>
+        
+</section>
+
+<!--Tabels -->
+<div class="mt-5 container">
+    <table id="financial" class="text-white col-md-10  table table-hover table-sm table-striped" style="width:100%">
+        <thead class="text-whit ">
+            <tr>
+                <th>Request date</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in datas%}
+            <tr >
+                <td>{{data.created}}</td>
+                <td>{{data.amount}}</td>
+                <td>
+                    {%if data.is_done%}
+                        <span class="badge badge-success">picked up</span>
+                    {%else%}
+                        <span class="badge badge-warning">Under process</span>
+                    {%endif%}
+                </td>
+
+            </tr>
+            {%endfor%}
+
+        </tbody>
+    </table>
+
+</div>
+{% elif request.GET.filter == 'Financial'%}
+<h3 class="text-center text-white">Filtering</h3>
+    <div style="flex-wrap: wrap;display:flex;background: #2C3034;
+    box-shadow: 0px 0px 4px 0px #fff" class=" container">
+
+        <a id="all"   class="filtering  card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class="text-white">All</p>
+            </div>              
+        </a>
+        <a id="zarinpal"   class="filtering  card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class="text-white">Zarinpal</p>
+            </div>              
+        </a>
+        <a id="strip"  class="filtering  card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class=" text-white">Strip</p>
+            </div>              
+        </a>
+        <a id="paypal"  class="filtering  card col-md-2 text-center">
+            <div class="text-center card-body">
+                <p class=" text-white">Paypal</p>
+            </div>              
+        </a>      
+    <div>
+        
+</section>
+
+<!--Tabels -->
+<div class="mt-5 container">
+    <table id="financial" class="text-white col-md-10 table table-hover table-sm table-striped" style="width:100%">
+        <thead class="text-whit">
+            <tr>
+                <th>ID number</th>
+                <th>Date</th>
+                <th>Country</th>
+                <th>Amount</th>
+                <th>Gsp</th>
+                <th>pst</th>
+                <th>Payment operator</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in datas%}
+            <tr>
+                <td>{{data.id_pay}}</td>
+                <td>{{data.success_date}}</td>
+                <td>{{data.country}}</td>
+                <td>{{data.amount}}</td>
+                <td>{{data.gsp}}</td>
+                <td>{{data.pst}}</td>
+                <td>{{data.pymeny_method}}</td>
+            </tr>
+            {%endfor%}
+
+        </tbody>
+    </table>
+
+</div>
+{%endif%}
+    
+
+
+
+  
+
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'accounting/js/datatabels.js' %}"></script>
+<script src="{% static 'accounting/js/bootstrapdatatabels.js' %}"></script>
+<script>
+$(document).ready(function () {
+    $('#financial').DataTable();
+    $('.filtering').click(function(){
+        $('.active_filter').removeClass('active_filter')
+            if ($(this).hasClass('active_filter')){
+                $(this).removeClass('active_filter')
+        
+            }
+            else{
+                $(this).addClass('active_filter')
+            }    
+            search($(this).attr('id'))
+    })
+
+   
+
+    function search(filtering){
+        var table = $('#financial').DataTable();
+        if (filtering =='all') {
+            table.column(2).search("").draw();
+            table.column(6).search("").draw();
+        }
+        else{
+            if(filtering == 'payment' || filtering == 'returned'){
+                table.column(2).search("").draw();
+                table.column(6).search(filtering).draw();
+            }
+            else{
+                if(filtering == 'zarinpal' || filtering == 'strip' || filtering == 'paypal'){
+                    table.column(6).search(filtering).draw();
+                }
+                else{
+
+                    table.column(2).search(filtering).draw();
+                }
+    
+                    }
+        }
+       
+        }
+   
+
+
+  
+});
+
+
+
+
+  
+</script>
+{% endblock content %}

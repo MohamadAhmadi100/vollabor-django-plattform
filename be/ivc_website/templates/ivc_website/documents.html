@@ -1,0 +1,51 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block content %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!-- HEADER SECTION -->
+<div id="documents-header-section" style="margin-top:150px;">
+    <div class="documents-header-inner">
+        <div class="row d-flex flex-wrap align-items-center">
+            <div class="col-12 text-center">
+                <h1 class="display-4">{% trans "Documents" %}</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- COURSES SECTION -->
+<section id="documents-section" class="bg-light text-dark py-5 px-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                {% if archive_documents %}
+                {% for archive_document_row in archive_documents %}
+                    <div class="row">
+                        {% for archive_document in archive_document_row %}
+                            {% if archive_document_row|length < 2 %}
+                                <div class="card col-md-6 mx-auto m-3">
+                            {% else %}
+                                <div class="card col-md-3 mx-auto m-3">
+                            {% endif %}
+                            <img class="card-img-top img-fluid" src="{{ archive_document.image.url }}">
+                            <div class="card-body">
+                                <h4 class="card-title">{{archive_document.title}}</h4>
+                                <p class="card-text">{{archive_document.description|truncatewords:20}}</p>
+                                <a href="{{archive_document.document_file.url}}">
+                                    <i class="fa fa-download"></i> Download File
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                {% else %}
+                <p class="text-muted display-4">There's not any document yet...</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

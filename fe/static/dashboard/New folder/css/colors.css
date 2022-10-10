@@ -1,0 +1,162 @@
+/* TEXT COLORS */
+.text-color1 {
+    color: #8ecae6;
+}
+.text-color2 {
+    color: #219ebc;
+}
+.text-color3 {
+    color: #023047;
+}
+.text-color4 {
+    color: #ffb703;
+}
+.text-color5 {
+    color: #fb8500;
+}
+.text-color6 {
+    color: #CC4F89;
+}
+.text-color7 {
+    color: #865797;
+}
+.text-color8 {
+    color: #465681;
+}
+.text-color9 {
+    color: #2F4858;
+}
+.text-color10 {
+    color: #00C15A;
+}
+.text-color11 {
+    color: #008927;
+}
+/*----- SPECIFIC ----*/
+.text-pink {
+    color: #f37d80;
+}
+.text-pale-blue {
+    color: #707fff;
+}
+.text-purple {
+    color: #8a36fd;
+}
+/*----END OF TEXT COLORS------*/
+
+
+/* BACKGROUND COLORS */
+.bg-color1 {
+    background-color: #8ecae6;
+}
+.bg-color2 {
+    background-color: #219ebc;
+}
+.bg-color3 {
+    background-color: #023047;
+}
+.bg-color4 {
+    background-color: #ffb703;
+}
+.bg-color5 {
+    background-color: #fb8500;
+}
+.bg-color6 {
+    background-color: #CC4F89;
+}
+.bg-color7 {
+    background-color: #865797;
+}
+.bg-color8 {
+    background-color: #465681;
+}
+.bg-color9 {
+    background-color: #2F4858;
+}
+.bg-color10 {
+    background-color: #00C15A;
+}
+.bg-color11 {
+    background-color: #008927;
+}
+/*---- SPECIFIC ---- */
+.bg-pink {
+    background-color: #f37d80;
+}
+.bg-pale-blue {
+    background-color: #707fff;
+}
+.bg-purple {
+    background-color: #8a36fd;
+}
+.bg-light-coral {
+    background-color: #ff6666;
+}
+.bg-orange {
+    background-color: #ff6600;
+}
+
+.bg-gold {
+    background-color: #FFD700;
+}
+.bg-silver {
+    background-color: #C0C0C0;
+}
+.bg-bronze {
+    background-color: #CD7F32;
+}
+.request-bg {
+    background: #d21e1e;
+}
+.bg-light-green{
+    background-color:#00e699
+}
+.bg-light-pink{
+    background-color:#ffb3da
+}
+.bg-light-blue{
+    background-color: #b3ffff
+}
+.bg-light-purple{
+    background-attachment:#d580ff
+}
+
+/*---- END OF BACKGROUND COLORS ---*/
+
+.btn-color1 {
+    background: #00C15A;
+    color: #fff;
+}
+.btn-color1:hover {
+    background: #008927;
+    color: #fff;
+}
+.btn-color2 {
+    background-color: #fb8500;
+    color: #fff;
+}
+.btn-color2:hover {
+    background-color: #bb6301;
+    color: #fff;
+}
+.btn-color3 {
+    background: #865797;
+    color: #fff;
+}
+.btn-color3:hover {
+    background: #59216d;
+    color: #fff;
+}
+
+.btn-color6 {
+    background-color: #CC4F89;
+}
+.btn-color6:hover {
+    background-color: #93205b;
+}
+
+.color2-fadeout {
+    background-image: linear-gradient(to left, rgba(187,99,1,0), rgba(187,99,1,1));
+    border-radius: 12%;
+    width: 300px;
+}

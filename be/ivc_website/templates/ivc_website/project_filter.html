@@ -1,0 +1,88 @@
+{% load static %}
+<div class="container-fluid p-5">
+    <div class="wrapper d-flex justify-content-center ">
+        <div class="content ms-2 d-flex flex-column justify-content-center align-items-center" >
+        {% for i in object_list %}
+        
+            <div class="item mb-3 d-flex align-items-center active">
+                <img class="workshop_img" src="{{i.project.upload_pictures.url}}" alt="">
+                <img class="discount" src="" alt="">
+                <div class="text ">
+                    <div class="icon&btn d-flex  align-items-center  ">
+                        <a href="#" class="peoples_attend ">
+                            <img class="img-fluid " src="{{i.main_supervisor.memberprofile.image.url}}" alt="">
+                        </a>
+                        <h6 class="text-dark mx-4">Project ID: {{i.project.client_form.formclint.id_project}}</h6>
+                        {% if i.status_value == 'hard' %}
+                            <span class="badge bg-warning text-dark">Gold</span>
+                        {% elif i.status_value == 'normal' %}
+                            <span class="badge bg-secondary text-dark">Silver</span>
+                        {% elif i.status_value == 'easy' %}
+                            <span class="badge text-dark" style="background:#CD7F32 !important" >Bronze</span>
+                        {% endif %}
+
+                        {% if i.status == 'on_going' %}
+                            <span style="margin-left: 20px;" class=" text-dark">Ongoing</span>
+                        {% elif i.status == 'on_hold' %}
+                            <span style="margin-left: 20px;" class=" text-dark">On hold</span>
+                        {% else %}
+                            <span style="margin-left: 20px;" class=" text-dark">{{i.status|title}}</span>
+                        {% endif %}
+                    </div>
+                    <h5 class="fw-bold mt-2">{{i.project.client_form.formclint.title|truncatewords:15}}</h5>
+        
+                    <p class="w-75">{{i.project.client_form.formclint.abstrack|truncatewords:25}}</p>
+                    <div class="icon&btn d-flex  align-items-center justify-content-between ">
+                        <div class="icon d-flex align-items-center">
+                            <div class="date d-flex align-items-center justify-content-center mx-2">
+                                 <img src="{% static 'projects/img/date.svg' %}" class="mx-1" alt="">
+                                <span class="text-muted">{{i.project.client_form.formclint.start_date}}</span>
+                            </div>
+                            <div class="date d-flex align-items-center justify-content-center mx-2">
+                                
+                                {% if i.project.client_form.formclint.fund == 0 %}
+                                <span class="fw-bold">Fund: Free</span>
+                                {% else %}
+                                <span class="fw-bold">Fund: ${{i.project.client_form.formclint.fund}}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+        
+                        <div class="btn d-flex align-items-center">
+                            <a href="{% url 'projects-page-detail' i.pk %}" class="view mx-2">View</a>
+                            {% if i.status == 'new' %}
+                            <a href="{% url 'industry:industry-project-apply' i.pk %}" class="buy   mx-2 d-flex align-items-center justify-content-center">
+                            Apply</a>
+                            {% else %}
+                            <button class="btn btn-warning buy  mx-2 d-flex align-items-center justify-content-center" style="padding-left: 30px;padding-right: 30px;" disabled>Apply</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        {% endfor %}
+{% block script %}
+<script>
+    
+    $(document).ready(function(){
+        
+        //document.getElementById("prev").addEventListener("click", PrevPage);
+       
+        
+        
+        
+    })
+    
+    function PrevPage(){
+        var a_prev = document.getElementById("prev");
+        a_prev.href = "";
+        return false;
+        
+    }
+</script>
+
+
+
+{% endblock script %}
+

@@ -1,0 +1,6 @@
+{% for number, field in sub_field.items %}
+<li>
+    <input class="styled-checkbox sub" id="checkbox-sub-{{number}}" type="checkbox" value="{{field.title}}">
+    <label for="checkbox-sub-{{number}}">{{field.title}}</label>
+</li>
+{% endfor %}

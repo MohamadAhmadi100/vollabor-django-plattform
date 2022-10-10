@@ -1,0 +1,214 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-street-view"></i> Project supervisor </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<head>
+    <link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+</head>
+
+<section id="industry-director">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <!-- new -->
+        <div class="card-page">
+            <div class="row justify-content-center align-items-center">
+                        
+                <!-- 1 compose -->
+                {% if request.GET.filter == "returned_project" %}
+                <div class="col green active">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white">Proposal Resubmition</h4>
+                        <p class="number ">{{count_returned_supervisor_project_industry}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=returned_project" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white">Proposal Resubmition</h4>
+                        <p class="number ">{{count_returned_supervisor_project_industry}}</p>
+                    </a>
+                </div>                  
+                {% endif %}
+                        
+                    <!-- 2 compose -->
+                    {% if request.GET.filter == "reject_project_supervisor" %}
+                    <div class="col green active">
+                        <a href="" class="text-center text-white">
+                            <i class="fa fa-check-circle"></i>
+                            <h4 class="text-white">Rejected proposal</h4>
+                            <p class="number ">{{count_reject_supervisor_project_industry}}</p>
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="col pink">
+                        <a href="?filter=reject_project_supervisor" class="text-center text-white">
+                            <i class="fa fa-check-circle"></i>
+                            <h4 class="text-white">Rejected proposal</h4>
+                            <p class="number ">{{count_reject_supervisor_project_industry}}</p>
+                        </a>
+                    </div>                  
+                    {% endif %}            
+                
+            </div>
+        </div>
+        
+
+        <div class="content my-4 table-responsive">
+            {% if request.GET.filter == "returned_project" %}
+            <table class="table table-dark table-hover table-striped p-table">
+                <thead>
+                <tr>
+                    <th>Project ID</th>
+                    <th>Title</th>
+                    <th>Fund</th>
+                    <th>Submission date</th>
+                    <th>Suggested strat date</th>
+                    <th>Suggested end date</th>
+                    <!--<th>Owner</th>-->
+                </tr>
+                </thead>
+                <tbody>
+                    {% for project in object_list %}
+                        <tr>
+                            <td class="p-name">
+                                <p style="overflow: hidden; width: 150px">{{project.client_form.formclint.id_project}}</p>
+                            </td>
+                            <td class="p-name">
+                                <p style="overflow: hidden; width: 200px">{{project.client_form.formclint.title|truncatechars:50}}</p>
+                            </td>
+                            <td class="p-name">
+                                ${{project.client_form.formclint.fund}}
+                            </td>
+                            <td class="p-name">
+                                {{project.client_form.formclint.created}}
+                            </td>
+                            <td class="p-name">
+                                {{project.client_form.formclint.start_date}}
+                            </td>
+                            <td class="p-name">
+                                {{project.client_form.formclint.end_date}}
+                            </td>
+                            <!--<td class="p-name">
+                                {{project.client_form.formclint.user.get_full_name}}
+                            </td>-->
+                             <td class="text-right">
+                                 <a href="{% url 'industry:industry-supervisor-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                     <i class="fa fa-eye"></i> View & Send
+                                 </a>
+                             </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          {% endif %}
+
+          {% if request.GET.filter == "reject_project_supervisor" %}
+            <table class="table table-dark table-hover table-striped p-table">
+                <thead>
+                <tr>
+                    <th>Project ID</th>
+                    <th>Title</th>
+                    <th>Fund</th>
+                    <th>Submission date</th>
+                    <th>Suggested strat date</th>
+                    <th>Suggested end date</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for project in reject_supervisor_project_industry %}
+                        <tr>
+                            <td class="p-name">
+                                <p style="overflow: hidden; width: 150px">{{project.client_form.formclint.id_project}}</p>
+                            </td>
+                            <td class="p-name">
+                                <p style="overflow: hidden; width: 200px">{{project.client_form.formclint.title|truncatechars:50}}</p>
+                            </td>
+                            <td class="p-name">
+                                ${{project.client_form.formclint.fund}}
+                            </td>
+                            <td class="p-name">
+                                {{project.client_form.formclint.created}}
+                            </td>
+                            <td class="p-name">
+                                {{project.client_form.formclint.start_date}}
+                            </td>
+                            <td class="p-name">
+                                {{project.client_form.formclint.end_date}}
+                            </td>
+                             <td class="text-right">
+                                 <a href="{% url 'industry:industry-supervisor-reject-proposal-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                     <i class="fa fa-eye"></i> View & Send
+                                 </a>
+                             </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          {% endif %}
+        </div>
+
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selectedItem = $(this).val();
+        let itemClasses = {
+            "Golden": "bg-warning text-dark",
+            "Silver": "bg-secondary text-white",
+            "Bronze": "bg-danger text-white",
+            "Normal": "bg-dark text-white",
+        };
+        $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+        $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+    });
+</script>
+
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $("[name='project-value']").keypress(function (evt) {
+        let entered_value = evt.originalEvent.key;
+        let current_value = $(evt.currentTarget).val();
+        if (isNumeric(entered_value) || (entered_value === '.' && !(current_value.includes('.')))) {
+            // let input be entered
+        }
+        else {
+            evt.preventDefault();
+        }
+    });
+</script>
+{% endblock script %}

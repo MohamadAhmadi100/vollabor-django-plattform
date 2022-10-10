@@ -1,0 +1,391 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block content %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-brown text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-user-plus"></i> Requests</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- REQUESTS -->
+<section id="requests">
+    <div class="container">
+        {% if messages %}
+                {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger"> {{ message }}</div>
+                        {%endif %}
+                {% endfor %}
+        {% endif %}
+        <section class="panel">
+            {% if request.user.memberprofile.position == "Mentor" or request.user.memberprofile.position == "Supervisor" %}
+            <h1 class="display-4 text-center mt-4">Your Projects</h1>
+            <p class="text-muted text-center mb-4">In this section you see people who wants to be a part of your projects, click view on each one to see the request on project management page</p>
+            <table class="table table-hover p-table" style="margin-bottom:120px">
+                <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Applicant</th>
+                    <th>Apply as</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for project_supervisor in request_dictionary|get_item:"project_supervisors" %}
+                    <tr>
+                        <td class="p-name">
+                            {{project_supervisor.project.title}}
+                        </td>
+                        <td class="p-name">
+                            {% if project_supervisor.supervisor|is_member_profile %}
+                            {{project_supervisor.supervisor.first_name}} {{project_supervisor.supervisor.last_name}}
+                            {% else %}
+                            {{project_supervisor.supervisor.legalprofile.company_name}}
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            Supervisor
+                        </td>
+                         <td>
+                             <a href="{% url 'dashboard-project-manage-page' project_primary_key=project_supervisor.project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View on project management page
+                             </a>
+                         </td>
+                    </tr>
+                {% endfor %}
+                {% for project_mentor in request_dictionary|get_item:"project_mentors" %}
+                    <tr>
+                        <td class="p-name">
+                            {{project_mentor.project.title}}
+                        </td>
+                        <td class="p-name">
+                            {% if project_mentor.mentor|is_member_profile %}
+                            {{project_mentor.mentor.first_name}} {{project_mentor.mentor.last_name}}
+                            {% else %}
+                            {{project_mentor.mentor.legalprofile.company_name}}
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            Mentor
+                        </td>
+                         <td>
+                             <a href="{% url 'dashboard-project-manage-page' project_primary_key=project_mentor.project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View on project management page
+                             </a>
+                         </td>
+                    </tr>
+                {% endfor %}
+                {% for project_member in request_dictionary|get_item:"project_members" %}
+                    <tr>
+                        <td class="p-name">
+                            {{project_member.project.title}}
+                        </td>
+                        <td class="p-name">
+                            {% if project_member.member|is_member_profile %}
+                            {{project_member.member.first_name}} {{project_member.member.last_name}}
+                            {% else %}
+                            {{project_member.member.legalprofile.company_name}}
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            Member
+                        </td>
+                         <td>
+                             <a href="{% url 'dashboard-project-manage-page' project_primary_key=project_member.project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View on project management page
+                             </a>
+                         </td>
+                    </tr>
+                {% endfor %}
+                {% for project_learner in request_dictionary|get_item:"project_learners" %}
+                    <tr>
+                        <td class="p-name">
+                            {{project_learner.project.title}}
+                        </td>
+                        <td class="p-name">
+                            {% if project_learner.learner|is_member_profile %}
+                            {{project_learner.learner.first_name}} {{project_learner.learner.last_name}}
+                            {% else %}
+                            {{project_learner.learner.legalprofile.company_name}}
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            Learner
+                        </td>
+                         <td>
+                             <a href="{% url 'dashboard-project-manage-page' project_primary_key=project_learner.project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View on project management page
+                             </a>
+                         </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <hr>
+            {% endif %}
+
+            <h1 class="display-4 text-center mt-4">Requested Projects</h1>
+            <p class="text-muted text-center mb-4">Here you can view projects that their mentor or supervisor want you to be a part of them. you can either accept or reject each of them</p>
+            <table class="table table-hover p-table" style="margin-bottom: 100px">
+                <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Main Supervisor</th>
+                    <th>Your Supervisor (Mentor)</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for project_supervisor in requested_projects.0 %}
+                    <tr>
+                        <td class="p-name" width="350px">
+                            {{project_supervisor.project.title}}
+                        </td>
+                        <td class="p-name">
+                            {% if project_supervisor.project.main_supervisor|is_member_profile %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_supervisor.project.main_supervisor.id %}">
+                                    {{project_supervisor.project.main_supervisor.first_name}} {{project_supervisor.project.main_supervisor.last_name}}
+                                </a>
+                            {% else %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_supervisor.project %}">
+                                    {{project_supervisor.project.main_supervisor.legalprofile.company_name}}
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            -
+                        </td>
+                        <td>
+                            <a href="{% url 'dashboard-project-view-page' project_primary_key=project_supervisor.project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                <i class="fa fa-eye"></i> View project details
+                            </a>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="text" name="accept-project-pk" class="d-none"
+                                       value="{{project_supervisor.pk}}">
+                                <input type="text" name="accept-collaboration-type" value="Supervisor" class="d-none">
+                                <button class="btn btn-success btn-xs mb-1" type="submit"><i class="fa fa-check"></i> Accept</button>
+                            </form>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="text" name="reject-project-pk" class="d-none"
+                                       value="{{project_supervisor.project.pk}}">
+                                <input type="text" name="reject-collaboration-type" value="Supervisor" class="d-none">
+                                <button class="btn btn-danger btn-xs mb-1" type="submit"><i class="fa fa-times"></i> Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% for project_mentor in requested_projects.1 %}
+                    <tr>
+                        <td class="p-name" width="350px">
+                            {{project_mentor.project.title}}
+                        </td>
+                        <td class="p-name">
+                            {% if project_mentor.project.main_supervisor|is_member_profile %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_mentor.project.main_supervisor.id %}">
+                                    {{project_mentor.project.main_supervisor.first_name}} {{project_mentor.project.main_supervisor.last_name}}
+                                </a>
+                            {% else %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_mentor.project.main_supervisor.id %}">
+                                {{project_mentor.project.main_supervisor.legalprofile.company_name}}
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            {% if project_mentor.project_supervisor|is_member_profile %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_mentor.project_supervisor.id %}">
+                                    {{project_mentor.project_supervisor.first_name}} {{project_mentor.project_supervisor.last_name}}
+                                </a>
+                            {% else %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_mentor.project_supervisor.id %}">
+                                    {{project_mentor.project_supervisor.legalprofile.company_name}}
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'dashboard-project-view-page' project_primary_key=project_mentor.project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                <i class="fa fa-eye"></i> View project details
+                            </a>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="text" name="accept-project-pk" class="d-none"
+                                       value="{{project_mentor.pk}}">
+                                <input type="text" name="accept-collaboration-type" value="Mentor" class="d-none">
+                                <button class="btn btn-success btn-xs mb-1" type="submit"><i class="fa fa-check"></i> Accept</button>
+                            </form>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="text" name="reject-project-pk" class="d-none"
+                                       value="{{project_mentor.pk}}">
+                                <input type="text" name="reject-collaboration-type" value="Mentor" class="d-none">
+                                <button class="btn btn-danger btn-xs mb-1" type="submit"><i class="fa fa-times"></i> Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% for project_member in requested_projects.2 %}
+                    <tr>
+                        <td class="p-name" width="350px">
+                            {{project_member.project.title}}
+                        </td>
+                        <td class="p-name">
+                            {% if project_member.project.main_supervisor|is_member_profile %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_member.project.main_supervisor.id %}">
+                                    {{project_member.project.main_supervisor.first_name}} {{project_member.project.main_supervisor.last_name}}
+                                </a>
+                            {% else %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_member.project.main_supervisor.id %}">
+                                    {{project_member.project.main_supervisor.legalprofile.company_name}}
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            {% if project_member.project_mentor|is_member_profile %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_member.project_mantor.id %}">
+                                    {{project_member.project_mentor.first_name}} {{project_member.project_mentor.last_name}}
+                                </a>
+                            {% else %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_mentor.project_mentor.id %}">
+                                    {{project_member.project_mentor.legalprofile.company_name}}
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'dashboard-project-view-page' project_primary_key=project_member.project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                <i class="fa fa-eye"></i> View project details
+                            </a>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="text" name="accept-project-pk" class="d-none"
+                                       value="{{project_member.pk}}">
+                                <input type="text" name="accept-collaboration-type" value="Member" class="d-none">
+                                <button class="btn btn-success btn-xs mb-1" type="submit"><i class="fa fa-check"></i> Accept</button>
+                            </form>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="text" name="reject-project-pk" class="d-none"
+                                       value="{{project_member.pk}}">
+                                <input type="text" name="reject-collaboration-type" value="Member" class="d-none">
+                                <button class="btn btn-danger btn-xs mb-1" type="submit"><i class="fa fa-times"></i> Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% for project_learner in requested_projects.3 %}
+                    <tr>
+                        <td class="p-name" width="350px">
+                            {{project_learner.project.title}}
+                        </td>
+                        <td class="p-name">
+                            {% if project_learner.project.main_supervisor|is_member_profile %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_learner.project.main_supervisor.id %}">
+                                    {{project_learner.project.main_supervisor.first_name}} {{project_learner.project.main_supervisor.last_name}}
+                                </a>
+                            {% else %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_learner.project.main_supervisor.id %}">
+                                    {{project_learner.project.main_supervisor.legalprofile.company_name}}
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            {% if project_learner.project_mentor|is_member_profile %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_learner.project_mentor.id %}">
+                                    {{project_learner.project_mentor.first_name}} {{project_learner.project_mentor.last_name}}
+                                </a>
+                            {% else %}
+                                <a class="text-dark" style="font-size:16px;text-decoration:none"
+                                                href="{% url 'dashboard-profile-page' user_id=project_learner.project_mentor.id %}">
+                                    {project_learner.project_mentor.legalprofile.company_name}}
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'dashboard-project-view-page' project_primary_key=project_learner.project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                <i class="fa fa-eye"></i> View project details
+                            </a>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="text" name="accept-project-pk" class="d-none"
+                                       value="{{project_learner.pk}}">
+                                <input type="text" name="accept-collaboration-type" value="Learner" class="d-none">
+                                <button class="btn btn-success btn-xs mb-1" type="submit"><i class="fa fa-check"></i> Accept</button>
+                            </form>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="text" name="reject-project-pk" class="d-none"
+                                       value="{{project_learner.pk}}">
+                                <input type="text" name="reject-collaboration-type" value="Learner" class="d-none">
+                                <button class="btn btn-danger btn-xs mb-1" type="submit"><i class="fa fa-times"></i> Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</section>
+
+<!-- CONFIRMATION MODAL -->
+<div class="modal fade" id="ConfirmationModal">
+    <div class="modal-dialog modal-lg text-dark">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <div class="modal-title">Confirmation</div>
+                <button class="close" data-dismiss='modal'><span>&times;</span></button>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                        <p>Are you sure you want to proceed?</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" name="accept" class="accept-input d-none">
+                        <input type="text" name="request-primary-key" class="request-pk d-none">
+                        <button class="btn btn-success" type="submit">Yes</button>
+                    </form>
+                    <button class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+        $(".accept-request").click(function() {
+                var clicked_element = $(this);
+                var data_pk = clicked_element.attr('data-pk');
+                $('.request-pk').val(data_pk);
+                $('.accept-input').val(1);
+        });
+        $(".reject-request").click(function() {
+                var clicked_element = $(this);
+                var data_pk = clicked_element.attr('data-pk');
+                $('.request-pk').val(data_pk);
+                $('.accept-input').val(0);
+        });
+</script>
+{% endblock content %}

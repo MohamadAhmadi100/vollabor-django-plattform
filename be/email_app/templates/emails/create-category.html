@@ -1,0 +1,24 @@
+{% extends 'emails/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} Create category{% endblock %}
+{% block main %}
+<div style="margin-left: 450px">
+</div>
+<div style="padding-left: 220px; padding-right: 220px" class="col-md-12">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"></h3>
+        </div>
+            <div style="padding-bottom: 150px;" class="card-body">
+                <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="form-row">
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            {{ form.title|as_crispy_field }}
+                        </div>
+                    </div>
+                    <button style="margin-left: 275px" class="btn btn-primary" type="submit">Create</button>
+                </form>
+            </div>
+    </div>
+</div>
+{% endblock %}

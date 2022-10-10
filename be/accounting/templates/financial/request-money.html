@@ -1,0 +1,145 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load blog_filter %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+
+{% block css %}
+<style>
+.dataTables_info{
+    display:none!important
+}
+body{background:#212429!important;}
+.card{
+    background: #2C3034;
+    box-shadow: 0px 0px 4px 0px #fff;
+}
+.card-body{color:#fff}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="{% static 'accounting/css/datatabels.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<header id="main-header" class="py-2 bg-danger text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>
+                    <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+                    Bank information
+                </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="blog-manager">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message|safe }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message|safe }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+        {%if info %}
+        <div class="mb-5 col-md-4  container card mt-5 p-3">
+            <div class="card text-center">
+                <div class="bg-success text-white card-header">
+                  Your bank info
+                </div>
+                <div class="card-body">
+                    <a  href="{% url 'accounting:IR-bank-info-submited' %}?edit=true" class="float-right btn btn-warning"><i class="fa fa-edit"></i></a>
+                  <h3 class="text-left card-title">{{info.firstname}} {{info.lastname}}</h3>
+                  <h5 class="text-left card-title">Your balance: <span class="badge badge-info">{{request.user.memberprofile.balance}}$</span></h5>
+                  <p class="text-left card-text">Shaba Number: {{info.shaba_acoount}}</p>
+                  <p class="text-left card-text">Account Number: {{info.account_number}}</p>
+                  <p class="text-left card-text">Card Number: {{info.card_number}}</p>
+                </div>              
+                <div class="card-footer text-muted">
+                </div>
+              </div>
+        </div>
+
+            <div class="text-center card m-auto col-md-2 text-white p-2 mt-1">
+                <h5>Witdrawal box value:<span class=" badge badge-success">{{witdrawalbox_value}}$</span></h5>
+            </div>
+
+        <div class="col-md-10  container card mt-5 p-3">
+
+                    <table id="financial" class="text-white col-md-10 table table-hover table-sm table-striped" style="width:100%">
+                        <thead class="text-whit">
+                            <tr>
+                                <th>Date of deposit</th>
+                                <th>Service</th>
+                                <th>َAmount</th>
+                                <th>Reason</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for w in withdrawals%}
+                                <tr>
+                                    <td>{{w.created}}</td>
+                                    <td>
+                                        {% if w.service.service_name == 'UN' %}unknow
+                                        {%elif w.service.service_name == 'P' %}project
+                                        {%elif w.service.service_name == 'W' %}workshop
+                                        {%elif w.service.service_name == 'BR' %}badgerequest
+                                        {%elif w.service.service_name == 'SR' %}supervisorrequest
+                                        {%elif w.service.service_name == 'WR' %}workshoprequest
+                                        {%endif%}
+                                    </td>
+                                    <td>{{w.amount}}</td>
+                                    <td>{{w.service.action}}</td>
+                                    <td>
+                                        <form method="POST">
+                                            {%csrf_token%}
+                                            <input type="hidden" name="id" value="{{w.id}}">
+                                            <button class="btn btn-sm btn-info" type="submit">Submit request</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+
+        </div>
+       
+        {%else%}
+            <h3 class="text-center mt-3">Compelete Bank information</h3>
+            <div class="container card mt-5 p-3">
+                <form style="color:#fff" class=" form-group col-md-8 m-auto" method="POST">
+                    {%csrf_token%}
+                    {%for item in form %}
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">{{item.label}}</label>
+                        {{item}}               
+                    </div>
+                        {%for error in item.errors%}
+                            <span id="emailHelp" class="p-0 alert alert-danger">{{error}}</span>
+                        {%endfor%}
+                    {%endfor%}
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+            </div>
+        {%endif%}
+</section>
+   
+
+<footer>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'accounting/js/datatabels.js' %}"></script>
+<script src="{% static 'accounting/js/bootstrapdatatabels.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $('#financial').DataTable();
+    })
+</script>
+</footer>
+{% endblock content %}

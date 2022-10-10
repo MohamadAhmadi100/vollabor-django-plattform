@@ -1,0 +1,141 @@
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/recent.css' %}">
+    <link rel="stylesheet" href="{% static 'css/forum.css' %}">
+
+
+
+</head>
+
+<body>
+
+    {% include 'nav.html' %}
+    <div class="breadcrumb">
+        <div class="container">
+            <ul>
+                <li><a href="categories.html" id="breadcrumb-link">  </a></li>
+                <li><span class="break"> </span></li>
+                <li><span class="category">  </span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <div class="recent">
+
+            <div class="btn-header d-flex justify-content-between mt-4">
+                <div class="btn-right d-flex ">
+                </div>
+            </div>
+            <hr class="d-none d-sm-block">
+            <div class="recent-main">
+                <ul class="list-item">
+                    {% for tit in object_list  %}
+                    <li style="background-color: #ebebeb; border-radius: 20px" class="item d-flex justify-content-between align-items-center">
+                        <div style="margin-left: 20px; margin-top: 10px" class="d-flex">
+                            {% for i in images %}
+                                {% if i.user == tit.topic.author %}
+                                    <img class="avatar avatar-rounded" alt="" title=""
+                                        data-uid="128975"
+                                        src="{{  i.image.url  }}"
+                                        data-original-title="bikelike">
+                                {% endif %}
+                            {% endfor %}
+                            <h2 class="mx-3 disc">
+                                <a href="{% url 'forum:detail-title' tit.topic.pk %}">{{tit.topic.title}}</a>
+                                <br>
+                                <small>
+                                    <a href="">
+                                        {% for i in tit.topic.categorys.all %}
+                                        <i  style="margin-right: 2px; color: orange" class="{{i.icon}}"></i>
+                                        <a href="{% url 'forum:category-topic' i.slug %}">{{i.title}}</a>
+                                        {% endfor %}
+                                        •
+                                    </a>
+                                </small>
+                                <small>
+                                    <span class="text-muted">{{tit.topic.created|naturaltime}}</span>
+
+                                </small>
+
+                                <small>
+                                    <span>{{tit.topic.author}}</span>
+                                </small>
+                            </h2>
+                        </div>
+                        <div style="margin-right: 20px" class="vote-section">
+                            <span class="option">
+                                <small style="background-color: #096857" class="badge btn-#096857">{{tit.date_add_to_history}}</small>
+                                <p></p>
+                                <small style="background-color: #4698b1" class="badge btn-#096857">{{tit.date_add_to_history|naturaltime}}</small>
+                            </span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <nav aria-label="Page navigation example" class="d-flex justify-content-center my-5">
+                {% if page_obj.has_other_pages %}
+                <ul  class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="{% url 'forum:post-history' page_obj.previous_page_number %}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for i in paginator.page_range %}
+                        {% if page_obj.number == i %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">
+                                {{ i }}
+                                </a>
+                            </li>   
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{% url 'forum:post-history' i %}">
+                                    {{ i }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{% url 'forum:post-history' page_obj.next_page_number %}">
+                            <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+
+
+</body>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+</html>

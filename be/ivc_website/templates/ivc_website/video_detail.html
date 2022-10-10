@@ -1,0 +1,153 @@
+{% extends 'ivc_website/base.html' %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'video/css/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'video/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'video/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'video/css/font-awesome.min.css' %}">
+{% endblock %}
+
+
+{% block content %}
+   
+<main id="video_main">
+    
+    <!--<div id="carouselExampleIndicators" class="banner_top carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active ">
+                <div class="row">
+                    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h2 class="text-white ">
+                            TECVICO is inviting the scientists to
+                            hold/participate in workshops.
+                        </h2>
+                        <a href="#" class="custom_btn  mt-3  text-white">Join</a>
+                    </div>
+                    <div class="col-md-6 position-relative">
+                        <img class="img-fluid" src="img/banner_workshop.png" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item  ">
+                <div class="row">
+                    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h2 class="text-white fw-bold">
+                            TECVICO is inviting the scientists to
+                            hold/participate in workshops.
+                        </h2>
+                        <a href="#" class="custom_btn  mt-3  text-white">Join</a>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="img/banner_workshop.png" alt="">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>-->
+
+
+    <div class="container-fluid p-5">
+        
+            <div class="wrapper d-flex justify-content-center mt-5">
+            <b class="d-block align-items-center justify-content-center text-center" > {{video.title}} </b>
+        </div>
+        
+        <section class="video_play d-flex justify-content-center align-items-center ">
+            <!--<video width="950" height="480" style="border-radius: 50px"
+                   poster="https://www.dropbox.com/s/04jvegnxbnm95l7/MicrosoftInclusiveHiring.jpg?raw=1" preload="auto"
+                   controls>
+            </video>-->
+             <iframe src="{{video.link}}" width="950" height="480" allow="autoplay" allowfullscreen></iframe>
+             
+            
+             
+        </section>
+    
+        <!--<div class="back-link d-flex align-items-center mt-3">-->
+        <!--    <a href="#" class="">Home</a>-->
+        <!--    <i class="fa fa-angle-right fa-2x mx-2"></i>-->
+        <!--    <a href="#" class="">Videos</a>-->
+        <!--    <i class="fa fa-angle-right fa-2x mx-2"></i>-->
+        <!--    <a href="#" class="active">{{video.title}}</a>-->
+        <!--</div>-->
+        <div class="wrapper d-flex justify-content-center">
+           
+            <div class="content ms-2 d-flex flex-column ">
+                <div class="video_items">
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-between align-items-center ">
+                            <b class="ps-3">Related videos</b>
+                            <div class="pe-3 sm_sidebar d-block d-lg-none  ">
+                                <button class="btn btn-outline-primary filter_right">
+                                    <i class="fa fa-filter"></i>
+                                    <span>Filter</span>
+                                </button>
+                            </div>
+                        </div>
+                        {% for video in related_video %}
+                        <div class="col-lg-4 col-sm-6 mb-3" style="width:350px; max-width:350px;">
+                            <a href="{% url 'video-detail' video.pk %}">
+                                <div class="item video_item d-flex align-items-center flex-column justify-content-center ">
+                                    <div class="bag_top">
+                                        <img src="img/hot.png" alt="">
+                                        <span>Hot</span>
+                                    </div>
+                                    <img class="workshop_img" style="object-fit: cover;
+                                            overflow: hidden;
+                                            height: 90%;
+                                            width: 90%;" src="{{video.image.url}}" alt="">
+                                    <div class="text pt-3">
+                                        <div class="profile justify-content-between ">
+                                            <div>
+                                                <img class="mx-2" src="{% static 'video/img/peoples.svg' %}" alt="">
+                                                <span> Tecvico</span>
+                                            </div>
+                                            <!--<div class="btn d-flex align-items-center justify-content-center text-muted">
+                                                <span>22</span>
+                                                <i class="fa fa-eye mx-1"></i>
+                                            </div>-->
+                                        </div>
+                                        <h5 class="fw-bold p-3  ">
+                                            {{video.title}}
+                                        </h5>
+                                        <div class="icon&btn d-flex  align-items-center justify-content-between ">
+                                            <div class="icon d-flex align-items-center">
+                                                <div class="date d-flex justify-content-center align-items-center mx-2">
+                                                    <img src="{% static 'video/img/date.svg' %}" class="mx-1" alt="">
+                                                    <span class="text-muted">{{video.created.date}}</span>
+                                                </div>
+                                            </div>
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!--<div class="d-flex justify-content-center  mt-5">
+                    <div class="pagination d-flex ">
+                        <ul class="d-flex justify-content-center"></ul>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+    </div>
+</main>
+
+<!------ js files ----->
+<script src="{% static 'video/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'video/js/popper.min.js' %}"></script>
+<script src="{% static 'video/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'video/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'video/js/base.js' %}"></script>
+<script src="{% static 'video/js/main.js' %}"></script>
+{% endblock %}

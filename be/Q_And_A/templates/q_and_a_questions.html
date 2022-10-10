@@ -1,0 +1,89 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<!-- HEADER SECTION -->
+<div id="faq-header-section" style="padding-top:200px">
+    <div class="dark-overlay">
+        <div class="faq-header-inner">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">{% trans "Q & A" %}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<section id="q-and-a-section" class="text-dark py-5 px-3" style="background:#eee;">
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+            <div class="alert alert-success"> {{ message }}</div>
+            {% else %}
+            <div class="alert alert-danger"> {{ message }}</div>
+            {%endif %}
+        {% endfor %}
+    {% endif %}
+    <div class="container">
+        {% if questions %}
+            {% for question in questions %}
+            <div class="row">
+                <div class="col-12">
+                    <span class="h4"><span class="badge badge-success"><i class="fa fa-question"></i></span></span>
+                    <a class="h5" href="{% url 'question-and-answers-page' question_id=question.id %}">{{question}}</a>
+                    <small class="badge badge-info" dir="auto">{{question.answer_set.all.count}} {% trans 'answers' %}</small>
+                </div>
+            </div>
+            <hr>
+            {% endfor %}
+        {% endif %}
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>{% trans 'Have any questions in your mind?' %}</h1>
+                <button class="btn btn-success" id="pose-question" dir="auto">{% trans 'Pose one!' %}</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- QUESTION MODAL -->
+<div class="modal" id="questionModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark"><i class="fa fa-question text-info"></i></h5>
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body text-dark">
+          <form method="post">
+              {% csrf_token %}
+              <input type="text" class="d-none" name="send-question" value="1">
+              {% if user.is_anonymous %}
+              <input type="text" name="full-name" class="form-control my-2" placeholder="{% trans 'Your full name...' %}" required>
+              <input type="email" name="email" class="form-control my-2" placeholder="{% trans 'Email address (Optional)' %}">
+              {% endif %}
+              <textarea name="posed-question" placeholder="{% trans 'Your question...' %}" class="form-control my-2" required></textarea>
+              <button class="btn btn-success my-2"><i class="fa fa-check"></i> {% trans 'Submit' %}</button>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" data-dismiss="modal">{% trans 'Close' %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('#pose-question').on('click', () => {
+        $('#questionModal').modal('show');
+    })
+</script>
+{% endblock script %}
+

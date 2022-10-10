@@ -1,0 +1,308 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<!--<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">-->
+<!--<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">-->
+
+<style>
+
+.content{
+    background-color: #2C3034;
+    height: auto;
+    padding-bottom: 2rem;
+    border-radius: 12px;
+}
+    
+ body{
+  background: #ecf0f1;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 16px;
+}
+
+.holder{
+  /*background: #fff;*/
+  background-color: #2C3034;
+  border-radius:5px; 	
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.1);	
+  margin:100px auto;
+  padding:30px 20px 20px;
+  width:400px;
+}
+
+td{
+  border-bottom:1px solid #f6f6f6;
+  padding:5px 10px;
+}
+
+td:nth-child(2){
+  text-align: right;
+  width: 40px;
+}
+
+tr:last-child td{
+  border:none;
+  padding:30px 10px 10px;
+  text-align: center;
+}
+.chkStyle{
+    
+    height: 30px;
+    width: 30px;
+    border-radius:50px;
+    
+}
+
+/*input[type=checkbox] {
+  cursor: pointer;
+  height: 30px;
+  margin:4px 0 0;
+  position: absolute;
+  opacity: 1;
+  width: 30px;
+  z-index: 2;
+}*/
+
+/*input[type=checkbox] + span {
+  background: #e74c3c;
+  border-radius: 50%;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.1);
+  display: inline-block;
+  height: 30px;
+  margin:4px 0 0;
+  position:relative;
+  width: 30px;
+  transition: all .2s ease;
+}
+
+input[type=checkbox] + span::before, input[type=checkbox] + span::after{
+  background:#fff;
+  content:'';
+  display:block;
+  position:absolute;
+  width:4px;
+  transition: all .2s ease;
+}
+
+input[type=checkbox] + span::before{
+  height:16px;
+  left:13px;
+  top:7px;
+  -webkit-transform:rotate(-45deg);
+  transform:rotate(-45deg);
+}
+
+input[type=checkbox] + span::after{
+  height:16px;
+  right:13px;
+  top:7px;
+  -webkit-transform:rotate(45deg);
+  transform:rotate(45deg);
+}
+
+input[type=checkbox]:checked + span {
+  background:#2ecc71;			    
+}
+
+input[type=checkbox]:checked + span::before{
+  height: 9px;
+  left: 9px;
+  top: 13px;
+  -webkit-transform:rotate(-47deg);
+  transform:rotate(-47deg);
+}
+
+input[type=checkbox]:checked + span::after{
+  height: 15px;
+  right: 11px;
+  top: 8px;
+}*/
+
+input[type=submit] {
+  background-color: #2ecc71;
+  border: 0;
+  border-radius: 4px;
+  color: #FFF;
+  cursor: pointer;
+  display: inline-block;
+  font-size:16px;
+  text-align: center;
+  padding: 12px 20px 14px;
+}   
+    
+    
+    
+    
+    
+    
+</style>
+
+
+
+
+
+
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-unlock-alt"></i> Access expert project</h1>
+            </div>
+        </div>
+    </div>
+
+</header>
+
+
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    
+    
+    
+    <div class="container ">
+    	<div class="row">
+        	<div class="holder content text-white">
+    	        <div class="heading-title mb-4">
+					<h3 class="h5 text-center text-danger">Select expert's access</h3>
+				</div>
+				<form method="POST" enctype="multipart/form-data">{% csrf_token %}
+				
+				    <div class="row justify-content-center">
+    					<div class="col-10">
+    						<div class="wrap w-100 form-group">
+    							
+    						
+        						    <div class="form-check my-3">
+        						    	<input type="checkbox" class="form-check-input chkStyle" id="chk1" name="directo_a_or_r_mainsupervisor">
+        						    	<label for="chk1" class="form-check-label ml-3 pt-2">Access to accept ot reject the request</label>
+        						    </div>
+        						    <div class="form-check my-3">
+        						    	<input type="checkbox" class="form-check-input chkStyle" name="directo_see_reviewer">
+        						    	<label class="form-check-label ml-3 pt-2">The reviewer's scores</label>
+        						    </div>
+        						    <div class="form-check my-3">
+        						    	<input type="checkbox" class="form-check-input chkStyle" name="directo_create_project">
+        						    	<label class="form-check-label ml-3 pt-2">Access to create a project</label>
+        						    </div>
+        						    <div class="form-check my-3">
+        						    	<input type="checkbox" class="form-check-input chkStyle" name="director_reject_proposal">
+        						    	<label class="form-check-label ml-3 pt-2">Access to reject the proposal</label>
+        						    </div>
+    						  
+    						</div>
+    					</div>
+				    </div>
+				    <div class="row text-center mt-5">
+				        	<input type="hidden" name="is_supervisor" id="id_is_supervisor" value="True" >
+        					<button type="submit" class="btn btn-danger mx-auto">Set expert's permissions </button>
+				        
+				    </div>
+				
+				
+				
+				
+				
+				
+				
+        			<!--<table width="100%">
+        				<tr>
+        					<td>Access accept or reject</td>
+        					<td>
+        						<div>
+        							<input type="checkbox" class="" name="directo_a_or_r_mainsupervisor" />
+        						    <span></span>
+        						</div>
+        					</td>
+        				</tr>
+        				<tr>
+        					<td>Access to see reviewer scores</td>
+        					<td>
+        						<div>
+        							<input type="checkbox" name="directo_see_reviewer"/>
+        						    <span></span>
+        						</div>
+        					</td>
+        				</tr>
+        				<tr>
+        					<td>Access to create a research project</td>
+        					<td>
+        						<div>
+        							<input type="checkbox" name="directo_create_project"/>
+        						    <span></span>
+        						</div>
+        					</td>
+        				</tr>
+        				
+        				<tr>
+        					<td>Access reject proposal</td>
+        					<td>
+        						<div>
+        							<input type="checkbox" name="director_reject_proposal"/>
+        						    <span></span>
+        						</div>
+        					</td>
+        				</tr>
+        				
+        				
+        						
+        				
+        				<tr>
+        					<td colspan="2">
+        					    	<input type="hidden" name="is_supervisor" id="id_is_supervisor" value="True" >
+        							<button type="submit" class="btn btn-primary">Set expert permissions </button>
+        					</td>
+        				</tr>
+        			</table>-->
+        			
+        		
+        		
+        			
+    			</form>
+    			
+    			
+    				
+    			
+    			
+    			
+		</div>
+	</div>
+
+
+</div>
+    
+  	        	    
+						
+    
+  
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+
+
+    <script>
+       
+    </script>
+
+
+{% endblock script %}

@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{%load static%}
+{% block title %}Edit Membership{% endblock %}
+{% block main %}
+<style>
+.hover {
+  border: 2px solid #fd7e14;
+  box-shadow: 1px 2px 7px 3px #fd7e14;
+  filter: grayscale(0)!important;
+}
+.images{border-radius:50px;filter: grayscale(1);}
+.img-box{ padding:2% }
+.ds-none{opacity:0}
+</style>
+
+<div class="m-auto col-md-12">
+    <form style="flex-wrap: wrap;display:flex" method="POST">
+        {% csrf_token %}
+        <div class="row col-md-5 form-group">
+          <label for="exampleInputEmail1">*Membership name:</label>
+          <input value="{{membership.name}}" required type="text" class="form-control" name='name'>
+    <!--      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+        </div>
+
+        <div  class=" col-md-5 form-group">
+          <label for="exampleInputEmail1">*Membership code:</label>
+          <div style="display:flex" >
+              <input value="{{membership.membership_code}}" required id="membership_code" value="" type="text" class="col-md-6 form-control" name='membership_code'>
+              
+              <a style="margin-left: 10px;" id="generate_code" class="btn btn-success">Generate code</a>
+          </div>
+        </div>
+
+          <div  class=" col-md-5 form-group">
+            <label for="exampleInputEmail1">*Duration:</label>
+            <div >
+                <input value="{{membership.duration}}" required value="" type="number" class="form-control" name='duration'>days
+            </div>
+          </div>
+
+
+          <div  class=" col-md-5 form-group">
+            <label for="exampleInputEmail1">*Membership amount:</label>
+            <div >
+                <input required value="{{membership.amount}}" type="number" class="form-control" name='amount'>
+            </div>
+          </div>
+
+          <div class="col-md-5 form-group">
+            <label for="exampleInputEmail1">Membership type:</label>
+            <select type="se" class=" form-control" name='type'>
+                <option {%if membership.type == 'real'%} selected {% endif %} value="real">real</option>
+                <option {%if membership.type == 'percent'%} selected {% endif %} value="percent">percent</option>
+            </select>
+          </div>
+
+
+          <div  class=" col-md-12 form-group">
+              <h3>Membership design:</h3>
+
+
+              <div class="col-md-5 ">
+                <table class="text-center table ">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>Use for all products</th>
+                      <th>Infinity</th>
+                      <th>Usable number</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    <tr>
+                      <td>
+                        <input {%if membership.is_all == '1' %} checked  {% endif %} class="m-auto"  id="is_all" value="" type="checkbox">
+                        <input  id="is_all_input" value="{{membership.is_all}}" type="hidden"  name='is_all'>
+                      </td>
+                      <td>
+                        <input {%if membership.usabel_number_all == '-1' %} checked {% else %} {% endif %}  class="m-auto"  id="all_infinity" value="" type="checkbox">
+                      </td>
+                      <td>
+                        <input class="{%if membership.usabel_number_all == '-1' %} ds-none {% else %} {% endif %} m-auto form-control"  id="usabel_number_all" value="{{membership.usabel_number_all}}" type="number"  name='usabel_number_all'></br>
+                    </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="col-md-8 ">
+                <table class="text-center table ">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>Use for all workshops</th>
+                      <th>Infinity</th>
+                      <th>Usable number</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    <tr>
+                      <td>
+                        <input {%if membership.is_workshop ==  '1' %} checked  {% endif %} class="m-auto"  id="is_workshop" value="" type="checkbox">
+                        <input  id="is_workshop_input" value="{{ membership.is_workshop }}" type="hidden"  name='is_workshop'>
+                      </td>
+                      <td><input {%if membership.usabel_number_workshop == '-1' %} checked {% else %} {% endif %} class="m-auto" id="workshop_infinity" value="" type="checkbox"></td>
+                      <td>
+                        <input class=" {%if membership.usabel_number_workshop == '-1' %} ds-none {% else %} {% endif %} m-auto form-control" style="float:right" id="usabel_number_workshop" value="{{membership.usabel_number_workshop}}" type="number"  name='usabel_number_workshop'>
+                      </td>
+                      <td>
+                        <input value="{{membership.workshop_amount}}" class=" form-control" type="number" name="workshop_amount">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+
+              <div class="col-md-8 ">
+                <table class="text-center table ">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>Use for all project</th>
+                      <th>Infinity</th>
+                      <th>Usable number</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    <tr>
+                      <td>
+                        <input {%if membership.is_project == '1' %} checked {% endif %} class="m-auto"  id="is_project" value="" type="checkbox">
+                        <input  id="is_project_input" value="{{ membership.is_project }}" type="hidden"  name='is_project'>
+                      </td>
+                      <td>
+                        <input {%if membership.usabel_number_project == '-1' %} checked {% else %} {% endif %} class="m-auto"  id="project_infinity" value="" type="checkbox">
+                      </td>
+                      <td>
+                        <input class=" {%if membership.usabel_number_project == '-1' %} ds-none {% else %} {% endif %} m-auto form-control"  id="usabel_number_project" value="{{membership.usabel_number_project}}" type="number"  name='usabel_number_project'>
+                    </td>
+                      <td>
+                        <input value="{{membership.project_amount}}" class="form-control" type="number" name="project_amount">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="col-md-8 ">
+                <table class="text-center table ">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>Use for all requests</th>
+                      <th>Infinity</th>
+                      <th>Usable number</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    <tr>
+                      <td>
+                        <input {%if membership.is_badge_request == '1' %} checked  {% endif %} class="m-auto" id="is_badge_request" value="" type="checkbox"></br>
+                        <input  id="is_badge_request_input" value="{{ membership.is_badge_request }}" type="hidden"  name='is_badge_request'>
+                      </td>
+                      <td>
+                        <input {%if membership.usabel_number_badge_rquest == '-1' %} checked {% else %} {% endif %} class="m-auto"  id="badgerequest_infinity" value="" type="checkbox">
+                      </td>
+                      <td>
+                        <input class=" {%if membership.usabel_number_badge_rquest == '-1' %} ds-none {% else %} {% endif %} m-auto form-control"  id="usabel_number_badge_rquest" value="{{membership.usabel_number_badge_rquest}}" type="number"  name='usabel_number_badge_rquest'>
+                    </td>
+                      <td>
+                        <input value="{{membership.badge_request_amount}}" class="form-control" type="number" name="badgerequest_amount_amount">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            
+
+          </div>
+
+         <div class="col-md-12">
+           Choose icon for membership
+           <div class="img-box">
+             {%for image in images%}
+             <img value="{{image}}" class="{%if membership.icon == image%} hover {% endif%} images" width=50px src="{% static '../media' %}/membership/icons/{{image}}">
+             {%endfor%}
+           </div>
+             <input type="hidden" value="{{membership.icon}}" id="membership_image" name="membership_image">
+         </div>
+
+         <div class="col-md-12">
+          Choose thumbnail for membership
+            <div class="img-box">
+              {%for image in thumbnails %}
+              <img value="{{image}}" class="{%if membership.thumbnail == image%} hover {% endif%}thumbnail" height=150px width=150px src="{% static '../media' %}/membership/thumbnails/{{image}}">
+              {%endfor%}
+            </div>
+              <input type="hidden" value="{{membership.thumbnail}}" id="membership_thumbnail" name="membership_thumbnail">
+              <input name="upload_image" type="file">
+          </div>
+
+        <button type="submit" class="btn btn-success">Save </button>
+          
+    </form>
+
+
+
+</div>
+<script>
+$(document).ready(function() {
+
+
+    $('#generate_code').click(function(e){
+        $.ajax({
+            type:'POST',
+            url:"{% url 'accounting:generate-code' %}",
+            data:{csrfmiddlewaretoken: '{{ csrf_token }}'},
+            success:function(res){
+                $('#membership_code').val(res.code)
+            },
+            error:function(){
+
+            }
+        })
+    })
+
+    $(".images").click(function() {
+      $('.images').removeClass('hover')
+      $(this).toggleClass("hover");
+      $('#membership_image').val($(this).attr('value'))
+  
+    });
+    $(".thumbnail").click(function() {
+      $('.thumbnail').removeClass('hover')
+      $(this).toggleClass("hover");
+      $('#membership_thumbnail').val($(this).attr('value'))
+  
+    });
+
+    $('#is_all').click(function(){check_checkboxes(this,is_all_input)})
+    $('#is_workshop').click(function(){check_checkboxes(this,is_workshop_input)})
+    $('#is_project').click(function(){check_checkboxes(this,is_project_input)})
+    $('#is_badge_request').click(function(){check_checkboxes(this,is_badge_request_input)})
+    $('#all_infinity').click(function(){usable_chek(this,'#usabel_number_all')})
+    $('#workshop_infinity').click(function(){usable_chek(this,'#usabel_number_workshop')})
+    $('#project_infinity').click(function(){usable_chek(this,'#usabel_number_project')})
+    $('#badgerequest_infinity').click(function(){usable_chek(this,'#usabel_number_badge_rquest')})
+
+
+})
+
+
+
+function usable_chek(target,usable){
+  if ($(target)[0].checked == true ){
+    $(usable).attr('value',-1)
+    $(usable).css ('display','none')
+  }
+  else{
+    $(usable).attr('value',0)
+    $(usable).css ('display','block')
+  }
+}
+
+
+
+function check_checkboxes(element,inputid){
+    if($(element)[0].checked == true){
+      $(inputid).val('1')
+    }
+    else{
+      $(inputid).val('0')
+    }
+}
+</script>
+{% endblock %}

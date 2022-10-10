@@ -1,0 +1,82 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-info text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-clock-o"></i> Change Meeting</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<!-- CHANGE MEETING -->
+<section id="change_meeting">
+    <div class="container">
+        {% if messages %}
+                {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger"> {{ message }}</div>
+                        {%endif %}
+                {% endfor %}
+        {% endif %}
+        <div class="row">
+            <div class="col-12 text-center mt-3">
+                <p class="h3 text-muted"><b>Project Title:</b> {{project_title}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 m-5">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            {{meeting_form.week_day|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            {{meeting_form.meeting_time|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            {{meeting_form.meeting_timezone|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            {{meeting_form.meeting_link|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            {{meeting_form.meeting_language|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-12">
+                            <button class="btn btn-info"><i class="fa fa-check"></i> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    $(function () {
+        $("#id_weekly_meeting_time").datetimepicker({
+          format: 'd/m/Y H:i'});
+    });
+</script>
+
+{% endblock content %}

@@ -1,0 +1,657 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* body {
+  min-height: 100vh;
+  background-color: #fff;
+} */
+body{
+    min-height: 100vh;
+    background-color: #212429!important;
+    color: white;
+}
+
+.bg-dark-blue{
+    background:rgb(6, 30, 49) !important;   
+}
+
+.side-navbar {
+  width: 180px;
+  height: 100%;
+  position: fixed;
+  margin-left: -300px;
+  background-color: #100901;
+  transition: 0.5s;
+  z-index:99999;
+}
+
+.nav-link:active,
+.nav-link:focus,
+.nav-link:hover {
+  background-color: #ffffff26;
+}
+
+.my-container {
+  transition: 0.4s;
+}
+
+.active-nav {
+  margin-left: 0;
+}
+
+/* for main section */
+.active-cont {
+  margin-left: 180px;
+}
+
+#menu-btn {
+  background-color: #100901;
+  color: #fff;
+  margin-left: -62px;
+}
+
+.my-container input {
+  border-radius: 2rem;
+  padding: 2px 20px;
+}
+
+/* main style */
+/* main */
+.main {
+  position: absolute;
+  width: calc(100% - 300px);
+  left: 280px;
+  min-height: 100vh;
+  background: var(--white);
+  transition: 0.5s;
+}
+
+.main.active {
+  width: calc(100% - 80px);
+  left: 100px;
+}
+
+.topbar {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+}
+.toggle{
+  position: relative;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5em;
+}
+
+.toggle i {
+  position: absolute;
+  font-size: 34px;
+  display: block;
+}
+
+.details {
+  position: relative;
+  width: 100%;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-gap: 30px;
+  /* background: rgb(6, 30, 49); */
+
+}
+
+.details .filter {
+  position: relative;
+  display: block;
+  background: #01476d;
+  padding: 20px;
+  box-shadow: 0 7px 25px rgba(0,0,0,0.08);
+  border-radius: 20px;
+}
+
+.details .recentOrders {
+  position: relative;
+  display: block;
+  min-height: 420px;
+  background: #cee1fc;
+  padding: 20px;
+  box-shadow: 0 7px 25px rgba(0,0,0,0.08);
+  border-radius: 20px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.cardHeader h2 {
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.btn {
+  position: relative;
+  padding: 5px 10px;
+  background: var(--blue);
+  text-decoration: none;
+  color: var(--white);
+  border-radius: 5px;
+}
+
+.btn.red {
+background: #f0291b;
+}
+.btn.red:hover {
+background: var(--white);
+color: #f0291b;
+}
+
+.btn.green {
+background: #176d02;
+}
+.btn.green:hover {
+background: var(--white);
+color: #176d02;
+}
+
+.btn.click-detail:hover {
+background: var(--white);
+  color: var(--blue);
+} 
+
+.btn.clear-filter {
+cursor: pointer;
+}
+
+.btn.clear-filter:hover {
+transform: scale(1.1,1.1);
+}
+
+.details table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+  /* background-color:#000; */
+}
+
+.details table thead td {
+  font-weight: 600;
+}
+
+.details .recentOrders table tr {
+  color: var(--black1);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.details .recentOrders table tr:last-child {
+  border-bottom: none;
+}
+
+.details .recentOrders table tbody tr:hover {
+  background: var(--blue);
+  color: var(--white);
+}
+
+.details .recentOrders table tr td {
+  padding: 10px;
+text-align: center;
+}
+
+/*.details .recentOrders table tr td:last-child {
+  text-align: end;
+}
+
+.details .recentOrders table tr td:nth-child(2) {
+  text-align: end;
+}
+
+.details .recentOrders table tr td:nth-child(3) {
+  text-align: center;
+}
+*/
+
+.d-none {
+display: none;
+}
+
+section {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 88vh;
+  background: #112d42;
+}
+
+.bg-dark-blue-es{
+    background: #112d42;
+}
+
+section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: #03a9f4;
+}
+
+section .container {
+  position: relative;
+  min-width: 800px;
+  min-height: 480px;
+  display: flex;
+  /* z-index: 2; */
+}
+
+
+section .container .contactinfo {
+  position: absolute;
+  top: 40px;
+  width: 250px;
+  height: calc(100% - 80px);
+  background: #0f3959;
+  z-index: 1;
+  margin-left: 10px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 20px 20px rgba(0,0,0,0.2);
+}
+
+section .container .contactinfo h2 {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+section .container .contactinfo .info {
+  position: relative;
+  margin: 20px 0;
+}
+
+section .container .contactinfo .info li {
+  position: relative;
+  list-style: none;
+  display: flex;
+  margin: 20px 0;
+  cursor: pointer;
+  align-items: flex-start;
+}
+
+section .container .contactinfo .info li span:nth-child(1){
+  widows: 30px;
+  min-width: 30px;
+}
+
+section .container .contactinfo .info li span:nth-child(1) img{
+  min-width: 100%;
+  filter: invert(1);
+  opacity: 0.5;
+}
+
+section .container .contactinfo .info li span:nth-child(2){
+  color: #fff;
+  margin-left: 10px;
+  font-weight: 300;
+  opacity: 0.5;
+}
+
+section .container .contactinfo .info li span:nth-child(2) img{
+  min-width: 100%;
+  filter: invert(1);
+  opacity: 0.5;
+}
+
+section .container .contactForm {
+  position: relative;
+  padding: 70px 50px;
+  background: rgb(6, 30, 49);
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 70px;
+  padding-left: 250px;
+  width: calc(100% - 150px);
+  box-shadow: 0 50px 50px rgba(0,0,0,0.5);
+}
+
+section .container .contactForm h2 {
+  color: #0f3959;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+section .container .contactForm .formBox {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding-top: 30px;
+}
+
+section .container .contactForm .formBox .inputBox
+{
+  position: relative;
+  margin: 0 0 35px 0;
+}
+
+section .container .contactForm .formBox .inputBox.w50 {
+  width: 47%;
+}
+
+section .container .contactForm .formBox .inputBox.w100 {
+  width: 100%;
+}
+section .container .contactForm .formBox .inputBox textarea,
+section .container .contactForm .formBox .inputBox input {
+  width: 100% !important ;
+  padding: 5px 0;
+  resize: none;
+  font-size: 18px;
+  font-weight: 300;
+  color: #333;
+  border: none;
+  border-bottom: 1px solid #777;
+  outline: none;
+}
+
+section .container .contactForm .formBox .inputBox textarea {
+  min-height: 120px;
+}
+
+section .container .contactForm .formBox .inputBox span {
+  position: absolute;
+  left: 0;
+  padding: 5px 0;
+  font-size: 18px;
+  font-weight: 300;
+  color: #333;
+  transition: 0.3s;
+  pointer-events: none;
+}
+section .container .contactForm .formBox .inputBox textarea:focus ~ span,
+section .container .contactForm .formBox .inputBox input:focus ~ span,
+section .container .contactForm .formBox .inputBox textarea:valid ~ span,
+section .container .contactForm .formBox .inputBox input:valid ~ span {
+  transform: translateY(-20px);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #ff568c;
+}
+
+section .container .contactForm .formBox .inputBox input[type="submit"] {
+  position: relative;
+  cursor: pointer;
+  background: #0f3959;
+  color: #fff;
+  border: none;
+  max-width: 150px;
+  padding: 12px;
+border-radius: 10px;
+}
+
+section .container .contactForm .formBox .inputBox input[type="submit"]:hover {
+  background: #f0291b;
+}
+
+.dropdown {
+position: relative;
+width: 300px;
+height: 50px;
+}
+
+.dropdown::before {
+content: '';
+position: absolute;
+right: 8px;
+top: 15px;
+z-index: 10000;
+width: 8px;
+height: 8px;
+border: 2px solid #333;
+border-right: 2px solid #fff;
+border-top: 2px solid #fff;
+transform: rotate(-45deg);
+transition: 0.5s;
+pointer-events: none;
+}
+
+.dropdown.active::before {
+top: 25px;
+transform: rotate(-225deg);
+}
+
+.dropdown input {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+cursor: pointer;
+background: #fff;
+border: 1px solid #999;
+outline: none;
+box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+padding: 12px 20px;
+border-radius: 10px;
+}
+
+.dropdown .option {
+position: absolute;
+top: 70px;
+width: 100%;
+max-height: 250px;
+background: #fff;
+box-shadow: 0 30px 30px rgba(0,0,0,0.05);
+border-radius: 10px;
+overflow: scroll;
+display: none;
+z-index: 10000;
+}
+
+.dropdown.active .option {
+display: block;
+}
+
+.dropdown .option div {
+padding: 12px 20px;
+cursor: pointer;
+}
+
+.dropdown .option div:hover {
+background: #62baea;
+color: #fff;
+}
+
+.dropdown .option div i {
+position: relative;
+top: 4px;
+font-size: 1.2em;
+}
+
+.select-user select {
+width: 300px;
+height: 50px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+font-size: 1em 4em 1em 1.5rem;
+padding: 1em 1.5em;
+border: 0;
+border-radius: 10px;
+}
+
+
+
+.others {
+width: 100%;
+margin-top: 10px;
+display: none;
+}
+
+.others.active {
+display: block;
+}
+.others input {
+position: relative;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+cursor: text;
+background: #fff;
+border: 1px solid #999;
+outline: none;
+box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+padding: 12px 20px;
+border-radius: 10px;
+}
+
+/* The alert message box */
+.alert {
+width: 80%;
+padding: 20px;
+margin-bottom: 15px;
+color: white;
+border-radius: 5px;
+}
+
+.alert.alert-success {
+background-color: #58d306; /* Red */
+}
+
+.alert.alert-danger {
+background-color: #f44336; /* Red */
+}
+/* The close button */
+.closebtn {
+margin-left: 15px;
+color: white;
+font-weight: bold;
+float: right;
+font-size: 22px;
+line-height: 20px;
+cursor: pointer;
+transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+color: black;
+}
+
+.filter ul {
+color: var(--blue);
+margin-top: 10px;
+margin-left: 5px;
+font-size: 20px;
+}
+
+.filter ul li {
+color: #E4E9F7;
+margin-top: 5px;
+list-style:none;
+font-size: 15px;
+cursor: pointer;
+}
+
+.filter ul li:hover {
+font-size: 16px;
+transition: all 0.1s ease;
+}
+
+.request-details {
+position: relative;
+width: 100%;
+padding: 20px 5px;
+/*display: grid;*/
+}
+.detail-title {
+position: relative;
+text-align: center;
+width: 100%;
+height: 60px;
+border-radius: 10px;
+background: #0f3959;
+color: #fff;
+}
+
+.detail-body {
+position: relative;
+width: 100%;
+min-height: 420px;
+margin-top: 10px;
+border-radius: 10px;
+background: #055da0;
+}
+
+.detail-body .detail-grid {
+display: grid;
+grid-template-columns:1fr;
+grid-gap: 20px; 
+}
+
+.detail-body .detail-grid-2 {
+display: grid;
+grid-template-columns:1fr 1fr;
+grid-gap: 20px;
+}
+
+.detail-box {
+margin-left: 30px;
+margin-top: 20px;
+width: 750px;
+height: 170px;
+}
+
+.detail-box-2 {
+margin-left: 20px;
+margin-top: 20px;
+width: 450px;
+height: 100px;
+}
+
+.detail-box-2 h4, 
+.detail-box h4 {
+color: #bfe8fc;
+}
+
+.detail-box-2 h2,
+.detail-box h2 {
+margin-left: 30px;
+margin-top: 5px;
+color: #bfe8fc;
+}
+
+
+
+.detail-body .inputBox input[type="submit"] {
+position: relative;
+cursor: pointer;
+background: #0f3959;
+margin-left: 20px;
+font-size: 20px;
+color: #fff;
+border: none;
+width: 150px;
+padding: 12px;
+border-radius: 10px;
+}
+
+.detail-body .inputBox input[type="submit"]:hover {
+background: #ff568c;
+}

@@ -1,0 +1,612 @@
+{% extends "request/base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-5 pt-5">
+        <div class="col-12">
+            <h3 class="text-secondary">Badge request</h3>
+            
+        </div>
+    </div>
+    <hr class="mb-5">
+    {% if form.status == 'send_manager' or form.status == 'Accept' or form.status == 'Accept-manager' %}
+        <div class="row" id="expert-box">
+            <div class="col-3"><h6>Applicant:</h6></div>
+            <div class="col-9"><h6>{{form.user.get_full_name}}</h6></div>
+        </div>
+        <div class="row" id="expert-box">
+            <div class="col-3"><h6>Badge:</h6></div>
+            <div class="col-9"><h6>{{form.skills}}</h6></div>
+        </div>
+        
+        
+        {% if form.status == 'Accept' or form.status == 'Accept-manager' %}
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Status:</h6></div>
+            <div class="col-9"><h6>Accepted</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Acceeted date:</h6></div>
+            <div class="col-9"><h6>{{form.accepted_date}}</h6></div>
+        </div>
+        {% elif form.status == 'rejected_by_manager' or form.status == 'rejected_by_expert'  %}
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Status:</h6></div>
+            <div class="col-9"><h6>Rejected</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Rejected date:</h6></div>
+            <div class="col-9"><h6>{{form.rejected_date}}</h6></div>
+        </div>
+        {% elif form.status == 'Reject' or form.status == 'revise_by_manager'  %}
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Status:</h6></div>
+            <div class="col-9"><h6>Revised</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Revised date:</h6></div>
+            <div class="col-9"><h6>{{form.revised_date}}</h6></div>
+        </div>
+        {% endif %}
+        
+        <div class="row" id="expert-box">
+            <div class="col-3"><h6>Submission date:</h6></div>
+            <div class="col-9"><h6>{{form.created.date}}</h6></div>
+        </div>
+        
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Applicant's email:</h6></div>
+            <div class="col-9"><h6>{{form.user.email}}</h6></div>
+        </div>
+        <div class="row" id="expert-box">
+            {% if form.position == 'Interview' %}
+            <div class="col-3"><h6>Interviewer:</h6></div>
+            <div class="col-9"><h6>{{review_obj.user.get_full_name}}</h6></div>
+            {% else %}
+            <div class="col-3"><h6>Reviewer:</h6></div>
+            <div class="col-9"><h6>{{review_obj.user.get_full_name}}</h6></div>
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-3"><h6>Averaged score:</h6></div>
+            <div class="col-9"><h6>{{review_obj.score}}</h6></div>
+        </div>
+        <div class="row">
+            <div class="col-3"><h6>Resume:</h6></div>
+            <div class="col-9"><a class="badge badge-primary" href="{{form.user.memberprofile.cv_file.url}}">Download</a></div>
+        </div>
+        {% if form.status == 'Reject-manager' or form.status == 'Reject-expert' %}
+        <div class="row">
+            <div class="col-3"><h6>Rejetion date:</h6></div>
+            <div class="col-9"><h6>{{form.rejected_date}}</h6></div>
+        </div>
+        
+        
+        {% endif %}
+        
+        
+        
+        
+        {% if form.status == 'send_manager' %}
+        <div class="row">
+            <div class="col-3"><h6>Subscores:</h6></div>
+            <div class="col-9"><button class="col-3 btn btn-primary btn-sm mt-1" data-bs-toggle="modal" data-bs-target="#test1" id="testBtn">Subscores</button></div>
+        </div>
+        <div class="row mt-3" id="expert-box">
+            <div class="col-3"><h6> 
+            {% if form.position == 'Interview' %}
+            Interviewer's 
+            {% else %}
+            Reviewer's 
+            {% endif %}
+            comment
+            :</h6></div>
+            
+        </div>
+        <div class="row" id="expert-box">
+            
+            <div class="col-9"><textarea class="form-control" disabled rows="3">{{review_obj.comment}}</textarea></div>
+        </div>
+        <div class="row mt-3" id="expert-box">
+            <div class="col-3"><h6>Expert's comment:</h6></div>
+            
+        </div>
+        <div class="row" id="expert-box">
+            
+            <div class="col-9"><textarea class="form-control" disabled rows="3">{{form.reason_reject}}</textarea></div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-6 ">
+                
+                <button type="button" class="btn btn-success"  id="revBtn" data-bs-toggle="modal" data-bs-target="#accept_manager">Accept</button>
+                <!--<a href="" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reject">Revise</a>-->
+                <button type="button" class="btn btn-danger"  id="revBtn" data-bs-toggle="modal" data-bs-target="#reject">Revise</button>
+                
+            </div>
+            
+        </div>
+        {% else %}
+        <a class="btn btn-warning mt-5" href="{% url 'request:manager-list' %}">Back</a>
+        {% endif %}
+    {% else %}
+        <form method="post" class="mb-5" id="chngform">
+            {% csrf_token %}
+            <div class="">
+                <div class="row" >
+                    <div class="col-3"><h6>Badge: </h6></div>
+                    <div class="col-9"><h6>{{form.skills}}</h6></div>
+                </div>
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Applicant:</h6></div>
+                    <div class="col-9"><h6>{{form.user.get_full_name}}</h6></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Email:</h6></div>
+                    <div class="col-9"><h6>{{form.user.email}}</h6></div>
+                </div>
+        
+        
+                {% if form.status == 'Accept' or form.status == 'Accept-manager' %}
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Status:</h6></div>
+                    <div class="col-9"><h6>Accepted</h6></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Acceeted date:</h6></div>
+                    <div class="col-9"><h6>{{form.accepted_date}}</h6></div>
+                </div>
+                {% elif form.status == 'Reject-badge-manager' or form.status == 'Reject-badge-expert'  %}
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Status:</h6></div>
+                    <div class="col-9"><h6>Rejected</h6></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Rejected date:</h6></div>
+                    <div class="col-9"><h6>{{form.rejected_date}}</h6></div>
+                </div>
+                {% elif form.status == 'Reject' or form.status == 'revise_by_manager'  %}
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Status:</h6></div>
+                    <div class="col-9"><h6>Revised</h6></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Revised date:</h6></div>
+                    <div class="col-9"><h6>{{form.revised_date}}</h6></div>
+                </div>
+                {% endif %}
+
+
+                <div class="row" id="expert-box">
+                    <div class="col-3"><h6>Submission date:</h6></div>
+                    <div class="col-9"><h6>{{form.created.date}}</h6></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Resume:</h6></div>
+                    <div class="col-9"><h6><a class="badge badge-primary" href="{{form.user.memberprofile.cv_file.url}}" target="_blank">Download</a></h6></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Expert:</h6></div>
+                    <div class="col-9"><h6>{{expert_obj.user.get_full_name}}</h6></div>
+                </div>
+                <div class="row" id="view-box">
+                    <div class="col-3"><h6>Expert email:</h6></div>
+                    <div class="col-9"><h6>{{expert_obj.user.researchrole.expert_email_address}}</h6></div>
+                </div>
+            {% if form.status == 'Reject-badge-manager' or form.status == 'Reject-badge-expert' %}
+            <div class="row" id="expert-box">
+                <div class="col-3"> <h6>Status:</h6></div>
+               <div class="col-9"><h6>Rejected</h6></div>
+            </div>
+            <div class="row">
+                <div class="col-3"><h6>Rejection date:</h6></div>
+                <div class="col-9"><h6>{{form.rejected_date}}</h6></div>
+            </div>
+        
+            <div class="row" id="expert-box">
+                <div class="col-3"> <h6>Rejection reason:</h6></div>
+               
+            </div>
+            <div class="row mb-2" id="expert-box">
+                
+               <div class="col-9"><textarea class="form-control" rows="3">{{form.reason_reject}}</textarea></div>
+            </div>
+            <a class="btn btn-warning" href="{% url 'request:manager-list' %}">Back</a>
+            {% else %}
+                <div class="row mt-2 px-1" id="view-box">
+                    <div class="col-6">
+                        <lable>Access to accept or reject: </lable>
+                        {% if form.access_accept_reject == True %}
+                        <input type="checkbox" name="access_expert" id="accChk" checked onchange="activeBtn();" />
+                        {% else %}
+                        <input type="checkbox" name="access_expert" id="accChk" onchange="activeBtn();" />
+                        {% endif %}
+                        <div id="accChk_error" style="color:red"></div>
+                        <br>
+                        <br>
+                        <label class="form-label" for="statussel">Change expert</label>
+                        <select class="form-control" name="experts" id="statussel" onchange="activeBtn();">
+                            <option value="0">--------</option>
+                            {% for i in experts %}
+                                {% if expert_obj.user != i.user %}
+                                <option value="{{i.user.id}}">{{i.user.get_full_name}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <div id="statussel_error" style="color:red"></div>
+                    </div>
+                </div>
+                
+                <div class="row mt-2 px-1" id="view-box">
+                    
+                    <div class="col-6 d-none" id="txtDiv">
+                        <h6 class="mt-3 mb-3">Message to the previous expert<span style="color: red">*</span>:</h6>
+                        <textarea name="last_exp_comemnt" id="last_exp_comemnt" class="form-control" style="width:500px; height:100px;" oninput="ClearErr('last_exp_comemnt')"></textarea>
+                    </div>
+                   
+                </div>
+                 <div id="last_exp_comemnt_error" style="color:red"></div>
+                 
+                 <div id="total_error" style="color:red"></div>
+            <div class="row mt-5 px-3">
+                
+                <button type="button" id="assignBtn" class="btn btn-success ml-1" value="declined" >Assign</button>
+
+
+                    
+                <div class="modal fade text-black" style="color:black" id="assign" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <h6>Are you sure to change the expert or give a manager's access to the expert?</h6>
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button type="button" id="rejClsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <input type="button" id="chngBtn" disabled  class="btn btn-success px-5" value="Assign">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if form.status == 'New' %}
+                <button type="button" class="btn btn-danger ml-1" value="declined" data-bs-toggle="modal" data-bs-target="#reject-badge">Reject</button>
+                {% endif %}
+                <button type="button" class="btn btn-warning mx-2" onclick="location.href='{% url 'request:manager-list' %}'">Cancel</button>
+            </div>
+            {% endif %}
+        </div>
+    </form>
+    {% endif %}
+    
+<div class="modal fade text-black" style="color:black" id="reject" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="POST" id="rejform" action="{% url 'request:manager-revise-badge' form.pk %}">{% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-body">
+                    <label>Revision reason<span style="color:red">*</span></label>
+                    <input type="hidden" name="position" value="manager">
+                    <textarea class="w-100 form-control" name="decline_reason" id="decline_reason" oninput="ClearErr('decline_reason')" style="width: 350px;"></textarea>
+                    <div id="decline_reason_error" class="text-danger"></div>
+                    
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" id="rejClsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="rejBtn" class="btn btn-danger" >Revise</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% if review_obj %}
+<div class="modal fade text-black" style="color:black" id="accept_manager" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="POST" id="rejform" action="{% url 'request:expert-accept-request' review_obj.pk 'badge' %}">{% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-body">
+                    <input type="hidden" name="position" value="manager">
+                    <h6>Are you sure to accept the badge score?</h6>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="rejClsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" id="rejBtn" class="btn btn-success" >Accept</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+
+<div class="modal fade text-black" style="color:black" id="reject-badge" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{% url 'request:expert-reject-badge' %}" method="POST">{% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-body">
+                    <input type="hidden" name="id_badge" value="{{form.pk}}">
+                    <input type="hidden" name="position" value="manager">
+                    <label>Revision reason<span style="color:red">*</span></label>
+                    <textarea class="w-100 form-control" name="decline_reason" id="decline_reason" required oninput="ClearErr('decline_reason')" style="width: 350px;"></textarea>
+                    <div id="decline_reason_error" class="text-danger"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Reject</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+ <div class="modal fade" id="test1" tabindex="-1" aria-labelledby="test1Label" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="test1Label">Subscores</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-0 py-0">
+                            <div class="col-9"><p>Related education/training (degree/certification, coursework):</p></div>
+                            <div class="col-3">{{review_obj.score_1}}</div>
+                        </div>
+                    
+                    
+                        <div class="row mb-0 py-0">
+                            <div class="col-9"><p>Related experience (work history and patents/publications):</p></div>
+                            <div class="col-3">{{review_obj.score_2}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9"> <p>Collaborative experience (teamwork, and international collaboration):</p></div>
+                            <div class="col-3">{{review_obj.score_3}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9">  <p>Technical & Management skills (software skills and how much s/he is expert in each software?):</p></div>
+                            <div class="col-3">{{review_obj.score_4}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9">  <p>Communication (clarity of ideas, direct answers, comprehension):</p></div>
+                            <div class="col-3">{{review_obj.score_5}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9">  <p>Initiative skill:</p></div>
+                            <div class="col-3">{{review_obj.score_6}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9">   <p>Innovative skill:</p></div>
+                            <div class="col-3">{{review_obj.score_7}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9"> <p>Candidate interest (motivation and reason to apply for the job):</p></div>
+                            <div class="col-3">{{review_obj.score_8}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9">  <p>Time management:</p></div>
+                            <div class="col-3">{{review_obj.score_9}}</div>
+                        </div>
+                        
+                        <div class="row mb-0 py-0">
+                            <div class="col-9"> <p>Personal score of interviewer:</p></div>
+                            <div class="col-3">{{review_obj.score_10}}</div>
+                        </div>
+                    
+                    
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    
+    
+</div>
+
+
+<script>
+var firstcheckval;
+var chkchng = false;
+var selchng = false;
+$(document).ready(function(){
+    
+    if(document.getElementById('accChk')){
+        firstcheckval = document.getElementById('accChk').checked;
+    }
+    
+    if(document.getElementById("assignBtn")){
+     document.getElementById("assignBtn").addEventListener("click",function(){
+         
+        var expertvalue=document.getElementById("statussel").value;
+        var changeComment = document.getElementById("last_exp_comemnt").value;
+        
+        if(expertvalue!="0" && changeComment.length==0){
+                document.getElementById("last_exp_comemnt_error").innerHTML="Error: please enter the change reason.";
+        }else{
+            
+             if(chkchng == false && selchng == false){
+             document.getElementById("total_error").innerHTML = "Error: please select an expert or give a manager's access.";
+         }else if(chkchng == true || selchng == true){
+            $('#assign').modal({backdrop: 'static', keyboard: false})  
+            $('#assign').modal('show');
+         }
+         
+           
+        }
+         
+        
+         
+        
+         
+        
+         
+         
+     })
+    
+    
+    }
+    
+    
+    
+     $("#statussel").change(function () {
+            const Value = $(this).val();
+            if (Value == 1){
+                $('.reviewer').removeClass('d-none');
+                $('.interviewer').addClass('d-none');
+                
+            }
+            else {
+                $('.reviewer').addClass('d-none');
+                 $('.interviewer').removeClass('d-none');
+            };
+        });
+
+    if(document.getElementById("chngBtn")){
+    document.getElementById("chngBtn").addEventListener("click",function(){
+              
+            var expertvalue=document.getElementById("statussel").value;
+            var changeComment = document.getElementById("last_exp_comemnt").value;
+            
+            if(expertvalue!="0" && changeComment.length==0){
+                    document.getElementById("last_exp_comemnt_error").innerHTML="Error: please enter the change reason.";
+            }else{
+                document.getElementById('chngform').submit();
+                document.getElementById('chngBtn').disabled = true;
+            }
+          
+        });
+        
+    }
+    
+    if(document.getElementById("rejBtn")){
+        document.getElementById("rejBtn").addEventListener("click",function(){
+            
+            var rejComment = document.getElementById("decline_reason").value;
+            if(rejComment.length==0){
+                    document.getElementById("decline_reason_error").innerHTML="Error: please enter the revision reason.";
+            }else{
+                document.getElementById('rejform').submit();
+                document.getElementById('rejBtn').disabled = true;
+                document.getElementById('rejClsBtn').disabled = true;
+            }
+          
+        });
+    
+    }
+    
+    
+})
+
+
+function activeBtn(){
+    document.getElementById("total_error").innerHTML="";
+    if(document.getElementById('accChk')){
+       var checkval = document.getElementById('accChk');
+        if(checkval.checked==firstcheckval){
+                    //document.getElementById('chngBtn').disabled = true;
+            chkchng = false;
+        }else{
+                    //document.getElementById('chngBtn').disabled = false;
+            chkchng = true;
+        }
+    }
+    
+    if(document.getElementById('statussel')){
+        var selval = document.getElementById('statussel');
+        if(selval.value=="0"){
+                //document.getElementById('chngBtn').disabled = true;
+                var element = document.getElementById("txtDiv");
+                element.classList.add("d-none");
+                document.getElementById("last_exp_comemnt_error").innerHTML="";
+                selchng = false;
+        }else{
+                //document.getElementById('chngBtn').disabled = false;
+                var element = document.getElementById("txtDiv");
+                element.classList.remove("d-none");
+                selchng = true;
+        }
+    }
+    
+    
+    
+    if(document.getElementById('chngBtn')){
+        if(selchng == true || chkchng == true ){
+            //alert("ok");
+            document.getElementById('chngBtn').disabled = false;
+        }else{
+            document.getElementById('chngBtn').disabled = true;
+        }
+    }
+    
+    
+    
+    
+    //document.getElementById('chngBtn').disabled = false;
+    //document.getElementById(id+"_error").innerHTML="";
+}
+
+
+
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+}
+
+         
+function clickAndDisable(link,id) {
+     // disable subsequent clicks
+     link.onclick = function(event) {
+        event.preventDefault();
+     }
+     
+     if(id !== 'undefined'){
+         document.getElementById(id).disabled=true;
+     }
+}         
+
+
+
+
+
+
+
+
+ /*   let reviewer = document.querySelector('.reviewer');
+    let interviewer = document.querySelector('.interviewer')
+   
+
+    function show(skill) {
+        reviewer.classList.add('d-none')
+        interviewer.classList.add('d-none')
+        document.querySelector('.textBox').value = skill
+        if (skill == "reviewer"){
+            reviewer.classList.remove('d-none')
+        }
+        else{
+            interviewer.classList.remove('d-none')
+        }
+    }
+
+    reviewer.onclick = function(){
+        reviewer.classList.toggle('active')
+    }
+
+    interviewer.onclick = function(){
+        interviewer.classList.toggle('active')
+    }*/
+
+  /*  dropdown.onclick = function(){
+        dropdown.classList.toggle('active')
+    }*/
+</script>
+{% endblock %}

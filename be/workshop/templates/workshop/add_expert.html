@@ -1,0 +1,448 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.cs' %}">
+    <!--<link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">-->
+    <link rel="stylesheet" href="{% static 'workshop/css/ws-details.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+
+
+{% block content %}
+
+
+<section class="bg-dark">
+	<div class="container py-4">
+		<h1 class="h1 text-center texh-white" id="pageHeaderTitle">Associate an expert</h1>
+
+		<article class="postcard dark ">
+			
+			<div class="postcard__text">
+				<h3 class="postcard__title text-success">Workshop title</h3>
+				
+				
+				<div class="postcard__preview-txt text-white">{{workshop.title}}</div>
+				
+			</div>
+		</article>
+		<div class="row">
+		    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success">Presentation file</h3>
+        			
+        				<div class="postcard__preview-txt text-white">
+        				    {% if workshop.load_pdf != ""%}
+                                <a href="{{workshop.load_pdf.url}}" class="m-0">    Download file  </a>
+                            {% else %}
+                                <div><a>Workshop has no file</a></div>
+                            {% endif %}
+        				    
+        				    
+        				</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+		        <article class="postcard dark ">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success">Previous exprience in workshops</h3>
+        				
+        				<div class="postcard__preview-txt text-white">
+        				    {% if workshop.proof_file != ""%}
+                            <div><a href="{{workshop.proof_file.url}}" style="text-decoration: underline;">Download file</a></div>
+                            {% else %}
+                            <div style="font-size:0.95em"><span class="d-block">No previous experience</span></div>
+                            {% endif %}
+        				    
+        				    
+        				    
+        				</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    
+		    
+		</div>
+		<article class="postcard dark">
+			<div class="postcard__text">
+				<h3 class="postcard__title text-success"><a href="#">Description</a></h3>
+				
+				<div class="postcard__preview-txt text-white">{{workshop.description}}</div>
+				
+			</div>
+		</article>
+		
+		<div class="row">
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Main field</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.main_field}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Subfield</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.sub_field}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Other field</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">
+        				    {% if workshop.add_field != "" %}
+                            <div>{{workshop.add_field}}</div>
+                            {% else %}
+                            <div><span class="d-block mt-2 text-center">No case registered</span></div>
+                            {% endif %}
+        				    
+        				    
+        				    
+        				</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    
+		</div>
+		
+		<div class="row">
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Holding date</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.date}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Start time</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.time_to_start}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark ">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Duration</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.duration}} hours</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    
+		</div>
+		
+		
+		<div class="row">
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Price per individual</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white"> $ {{workshop.price}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Language</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.language}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark ">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Holding a workshop</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">
+        				   {% if workshop.is_online != True %}
+                            <div>as in-person</div>
+                            {% else %}
+                            <div><span class="d-block mt-2 text-center">as online</span></div>
+                            {% endif %}
+        				    
+        				</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+
+
+			{%if comment %}
+			<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark ">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Expert's comment</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">
+
+                            <div><span class="d-block mt-2 text-center">{{comment.comment}}</span></div>
+
+        				   
+        				</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+			{%endif%}
+		    
+		    
+		</div>
+		
+		<div class="row">
+		<article class="postcard dark">
+			<div class="col-12 postcard__text">
+				<h3 class="postcard__title text-success"><a href="#">Time table</a></h3>
+				
+				<div class="postcard__preview-txt">
+				    <table class="table table-hover table-striped ">
+				        <thead class="table-info">
+				            <tr>
+				                <th>Section title</th>
+				                <th>Start date</th>
+				                <th>Start time</th>
+				                <th>End time</th>
+				                <th>Duration</th>
+				                <th>Price</th>
+				                
+				                
+				            </tr>
+				            
+				            
+				        </thead>
+				        <tbody class="table-dark">
+				            {% for time in time_table %}
+				            <tr>
+				                <td>{{time.title}}</td>
+				                <td>{{time.start_date}}</td>
+				                <td>{{time.start_time}}</td>
+				                <td>{{time.end_time}}</td>
+				                <td>{{time.duration}}</td>
+				                <td>{{time.price}}$</td>
+				            </tr>
+				            {% endfor %}
+				        </tbody>
+				        
+				        
+				        
+				        
+				        
+				    </table>
+				    
+				    
+				    
+				</div>
+				
+			</div>
+		</article>
+		</div>
+		
+		
+		
+		
+		<div class="row">
+		    
+		        <article class="postcard dark p-5">
+		            <h3 class="postcard__title text-success"><a href="#">Select an expert</a></h3>
+        			<form  method="POST" action="{% url 'add_expert' workshop.id %}" class="w-100 p-0 justify-content-between">
+                    {% csrf_token %}
+                        <div class="row">
+                            
+                            <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
+                                <div class="row px-4">
+                                    <select class="form-control py-2" name="expert" style="font-size:14px">
+                                    {% for user in users %}
+                                        <option value="{{user.id}}">{{user.first_name}} {{user.last_name}}</option>
+                                    {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="AccPerm" id="Accperm" class="form-input-check" style="width:20px;height:20px" value='true'>
+                                        <label for="Accperm" class="form-label text-success">Do you want to give the "Access" or "Reject" permission to the expert?</label>
+                                        
+                                    </div>
+                                    
+                                    
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                                <button class="btn btn-success btn-block py-2" type="submit">Associate</button>
+                            </div>
+                            
+                            
+                            
+                        </div>
+                        
+                        
+                    </form>
+		        </article>
+		        
+		    
+		    
+		    
+		 </div>
+		
+		
+		
+	</div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--=========================================================================================================================================-->
+<!--<div class="w-100 mt-3 " >
+    <div class="workshp-info mx-auto">
+        <div class="text-center">Adding expert form</div>
+        <div class="w-100 text-start" style="height:200px;background-color:#fff;box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px; vertical-align:middle">
+            <h3 class="workshp-title mb-3">{{workshop.title}}</h3>
+            
+        </div>
+        <div>
+            <div>
+                {% if workshop.load_pdf != ""%}
+                     <h4 class="mt-3" style="color:#EEAE3F">Presentation File</h4>
+                   <!-- <span class="d-block mt-2 text-center">Workshop File</span>
+                   <div>
+                    <a href="{{workshop.load_pdf.url}}" style="color:#fff;text-decoration: underline;">Download</a></div>
+                {% else %}
+                    <div style="font-size:0.95em"><span class="d-block mt-2 text-center">Workshop has no file</span></div>
+                {% endif %}
+            </div>
+            <div>
+                 {% if workshop.proof_file != ""%}
+                     <h4 class="mt-3" style="color:#EEAE3F">Previous exprience in workshops</h4>
+                   <!-- <span class="d-block mt-2 text-center">Workshop File</span>--
+                   <div>
+                       
+                    <a href="{{workshop.proof_file.url}}" style="color:#fff;text-decoration: underline;">Proof File</a></div>
+                {% else %}
+                    <div style="font-size:0.95em"><span class="d-block mt-2 text-center">No file</span></div>
+                {% endif %}
+                
+                
+            </div>
+            <div>
+               <h4 class="mt-3" style="color:#EEAE3F">Description</h4>
+                <div style="font-size:0.95em">{{workshop.description}}</div>
+            </div>
+            <div>
+               <h4 class="mt-3" style="color:#EEAE3F">Main field</h4>
+                <div style="font-size:0.95em">{{workshop.main_field}}</div>
+            </div>
+            <div>
+               <h4 class="mt-3" style="color:#EEAE3F">Sub field</h4>
+                <div style="font-size:0.95em">{{workshop.sub_field}}</div>
+            </div>
+            <div>
+               <h4 class="mt-3" style="color:#EEAE3F">Date</h4>
+                <div style="font-size:0.95em">{{workshop.date}}</div>
+            </div>
+            <div>
+               <h4 class="mt-3" style="color:#EEAE3F">Price</h4>
+                <div style="font-size:0.95em">{{workshop.price}}</div>
+            </div>
+                
+        </div>
+           
+            
+       
+        
+        <div class="box1 mb-3  mt-4" style="overflow:visible;">
+            <form method="POST" action="{% url 'add_expert' workshop.id %}" class="p-0 d-flex justify-content-between">
+            {% csrf_token %}
+                <select name="expert" style="font-size:14px">
+                {% for user in users %}
+                    <option value="{{user.id}}">{{user.first_name}} {{user.last_name}}</option>
+                {% endfor %}
+                </select>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>-->
+
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+
+{% endblock content %}

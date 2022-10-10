@@ -1,0 +1,389 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.cs' %}">
+    <!--<link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">-->
+    <link rel="stylesheet" href="{% static 'workshop/css/ws-details.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+
+
+{% block content %}
+
+
+<section class="bg-dark">
+	<div class="container py-4">
+		<h1 class="h1 text-center texh-white" id="pageHeaderTitle">Workshop detail</h1>
+
+		<article class="postcard dark ">
+			
+			<div class="postcard__text">
+				<h3 class="postcard__title text-success">Workshop title</h3>
+				
+				
+				<div class="postcard__preview-txt text-white">{{workshop.title}}</div>
+				
+			</div>
+		</article>
+		<div class="row">
+		    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success">Presentation file</h3>
+        			
+        				<div class="postcard__preview-txt text-white">
+        				    {% if workshop.load_pdf != ""%}
+                                <a href="{{workshop.load_pdf.url}}" class="m-0">    Download file  </a>
+                            {% else %}
+                                <div><a>Workshop has no file</a></div>
+                            {% endif %}
+        				    
+        				    
+        				</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+		        <article class="postcard dark ">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success">Previous exprience in workshops</h3>
+        				
+        				<div class="postcard__preview-txt text-white">
+        				    {% if workshop.proof_file != ""%}
+                            <div><a href="{{workshop.proof_file.url}}" style="text-decoration: underline;">Download file</a></div>
+                            {% else %}
+                            <div style="font-size:0.95em"><span class="d-block">No previous experience</span></div>
+                            {% endif %}
+        				    
+        				    
+        				    
+        				</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    
+		    
+		</div>
+		<article class="postcard dark">
+			<div class="postcard__text">
+				<h3 class="postcard__title text-success"><a href="#">Description</a></h3>
+				
+				<div class="postcard__preview-txt text-white">{{workshop.description}}</div>
+				
+			</div>
+		</article>
+		
+		<div class="row">
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Main field</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.main_field}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Subfield</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.sub_field}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Other field</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">
+        				    {% if workshop.add_field != "" %}
+                            <div>{{workshop.add_field}}</div>
+                            {% else %}
+                            <div><span class="d-block mt-2 text-center">No case registered</span></div>
+                            {% endif %}
+        				    
+        				    
+        				    
+        				</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    
+		</div>
+		
+		<div class="row">
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Holding date</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.date}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Start time</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.time_to_start}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark ">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Duration</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.duration}} hours</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    
+		</div>
+		
+		
+		<div class="row">
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Price per individual</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white"> $ {{workshop.price}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Language</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{workshop.language}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark ">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Holding a workshop</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">
+        				   {% if workshop.is_online != True %}
+                            <div>as in-person</div>
+                            {% else %}
+                            <div>as online</div>
+                            {% endif %}
+        				    
+        				</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    
+		</div>
+		{% if workshop.status != 'Set_time_table' %}
+		<div class="row">
+		<article class="postcard dark">
+			<div class="col-12 postcard__text">
+				<h3 class="postcard__title text-success"><a href="#">Time table</a></h3>
+				
+				<div class="postcard__preview-txt">
+				    <table class="table table-hover table-striped ">
+				        <thead class="table-info">
+				            <tr>
+				                <th>Section title</th>
+				                <th>Start date</th>
+				                <th>Start time</th>
+				                <th>End time</th>
+				                <th>Duration</th>
+				                <th>Price</th>
+				                
+				                
+				            </tr>
+				            
+				            
+				        </thead>
+				        <tbody class="table-dark">
+				            {% for time in time_table %}
+				            <tr>
+				                <td>{{time.title}}</td>
+				                <td>{{time.start_date}}</td>
+				                <td>{{time.start_time}}</td>
+				                <td>{{time.end_time}}</td>
+				                <td>{{time.duration}}</td>
+				                <td>{{time.price}}$</td>
+				            </tr>
+				            {% endfor %}
+				        </tbody>
+				        
+				        
+				        
+				        
+				        
+				    </table>
+				    
+				    
+				    
+				</div>
+				
+			</div>
+		</article>
+		</div>
+		{% endif %}
+
+		{%if workshop.status == 'Revise_contract_to_supervisor' %}
+		<div class="row">
+			<article class="postcard dark">
+				<div class="col-12 postcard__text">
+					<h3 class="postcard__title text-success"><a href="#">Expert's comments</a></h3>
+					
+					<div class="postcard__preview-txt">
+
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-1 px-1"> 
+
+									
+										{%if comment%}
+											<p class="text-white">{{comment.comment}}</p>
+										{%endif%}
+										
+									
+								</div>
+					
+					</div>				
+				</div>
+			</article>
+		</div>
+		{%endif%}
+
+		{%if workshop.status == 'Reject_contract_to_supervisor' %}
+		<div class="row">
+			<article class="postcard dark">
+				<div class="col-12 postcard__text">
+					<h3 class="postcard__title text-success"><a href="#">Manager's comments</a></h3>
+					
+					<div class="postcard__preview-txt">
+
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-1 px-1"> 
+
+									
+										{%if comment%}
+											<p class="text-white">{{accept_reject.comment}}</p>
+										{%endif%}
+										
+									
+								</div>
+					
+					</div>				
+				</div>
+			</article>
+		</div>
+		{%endif%}
+
+
+
+<!--..........................................................Contract................................................-->
+
+
+		<div class="row">
+			<article class="postcard dark">
+				<div class="col-12 postcard__text">
+					<h3 class="postcard__title text-success"><a href="#">Contract</a></h3>
+					
+					<div class="postcard__preview-txt">
+
+					<!--Upload_contract-->
+					{%if workshop.status == 'Upload_contract' %}
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-1 px-1"> 
+										<a style="color:#90EE90; font-size:0.9em" href='{{SITE_URL}}/media/{{accept_reject.contract}}' class="btn btn-success" target='_blank'>View Contract</a>		
+
+										<a style="color:#90EE90; font-size:0.9em" href="{% url 'supervisor-contract-status' pk=workshop.pk %}" class="btn btn-primary">Next</a>
+
+								</div>
+					<hr>							
+					{%endif%}
+
+
+					<!--VIEW CONTRACT-->
+					{%if workshop.contract%}
+
+							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-1 px-1"> 
+										<a style="color:#90EE90; font-size:0.9em" href='{{SITE_URL}}/media/{{workshop.contract}}' class="btn btn-success" target='_blank'>View The contract signed by you</a>		
+								
+										{%if workshop.status == 'Revise_contract_to_supervisor' %}
+											<a style="color:#90EE90; font-size:0.9em" href="{% url 'supervisor-contract-status' pk=workshop.pk %}?filter=edit" class="btn btn-warning">edit</a>
+											<a style="color:#90EE90; font-size:0.9em" href='{{SITE_URL}}/media/{{accept_reject.contract}}' class="btn btn-success" target='_blank'>View  contract</a>		
+										{%endif%}
+							</div>
+
+					{%endif%}
+
+					<!--REJECT CONTRACT-->
+					{%if workshop.status == 'Reject_contract_to_supervisor' %}
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-1 px-1"> 
+
+										<a style="color:#90EE90; font-size:0.9em" href="{% url 'supervisor-contract-status' pk=workshop.pk %}?filter=edit" class="btn btn-warning">Edit</a>
+										
+										<a style="color:#90EE90; font-size:0.9em" href="{% url 'delete-workshop' pk=workshop.pk %}" class="btn btn-danger">Delete</a>
+
+								</div>
+					<hr>							
+					{%endif%}
+
+
+					
+					</div>				
+				</div>
+			</article>
+		</div>
+
+
+
+	</div>
+</section>
+
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+
+{% endblock content %}

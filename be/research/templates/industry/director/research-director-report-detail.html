@@ -1,0 +1,541 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-eye"></i> Report view </h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}project{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is Defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are chosen</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation is sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is new</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row">
+            {% if selected_project.is_valid %}
+                {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                <div class="col-md-3 my-1">
+                        <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="row">
+        <!-- new table theme -->         
+        <main class="container-fluid  ">
+            <div class="content my-4">
+                <div class="row px-4 py-2">
+                    <div class="col-md-12">
+                        <h2 style="overflow: hidden">{{selected_project.title}}</h2>
+                        {% if selected_project.fund > 0 %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                    ${{selected_project.fund}}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if selected_project.status == 'Rejected' %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                 
+                                <span class="badge badge-danger">Reason of rejection</span>
+                                {{selected_project.reject_reason}}                            
+                                </div>
+                            </div>
+                        </div>
+
+                        {% endif %}
+
+                        {% if project_areas %}
+                            <div class="col-md-12">
+                                <label class="form-label">Project areas:</label>
+                                <div class="form-group ">
+                                    <span class="text-info bold"></span>
+                                        {% for project_area in project_areas %}
+                                        <span class="badge
+                                        {% if project_area.is_confirmed %}
+                                            {% if project_area.area.confirmed %}
+                                            badge-success
+                                            {% else %}
+                                            badge-danger
+                                            {% endif %}
+                                        {% else %}
+                                            badge-warning
+                                        {% endif %}
+                                            ">{{project_area.area}}</span>
+                                            {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+    
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="form-group ">
+                            <label class="form-label">Name:</label>
+                            <input type="text" class="form-control" value="{{object.project.client_form.formclint.name}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">Title:</label>
+                            <input type="text" class="form-control" value="{{object.project.client_form.formclint.title}}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Fund:</label>
+                            <input type="text" class="form-control" value="${{object.project.client_form.formclint.fund}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">Dataset link:</label>
+                            {% if object.project.client_form.formclint.data_set_link %}
+                            <a href="{{object.project.client_form.formclint.data_set_link}}">Click</a>
+                            {% else %}
+                            <input type="text" class="form-control" value="There is no link" disabled>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Submission date:</label>
+                            <input type="text" class="form-control" value="{{object.project.client_form.formclint.created|date:'m-d-Y'}}" disabled>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Suggested start date:</label>
+                            <input type="text" class="form-control" value="{{object.project.client_form.formclint.start_date}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Suggested end date:</label>
+                            <input type="text" class="form-control" value="{{object.project.client_form.formclint.end_date}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Abstrack:</label>
+                            <input type="text" class="form-control" value="{{object.project.client_form.formclint.abstrack}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Equipment:</label>
+                            <input type="text" class="form-control" value="{{object.project.client_form.formclint.abstrack}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Requirement:</label>
+                            <input type="text" class="form-control" value="{{object.project.client_form.formclint.requirement}}" disabled>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            
+        
+
+                    <!-- WBS table -->
+                    <br>
+                    <br>
+                    <hr class="border-warning">
+                    <h4 class="text-center">WBS table</h4>
+                    <br>
+                    <table class="table table-hover table striped">
+                        <thead class="text-dark" style="background-color:#ADD8E6">
+                            <tr>
+                                <th>Topic</th>
+                                <th>Suggested start date</th>
+                                <th>Suggested end date</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody class=" table-dark">
+                            {% for i in wbs_list %}
+                            <tr>
+                                <td>{{i.topic}} </td>
+                                <td>{{i.start_date}}</td>
+                                <td>{{i.end_date}} </td>
+                                <td>
+                                    {% if i.status == None %}
+                                        <h6 class="">The time is left </h6>
+                                    {% elif i.status == "end_of_report" %}
+                                        <h6 class="">Answered</h6>
+                                    {% else %}
+                                        <h6 class="">Unanswered</h6>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if i.status == "end_of_report" %}
+                                        <button type="button" class="btn btn-primary" value="declined" data-bs-toggle="modal" data-bs-target="#view_comment{{i.pk}}">View main supervisor's report</button>
+                                    {% else %}
+                                        <button type="button" disabled class="btn btn-primary" value="declined" data-bs-toggle="modal" data-bs-target="#view_comment{{i.pk}}">View main supervisor's report</button>
+                                    {% endif %}
+
+                                    {% if i.question_1 %}
+                                    <a href="{% url 'industry:project-upload-paper' i.pk %}" target="_blank" class="btn btn-success">View paper / conference</a>
+                                    {% else %}
+                                        <button type="button" disabled class="btn btn-success" value="declined" data-bs-toggle="modal" data-bs-target="#view_comment{{i.pk}}">View paper / conference</button>
+                                    {% endif %}
+
+
+                                    {% if i.question_1 %}
+                                        {% if i.confirm == False %}
+                                        <button  type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                            data-bs-target="#confirm_produc{{i.pk}}" class="btn btn-secondary mt-2">
+                                            Send the product to the ad <i class="fa fa-times-circle" style="color:red"></i>
+                                        </button>
+                                        {% elif i.confirm == True %}
+                                        <button  type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                            data-bs-target="#not_confirm{{i.pk}}" class="btn btn-secondary mt-2">
+                                            Send the product to the ad <i class="fa fa-check-circle" style="color:green"></i>
+                                        </button>
+                                        {% endif %}
+                                    {% else %}
+                                        <button disabled type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                            data-bs-target="#confirm_produc{{i.pk}}" class="btn btn-secondary mt-2">
+                                            Send the product to the ad <i class="fa fa-times-circle" style="color:red"></i>
+                                        </button>
+                                    {% endif %}
+
+                                    {% if today >= i.end_date %}
+                                    <button type="button" class="btn btn-secondary" value="declined" data-bs-toggle="modal" data-bs-target="#report_Applicant{{i.pk}}">View applicant's report</button>
+                                    {% endif %}
+
+
+                                        
+                                    <div class="modal fade" id="report_Applicant{{i.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title text-white" id="exampleModalLabel"></h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                                                </div>
+                                                
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                                            <table class="table table-dark table-bordered">
+                                                                <tbody class="text-center">
+                                                                    <tr class="table-info text-dark">
+                                                                        <td>Full name:</td>
+                                                                        <td>Email:</td>
+                                                                        <td>Position:</td>
+                                                                        <td>Action"</td>
+                                                                    </tr>
+                                                                    {% for r in i.wbs_objects.all %}
+                                                                        <tr class="text-dark">
+                                                                            <td>{{r.applicant.get_full_name}}</td>
+                                                                            <td>{{r.applicant.email}}</td>
+                                                                            <td>{{r.position}}</td>
+                                                                            <td>
+                                                                                <button type="button" class="btn btn-primary" value="declined" data-bs-toggle="modal" data-bs-target="#view-evaluation{{r.pk}}">View report</button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row text-center">
+                                                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 text-end">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                                
+                                        </div><!--modal-dialog-->
+                                    </div> <!--modal-->  
+
+                                          
+
+
+                                    <div class="modal fade" id="not_confirm{{i.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="POST" action="{% url 'industry:confirm-produc' object.project.pk %}" id="pform" enctype="multipart/form-data">{% csrf_token %}
+                                                    <div class="modal-body">
+                                                    <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+                                                        <input type="hidden" name="id_wbs" value="{{i.pk}}">
+                                                        <input type="hidden" name="status" value="True">
+                                                        <input type="hidden" name="position" value="report-expert">
+                                                        <input type="hidden" name="position_user" value="expert">
+
+                                                    <h6 class="text-dark">Are you sure to send the product to the advertisement team?</h6>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-success">Send</button>
+                                                        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="modal fade" id="confirm_produc{{i.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="POST" action="{% url 'industry:confirm-produc' object.project.pk %}" id="pform" enctype="multipart/form-data">{% csrf_token %}
+                                                    <div class="modal-body">
+                                                    <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+                                                        <input type="hidden" name="id_wbs" value="{{i.pk}}">
+                                                        <input type="hidden" name="status" value="True">
+                                                        <input type="hidden" name="position" value="report-expert">
+                                                        <input type="hidden" name="position_user" value="expert">
+
+                                                    <h6 class="text-dark">Are you sure to send the product to the advertisement team?</h6>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-success">Send</button>
+                                                        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div> 
+
+                                </td>
+                            </tr>
+
+                            <div class="modal fade text-black" style="color:black" id="view_comment{{i.pk}}" tabindex="-1" aria-labelledby="rejectLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-md">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            <label>Report</label>
+                                            <textarea disabled class="w-100 form-control" rows="5" style="width: 350px;">{{i.report}}</textarea>
+                                            <div id="decline_reason_error" style="color:red"></div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" id="clsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    
+                    <div class="col-md-6">
+                        <br>
+                        <br>
+                        <a href="{% url 'industry:research-director-manage-project' %}" class="btn btn-warning">Back</a>
+                    </div>
+            </div>
+        </main>
+        </div>
+
+
+
+        {% for i in wbs_list %}
+            {% for r in i.wbs_objects.all %}
+                <div class="modal fade" id="view-evaluation{{r.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <form method="POST" action="{% url 'industry:project-report-applicant-wbs' %}">{% csrf_token %}
+                                <div class="modal-body">
+                                    <div class="modal-body text-dark">
+                                        
+                                        <input type="hidden" name="id_pr" id="id_id_pr" value="{{i.id}}" >
+                                        <div class="form-group col-md-12 mb-0">
+                                        </div>
+                                        <div class ="row">
+                                            <div class="col-md-6 py-2">
+                                                
+                                             
+                                                <p>question 1 : test test</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    
+                                                    <h6>{{r.question_1}}</h6>
+                                                    
+                                                
+                                                </div>
+                                                 <input type="hidden" name="question_1" id="question_1{{i.id}}" value="" class="form-control" />
+                                                </div>
+                                        </div>
+                                        
+                                        <div class ="row">
+                                            <div class="col-md-6 py-2">
+                                                
+                                             
+                                                <p>question 2 : test test</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    
+                                                    <h6>{{r.question_2}}</h6>
+                                                
+                                                </div>
+                                                 <input type="hidden" name="question_2" id="question_2{{i.id}}" value="" class="form-control">
+                                                </div>
+                                        </div>
+                                        
+                                        <div class ="row">
+                                            <div class="col-md-6 py-2">
+                                                
+                                             
+                                                <p>question 3 : test test</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    
+                                                    <h6>{{r.question_3}}</h6>
+                                                    
+                                             </div>  
+                                       </div>
+                                        <div class ="row">
+                                            <div class="col-md-6 py-2">
+                                                
+                                             
+                                                <p>question 4 : test test</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    
+                                                    
+                                                    <h6>{{r.question_4}}</h6>
+                                                
+                                                </div>
+                                                <input type="hidden" name="question_4" id="question_4{{i.id}}" value="" class="form-control">
+                                                </div>
+                                        </div>
+                                       
+                                       
+                                       
+                                        
+
+                                        <input type="hidden" name="wbs_id" value="{{i.pk}}">
+                                        <input type="hidden" name="obj_id" value="{{object.pk}}">
+                                        <input type="hidden" name="position" value="{{position}}">
+                                        
+                                        <div class="form-group col-md-12 mb-0">
+                                            <div id="div_id_status" class="form-group">
+                                                <input type="hidden" name="status" id="id_status" value="end_of_report" >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+{% endblock script %}

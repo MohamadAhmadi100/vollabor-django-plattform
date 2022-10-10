@@ -1,0 +1,398 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block css %}
+    
+    <link rel="stylesheet" href="{% static 'projects/css/main.css' %}">
+   
+{% endblock css %}
+
+{% block content %}
+
+
+
+<div id="projects">
+    <div id="carouselExampleIndicators" class="banner_top carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active ">
+                <div class="row">
+                    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h2 class="text-white" style="font-size:28px;">
+                            TECVICO leads you to success
+
+                        </h2>
+                        <!--{% if user.is_authenticated %}-->
+                        
+                        <!--{% else %}-->
+                        <!--<a href="{% url 'cv-upload-page' %}" class="custom_btn  mt-3  text-white">Join us</a>-->
+                        <!--{% endif %}-->
+                    </div>
+                    <div class="col-md-6 position-relative">
+                        <img class="img-fluid" src="{% static 'projects/img/project.png' %}" style="height: 370px;max-height: max-content"
+                             alt="">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="container-fluid p-5">
+        <!--<div class="back-link d-flex align-items-center mt-3">-->
+        <!--    <a href="#" class="">Home</a>-->
+        <!--    <i class="fa fa-angle-right fa-2x mx-2"></i>-->
+        <!--    <a href="#" class="active">Projects</a>-->
+        <!--</div>-->
+        <!--<div class="sm_sidebar mt-3">-->
+        <!--    <button class="btn btn-outline-primary filter_right">-->
+        <!--        <i class="fa fa-filter"></i>-->
+        <!--        <span>Filter</span>-->
+        <!--    </button>-->
+        <!--</div>-->
+        <div class="wrapper d-flex justify-content-center">
+            <form method="POST">{% csrf_token %}
+                <div class="sidebar_filter">
+                    <form action="{% url 'industry:industry-project-search' %}">
+                        <div class="item">
+                            <a class="main d-flex align-items-center justify-content-between ">
+                                <span>Search</span>
+                            </a>
+                            <input type="text" class="form-control mt-2 mb-2" placeholder="search by title & keywords">
+        
+                        </div>
+                    </form>
+
+                    <!--<div class="item">-->
+                    <!--    <a class="main d-flex align-items-center justify-content-between">-->
+                    <!--        <span>Categories</span>-->
+                    <!--        <i class="fa fa-angle-down "></i>-->
+                    <!--    </a>-->
+                    <!--    <div class="preloader d-none">-->
+                    <!--        <i class="fa-filter"></i>-->
+                    <!--    </div>-->
+                    <!--    <ul class="unstyled centered" name="main[]">-->
+                    <!--        <li>-->
+                    <!--            <input class="styled-checkbox" id="main-1" type="checkbox" value="Industry">-->
+                    <!--            <label for="main-1">Industry</label>-->
+                    <!--        </li>-->
+                    <!--        <li>-->
+                    <!--            <input class="styled-checkbox" id="main-2" type="checkbox" value="Research">-->
+                    <!--            <label for="main-2">Research</label>-->
+                    <!--        </li>-->
+                    <!--        <li>-->
+                    <!--            <input class="styled-checkbox" id="main-3" type="checkbox" value="Competition">-->
+                    <!--            <label for="main-3">Competition</label>-->
+                    <!--        </li>-->
+                    <!--    </ul>-->
+                    <!--</div>-->
+                    
+                    <div class="item">
+                        <a class="main d-flex align-items-center justify-content-between">
+                            <span>Status</span>
+                            <i class="fa fa-angle-down "></i>
+                        </a>
+                        <div class="preloader d-none">
+                            <i class="fa-filter"></i>
+                        </div>
+                        <ul class="unstyled centered" name="status[]">
+                             <li>
+                                <input class="styled-checkbox status" id="status-1" type="checkbox" value="new">
+                                <label for="status-1">New</label>
+                                <hr>
+                            </li>
+                            <li>
+                                <input class="styled-checkbox status" id="status-2" type="checkbox" value="on_going">
+                                <label for="status-2">OnGoing</label>
+                                <hr>
+                            </li>
+                            <li>
+                                <input class="styled-checkbox status" id="status-3" type="checkbox" value="done">
+                                <label for="status-3">Done</label>
+                                <hr>
+                            </li> 
+
+                        </ul>
+
+                    </div>
+
+                    <div class="item">
+                        <a class="main d-flex align-items-center justify-content-between">
+                            <span>Grade</span>
+                            <i class="fa fa-angle-down "></i>
+                        </a>
+                        <div class="preloader d-none">
+                            <i class="fa-filter"></i>
+                        </div>
+                        <ul class="unstyled centered" name="date[]">
+                            <li>
+                                <input class="styled-checkbox grade" id="date-1" type="checkbox" value="hard">
+                                <label for="date-1">Gold</label>
+                            </li>
+                            <li>
+                                <input class="styled-checkbox grade" id="date-2" type="checkbox" value="normal">
+                                <label for="date-2">Silver</label>
+                            </li>
+                            <li>
+                                <input class="styled-checkbox grade" id="date-3" type="checkbox" value="easy">
+                                <label for="date-3">Bronze</label>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </form>
+                <div class="content ms-2 d-flex flex-column justify-content-center align-items-center" id="project-filter">
+
+                    {% for i in object_list %}
+                        <div class="item mb-3 d-flex align-items-center active">
+                             <img class="workshop_img" src="{{i.project.upload_pictures.url}}" alt="">
+                            <!--{% if i.upload_pictures %}-->
+                           
+                            <!--{% else %}
+                            <img class="workshop_img" src="" alt="">
+                            {% endif %}-->
+                            <img class="discount" src="" alt="">
+                            <div class="text ">
+                                <div class="icon&btn d-flex  align-items-center  ">
+                                    <a href="#" class="peoples_attend ">
+                                        <img class="img-fluid " src="{{i.main_supervisor.memberprofile.image.url}}" alt="">
+                                    </a>
+                                    <h6 class="text-dark mx-4">Project ID: {{i.project.client_form.formclint.id_project}}</h6>
+                                    {%  if i.status_value == 'hard' %}
+                                        <span class="badge badge-warning">Gold</span>
+                                    {% endif %}
+                                    {%  if i.status_value == 'normal' %}
+                                        <span class="badge badge-warning">Silver</span>
+                                    {% endif %}
+                                    {%  if i.status_value == 'easy' %}
+                                        <span class="badge badge-warning">Bronze</span>
+                                    {% endif %}
+                                </div>
+                                <h5 class="fw-bold mt-2">{{i.project.client_form.formclint.title|truncatewords:15}}</h5>
+
+                                <p class="w-75">{{i.project.client_form.formclint.abstrack|truncatewords:25}}</p>
+                                <div class="icon&btn d-flex  align-items-center justify-content-between ">
+                                    <div class="icon d-flex align-items-center">
+                                        <div class="date d-flex align-items-center justify-content-center mx-2">
+                                            <img src="{% static 'projects/img/date.svg' %}" class="mx-1" alt="">
+                                            <span class="text-muted">{{i.project.client_form.formclint.start_date}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="btn d-flex align-items-center">
+                                        <a href="{% url 'projects-page-detail' i.pk %}" class="view mx-2">View</a>
+                                        <a href="{% url 'industry:industry-project-apply' i.pk %}" class="buy   mx-2 d-flex align-items-center justify-content-center">
+                                    Apply</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                        <nav aria-label="Page navigation example" class="d-flex justify-content-center my-5">
+                            {% if page_obj.has_other_pages %}
+                            <ul  class="pagination">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{% url 'projects-page' page_obj.previous_page_number %}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+            
+                                {% for i in paginator.page_range %}
+                                    {% if page_obj.number == i %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#">
+                                            {{ i }}
+                                            </a>
+                                        </li>   
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{% url 'projects-page' i %}">
+                                                {{ i }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+            
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{% url 'projects-page' page_obj.next_page_number %}">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                            {% endif %}
+                        </nav>
+                </div>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar_bg ">
+    <div class="sidebar_right  ">
+        <a class=" btn clos">
+            <i class="fa fa-times-circle "></i>
+        </a>
+        <form method="POST">{% csrf_token %}
+            <form action="{% url 'industry:industry-project-search' %}">
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between ">
+                        <span>Search</span>
+                    </a>
+                    <input type="text" class="form-control mt-2 mb-2" placeholder="search by title & keywords">
+
+                </div>
+            </form>
+
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between">
+                    <span>Categories</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <div class="preloader d-none">
+                    <i class="fa-filter"></i>
+                </div>
+                <ul class="unstyled centered" name="main[]">
+                    <li>
+                        <input class="styled-checkbox" id="main-1" type="checkbox" value="Industry">
+                        <label for="main-1">Industry</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="main-2" type="checkbox" value="Research">
+                        <label for="main-2">Research</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="main-3" type="checkbox" value="Competition">
+                        <label for="main-3">Competition</label>
+                    </li>
+                </ul>
+            </div>
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between">
+                    <span>Status</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <div class="preloader d-none">
+                    <i class="fa-filter"></i>
+                </div>
+                <ul class="unstyled centered" name="status[]">
+                     <li>
+                        <input class="styled-checkbox status" id="status-1" type="checkbox" value="new">
+                        <label for="status-1">New</label>
+                        <hr>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox status" id="status-2" type="checkbox" value="on_going">
+                        <label for="status-2">OnGoing</label>
+                        <hr>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox status" id="status-3" type="checkbox" value="done">
+                        <label for="status-3">Done</label>
+                        <hr>
+                    </li> 
+
+                </ul>
+
+            </div>
+
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between">
+                    <span>Grade</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <div class="preloader d-none">
+                    <i class="fa-filter"></i>
+                </div>
+                <ul class="unstyled centered" name="date[]">
+                    <li>
+                        <input class="styled-checkbox grade" id="date-1" type="checkbox" value="hard">
+                        <label for="date-1">Gold</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox grade" id="date-2" type="checkbox" value="normal">
+                        <label for="date-2">Silver</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox grade" id="date-3" type="checkbox" value="easy">
+                        <label for="date-3">Bronze</label>
+                    </li>
+
+                </ul>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+{% endblock content %}
+{% block script %}  
+<!------ js files ----->
+<script src="{% static 'projects/js/main.js' %}"></script>
+<script>
+    let project_status = []
+    let project_grade = []
+    $(document).ready(function(){
+        $('.styled-checkbox.status').click(function (){
+        if ($(this).is(":checked")){
+            project_status.push($(this).attr('value'))
+        }
+        else {
+            let val = $(this).attr('value')
+            const index = project_status.indexOf(val);
+            if (index > -1) {
+                project_status.splice(index, 1);
+                }
+            }
+        })
+        
+        $('.styled-checkbox.grade').click(function (){
+        if ($(this).is(":checked")){
+            project_grade.push($(this).attr('value'))
+        }
+        else {
+            let val = $(this).attr('value')
+            const index = project_grade.indexOf(val);
+            if (index > -1) {
+                project_grade.splice(index, 1);
+                }
+            }
+        })
+        
+        $('.styled-checkbox').click(function () {
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'ajax_project_filter' %}",
+                data: {
+                    'project_status':project_status,
+                    'project_grade':project_grade,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $('#project-filter').html(data);
+                },
+                error: function (request, errors) {
+                    alert(errors.responseText)
+                }
+            });
+        });
+    })
+</script>
+
+
+
+{% endblock script %}
+

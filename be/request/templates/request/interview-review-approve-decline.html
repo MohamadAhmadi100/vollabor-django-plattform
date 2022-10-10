@@ -1,0 +1,128 @@
+{% extends "request/base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-5 pt-5">
+        <div class="col-12">
+            <h3 class="text-secondary">Badge request</h3>
+            
+        </div>
+        
+    </div>
+    <hr class="mb-5">
+    <div class="">
+        <div class="row" id="expert-box">
+            <div class="col-3"><h6>Badge request:</h6></div>
+            <div class="col-9"><h6>{{form.skills}}</h6></div>
+        </div>
+        <div class="row" id="expert-box">
+            <div class="col-3"><h6>Submission date:</h6></div>
+            <div class="col-9"><h6>{{form.created.date}}</h6></div>
+        </div>
+        <div class="row" id="expert-box">
+            <div class="col-3"><h6>Applicant:</h6></div>
+            <div class="col-9"><h6>{{form.user.get_full_name}}</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Email:</h6></div>
+            <div class="col-9"><h6>{{form.user.email}}</h6></div>
+        </div>
+        <div class="row" id="view-box">
+            <div class="col-3"><h6>Resume:</h6></div>
+            <div class="col-9"><h6><a class="badge badge-primary" href="{{user_cv_file.url}}" target="_blank">Download</a></h6></div>
+        </div>
+    <form method="post" id="appform">
+        {% csrf_token %}
+        <div class="mt-5">
+            <div class="">
+                <button type="button" class="btn btn-primary" value="declined" data-bs-toggle="modal" data-bs-target="#approve">Approve</button>
+                <button type="button" class="btn btn-danger" value="declined" data-bs-toggle="modal" data-bs-target="#reject">Decline</button>
+            </div>
+        </div>
+       
+
+        <div class="modal fade text-black" style="color:black" id="approve" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <h6>Are you sure to approve the request?</h6>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <input type="submit" id="appBtn2" class="btn btn-primary" name="btn" value="Approve">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </form>
+    
+    <div class="modal fade text-black" style="color:black" id="reject" tabindex="-1" aria-labelledby="rejectLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <form method="POST" id="decform">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <label>Rejection reason<span style="color:red">*</span></label>
+                        <textarea class="w-100 form-control" rows="5" name="decline_reason" id="decline_reason" oninput="ClearErr('decline_reason')" style="width: 350px;"></textarea>
+                        <div id="decline_reason_error" style="color:red"></div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="clsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        {% csrf_token %}
+                        <input type="button" id="decBtn" class="btn btn-danger" name="btn" value="Decline">
+                        
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    </div>
+    
+    
+     
+    
+    
+</div>
+
+<script>
+    
+ $(document).ready(function() {
+     
+    document.getElementById("decBtn").addEventListener("click",function(){
+              
+        var declineReason=document.getElementById("decline_reason").value;
+        if(declineReason.length==0){
+            document.getElementById("decline_reason_error").innerHTML="Error: please enter the decline reason."
+        }else{
+            document.getElementById('decform').submit();
+            document.getElementById('decBtn').disabled = true;
+             document.getElementById('clsBtn').disabled = true;
+        }
+          
+    }); 
+     
+    document.getElementById("appBtn").addEventListener("click",function(){
+        document.getElementById('appform').submit();
+        document.getElementById('appBtn').disabled = true; 
+        document.getElementById('decBtn').disabled = true;
+         
+    });
+     
+     
+     
+ });
+ 
+ 
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+}
+    
+</script>
+   
+
+{% endblock %}

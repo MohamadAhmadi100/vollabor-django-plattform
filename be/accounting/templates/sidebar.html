@@ -1,0 +1,303 @@
+{% load static %}
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <!-- Brand Logo -->
+
+
+  <!-- Sidebar -->
+<div class="sidebar">
+    <!-- Sidebar user panel (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+
+      <div class="info">
+        <h4 style="color: white; font-size: 17px">{{user.get_full_name}}</h4>
+      </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+  <nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      {%if request.user.is_superuser == False%}
+      {%for role in roles%}
+        {%if role.position == 'accounting expert' or role.position == 'accounting manager' %} 
+            <!-- Balance reporting-->
+              <li class="nav-item {% if 'reporting' in request.resolver_match.url_name %}menu-open{% endif %} ">
+                <a href="#" class="nav-link"> 
+                  <i class="fa-solid fas fa-wallet"></i>
+                  <p>
+                    Reporting 
+                    <i class="right fas fa-angle-left"></i>
+                  </p>  
+                </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                          <a href="{% url 'accounting:reporting-balance' %}" class="nav-link {% if request.resolver_match.url_name == 'reporting-balance' %}active{% endif %}">
+                            <i class="fa-solid fas fa-chart-bar"></i>
+                            <p>Balance reporting</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="{% url 'accounting:reporting-zarinpal' %}" class="nav-link {% if request.resolver_match.url_name == 'reporting-zarinpal' %}active{% endif %}">
+                            <i class="fa-solid fas fa-chart-bar"></i>
+                            <p>Zarinpal reporting</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="{% url 'accounting:reporting-strip' %}" class="nav-link {% if request.resolver_match.url_name == 'reporting-strip' %}active{% endif %}">
+                            <i class="fa-solid fas fa-chart-bar"></i>
+                            <p>Strip reporting</p>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="{% url 'accounting:reporting-paypal' %}" class="nav-link {% if request.resolver_match.url_name == 'reporting-paypal' %}active{% endif %}">
+                            <i class="fa-solid fas fa-chart-bar"></i>
+                            <p>Paypal reporting</p>
+                          </a>
+                        </li>
+                        
+                    </ul>
+              </li>
+
+               <!-- Requests-->
+               <li class="nav-item {% if 'reporting' in request.resolver_match.url_name %}menu-open{% endif %} ">
+                  <a href="{% url 'accounting:request-list' %}" class="nav-link"> 
+                    <i class="fa-solid fas fa-wallet"></i>
+                    <p>
+                      Requests 
+                    </p>  
+                  </a>
+              </li>
+
+        {%endif%}
+        {%if role.position == 'accounting manager'%}
+                     <!--Membership-->
+              <li class="nav-item {% if request.resolver_match.url_name == 'list-membership' %} menu-open {% elif request.resolver_match.url_name == 'create-membership' %} menu-open {%endif%}">
+                <a href="#" class="nav-link">
+                  <i class="fa-solid fas fa-tags"></i>
+                  <p>
+                    Membership
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                          <a href="{% url 'accounting:list-membership' %}" class="nav-link {% if request.resolver_match.url_name == 'list-membership' %}active{% endif %}">
+                            <i class="fa-solid fas fa-eye"></i>
+                            <p>All Membership</p>
+                          </a>
+                        </li>
+                          <li class="nav-item">
+                            <a href="{% url 'accounting:create-membership' %}" class="nav-link {% if request.resolver_match.url_name == 'create-membership' %}active{% endif %}">
+                              <i class="fa-solid fas fa-plus"></i>
+                              <p>Create a membership</p>
+                            </a>
+                          </li>
+                    </ul>
+                </li>
+
+                <!--Agency-->
+                <li class="nav-item {% if 'agency' in request.resolver_match.url_name %} menu-open{%endif%}">
+                  <a href="#" class="nav-link">
+                    <i class="fa-solid fas fa-tags"></i>
+                    <p>
+                      Agency
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                      <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                            <a href="{% url 'accounting:agency-list' %}" class="nav-link {% if request.resolver_match.url_name == 'agency-list' %}active{% endif %}">
+                              <i class="fa-solid fas fa-eye"></i>
+                              <p>All Agency</p>
+                            </a>
+                          </li>
+                            <li class="nav-item">
+                              <a href="{% url 'accounting:agency-create' %}" class="nav-link {% if request.resolver_match.url_name == 'agency-create' %}active{% endif %}">
+                                <i class="fa-solid fas fa-plus"></i>
+                                <p>Create a Agency</p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              <a href="{% url 'accounting:agency-manage' %}" class="nav-link {% if request.resolver_match.url_name == 'agency-manage' %}active{% endif %}">
+                                <i class="fa-solid fas fa-plus"></i>
+                                <p>Management of agency</p>
+                              </a>
+                            </li>
+                      </ul>
+                  </li>
+        
+               
+        <!--Discounting-->
+        <li class="nav-item {% if request.resolver_match.url_name == 'list-discount' %} menu-open {% elif request.resolver_match.url_name == 'create-discount' %} menu-open {%endif%}">
+          <a href="#" class="nav-link">
+            <i class="fa-solid fas fa-tags"></i>
+            <p>
+              Discount
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+              <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{% url 'accounting:list-discount' %}" class="nav-link {% if request.resolver_match.url_name == 'list-discount' %}active{% endif %}">
+                      <i class="fa-solid fas fa-eye"></i>
+                      <p>All discounts</p>
+                    </a>
+                  </li>
+                    <li class="nav-item">
+                      <a href="{% url 'accounting:create-discount' %}" class="nav-link {% if request.resolver_match.url_name == 'create-discount' %}active{% endif %}">
+                        <i class="fa-solid fas fa-plus"></i>
+                        <p>Create a Discount</p>
+                      </a>
+                    </li>
+              </ul>
+          </li>
+        {%endif%}
+        {%endfor%}
+
+
+
+
+        {%else%}
+
+
+
+
+           <!-- Balance reporting-->
+           <li class="nav-item {% if 'reporting' in request.resolver_match.url_name %}menu-open{% endif %} ">
+            <a href="#" class="nav-link"> 
+              <i class="fa-solid fas fa-wallet"></i>
+              <p>
+                 Reporting 
+                <i class="right fas fa-angle-left"></i>
+              </p>  
+            </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="{% url 'accounting:reporting-balance' %}" class="nav-link {% if request.resolver_match.url_name == 'reporting-balance' %}active{% endif %}">
+                        <i class="fa-solid fas fa-chart-bar"></i>
+                        <p>Balance reporting</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{% url 'accounting:reporting-zarinpal' %}" class="nav-link {% if request.resolver_match.url_name == 'reporting-zarinpal' %}active{% endif %}">
+                        <i class="fa-solid fas fa-chart-bar"></i>
+                        <p>Zarinpal reporting</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{% url 'accounting:reporting-strip' %}" class="nav-link {% if request.resolver_match.url_name == 'reporting-strip' %}active{% endif %}">
+                        <i class="fa-solid fas fa-chart-bar"></i>
+                        <p>Strip reporting</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{% url 'accounting:reporting-paypal' %}" class="nav-link {% if request.resolver_match.url_name == 'reporting-paypal' %}active{% endif %}">
+                        <i class="fa-solid fas fa-chart-bar"></i>
+                        <p>Paypal reporting</p>
+                      </a>
+                    </li>
+                </ul>
+            </li>
+
+
+             <!-- Requests-->
+             <li class="nav-item {% if 'reporting' in request.resolver_match.url_name %}menu-open{% endif %} ">
+                <a href="{% url 'accounting:request-list' %}" class="nav-link"> 
+                  <i class="fa-solid fas fa-wallet"></i>
+                  <p>
+                    Requests 
+                  </p>  
+                </a>
+            </li>
+
+
+             <!--Discounting-->
+        <li class="nav-item {% if request.resolver_match.url_name == 'list-discount' %} menu-open {% elif request.resolver_match.url_name == 'create-discount' %} menu-open {%endif%}">
+          <a href="#" class="nav-link">
+            <i class="fa-solid fas fa-tags"></i>
+            <p>
+              Discount
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+              <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{% url 'accounting:list-discount' %}" class="nav-link {% if request.resolver_match.url_name == 'list-discount' %}active{% endif %}">
+                      <i class="fa-solid fas fa-eye"></i>
+                      <p>All discounts</p>
+                    </a>
+                  </li>
+                    <li class="nav-item">
+                      <a href="{% url 'accounting:create-discount' %}" class="nav-link {% if request.resolver_match.url_name == 'create-discount' %}active{% endif %}">
+                        <i class="fa-solid fas fa-plus"></i>
+                        <p>Create a Discount</p>
+                      </a>
+                    </li>
+              </ul>
+          </li>
+
+
+               <!--Membership-->
+        <li class="nav-item {% if request.resolver_match.url_name == 'list-membership' %} menu-open {% elif request.resolver_match.url_name == 'create-membership' %} menu-open {%endif%}">
+          <a href="#" class="nav-link">
+            <i class="fa-solid fas fa-tags"></i>
+            <p>
+              Membership
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+              <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{% url 'accounting:list-membership' %}" class="nav-link {% if request.resolver_match.url_name == 'list-membership' %}active{% endif %}">
+                      <i class="fa-solid fas fa-eye"></i>
+                      <p>All Membership</p>
+                    </a>
+                  </li>
+                    <li class="nav-item">
+                      <a href="{% url 'accounting:create-membership' %}" class="nav-link {% if request.resolver_match.url_name == 'create-membership' %}active{% endif %}">
+                        <i class="fa-solid fas fa-plus"></i>
+                        <p>Create a membership</p>
+                      </a>
+                    </li>
+              </ul>
+          </li>
+            
+          
+          
+          
+          <!--Agency-->
+          <li class="nav-item {% if 'agency' in request.resolver_match.url_name %} menu-open{%endif%}">
+            <a href="#" class="nav-link">
+              <i class="fa-solid fas fa-tags"></i>
+              <p>
+                Agency
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="{% url 'accounting:agency-list' %}" class="nav-link {% if request.resolver_match.url_name == 'agency-list' %}active{% endif %}">
+                        <i class="fa-solid fas fa-eye"></i>
+                        <p>All Agency</p>
+                      </a>
+                    </li>
+                      <li class="nav-item">
+                        <a href="{% url 'accounting:agency-create' %}" class="nav-link {% if request.resolver_match.url_name == 'agency-create' %}active{% endif %}">
+                          <i class="fa-solid fas fa-plus"></i>
+                          <p>Create a Agency</p>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="{% url 'accounting:agency-manage' %}" class="nav-link {% if request.resolver_match.url_name == 'agency-manage' %}active{% endif %}">
+                          <i class="fa-solid fas fa-plus"></i>
+                          <p>Management of agency</p>
+                        </a>
+                      </li>
+                </ul>
+            </li>
+        {%endif%}
+    </ul>
+  </nav>
+    <!-- /.sidebar-menu -->
+</div>
+  <!-- /.sidebar -->
+</aside>

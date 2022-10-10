@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "tecvico",
+  "private_key_id": "519677c7d9b7280920f112000cb011c73027125e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDML8cb3dlEm+D/\n2mX1EdBOW/OkCgV/E9ZhBFVwWB8z9xYisi3IHFn+uKKn+kgP5yQLg7h81QG6aN8L\nY5aPh6AG9DZtCAe2Nvc2rPL1SmWDPb+nkLpVmjwtyGwAtlVfq/+GSks7IraFevpW\nWHUB1LrPTi8uOlIiSy35HNaTLlOxceFkYb9VFG1wPQSSDmBPYlmNKaS4x9YvH9GL\nhTDfAn0QxuXWVsco8p4XqcpM0BqoVx0D0XmsbSFYouZSDrDqdIbWMIjAfZrrmONE\nvHXmZneTnygfsnD3jrRB9KtTMtPn5ruRDhHimLRTA1t2Qo7C+XIk2cGwkVSd3Yff\nXbgAXpAXAgMBAAECggEACH3WLHkB76IB7fIBunrmrFOTotdN2jaTfE5nVTg89/bH\nI2NAlylirr6z+QNmGs80hwwP0JU1MLDq0bjvCoIL7C4c01T5qSDJECuKIRxac2ZO\ngaP5s9SpuweyQidTDpsDEe0mCswLRirSnWOpXg2gRT3NpYEEaGuy+kCyRcWv8lmk\njF7whOIF8U7BjPt4qjrHdkgy612n8BJGCM2lA4PInE9z8HZgccQ0x0f2bzqmlk5v\nXAVvFaOFZ2MA6958W8Yjz77VwrKupPC6zX61kp4uE3VqrTtnQKeOAvm9zBRSVIlb\nO138xrH6qz6FiqsPDmbt41xOWyyxyVnFZTinMnboWQKBgQDsqiPed4ZuGIdOu2LL\nxq2QCX/WVTyGNBAAVf8QQt9Je3/SWCr1mH6oxRrF66AtZ8Ki15TMPhBk4a+0+Zi+\n9SpvVy3iffWyC/PB3IyK8Nxb5SzAonVX4xwf42z81Re4OCr6S6An3cgC/o3mQvYO\nmuuScRJIYqGGkq3kN9NpwpddTwKBgQDc3lup7zWIrkrhfhglliSjF5WXw4f/Fmv/\nUgOhyuK1Vd7XAuiHNQAMGeXJO+/WnqWCcUsV3zTcIH+J7mzQEqRZKZG/be5OQc+0\nMeVVNSba88Qn1taTyn9ilbBTomXWDWimkyJJ8uXi2xYYJat8x1tiSBKkg1Rzulsa\nzW9/Nq0+uQKBgA2GF3CiAeOOsUS1forIeqiNcmmsCz5cAUITp/Sk7Z+EWCSL90B7\ni1lXkhUXRtrxX/TwPseBEGzDXMgJr0nSNq+QGsYjjoOzHSXJ1Zom82Co8uq7Hdt8\n1eGYnGTCRI25X/NXmPpOORy6sR8kWm0xOx7uKS5LvJE1FozBB+q2PPIPAoGACdE0\nX9RLG90rZOR27EzFKh6lPo6pX9Q+TqX1lV5wP0Em24W8ki3v55nLFeu9GFwK3UZt\n4PX/4nzrTlUzrvf1KCVp3glj20Sfl9HT8LqhFIBbSq4I8Z7BlL80jDMetan46daG\nYqUSRMgaLk6WVcCCtlafxYI04cP5wrI4732dq7kCgYEAzW8tWTSRBufxNpSSTF66\nszwFwsdrBpyyOeiCrIzXEcntX7LASMaCbSQSa7y4s1qafgOHGNm0SQ9h4P81hP/0\nPCciW81WkJu6M53ZhVNR11LzsSGLR0Jw9hMS4jzYcDRDJwLdxSt17+iX6VEsUGfW\nZ8t6RAyKQUdHtQ6e9PLU5kg=\n-----END PRIVATE KEY-----\n",
+  "client_email": "tecvico-drive@tecvico.iam.gserviceaccount.com",
+  "client_id": "106768320023889517171",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tecvico-drive%40tecvico.iam.gserviceaccount.com"
+}

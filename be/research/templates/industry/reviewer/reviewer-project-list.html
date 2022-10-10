@@ -1,0 +1,680 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load base %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1><i class="fa fa-eye"></i>Project reviewer's panel</h1>
+            </div>
+            <div class="col-md-6 pt-3" style="text-align:right">
+
+                <button type="button" class="btn btn-danger" value="declined" data-bs-toggle="modal" data-bs-target="#activities">Report</button>
+
+
+                <div class="modal fade" id="activities" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-white" id="exampleModalLabel"></h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                            </div>
+                            
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-xl-12 col-lg-12 col-md-12">
+                                        <table class="table table-dark table-bordered">
+                                            <tbody class="">
+                                                <tr class="table-info text-dark">
+                                                    <td>Evaluated reviewer</td>
+                                                    <td>Declined reviewer</td>
+                                                    <td>Breach of promise</td>
+                                                </tr>
+                                                <tr class="text-dark">
+                                                    <td class="text-white text-center">{{request.user.researchrole.count_evaluated_reviewer}}</td>
+                                                    <td class="text-white text-center">{{request.user.researchrole.count_rejected_reviewer}}</td>
+                                                    <td class="text-white text-center">{{request.user.researchrole.count_breach_of_promis_reviewer}}</td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row text-center"> 
+                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 text-end">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                   
+            </div>
+        </div>
+    </div>
+</header>
+
+<head>
+    <link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+</head>
+
+<section id="industry-director">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        
+        <!-- new -->
+        <div class="card-page">
+            <div class="row justify-content-center align-items-center">
+                        
+                <!-- 1 compose -->
+                {% if request.GET.filter == "new_research_request" %}
+                <div class="col green active">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">New request</h4>
+                        <p class="number ">{{reviewer_request_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=new_research_request" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">New request</h4>
+                        <p class="number ">{{reviewer_request_count}}</p>
+                    </a>
+                </div>                  
+                {% endif %}
+                        
+                <!-- 2 compose -->
+                {% if request.GET.filter == "project_research" %}
+                <div class="col green active">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Evaluation</h4>
+                        <p class="number ">{{reviewer_project_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=project_research" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Evaluation</h4>
+                        <p class="number ">{{reviewer_project_count}}</p>
+                    </a>
+                </div>                  
+                {% endif %}
+                        
+                <!-- 1 compose -->
+                {% if request.GET.filter == "revised_project" %}
+                <div class="col green active">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Revised</h4>
+                        <p class="number ">{{reviewer_revised_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=revised_project" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Revised</h4>
+                        <p class="number ">{{reviewer_revised_count}}</p>
+                    </a>
+                </div>                  
+                {% endif %}
+                        
+                        
+                <!-- 3 compose -->
+                {% if request.GET.filter == "reviewer_history" %}
+                <div class="col green active">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">History</h4>
+                        <p class="number "></p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=reviewer_history" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">History</h4>
+                        <p class="number "></p>
+                    </a>
+                </div>                  
+                {% endif %}
+            
+            </div>
+        </div>
+
+        <div class="content my-4 table-responsive">
+            {% if request.GET.filter == "new_research_request" %}
+            <table class="table table-striped table-dark table-hover p-table">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <!-- <th>Supervisor</th> -->
+                    <th>Fund</th>
+                    <th>Submission date</th>
+                    <th>Suggested start date</th>
+                    <th>Suggested end date</th>
+                    <th>Deadline</th>
+                    <th>Left time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                
+                <tbody>
+                {% for project in object_list %}
+                        {% if project.object_expert %}
+
+                        <td class="p-name">
+                            <p style="overflow: hidden; width: 400px">{{project.object_expert.formclint.title}}</p>
+                        </td>
+                        <!-- <td class="p-name">
+                            {{project.object_supervisor.supervisor}}
+                        </td> -->
+                        <td class="p-name">
+                            ${{project.object_expert.formclint.fund}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_expert.formclint.created|date:'m-d-Y'}}
+                        </td>
+                        <td class="p-name">
+
+                            {{project.object_expert.formclint.start_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_expert.formclint.end_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.deadline}}
+                        </td>
+                        <td class="p-name">
+                            
+                            {{project.deadline|naturaltime}}
+                        </td>
+                        <td class="p-name">
+                            Pending for your approval
+                        </td>
+                         <td class="text-right">
+                             <a href="{% url 'industry:research-reviewer-project-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View
+                             </a>
+                         </td>
+
+                        {% else %}
+                        <td class="p-name">
+                            <p style="overflow: hidden; width: 400px">{{project.object_client.title}}</p>
+                        </td>
+                        <!-- <td class="p-name">
+                            {{project.object_supervisor.supervisor}}
+                        </td> -->
+                        <td class="p-name">
+                            ${{project.object_client.fund}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_client.created|date:'m-d-Y'}}
+                        </td>
+                        <td class="p-name">
+
+                            {{project.object_client.start_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_client.end_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.deadline}}
+                        </td>
+                        <td class="p-name">
+                            
+                            {{project.deadline|naturaltime}}
+                        </td>
+                        <td class="p-name">
+                            Pending for your approval
+                        </td>
+                        <!-- <td class="p-name">
+                            {{project.object_supervisor.client_form.formclint.user.get_full_name}}
+                        </td> -->
+                         <td class="text-right">
+                             <a href="{% url 'industry:research-reviewer-project-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View
+                             </a>
+                         </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+          {% endif %}
+          {% if request.GET.filter == "project_research" %}
+            <table class="table table-hover table-dark table-striped p-table">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <!-- <th>Supervisor</th> -->
+                    <th>Fund</th>
+                    <th>Submission date</th>
+                    <th>Suggested start date</th>
+                    <th>Suggested end date</th>
+                    <th>Deadline</th>
+                    <th>Left time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <!-- <th>Owner</th> -->
+                </tr>
+                </thead>
+                <tbody>
+                {% for project in reviewer_project %}
+                        {% if project.object_expert %}
+
+                        <td class="p-name">
+                            <p style="overflow: hidden; width: 400px">{{project.object_expert.formclint.title}}</p>
+                        </td>
+                        <!-- <td class="p-name">
+                            {{project.object_supervisor.supervisor}}
+                        </td> -->
+                        <td class="p-name">
+                            ${{project.object_expert.formclint.fund}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_expert.formclint.created|date:'m-d-Y'}}
+                        </td>
+                        <td class="p-name">
+
+                            {{project.object_expert.formclint.start_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_expert.formclint.end_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.deadline}}
+                        </td>
+                        <td class="p-name">
+                            
+                            {{project.deadline|naturaltime}}
+                        </td>
+                        <td class="p-name">
+                            Pending for your evaluation
+                        </td>
+                         <td class="text-right">
+                             <a href="{% url 'industry:research-reviewer-project-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View
+                             </a>
+                         </td>
+
+                        {% else %}
+                        <td class="p-name">
+                            <p style="overflow: hidden; width: 400px">{{project.object_client.title}}</p>
+                        </td>
+                        <!-- <td class="p-name">
+                            {{project.object_supervisor.supervisor}}
+                        </td> -->
+                        <td class="p-name">
+                            ${{project.object_client.fund}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_client.created|date:'m-d-Y'}}
+                        </td>
+                        <td class="p-name">
+
+                            {{project.object_client.start_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_client.end_date}}
+                        </td>
+                        <!-- <td class="p-name">
+                            {{project.object_supervisor.client_form.formclint.user.get_full_name}}
+                        </td> -->
+                        <td class="p-name">
+                            {{project.deadline}}
+                        </td>
+                        <td class="p-name">
+                            
+                            {{project.deadline|naturaltime}}
+                        </td>
+                        <td class="p-name">
+                            Pending for your evaluation
+                        </td>
+                         <td class="text-right">
+                             <a href="{% url 'industry:research-reviewer-project-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View
+                             </a>
+                         </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+          {% endif %}
+
+          {% if request.GET.filter == "revised_project" %}
+            <table class="table table-hover table-dark table-striped p-table">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <!-- <th>Supervisor</th> -->
+                    <th>Fund</th>
+                    <th>Submission date</th>
+                    <th>Suggested start date</th>
+                    <th>Suggested end date</th>
+                    <th>Deadline</th>
+                    <th>Left time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <!-- <th>Owner</th> -->
+                </tr>
+                </thead>
+                <tbody>
+                {% for project in reviewer_revised %}
+                    {% if project.object_expert %}
+
+                        <td class="p-name">
+                            <p style="overflow: hidden; width: 400px">{{project.object_expert.formclint.title}}</p>
+                        </td>
+                        <td class="p-name">
+                            ${{project.object_expert.formclint.fund}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_expert.formclint.created|date:'m-d-Y'}}
+                        </td>
+                        <td class="p-name">
+
+                            {{project.object_expert.formclint.start_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_expert.formclint.end_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.deadline}}
+                        </td>
+                        <td class="p-name">
+                            
+                            {{project.deadline|naturaltime}}
+                        </td>
+                        <td class="p-name">
+                            {% if project.status == 'reject_project' %}
+                                <span style="margin-left: 20px"> <span >Declined</span></span>
+
+                            {% elif project.status == 'not_see_project' %}
+                                <span style="margin-left: 20px"> <span >Not see</span></span>
+
+                            {% elif project.status == 'new_project' %}
+                                <span style="margin-left: 20px"> <span>Pending for your approval</span></span>
+
+                            {% elif project.status == 'accept_project' %}
+                                <span style="margin-left: 20px"> <span>Pending for your evaluation</span></span>
+
+                            {% elif project.status == 'breach_of_promis' %}
+                                <span style="margin-left: 20px"> <span >Breach of promis</span></span>
+
+
+                            {% elif project.status == 'send_director_project' %}
+                                <span style="margin-left: 20px"> <span > Evaluated</span></span>
+                                
+                            {% endif %}
+                        </td>
+                         <td class="text-right">
+                             <a href="{% url 'industry:research-reviewer-project-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View
+                             </a>
+                         </td>
+
+                    {% else %}
+                        <td class="p-name">
+                            <p style="overflow: hidden; width: 400px">{{project.object_client.title}}</p>
+                        </td>
+                        <td class="p-name">
+                            ${{project.object_client.fund}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_client.created|date:'m-d-Y'}}
+                        </td>
+                        <td class="p-name">
+
+                            {{project.object_client.start_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_client.end_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.deadline}}
+                        </td>
+                        <td class="p-name">
+                            
+                            {{project.deadline|naturaltime}}
+                        </td>
+                        <td class="p-name">
+                            Revise
+                        </td>
+                         <td class="text-right">
+                             <a href="{% url 'industry:research-reviewer-project-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View
+                             </a>
+                         </td>
+                    {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+          {% endif %}
+
+          {% if request.GET.filter == "reviewer_history" %}
+            <table class="table table-hover table-dark table-striped p-table">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <!-- <th>Supervisor</th> -->
+                    <th>Fund</th>
+                    <th>Submission date</th>
+                    <th>Suggested start date</th>
+                    <th>Suggested end date</th>
+                    <th>Deadline</th>
+                    <th>Left time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <!-- <th>Owner</th> -->
+                </tr>
+                </thead>
+                <tbody>
+                {% for project in reviewer_evaluted %}
+                    {% if project.object_expert %}
+                    <tr>
+
+                        <td class="p-name">
+                            <p style="overflow: hidden; width: 400px">{{project.object_expert.formclint.title}}</p>
+                        </td>
+                        <td class="p-name">
+                            ${{project.object_expert.formclint.fund}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_expert.formclint.created|date:'m-d-Y'}}
+                        </td>
+                        <td class="p-name">
+
+                            {{project.object_expert.formclint.start_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_expert.formclint.end_date}}
+                        </td>
+                        <td class="p-name">
+                            {% if project.deadline %}
+                                {{project.deadline}}
+
+                            {% else %}
+                                ---
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            
+                            {% if project.deadline %}
+                                {{project.deadline|naturaltime}}
+
+                            {% else %}
+                                ---
+                            {% endif %}
+                            
+                        </td>
+                        <td class="p-name">
+                            {% if project.status == 'reject_project' %}
+                                <span style="margin-left: 20px"> <span >Declined</span></span>
+
+                            {% elif project.status == 'not_see_project' %}
+                                <span style="margin-left: 20px"> <span >Not see</span></span>
+
+                            {% elif project.status == 'new_project' %}
+                                <span style="margin-left: 20px"> <span>Pending for your approval</span></span>
+
+                            {% elif project.status == 'accept_project' %}
+                                <span style="margin-left: 20px"> <span>Pending for your evaluation</span></span>
+
+                            {% elif project.status == 'breach_of_promis' %}
+                                <span style="margin-left: 20px"> <span >Breach of promis</span></span>
+
+                            {% elif project.status == 'revise_by_expert_p' %}
+                                <span style="margin-left: 20px"> <span >Revised</span></span>
+
+
+                            {% elif project.status == 'send_director_project' %}
+                                <span style="margin-left: 20px"> <span > Evaluated</span></span>
+                                
+                            {% endif %}
+                        </td>
+                         <td class="text-right">
+                             <a href="{% url 'industry:research-reviewer-project-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View
+                             </a>
+                         </td>
+
+                    {% else %}
+                        <td class="p-name">
+                            <p style="overflow: hidden; width: 400px">{{project.object_client.title}}</p>
+                        </td>
+                        <td class="p-name">
+                            ${{project.object_client.fund}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_client.created|date:'m-d-Y'}}
+                        </td>
+                        <td class="p-name">
+
+                            {{project.object_client.start_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.object_client.end_date}}
+                        </td>
+                        <td class="p-name">
+                            {% if project.deadline %}
+                                {{project.deadline}}
+
+                            {% else %}
+                                ---
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            
+                            {% if project.deadline %}
+                                {{project.deadline|naturaltime}}
+
+                            {% else %}
+                                ---
+                            {% endif %}
+                            
+                        </td>
+                        <td class="p-name">
+                            {% if project.status == 'reject_project' %}
+                                <span style="margin-left: 20px"> <span >Declined</span></span>
+
+                            {% elif project.status == 'not_see_project' %}
+                                <span style="margin-left: 20px"> <span >Not see</span></span>
+
+                            {% elif project.status == 'new_project' %}
+                                <span>Pending for your approval</span>
+
+                            {% elif project.status == 'accept_project' %}
+                                <span>Pending for your evaluation</span>
+
+                            {% elif project.status == 'revise_by_director_p' %}
+                                <span style="margin-left: 20px"> <span >Revised</span></span>
+                                
+                            {% elif project.status == 'breach_of_promis' %}
+                                <span style="margin-left: 20px"> <span >Breach of promis</span></span>
+
+
+                            {% elif project.status == 'send_director_project' %}
+                                <span style="margin-left: 20px"> <span > Evaluated</span></span>
+                                
+                            {% endif %}
+                        </td>
+                         <td class="text-right">
+                             <a href="{% url 'industry:research-reviewer-project-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View
+                             </a>
+                         </td>
+                    {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+          {% endif %}
+
+        </div>      
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selectedItem = $(this).val();
+        let itemClasses = {
+            "Golden": "bg-warning text-dark",
+            "Silver": "bg-secondary text-white",
+            "Bronze": "bg-danger text-white",
+            "Normal": "bg-dark text-white",
+        };
+        $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+        $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+    });
+</script>
+
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $("[name='project-value']").keypress(function (evt) {
+        let entered_value = evt.originalEvent.key;
+        let current_value = $(evt.currentTarget).val();
+        if (isNumeric(entered_value) || (entered_value === '.' && !(current_value.includes('.')))) {
+            // let input be entered
+        }
+        else {
+            evt.preventDefault();
+        }
+    });
+</script>
+{% endblock script %}
+
+
+This paste expires in <1 hour. Public IP access. Share whatever you see with others in seconds with Context.Terms of ServiceReport this

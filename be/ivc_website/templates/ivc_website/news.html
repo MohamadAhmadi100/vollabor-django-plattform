@@ -1,0 +1,454 @@
+{% extends 'ivc_website/base.html' %}
+{% load static %}
+
+{% block css %}
+    
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/multislider.css' %}">
+    <style>
+/*        #news #carouselExampleIndicators .carousel-inner {*/
+           /* background-image: url("../img/Bitmap-9.png");*/
+/*            height: 280px;*/
+/*        }*/
+
+/*        #news #carouselExampleIndicators .carousel-inner .col-md-12 {*/
+/*            height: 100%;*/
+/*        }*/
+
+
+/*        #news .top-news .right-top {*/
+/*            position: relative;*/
+/*            cursor: pointer;*/
+/*        }*/
+
+/*        #news .top-news .right-top .text {*/
+/*            opacity: 0;*/
+/*            visibility: hidden;*/
+/*            transition: all 0.3s;*/
+/*            position: absolute;*/
+/*            bottom: 0;*/
+/*            left: 0;*/
+/*        }*/
+
+/*        #news .top-news .right-top .text p {*/
+/*            padding: 12px;*/
+/*        }*/
+
+
+/*        #news .top-news .right-top:hover .text {*/
+/*            width: 100%;*/
+/*            height: auto;*/
+/*            background: linear-gradient(360deg, #C4C4C4 0%, #292727 0.01%,*/
+/*            rgba(64, 58, 58, 0.48) 60.63%, rgba(196, 196, 196, 0) 143.18%);*/
+/*            opacity: 1;*/
+/*            visibility: visible;*/
+/*            transform:scale(1);*/
+/*        }*/
+        
+/*        .square {*/
+/*    width: 100%;*/
+    /*padding-bottom: 100%;*/
+/*    background-size: cover;*/
+/*    background-position: center;*/
+/*}*/
+        
+/*        .blog-item img{*/
+/*            height: 100%;*/
+/*        }*/
+/*        @media only screen and (max-width: 768px) {*/
+/*            #news .top-news .col-12{*/
+/*                margin-top: 1rem;*/
+/*            }*/
+/*        }*/
+    </style>
+   
+   
+
+   
+{% endblock %}
+
+{% block content %}
+
+    
+
+<div id="news">
+
+   <div id="carouselExampleIndicators" class="banner_top carousel slide" style="background:#011D55" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active ">
+                <div class="row">
+                    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h2 class="text-white" style="font-size:28px;">
+                            Just keep going. You never know how far you can go.
+
+                        </h2>
+                       
+                        
+                       
+                    </div>
+                    <div class="col-md-6 position-relative">
+                        <img class="img-fluid" src="{% static 'blog/img/project.png' %}" style="height: 300px;max-height: max-content"
+                             alt="">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+        
+
+    <div class="container px-5 pt-3" style="">
+        <div class="back-link d-flex justify-content-between align-items-center ">
+            <!--<div class="d-flex align-items-center justify-content-center">-->
+            <!--    <a href="{% url 'home-page' %}" class="">Home</a>-->
+            <!--    <i class="fa fa-angle-right fa-2x mx-2"></i>-->
+            <!--    <a href="{% url 'news-page' %}" class="active">News</a>-->
+            <!--</div>-->
+        </div>
+                   
+        <!--<section class=" container-fluid top-news  ">-->
+        <!--    <div class="row">-->
+        <!--        <div class="right-top col-md-6 d-md-block d-none item it1 shadow ">-->
+        <!--            <div class="text">-->
+        <!--                 <p>{{last_news.title}}</p>-->
+        <!--                <p style="color:#ccc !important;">{{last_news.description|safe}}</p>-->
+        <!--            </div>-->
+        <!--        </div>-->
+
+        <!--        <div class="col-md-6 item" id="news_id">-->
+        <!--            <div class="row flex-column" >-->
+        <!--                {% for top in top_news %}-->
+        <!--               <div class="col-12 ">-->
+        <!--                    <div class="item it4 text">-->
+        <!--                        <div class="shadow" data-url="{{top.thumbnail.url}}">-->
+        <!--                            <p>{{top.title}}</p>-->
+        <!--                            <p style="color:#ccc !important;">{{top.description|truncatewords:30|safe}}</p>-->
+        <!--                        </div>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <!--                {% endfor %}-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--    </div>-->
+        <!--</section>-->
+
+        <!--<div class="filter_news d-flex flex-column justify-content-between align-items-center ">
+            <div class="search d-flex align-items-center  ">
+                <i class="fa fa-search"></i>
+                <input type="text" id="search_word" class="form-control" placeholder="search...">
+            </div>
+
+            <div class="d-flex justify-content-center align-items-center flex-wrap my-2">
+                {% for cat in category_list %}
+                <div class="item category_list" data-value="{{cat.slug}}">{{cat.title}}</div>
+                
+                {% endfor %}
+                
+             
+            </div>
+        </div>-->
+
+        <div class="wrapper d-flex justify-content-center pt-5">
+            <div   class="sidebar_filter">
+                <div class="item">
+                    <a class=" main d-flex align-items-center justify-content-between ">
+                        <span>Search</span>
+                        <div class="sm_sidebar ">
+                            <button class="btn btn-outline-primary filter_right d-md-none d-lg-none ">
+                                <i class="fa fa-filter"></i>
+                                <span>Filter</span>
+                            </button>
+                        </div>
+
+                    </a>
+
+                    <input type="text" class="form-control mt-2 mb-2" id="search_filter" placeholder="search by title">
+                    
+                     <ul class="unstyled centered p-2" name="main[]">
+                       
+                        
+                          {% for cat in category_list %}
+                           
+                         <li>
+                            <input class="styled-checkbox category_list" id="{{cat.id}}" type="checkbox" value="{{cat.title}}">
+                            
+                            <label for="{{cat.id}}">{{cat.title}}</label>
+                        </li>
+                
+                        <!--<li>-->
+                        <!--    <input class="styled-checkbox date1" id="date4" type="checkbox" value="Last week">-->
+                        <!--    <label for="date4">Last week</label>-->
+                        <!--</li>-->
+                
+                          {% endfor %}
+                        
+                    </ul>
+                    
+                </div>
+            </div>
+            <div class="content ms-2 d-flex flex-column justify-content-center align-items-center">
+                
+                    <div class="row" style="width:100%" id="article">
+                        
+   
+                            
+					   {% for new in news %}
+                         
+                            <div class=" col-sm-12 col-md-6 col-lg-6 my-1">
+                                <div class="card">
+                                    <div class="card-image-wrapper">
+                                        <img src="{{new.thumbnail.url}}" style="height:350px !important;object-fit:contain" class="card-img-top" alt="...">
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 style="height:60px" class="card-title">{{new.title|truncatechars:90}}</h5>
+                                        <h6>{{new.category_to_str}}</h6>
+                                        <h6>{{new.date}}</h6>
+                                        <div class="cardText" >
+                                            <p class="card-text">
+                                                  {{new.description|truncatewords:35|safe}}
+                                            </p>
+                                        </div>
+                                        <a href="{% url 'news-detail' new.pk %}" class="btn btn-primary">Read more</a>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                        {% endfor %}
+                         
+                        
+                        
+                        
+                    </div>
+                
+            </div>
+        </div>
+    
+  
+  
+    <div class="ag_buttons d-flex justify-content-between align-items-center  align-items-center mt-4">
+
+            <h3 class="mx-3">Top News</h3>
+            <div class="sm_sidebar ">
+                <button class="btn btn-outline-primary filter_right">
+                    <i class="fa fa-filter"></i>
+                    <span>Filter</span>
+                </button>
+            </div>
+
+    </div>
+        <hr class="mb-3">
+        <div class="container">
+            
+            
+            <div class="row collab px-5">
+    			<div id="CollabSlider" class="mb-0">
+    				<div class="MS-content">
+    					
+    					{% for post in top_news %}
+                        <div class="item">
+                            <img class="img-fluid mt-3" src="{{post.thumbnail.url}}" style="height:275px;" alt="">
+                            <div class="item-title">
+                                <div class="title-text mt-1 mx-auto" >{{post.title}}</div>
+                                <a class="px-2" href="{% url 'news-detail' post.pk %}">
+                                    <span class="text-primary" >Read More...</span>
+                                       
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+    					
+    					
+    					
+    				   
+    				</div>
+    			   <div class="MS-controls">
+    				   <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+    				   <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+    			   </div>
+    			   
+    			   
+    			</div>
+			
+		
+		
+		</div>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+           <!-- <div class="d-flex justify-content-center ">          
+                <div class="owl-carousel owl-theme top_article " style="width:100%!important;">
+                    {% for post in top_news %}
+                    <div class="card-top-article mx-3 d-flex  flex-column bg-white p-2">
+                        <img class="img-fluid mt-3" src="{{post.thumbnail.url}}" style="height:275px;" alt="">
+                        <b class="mt-1" >{{post.title}}</b>
+                        
+                        <!--<p style="">{{post.description|truncatewords:15|safe}}</p>--
+                       
+                        <a class="d-inline-flex" href="{% url 'news-detail' post.pk %}">
+                                <span class="text-primary" >Read More...</span>
+                                <!--<i class="fa fa-angle-right  ms-1"></i>--
+                        </a>
+                        
+                        <div class="title d-flex  mt-3 w-100">
+                        </div>
+                      
+                        <div class="">
+                        </div>
+                    </div>
+                    {% endfor %}
+    
+                </div>            
+            </div> -->        
+    
+
+  
+        </div>
+
+</div>
+</div>
+
+
+
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'blog/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/main.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/multislider.min.js' %}"></script>
+
+
+
+<script>
+    cat_slug = "";
+    search_word = "";
+
+    $(document).ready(function () {
+        
+       $('#CollabSlider').multislider({
+        interval: 4000,
+        slideAll: false,
+		continuous:false,
+		hoverPause:true,
+        duration: 500
+        });
+        
+        
+        
+        /*  $('.top_article').owlCarousel({
+            center: true,
+            loop: true,
+            margin: 10,
+            items: 4,
+            autoplay: true,
+            autoplayTimeout: 3000,
+            autoplayHoverPause: true,
+
+            responsive: {
+                768: {
+                    items: 3
+                },
+                300:{
+                    items:1
+                }
+            }
+        });*/
+        
+        
+        $('.filter_news .item').click(function () {
+            $('.filter_news .item').removeClass('active');
+            $(this).addClass('active');
+        })
+        
+         $('#search_filter').keyup(function(){
+            search_word = $('#search_filter').val()
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'news-filter' %}",
+                data: {
+                    'search_word': search_word,
+                    'slug': cat_slug,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $('#article').html(data)
+                },
+                error: function (request, errors) {}
+            });
+        })
+
+        $('.item.category_list').click(function (){
+            cat_slug = ($(this).attr('data-value'))
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'news-filter' %}",
+                data: {
+                    'slug': cat_slug,
+                    'search_word': search_word,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $('#display_news').html(data)
+                },
+                error: function (request, errors) {}
+            });
+        })
+
+
+    })
+
+    $('.category_list').click(category_list)
+    function category_list(){
+        //alert("ok");
+        let category_checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+        let category_list=[]
+        for(let i=category_checkboxes.length-1;i>=0;i--){
+            category_list.push(category_checkboxes[i].id)
+        }
+        
+        
+        if(category_checkboxes.length==0){
+            location.reload();
+        }else{
+        
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'news-filter' %}",
+                data: {
+                    'catlist': category_list,
+                    'status':'category',
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                traditional: true,
+                success: function (data) {
+                    $('#article').html(data)
+                    //console.log(data)
+                },
+                error: function (request, errors) {}
+            });
+        }
+    }
+</script>
+
+
+
+{% endblock %}

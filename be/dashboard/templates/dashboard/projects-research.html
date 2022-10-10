@@ -1,0 +1,490 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+<!DOCTYPE html>
+<html lang="en">
+{% block css %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'project/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'project/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'project/css/workshop.css' %}">
+    <link rel="stylesheet" href="{% static 'project/css/bootstrap-table-sticky-header.css' %}">
+    <title>Project List</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon-v2.ico' %}"/>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MV42WCDPR9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-MV42WCDPR9');
+    </script>
+</head>
+<style>
+.chkStyle{
+    
+    height: 30px;
+    width: 30px;
+    border-radius:50px;
+    
+}
+    
+</style>
+{% endblock css %}
+{% block content %}
+<body>
+
+    
+
+    <div class="ws-content d-md-flex">
+        <div class="workshop">
+            <div class="bc">
+                <a href="{% url 'dashboard-page' %}" class="text-capitalize ">Dashboard</a>
+                <span class="bc-icon"> / </span>
+                <span class="text-capitalize "> project list</span>
+                        
+                <!--<div class="mt-2" style="float: right;">-->
+                <!--     <h5 class="btn btn-secondary fw-bold mb-1" style="font-weight:bold; color:#1AE8F9 ">-->
+                <!--       Balance: ${{user.memberprofile.balance}}-->
+                <!--        <br/>-->
+                <!--        <a class="btn btn-warning btn-sm text-dark fw-bold px-4 my-1 mx-2" href="{% url 'create-checkout-session' %}"> -->
+                <!--            <i class="fas fa-money-check-alt text-dark" style='font-size:14px'></i> Charge-->
+                <!--        </a>-->
+                <!--    </h5>-->
+                    
+                <!--</div>-->
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="margin-left: 100px" class="row">
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger"> {{ message }}</div>
+                        {%endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <div class="Project-content" >
+                <div class="project-list">
+                    <div class="project-list-form">
+                       
+                       <div class="container">
+                       <div class="row">
+                           <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 my-1 project-list-search" >
+                           <form method="POST">{% csrf_token %}
+                           
+                               <input type="text" id="q" name="q" placeholder="Search .....">
+                                <button type="submit" id="search-btn" name="search-btn" class="search-btn" style="background-color:transparent;color:#00262b; outline: none;box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);" >
+                                    <i class="fas fa-search"></i>
+                                </button>
+                             </form>  
+                           </div>
+
+                        
+                           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 my-1 ">
+                                <select class="form-select" id="gradesel" aria-label="Default select" style="background-color:transparent;color:#00262b; outline: none;box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);" onchange="filterproject();">
+                                    <option value="" selected disabled class="project-color1" > Grade</option>
+                                    <option  value="all" class="project-color1">All</option>
+                                    <option name="gold" id="gold" value="hard" class="project-color1">Gold</option>
+                                    <option name="silver" id="silver" value="normal" class="project-color1">Silver</option>
+                                    <option name="boronze" id="boronze" value="easy" class="project-color1">Boronze</option>
+                                </select>
+                           </div>
+                           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 my-1">
+                               <select class="form-select" id="statussel" aria-label="Default select example" style="background-color:transparent;color:#00262b; outline: none;box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);" onchange="filterproject();">
+                                    <option value="" selected disabled class="project-color1">Status</option>
+                                    <option  value="all" class="project-color1">All</option>
+                                    <option id="new" value="new" class="project-color1">New</option>
+                                    <option id="on_going" value="on_going" class="project-color1">Ongoing</option>
+                                    <option id="pending" value="pending" class="project-color1">Pending</option>
+                                    <option id="on_hold" value="on_hold" class="project-color1">On hold</option>
+                                    <option id="done" value="done" class="project-color1">Done</option>
+                                </select>
+                                
+                                
+                           </div>
+                           
+                           
+                       </div>
+                       </div>
+                    </div>
+                    <div  id="research_pr" class="tableView">
+                        
+                    
+                        <div  id="fixedTable" class="fixedTable table-responsive"  style="height:800px;" >
+                            <table class="table table-white table-striped table-hover" >
+                                <thead class="table-primary" >
+                                    <tr>
+                                        <th class="text-center align-middle" scope="col" width="5%" >ID</th>
+                                        <th class="text-center align-middle"  scope="col" width="30%" style="min-width:250px;">Project title</th>
+                                        <!--<th class="text-center" rowspan="1" colspan="4" width="30%" scope="col">Users's responsibility fee</th>-->
+                                        
+                                        <th class="text-center align-middle" scope="col" width="10%">Status</th>
+                                        <th class="text-center align-middle"  scope="col" width="10%">Grade</th>
+                                        <th class="text-center align-middle"  scope="col" width="5%">Start date</th>
+                                        <th class="text-center align-middle"  scope="col" width="5%">End date</th>
+                                        <th class="text-center align-middle"  scope="col" width="5%">Fund</th>
+                                        <!--<th class="text-center align-middle" rowspan="2" colspan="1" scope="col" width="7%">Product</th>-->
+                                        <th class="text-center align-middle"  scope="col" width="30%" style="min-width:200px;"></th>
+                                    </tr>
+                                    <!--<tr>
+                                       
+                                        <th class="text-center" width="7.5%">Advisor</th>
+                                        <th class="text-center" width="7.5%">Mentor</th>
+                                        <th class="text-center" width="7.5%">Member</th>
+                                        <th class="text-center" width="7.5%">Learner</th>
+                                        
+                                    </tr>-->
+                                </thead>
+                                <tbody>
+                                    {% for i in projects %}
+                                        {% if i.status == 'under_process_supervisor' %}
+                                          <tr>
+                                            <td class="fw-bold">{{i.proposal_supervisor.formclint.id_project}}</td>
+                                            <td>{{i.proposal_supervisor.formclint.title}}</td>
+
+                                             <!--<td class="text-center align-middle">${{i.value_supervisor}}</td>-->
+                                             <!--<td class="text-center align-middle">${{i.value_mentor}}</td>-->
+                                             <!--<td class="text-center align-middle">${{i.value_mmber}}</td>-->
+                                             <!--<td class="text-center align-middle">${{i.value_lerner}}</td>-->
+
+                                            <td class="text-center align-middle fw-bold">Selecting supervisor</td>
+
+
+                                             <td class="text-center align-middle">
+                                              {% if i.status_value == 'hard' %}
+                                                <span style="color: #ffc107; font-weight:bold">Gold</span>
+                                              {% endif %}
+                                              
+                                              {% if i.status_value == 'normal' %}
+                                                <span  class="text-light fw-bold" >Silver</span>
+                                              {% endif %}
+                                              
+                                              {% if i.status_value == 'easy' %}
+                                                <span  style="color: #8a471f; font-weight:bold">Boronze</span>
+                                              {% endif %}
+                                              </td>
+
+                                            <td class="text-center align-middle">{{i.proposal_supervisor.formclint.start_date}}</td>
+                                            <td class="text-center align-middle">{{i.proposal_supervisor.formclint.end_date}}</td>
+                                            <td class="text-center align-middle">{{i.proposal_supervisor.formclint.fund}}</td>
+                                            <!--<td class="text-center align-middle">0</td>-->
+
+                                             <!--<td class="text-center">-->
+                                             <!--    <div class="row text-center mb-2">-->
+                                             <!--        <div class="col-5 px-0 text-center">-->
+                                                         <!--<button class="btn btn-success btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:detail-send-proposal' i.pk %}'" type="button">Viewww</button>-->
+                                             <!--         </div>-->
+                                             <!--    </div>-->
+                                             <!--</td>-->
+                                             
+                                             <td class="text-center">
+                                                 <div class="row text-center mb-2">
+                                                     <div class="col-5 px-0 mx-0 text-center">
+                                                          {% if i.status == 'new' and i.main_supervisor != request.user %}
+                                                              <!--<button class="btn btn-warning w-90 disabled" style="width:90%" type="button">Apply</button>-->
+                                                              <button class="btn btn-warning btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:industry-project-apply' i.pk %}'" type="button">Apply</button>
+                                                          {% else %}
+                                                              <button class="btn btn-warning btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:industry-project-apply' i.pk %}'" type="button">Apply</button>
+                                                              <!--<button class="btn btn-warning btn-sm w-90 disabled" style="width:70%" type="button">Apply</button>-->
+                                                          {% endif %}
+                                                     </div>
+                                                     <div class="col-5 px-0 text-center">
+                                                         <button class="btn btn-success btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:selecting-supervisor-detail' i.pk %}'" type="button">View</button>
+                                                              
+                                                      </div>
+                                                     
+                                                 </div>
+                                                 <div class="row text-center">
+                                                     <div class="col-5 px-0 mx-0 text-center">
+                                                        {% if request.user.is_superuser or request.user.researchrole.director == True %}
+                                                         <button class="btn btn-danger btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:industry-project-delete' i.pk %}'" type="button">Delete</button>
+                                                        {% endif %}
+                                                          
+                                                     </div>
+
+                                                 </div>
+                                                 <div class="row text-center">
+                                                      {% if request.user.researchrole.director == True %}
+                                                         <div class="col-10 mt-2 px-0 text-center">
+
+                                                                <button type="button" class="btn btn-primary mx-1" data-bs-toggle="modal" onclick="location.href='{% url 'industry:detail-send-proposal' i.pk %}'" >Apply as supervisor
+                                                                </button>
+                                                         </div>
+                                                      {% endif %} 
+                                                 </div>
+                                                 
+                                             </td>
+                                          </tr>
+                                        
+                                        
+                                        
+                                        
+                                        {% else %}
+                                          <tr>
+                                             <td class="fw-bold">{{i.project.client_form.formclint.id_project}}</td>
+                                             <td>{{i.project.client_form.formclint.title}}</td>
+                                             {% if i.status == 'new' %}
+                                             <!--<td class="text-center align-middle">
+                                             
+                                                 
+                                                      
+                                                      ${{i.value_supervisor}}
+                                                
+                                             </td>
+                                             <td class="text-center align-middle">
+                                                 
+                                                    
+                                                      ${{i.value_mentor}}
+                                                   
+                                             </td>
+                                             <td class="text-center align-middle">
+                                                 
+                                                      
+                                                      ${{i.value_mmber}}
+                                                  
+                                              </td>
+                                             <td class="text-center align-middle">
+                                                 
+                                                     
+                                                      ${{i.value_lerner}}
+                                                  
+                                                 
+                                             </td>-->
+                                             {% else %}
+
+                                             <!--<td class="text-center align-middle"></td>
+                                             <td class="text-center align-middle"></td>
+                                             <td class="text-center align-middle"></td>
+                                             <td class="text-center align-middle"></td>-->
+                                             {% endif %}
+                                             <td class="text-center align-middle fw-bold">
+                                               
+                                              {% if i.status == 'new' %}
+                                                <span >New</span>
+                                              {% elif i.status == 'on_going' %}
+                                                <span >Ongoing</span>
+                                              {% elif i.status == 'pending' %}
+                                                <span >Pending</span>
+                                              {% elif i.status == 'on_hold' %}
+                                                <span >On hold</span>
+                                              {% elif i.status == 'done' %}
+                                                <span >Done</span>
+                                              {% endif %}
+
+                                             </td>
+                                             <td class="text-center align-middle">
+                                              {% if i.status_value == 'hard' %}
+                                                <span style="color: #ffc107; font-weight:bold">Gold</span>
+                                              {% endif %}
+                                              
+                                              {% if i.status_value == 'normal' %}
+                                                <span  class="text-light fw-bold" >Silver</span>
+                                              {% endif %}
+                                              
+                                              {% if i.status_value == 'easy' %}
+                                                <span  style="color: #8a471f; font-weight:bold">Boronze</span>
+                                              {% endif %}
+                                              </td>
+                                             <td class="text-center align-middle">{{i.project.client_form.formclint.start_date}}</td>
+                                              <td class="text-center align-middle">{{i.project.client_form.formclint.end_date}}</td>
+                                              <td class="text-center align-middle">{{i.project.client_form.formclint.fund}}</td>
+                                              <!--<td class="text-center align-middle">{{i.project.time_programmins.Products.count}}</td>-->
+                                             <td class="text-center">
+                                                 <div class="row text-center mb-2">
+                                                     <div class="col-5 px-0 mx-0 text-center">
+                                                          {% if i.status == 'new' and i.main_supervisor != request.user %}
+                                                              <!--<button class="btn btn-warning w-90 disabled" style="width:90%" type="button">Apply</button>-->
+                                                              <button class="btn btn-warning btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:industry-project-apply' i.pk %}'" type="button">Apply</button>
+                                                          {% else %}
+                                                              <button class="btn btn-warning btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:industry-project-apply' i.pk %}'" type="button">Apply</button>
+                                                              <!--<button class="btn btn-warning btn-sm w-90 disabled" style="width:70%" type="button">Apply</button>-->
+                                                          {% endif %}
+                                                     </div>
+                                                     <div class="col-5 px-0 text-center">
+                                                         <button class="btn btn-success btn-sm w-90" style="width:70%" onclick="location.href='{% url 'project-detail-research' i.pk %}'" type="button">View</button>
+                                                              
+                                                      </div>
+                                                     
+                                                 </div>
+                                                 <div class="row text-center">
+                                                     <div class="col-5 px-0 mx-0 text-center">
+                                                        {% if request.user.is_superuser or request.user.researchrole.director == True %}
+                                                         <button class="btn btn-danger btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:industry-project-delete' i.pk %}'" type="button">Delete</button>
+                                                        {% endif %}
+                                                          
+                                                     </div>
+                                                     <div class="col-5 px-0 text-center">
+                                                          {% if i.main_supervisor == request.user %}
+                                                          <button class="btn btn-primary btn-sm w-90" style="width:70%" onclick="location.href='{% url 'industry:mainsupervisor-detail' i.pk %}'" type="button">Edit  <span class="badge badge-danger" style="background-color: danger; color: white">{{i.project_requests.Active.count}}</span></button>
+
+                                                          {% endif %}
+                                                         
+                                                     </div>
+                                                     
+                                                 </div>
+                                                 <div class="row text-center">
+                                                      {% if request.user.researchrole.director == True %}
+                                                         <div class="col-10 mt-2 px-0 text-center">
+
+                                                                <button type="button" class="btn btn-primary mx-1" data-bs-toggle="modal" data-bs-target="#change_status_home_{{i.id}}" >
+
+                                                                    Change status
+                                                                    {% if i.view_project_home == False %}
+                                                                        <i class="fa fa-times-circle" style="color:red"></i>
+                                                                    {% else %}
+                                                                        <i class="fa fa-check-circle" style="color:green"></i>
+                                                                    {% endif %}
+                                                                </button>
+                                                         </div>
+                                                      {% endif %}
+                                                     
+                                                 </div>
+                                                 
+                                             </td>
+                                          </tr>
+
+                                            <div class="modal fade" id="change_status_home_{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <form method="POST" action="{% url 'industry:change-status-to-home' %}" enctype="multipart/form-data">{% csrf_token %}
+                                                            <div class="modal-body">
+                                                                <input type="hidden" name="id_project" value="{{i.id}}">
+
+                                                                {% if i.view_project_home == False %}
+                                                                <div class="form-check my-3">
+                                                                    <input type="checkbox"  class="form-check-input chkStyle" id="chk1" name="status">
+                                                                    <label for="chk1" style="color: white" class="form-check-label ml-3 pt-2 text-dark">Change status to home</label>
+                                                                </div>
+                                                                {% else %}
+                                                                <div class="form-check my-3">
+                                                                    <input type="checkbox" checked class="form-check-input chkStyle" id="chk1" name="status">
+                                                                    <label for="chk1" style="color: white" class="form-check-label ml-3 pt-2 text-dark">Change status to home</label>
+                                                                </div>
+                                                                {% endif %}
+
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="submit" class="btn btn-success">Change</button>
+                                                                <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="my-4 text-center ws-footer-content">Copyright <i class="fas fa-copyright"></i> 2021 TECVICO
+                Group - All
+                Rights Reserved</div>
+        </div>
+    </div>
+
+
+
+    <script src="{% static 'project/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'project/js/popper.min.js' %}"></script>
+    <script src="{% static 'project/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'project/js/workshop.js' %}"></script>
+    <script src="{% static 'project/js/myjs.js' %}"></script>
+    <script src="{% static 'project/js/projectlist.js' %}"></script>
+    <script src="{% static 'dashboard/js/fixed_table.js' %}"></script>
+{% endblock content %} 
+{% block script %}
+     <script>
+        var fixedTable = new FixedTable();
+    </script>
+
+
+
+    <script>
+    
+    
+        
+        
+    $(document).ready(function () { 
+        
+         var searchBtn = document.getElementById("search-btn");
+        searchBtn.addEventListener('change', (event) => {
+        var search =  document.getElementById("q").value;
+         $.ajax({
+                    type: 'POST',
+                    url: "{% url 'dashboard-projects-page' %}",
+                    data: {
+                        'search': search,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(){
+                       
+                    }
+                })
+        
+        });
+        
+        
+    })    
+        
+    function filterproject(){
+        var gradeSelection = document.getElementById("gradesel");
+        var grade =  gradeSelection.value;
+        var statusSelection = document.getElementById("statussel");
+        var status =  statusSelection.value;
+         $.ajax({
+                    type: 'POST',
+                    url: "{% url 'ajax_project_filter_dashboard' %}",
+                    data: {
+                        'grade': grade,
+                        'status': status,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(data){
+                      $('#research_pr').html(data)
+                    },
+                    error: function (request, errors) {
+                    alert(errors.responseText);
+                    }
+                })
+        
+    }    
+    
+    
+    
+    
+     $(function() {
+        
+       var resetCSSClass = function() {
+           // $('.fixedTable').width('auto');
+            $('.fixedTable').height('500px');
+            setModeText('Normal');
+        };
+
+        var setModeText = function(text) {
+            $('.modeView .val').text(text);
+        };
+    });
+    
+        
+    </script>
+
+{% endblock script %}
+</body>
+
+</html>
+

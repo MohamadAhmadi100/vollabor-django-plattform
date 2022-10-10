@@ -1,0 +1,135 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load blog_filter %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+
+{% block css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+<header id="main-header" class="py-2 bg-info text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-blog"></i> Manage Blog</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="blog-manager">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message|safe }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message|safe }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <a  href="{% url 'blog:create-article' %}" class="btn btn-outline-dark"><i class="fa fa-plus"></i> New Post</a>
+                    <a  href="{% url 'blog:create-category' %}" class="btn btn-outline-dark"><i class="fa fa-plus"></i> New Category</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4" id="manage-posts-row">
+                <div class="col-md-12 mb-5">
+                    <div class="wrapper wrapper-content animated fadeInUp">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                <div class="row mb-3">
+                                    <div class="col-lg-12 text-center">
+                                        <h3><i class="fa fa-edit"></i> Manage Posts</h3>
+                                    </div>
+                                </div>
+                                <div class="mt-5 w-100 d-flex justify-content-center main-ws">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-1">#</th>
+                                                <th class="col-2">Picture</th>
+                                                <th class="col-2">Title</th>
+                                                <th class="col-4">description</th>
+                                                <th class="col-3">Category</th>
+                                                <th class="col-2">Date</th>
+                                                <th class="col-2">Author</th>
+                                                <th class="col-1">Status</th>
+                                                <th class="col-1">Top article</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for new in posts %}
+                                            <tr>
+                                                <th class="col-1">{{i}}</th>
+                                                <td class="col-2"><img src="{{new.thumbnail.url}}" style="width: 80px; height: 80px;"></td>
+                                                <td class="col-2">
+                                                    {% if new.status in 'bd'|make_list or author.manager|is_blog_manager %}
+                                                        <a href="{% url 'blog:update-article' pk=new.pk %}">{{new.title}}</a>
+                                                    {% else %}
+                                                        {{new.title}}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="col-4">{{new.description|truncatewords:10|safe}}</td>
+                                                <td class="col-3">{{new.category_to_str}}</td>
+                                                <td class="col-2">{{new.date}}</td>
+                                                <td class="col-2">{{new.author}}</td>
+                                                <td>
+                                                {% if new.status == 'p' %}
+                                                    <span class="badge badge-success">Published</span>
+                                                    <a target="_blank" class="badge badge-primary" href="">Show</a>
+                                                {% elif new.status == 'i' %}
+                                                    <span class="badge badge-primary">Investigation</span>
+                                                    {% if author.manager|is_blog_manager %}
+                                                    <a target="_blank" class="badge badge-secondary" href="">Preview</a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if new.status == 'd' %}
+                                                        <span class="badge badge-danger">Draft</span>
+                                                    {% else %}
+                                                        <span class="badge badge-warning">Back</span>
+                                                    {% endif %}
+                                                    <a target="_blank" class="badge badge-secondary" href="">Preview</a>
+                                                {% endif %}
+                                                {% if author.manager|is_blog_manager %}
+                                                  <a class="badge text-danger" href="{% url 'blog:delete-article' new.pk %}">Delete</a>
+                                                {% endif %}
+                                                </td>
+                                                <td class="col-1">
+                                                    {% if new.is_top == True %}
+                                                      <i class="fa fa-check-circle" style="color: green;"></i>
+                                                    {% else %}
+                                                      <i class="fa fa-minus-circle" style="color: red;"></i>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <hr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: inline;">
+                            {% if posts.has_previous %}
+                                <a class="btn btn-primary" href="{% url 'blog:blog-manager-page' %}?page={{posts.previous_page_number}}">Previous page</a>
+                            {% endif %}
+                            {% if posts.has_next %}
+                                <a class="btn btn-primary" href="{% url 'blog:blog-manager-page' %}?page={{posts.next_page_number}}">Next page</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+        </div>
+</section>
+{% endblock content %}

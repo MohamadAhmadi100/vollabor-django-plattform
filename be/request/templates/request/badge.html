@@ -1,0 +1,165 @@
+{% extends "request/base.html" %}
+{% block content %}
+<!-- table -->
+
+    
+        
+            <div class="row py-3 px-2 mt-5 mb-5 bg-warning">
+                <div class="col-md-8">
+                    <h2 class="">Badge</h2>
+                </div>
+                <!--<div class="col-md-4 text-right">-->
+                <!--    <a class="btn text-dark mb-1" href="{% url 'create-checkout-session' %}" style="font-weight: bold;">Balance-->
+                <!--    <span class="text-dark"> <i class="fa fa-dollar-sign text-white bg-dark p-2" style="border-radius: 25px;"></i>{{user.memberprofile.balance}}</span>-->
+                <!--    </a>-->
+                <!--</div>-->
+                
+
+                    
+                
+            </div>
+    <div class="container-fluid">    
+            <div class="row px-2 mt-5 mb-5">
+                
+                <form method="post" id="skillform">
+                    {% csrf_token %}
+                    
+                    <div class="row px-2 my-3">
+                        <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12">
+                            <h4>Select your skill</h4>
+                            
+                        </div>
+                        <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12">
+                            <select name="skills" id="skills" class="form-control skillList">
+                                {% for skill in skill_list %}
+                                <option onclick="show('{{skill}}')" value="{{skill}}"> {{skill}}</option>
+                                {% endfor %}
+                                <option onclick="show('Others')" value="0">Others</option>
+                            </select>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="row px-2 my-3">
+                        <div class="col-12">
+                            <input type="text" id="OtherSection" class="form-control d-none" name="others" oninput="ClearErr('OtherSection')" placeholder="Enter your skill">
+                            <div id="OtherSection_error" style="color:red"></div>
+                        </div>
+                        
+                    </div>
+                    <div class="row px-2 my-3">
+                        <div class="col-4 text-start">
+                             <input type="button" id="subBtn" class="btn btn-primary btn-block" value="Submit">
+                        </div>
+                        
+                    </div>
+                    
+                    
+                </form>
+                
+                
+            </div>
+        
+        
+            <hr/>
+       
+            <div class="row px-2 mt-3 text-secondary">
+                <div class="col-12">
+                    <h4>Attention!!</h4>
+                </div>
+                <div class="col-11 px-3">
+                    <p>The uploaded resume in your profile will be considered for reviewing process.</p>
+                    <p>If you don't find your desired badge, you can insert your desired badge through selecting other option from skill list.</p>
+                    <p>Cost of each badge request is $ 0.</p>
+                    
+                </div>
+                
+                
+                   
+                
+            
+            </div>
+            
+            
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+       
+    </div>
+
+<script>
+    $(document).ready(function() {
+
+        $(".skillList").change(function () {
+           
+            const Value = $(this).val();
+             
+            if (Value == "0"){
+                $('#OtherSection').removeClass('d-none');
+            }
+            else {
+                $('#OtherSection').addClass('d-none');
+            };
+        });
+        
+        
+        document.getElementById("subBtn").addEventListener("click",function(){
+              
+            var skillvalue=document.getElementById("skills").value;
+            if(skillvalue=="0"){
+                var otherSkill = document.getElementById("OtherSection").value;
+                if(otherSkill==""){
+                    document.getElementById("OtherSection_error").innerHTML="Error: please enter the your skill."
+                }else{
+                    document.getElementById('skillform').submit();
+                    document.getElementById('subBtn').disabled = true;
+                }
+            }else{
+                document.getElementById('skillform').submit();
+                document.getElementById('subBtn').disabled = true;
+            }
+          
+        });
+        
+        
+        
+    
+    });
+
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+}
+
+
+ /*   let others = document.querySelector('.others');
+
+    function show(skill) {
+        document.querySelector('.textBox').value = skill
+        if (skill == "Others"){
+            others.classList.add('active')
+        }
+        else{
+            others.classList.remove('active')
+        }
+    }
+
+    let dropdown = document.querySelector('.dropdown');
+    dropdown.onclick = function(){
+        dropdown.classList.toggle('active')
+    }*/
+</script>
+{% endblock %}

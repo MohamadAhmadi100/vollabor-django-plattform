@@ -1,0 +1,610 @@
+{% extends 'emails/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %} Send email {% endblock %}
+
+{% block main %}
+<div style="margin-left: 450px; margin-bottom: 10px">
+    <a class="btn btn-primary" href="{% url 'email:send-email' %}"><h6>Send email</h6></a>
+    <a class="btn btn-success" href=""><h6>Send email template</h6></a>
+
+</div>
+<div style="" class="col-md-10 mx-auto">
+    <div class="card card-primary">
+
+        <div class="card-header">
+            <h3 class="card-title">Emails</h3>
+        </div>
+        <div class="card-body">
+            {% if form_mode == 'notprojects' %}
+                <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="subject" class="form-label">Subject:</label>
+                            <input type="text" class="form-control" name="subject" id="subject" required>
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="description" class="form-label">Description:</label>
+                            <textarea class="ckeditor form-control" name="description" rows="5" id="description" required></textarea>
+                            
+                        </div>
+                        
+                    </div>
+                    
+                    
+                </form>
+
+
+            <div class="row mb-3">
+                <div class="col-12">
+                    <label for="subject" class="form-label">Company emails:</label>
+                    
+                    {% if request.user.is_superuser %}
+                    <div class="form-check ml-3">
+                            <input class="form-check-input emails" id="project@tecvico.com" name="Cemails" type="radio"/>
+                            <label class="form-check-label" for="email2">project@tecvico.com</label>
+                    </div>
+                    
+                    <div class="form-check ml-3">
+                            <input class="form-check-input emails" id="pa@tecvico.com" name="Cemails" type="radio"/>
+                            <label class="form-check-label" for="email3">pa@tecvico.com</label>
+                    </div>
+                    
+                    {% endif %}
+                    <div class="form-check ml-3">
+                        <input class="form-check-input emails" id="info@tecvico.com" name="Cemails" type="radio"/>
+                        <label class="form-check-label" for="email3">info@tecvico.com</label>
+                    </div>
+                    <div class="form-check ml-3">
+                        <input class="form-check-input emails" id="info@tecvico.com" name="Cemails" type="radio"/>
+                        <label class="form-check-label" for="email3">workshop@tecvico.com</label>
+                    </div>
+                    {% if request.user.email == 'siamakmarandi@gmail.com' %}
+                        <div class="form-check ml-3">
+                                <input class="form-check-input emails" id="pa1@tecvico.com" name="Cemails" type="radio"/>
+                                <label class="form-check-label" for="email4">pa1@tecvico.com</label>
+                        </div>
+                    {% elif request.user.email == 'mohamadrezaeiny@gmail.com' %}
+                        <div class="form-check ml-3">
+                                <input class="form-check-input emails" id="pa2@tecvico.com" name="Cemails" type="radio"/>
+                                <label class="form-check-label" for="email5">pa2@tecvico.com</label>
+                        </div>
+                    {% elif request.user.email == 'aminramezani1376@gmail.com' %}
+                        <div class="form-check ml-3">
+                                <input class="form-check-input emails" id="pa3@tecvico.com" name="Cemails" type="radio"/>
+                                <label class="form-check-label" for="email6">pa3@tecvico.com</label>
+                        </div>
+                    {% elif request.user.email == 'arianict0101@gmail.com' %}
+                        <div class="form-check ml-3">
+                                <input class="form-check-input emails" id="pa4@tecvico.com" name="Cemails" type="radio"/>
+                                <label class="form-check-label" for="email7">pa4@tecvico.com</label>
+                        </div>
+                    {% endif %}
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails" id="pa5@tecvico.com" name="Cemails" type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email8">pa5@tecvico.com</label>-->
+                        <!--</div>-->
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails" id="pa6@tecvico.com" name="Cemails" type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email9">pa6@tecvico.com</label>-->
+                        <!--</div>-->
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails" id="pa7@tecvico.com" name="Cemails" type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email10">pa7@tecvico.com</label>-->
+                        <!--</div>-->
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails" id="pa8@tecvico.com" name="Cemails" type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email11">pa8@tecvico.com</label>-->
+                        <!--</div>-->
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails" id="pa9@tecvico.com" name="Cemails" type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email12">pa9@tecvico.com</label>-->
+                        <!--</div>-->
+                        <!--<div class="form-check ml-3">-->
+                        <!--        <input class="form-check-input emails" id="pa10@tecvico.com" name="Cemails" type="radio"/>-->
+                        <!--        <label class="form-check-label" for="email13">pa10@tecvico.com</label>-->
+                        <!--</div>-->
+                    
+                </div>
+                
+            </div>
+            <hr>
+
+
+            {% if request.GET.filter == "email-company" %}
+            <a href="?filter=email-company" class="btn btn-light" style="background-color: #a3a1a1"> Company </a>
+            {% else %}
+            <a href="?filter=email-company" class="btn btn-light" style="background-color: #e1e1e1" > Company </a>
+            {% endif %}
+
+            {% if request.GET.filter == "email-workshop" %}
+            <a href="?filter=email-workshop" class="btn btn-light" style="background-color: #a3a1a1"> Wrokshop </a>
+            {% else %}
+            <a href="?filter=email-workshop" class="btn btn-light" style="background-color: #e1e1e1" > Wrokshop </a>
+            {% endif %}
+
+            {% if request.GET.filter == "email-institute" %}
+            <a href="?filter=email-institute" class="btn btn-light" style="background-color: #a3a1a1"> Institute </a>
+            {% else %}
+            <a href="?filter=email-institute" class="btn btn-light" style="background-color: #e1e1e1" > Institute </a>
+            {% endif %}
+
+            {% if request.GET.filter == "email-workshop" %}
+                {% for cat in workshops %}
+                <div class="row m-2">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="row text-dark px-1">
+                           <div class="col-1 mx-0 px-0 mt-1">
+                               <input class="form-check-input border-dark m-1" id="chk{{cat.id}}" type="checkbox" style="width:25px;height:25px" onclick="checkFnc('chk{{cat.id}}','{{cat.unique_id}}')"/>
+                           </div>
+                            <div class="col-9 mx-0 px-2">
+                                <a class="btn btn-info btn-block py-2 text-white"  data-bs-toggle="collapse" href="#e{{cat.unique_id}}" aria-expanded="false" aria-controls="e{{cat.unique_id}}">
+                            {{cat.title}} 
+                            </a>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="collapse" id="e{{cat.unique_id}}">
+                        {% for i in users_workshop %}
+                        {%if i.workshop == cat %}
+                            <div class="row pl-5 mx-auto table-info my-1 py-2">
+                                <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 form-check text-wrap word-wrap">
+                                    <input class="form-check-input emails" id="{{i.user.email}}" name="{{cat.company_name}}" type="checkbox"/>
+                                    <label class="form-check-label text-wrap" style="font-size:0.9em" for="{{i.user.email}}">{{i.user.email}}</label>
+                                </div>
+                                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                    <a data-bs-toggle="modal" href="#InfoModal{{i.pk}}" style="float: right;"  class="d-inline-block mx-3 info"><i class="fa fa-question-circle"></i></a>
+                                </div>
+                            </div>
+                            <div class="modal fade"  id="InfoModal{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                                    <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header modal-colored-header bg-secondary text-white">
+                                              <h5 class="modal-title text-white" id="InfoModalLabel">{{i.workshop.title}}</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+        										<ul class="list-group list-group-flush">
+        											<li class="list-group-item">Full name: <span class="text-secondary">{{i.user.get_full_name}}</span></li>
+        
+        											<li class="list-group-item">Position: <span class="text-secondary">{{i.user.memberprofile.position}}</span></li>
+        
+        											<li class="list-group-item">Degree: <span class="text-secondary">{{i.user.memberprofile.degree}}</span></li>
+        
+        											<li class="list-group-item">Gender: <span class="text-secondary">{{i.user.memberprofile.gender}}</span></li>
+        
+        											<li class="list-group-item">Email address: <span class="text-secondary">{{i.user.email}}</span></li>
+        										</ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {%endif%}
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <input type="hidden" name="position" id="position" value="workshop">
+            {% endif %}
+
+
+
+            {% if request.GET.filter == "email-institute" %}
+                {% for cat in institutes %}
+                <div class="row m-2">
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="row text-dark px-1">
+                           <div class="col-1 mx-0 px-0 mt-1">
+                               <input class="form-check-input border-dark m-1" id="chk{{cat.id}}" type="checkbox" style="width:25px;height:25px" onclick="checkFnc('chk{{cat.id}}','{{cat.company_name}}')"/>
+                           </div>
+                            <div class="col-9 mx-0 px-2">
+                                <a class="btn btn-info btn-block py-2 text-white"  data-bs-toggle="collapse" href="#e{{cat.company_name}}" aria-expanded="false" aria-controls="e{{cat.company_name}}">
+                            {{cat.institute_name}} 
+                            </a>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="collapse" id="e{{cat.company_name}}">
+                        {% for email in cat.emails_institute.Published %}
+                            <div class="row pl-5 mx-auto table-info my-1 py-2">
+                                <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 form-check text-wrap word-wrap">
+                                    <input class="form-check-input emails" id="{{email.email_address}}" name="{{cat.company_name}}" type="checkbox"/>
+                                    <label class="form-check-label text-wrap" style="font-size:0.9em" for="{{email.email_address}}">{{email.email_address}}</label>
+                                </div>
+                                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                    <a data-bs-toggle="modal" href="#InfoModal{{i.pk}}" style="float: right;"  class="d-inline-block mx-3 info"><i class="fa fa-question-circle"></i></a>
+                                </div>
+                            </div>
+                            <div class="modal fade"  id="InfoModal{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                                    <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header modal-colored-header bg-secondary text-white">
+                                              <h5 class="modal-title text-white" id="InfoModalLabel">{{i}}</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item">Full name: <span class="text-secondary">{{i.user.get_full_name}}</span></li>
+        
+                                                    <li class="list-group-item">Position: <span class="text-secondary">{{i.user.memberprofile.position}}</span></li>
+        
+                                                    <li class="list-group-item">Degree: <span class="text-secondary">{{i.user.memberprofile.degree}}</span></li>
+        
+                                                    <li class="list-group-item">Gender: <span class="text-secondary">{{i.user.memberprofile.gender}}</span></li>
+        
+                                                    <li class="list-group-item">Email address: <span class="text-secondary">{{i.user.email}}</span></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <input type="hidden" name="position" id="position" value="institute">
+            {% endif %}
+
+
+            {% if request.GET.filter == "email-company" %}
+                {% for category in copanys %}
+                
+                <div class="row my-1 text-dark px-1">
+                   <div class="col-1 mx-0 px-0 mt-1">
+                       <input class="form-check-input border-dark m-1" id="chk{{category.id}}" type="checkbox" style="width:25px;height:25px" onclick="checkFnc('chk{{category.id}}','{{category.company_name}}')"/>
+                    
+                   </div>
+                    <div class="col-9 mx-0 px-2">
+                        <a class="btn btn-info btn-block py-2 text-white"  data-bs-toggle="collapse" href="#e{{category.id}}" aria-expanded="false" aria-controls="e{{category.id}}">
+                    {{category.company_name}} 
+                    </a>
+                    </div>
+                </div>
+                <div class="collapse col-9 pl-5" id="e{{category.id}}">
+                        
+                        {% for email in category.company_email.Published %}
+                            <div class="row pl-5 mx-auto table-info my-2 py-2">
+                                <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 form-check text-wrap word-wrap">
+                                    <input class="form-check-input emails" id="{{email.agent_email_address}}" name="{{category.company_name}}" type="checkbox"/>
+                                    <label class="form-check-label text-wrap" style="font-size:0.9em" for="{{email.agent_email_address}}">{{email.agent_email_address}}</label>
+                                </div>
+                                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12">
+                                    <a data-bs-toggle="modal" href="#InfoModal{{email.pk}}" style="float: right;"  class="d-inline-block mx-3 info"><i class="fa fa-question-circle"></i></a>
+                                    
+                                    
+                                </div>
+                                
+                            </div>
+                            <div class="modal fade"  id="InfoModal{{email.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                                    <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header modal-colored-header bg-secondary text-white">
+                                              <h5 class="modal-title text-white" id="InfoModalLabel">{{email}}</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item">Company agent’s first name: <span class="text-secondary">{{email.company_agent_first_name}}</span></li>
+                                                    <li class="list-group-item">Company agent’s surname: <span class="text-secondary">{{email.company_agent_surname}}</span></li>
+                                                    <li class="list-group-item">agent’s position: <span class="text-secondary">{{email.agent_position}}</span></li>
+                                                    <li class="list-group-item">agent’s academic degree: <span class="text-secondary">{{email.agent_academic_degree}}</span></li>
+                                                    <li class="list-group-item">gender: <span class="text-secondary">{{email.gender}}</span></li>
+                                                    <li class="list-group-item">agent’s email address: <span class="text-secondary">{{email.agent_email_address}}</span></li>
+                                                </ul>
+                                            </div>
+                                            
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                       
+                        {% endfor %}
+                        </div>
+                {% endfor %}
+                <input type="hidden" name="position" id="position" value="company">
+            {% endif %}
+
+            <div class="card-footer text-muted text-center">
+                <button type="submit" class="btn btn-success" id="subBtn">submit</button>
+            </div>
+            {% endif %}
+
+
+            {% if form_mode == 'project'  %}
+                <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="form-row">
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            {{ form_project.title|as_crispy_field }}
+                            {{ form_project.projectlink|as_crispy_field }}
+                            {{ form_project.description|as_crispy_field }}
+                            {{ form_project.img|as_crispy_field }}
+                        </div>
+                    </div>
+                    <button style="margin-left: 275px" class="btn btn-primary" type="submit">Create</button>
+                </form>
+
+
+            
+            {% for i in projects %}
+            <div class="row my-3">
+                <div class="item col-12  d-flex p-3">
+                    <div class="row w-100">
+                        <div class="col-4">
+
+                            <img style="height: 150px; width: 200px" class="" src="{{i.img.url}}" alt="">
+                        </div>
+                        <div class="col-8">
+                            <h5>Title:{% if i.title %}{{i.title}}{%endif%}</h5>
+                            <h5>Link:{% if i.projectlink %}{{i.projectlink}}{%endif%}</h5>
+                            <p class="mt-3 w-100">
+
+                                {{i.description|safe}}
+                            </p>
+                            <a href="{% url 'email:delete-projects-email' i.pk %}" ><h6 class="btn btn-danger">Delete</h6></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+
+            <a href="{% url 'email:send-template-project-research' %}?id={{object.pk}}"><h6 class="btn btn-primary">Next</h6></a>
+            {% endif %}
+        </div>
+    </div>
+     <!--waiting_modal-->
+ <div class="modal" id="WaitModal">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span id="close_email_modal" aria-hidden="true">&times;</span>
+            </button>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="lds-dual-ring">
+                </div>
+                <div style="display:none" class="lds-dual-done">
+                    Done
+                </div>
+                <div class="card text-center ">
+                    <span>Total emails</span>
+                    <span value=0 id="totale">---</span>
+                </div>
+                <div class="card text-center ">
+                    <span>successful</span>
+                    <span value=0 id="success">---</span>
+                </div>
+                <div class="card text-center ">
+                    <span>remaining</span>
+                    <span value=0 id="remaning">---</span>
+                </div>
+                <div class="card text-center ">
+                    <span >Unsuccessful</span>
+                    <span value=0 id="feiled">---</span>
+                </div>
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="feiled-list">
+                            <button class="accordion-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne"
+                                    aria-expanded="true"
+                                    aria-controls="collapseOne">
+                                    Show unsuccessful emails
+                            </button>
+                        </h2>
+                        <div id="collapseOne"
+                             class="accordion-collapse collapse show"
+                             aria-labelledby="feiled"
+                             data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <ul id="failed_e_list" style="width:75%;list-style:none;font-size:13px" class="emails_status">
+                                </ul>
+                                <button id="retry" class="btn btn-success" type="submit">Try again</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"> </script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+<script>
+    
+    $(document).ready(function() {
+            let template_id=''
+                $('#close_email_modal').click(function(){
+                    $('#WaitModal').modal('toggle');
+                }) 
+    
+                $('#retry').click(function(){
+                    let emails_list=[]
+                    $('#failed_e_list li').each(function(i){
+                        emails_list.push($(this).text())     
+                    })
+                    SendData(emails_list)
+                })
+                 
+                $('#subBtn').click(function(e){
+                 var emails_list=email_list()
+                 console.log(template_id)
+                 SendData(emails_list,template_id)
+                })   
+                
+                   $('.template_id').click(function(){
+                   template_id=$(this).attr('id')
+                })
+    });
+             
+        
+    function email_list(){
+        let email_checkboxes = document.querySelectorAll('input[type=checkbox].emails:checked');
+        let emails_list=[]
+        for(let i=email_checkboxes.length-1;i>=0;i--){
+            emails_list.push(email_checkboxes[i].id)
+        }
+        return emails_list
+    
+    }
+    
+    function SendData(email_list,template_id){
+        console.log(email_list)
+        $('#WaitModal').modal({backdrop: 'static', keyboard: false})  
+        $('#WaitModal').modal('show');
+        var subject = document.getElementById("subject").value;
+        var Cemail_list; 
+        let Cemail_checkboxes = document.querySelectorAll('input[name="Cemails"]:checked');
+        Cemail_checkboxes.forEach((checkbox) => {
+            Cemail_list = checkbox.id;
+        });
+        $('#success').html(0)
+        $('#success').attr('value',0)
+        $('#remaning').html(email_list.length)
+        $('#remaning').attr('value',email_list.length)
+        $('#feiled').html(0)
+        $('#feiled').attr('value',0)
+        $('.emails_status').html('')
+        let history=$('#email_selection_name').val()
+        $('#totale').html(email_list.length.toString())
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "{% url 'email:send-email-template-test' %}",
+            data:{"templateId":"{{object.id}}", "email_list":email_list[email_list.length-1],"Cemail_list":Cemail_list,'description':$('#description').val(),
+                    "subject":subject, csrfmiddlewaretoken: '{{ csrf_token }}','history':history,'new_history_email_id':'create'},
+            success:function(res){
+                let new_history_email_id=res.new_history_email_id
+                if(res.result==1){
+                    let success=parseInt($('#success').attr('value'))
+                    let remaning=parseInt($('#remaning').attr('value'))
+                    $('#success').html(success+1)
+                    $('#remaning').html(remaning-1)
+                    $('#remaning').attr('value',remaning-1)
+                    $('#success').attr('value',success+1)
+                }
+                else{
+                let field=parseInt($('#feiled').attr('value'))
+                let remaning=parseInt($('#remaning').attr('value'))
+                $('#remaning').html(remaning-1)
+                $('#remaning').attr('value',remaning-1)
+                $('#feiled').html(field+1)
+                $('#feiled').attr('value',field+1)
+                $('.emails_status').append('<li>'+ email_list[i] +'</li>')
+                }
+    
+    
+    
+                for(let i=email_list.length-2;i>=0;i--){
+                    $.ajax({
+                        type: "POST",
+                        enctype: 'multipart/form-data',
+                        url: "{% url 'email:send-email-template-test' %}",
+                        data:{"templateId":"{{object.id}}", "email_list":email_list[i],"Cemail_list":Cemail_list,'description':$('#description').val(),
+                        "subject":subject, csrfmiddlewaretoken: '{{ csrf_token }}',"history":history,'new_history_email_id':new_history_email_id},
+                        success:function(res){
+                            if(res.result==1){
+                                let success=parseInt($('#success').attr('value'))
+                                let remaning=parseInt($('#remaning').attr('value'))
+                                $('#success').html(success+1)
+                                $('#remaning').html(remaning-1)
+                                $('#remaning').attr('value',remaning-1)
+                                $('#success').attr('value',success+1)
+                            }
+                            else{
+                                let field=parseInt($('#feiled').attr('value'))
+                            let remaning=parseInt($('#remaning').attr('value'))
+                            $('#remaning').html(remaning-1)
+                            $('#remaning').attr('value',remaning-1)
+                            $('#feiled').html(field+1)
+                            $('#feiled').attr('value',field+1)
+                            $('.emails_status').append('<li>'+ email_list[i] +'</li>')
+                                
+                            }
+                            if(i==0){
+                                $('.lds-dual-ring').css('display','none')
+                                $('.lds-dual-done').css('display','block')
+                            }
+                            
+                        },
+                        error:function(res){
+                            let field=parseInt($('#feiled').attr('value'))
+                            let remaning=parseInt($('#remaning').attr('value'))
+                            $('#remaning').html(remaning-1)
+                            $('#remaning').attr('value',remaning-1)
+                            $('#feiled').html(field+1)
+                            $('#feiled').attr('value',field+1)
+                            $('.emails_status').append('<li>'+ email_list[i] +'</li>')
+                            if(i==0){
+                                $('.lds-dual-ring').css('display','none')
+                                $('.lds-dual-done').css('display','block')
+                            }
+                        }
+                    })
+                    
+                    
+                }
+    
+                
+            },
+            error:function(res){
+                alert('connection lost')
+            }
+        })
+    
+    
+        
+     
+     
+      
+    }
+     
+    function checkFnc(id,name){
+        var chkElm = document.getElementById(id);
+       
+        if(chkElm.checked){
+            selectAll(name);
+        }else{
+            UnSelectAll(name);
+        }
+      //  $("#"+id).click(function(){
+       // $('input:checkbox').not(this).prop('checked', this.checked);
+        
+    }   
+    
+ function selectAll(name) {
+            var items = document.getElementsByName(name);
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].type == 'checkbox')
+                    items[i].checked = true;
+            }
+        }
+    
+ function UnSelectAll(name) {
+        var items = document.getElementsByName(name);
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].type == 'checkbox')
+                items[i].checked = false;
+        }
+    }	 
+        
+</script>
+
+
+
+{% endblock %}
+
+

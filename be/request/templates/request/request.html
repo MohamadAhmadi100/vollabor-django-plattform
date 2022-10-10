@@ -1,0 +1,228 @@
+{% extends "request/base.html" %}
+{% block content %}
+<!-- table -->
+
+        <div class="row py-3 px-2 mt-5 mb-5 bg-warning">
+            <div class="col-md-8">
+                 <h2 class="">My request </h2>
+            </div>
+            <!--<div class="col-md-4 text-right">-->
+            <!--    <a class="btn text-dark mb-1" style="font-weight:bold" href="{% url 'create-checkout-session' %}">Balance-->
+            <!--    <span class="text-dark"> <i class="fa fa-dollar-sign text-white bg-dark p-2" style="border-radius: 25px;"></i>{{user.memberprofile.balance}}</span>-->
+            <!--    </a>-->
+            <!--</div>-->
+            
+            
+            
+        </div>
+        <div class="container">
+            {% comment %} {% if unpaid_badges or unpaid_supervisor or unpaid_workshop %} {% endcomment %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th colspan="5"><h4>Unpaid invoices</h4></th>
+                    </tr>
+                    <tr class="table-info" style="font-weight:bold">
+                        <td style="width:20%">ID</td>
+                        <td style="width:15%" class="text-center">skill</td>
+                        <td style="width:15%">Submission date</td>
+                        <td style="width:15%" class="text-center">Type</td>
+                        <td style="width:20%" class="text-center"></td>
+                    </tr>
+                </thead>
+                <tbody class="table-dark">
+                    {%if unpaid_badges%}
+                        {% for item in unpaid_badges %}
+                        <tr>
+                            <td style="width:20%">{{item.unique_id}}</td>
+                            <td style="width:20%">{{item.skills}}</td>
+                            <td style="width:15%">{{item.created.date}}</td>
+                            <td style="width:15%" class="text-center"><span class="mx-auto">Badge request</span></td>
+                            {%for invoice in invoces%}
+                                {%if invoice.service.badge == item %}
+                                    <td style="width:20%" class="text-center"><a class="btn btn-success" href="{% url 'accounting:invoice-detail' invoice.pk %}">Pay</a></td>
+                                {%endif%}
+                            {%endfor%}
+                        </tr>
+                        {% endfor %}
+                    {%endif%}
+                    {% if unpaid_supervisor %}
+                        {% for item in unpaid_supervisor %}
+                        <tr>
+                            <td style="width:20%">{{item.id_request}}</td>
+                            <td style="width:20%"></td>
+                            <td style="width:15%">{{item.created.date}}</td>
+                            <td style="width:15%" class="text-center"><span class="mx-auto">Supervisor request</span></td>
+                            {%for invoice in invoces%}
+                                {%if invoice.service.badgesupervisor == item %}
+                                    <td style="width:20%" class="text-center"><a class="btn btn-success" href="{% url 'accounting:invoice-detail' invoice.pk %}">Pay</a></td>
+                                {%endif%}
+                            {%endfor%}
+                        </tr>
+                        {% endfor %}
+                    {% endif%}
+                    {% if unpaid_workshop %}
+                        {% for item in unpaid_workshop %}
+                        <tr>
+                            <td style="width:20%">{{item.id_request}}</td>
+                            <td style="width:20%"></td>
+                            <td style="width:15%">{{item.created.date}}</td>
+                            <td style="width:15%" class="text-center"><span class="mx-auto">Workshop request</span></td>
+                            {%for invoice in invoces%}
+                                {%if invoice.service.badgeworkshop == item %}
+                                    <td style="width:20%" class="text-center"><a class="btn btn-success" href="{% url 'accounting:invoice-detail' invoice.pk %}">Pay</a></td>
+                                {%endif%}
+                            {%endfor%}
+                        </tr>
+                        {% endfor %}
+                    {%endif%}
+
+                </tbody>
+            </table>
+            {% comment %} {% else %} {% endcomment %}
+            <!--<h5>There is nothing to show.</h5>-->
+            {% comment %} {% endif %} {% endcomment %}
+
+
+
+
+
+        {% if badges %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan="5"><h4>Badge request</h4></th>
+                </tr>
+                <tr class="table-info" style="font-weight:bold">
+                    <td style="width:20%">ID</td>
+                    <td style="width:30%">Skill</td>
+                    <td style="width:15%">Submission date</td>
+                    <td style="width:15%" class="text-center">Status</td>
+                    <td style="width:20%" class="text-center"></td>
+                </tr>
+            </thead>
+            <tbody class="table-dark">
+                {% for item in badges %}
+                <tr>
+                    <td style="width:20%">{{item.unique_id}}</td>
+                    <td style="width:30%">{{item.skills}}</td>
+                    <td style="width:15%">{{item.created.date}}</td>
+                    {% if item.status == "Accept" or item.status == "Accept-manager" %}
+                    <td style="width:15%" class="text-center"><span class="mx-auto">Accepted</span></td>
+                    {% elif item.status == "Interview" %}
+                    <td style="width:15%" class="text-center"><span class="mx-auto">Under process/interview</span></td>
+                    {% elif item.status == 'Reject-badge-manager' or item.status == 'Reject-badge-expert' %}
+                    <td style="width:15%" class="text-center"><span class="mx-auto">Rejected</span></td>
+                    {% else %}
+                    <td style="width:15%" class="text-center"><span class="mx-auto">Under process</span></td>
+                    {% endif %}
+                    <td style="width:20%" class="text-center"><a class="btn btn-success" href="{% url 'request:badge-request-detail' item.pk %}">View</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <!--<h5>There is nothing to show.</h5>-->
+        {% endif %}
+        
+        {% if supervisor %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan="5"><h4>Supervisor's request</h4></th>
+                </tr>
+                <tr class="table-info" style="font-weight:bold">
+                    <td style="width:20%">ID</td>
+                    <td style="width:30%">Degree</td>
+                    <td style="width:15%">Submission date</td>
+                    <td style="width:15%" class="text-center">Status</td>
+                    <td style="width:20%" class="text-center"></td>
+                </tr>
+            </thead>
+            <tbody class="table-dark">
+                {% for item in supervisor %}
+                <tr>
+                    <td style="width:20%">{{item.id_request}}</td>
+                    <td style="width:30%">{{item.user.memberprofile.degree}}</td>
+                    <td style="width:15%">{{item.created.date}}</td>
+                    {% if item.status == 'accepted_by_manager' or item.status == 'accepted_by_expert' %}
+                    <td style="width:15%" class="text-center"><span class="mx-auto">Accepted</span></td>
+                    {% elif item.status == 'rejected_by_manager' or item.status == 'rejected_by_expert' %}
+                    <td style="width:15%" class="text-center"><span class="mx-auto">Rejected</span></td>
+                    {% else %}
+                    <td style="width:15%" class="text-center"><span class="mx-auto">Under process</span></td>
+                    {% endif %}
+                    <td style="width:20%" class="text-center"><a class="btn btn-success" href="{% url 'request:supervisor-request-detail' item.pk %}">View</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <!--<h5>There is nothing to show.</h5>-->
+        {% endif %}
+        {% if workshop %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan="5"><h4>Workshop presenter's request</h4></th>
+                </tr>
+                <tr class="table-info" style="font-weight:bold">
+                    <td style="width:20%">ID</td>
+                    <td style="width:30%">Degree</td>
+                    <td style="width:15%">Submission date</td>
+                    <td style="width:15%" class="text-center">Status</td>
+                    <td style="width:20%" class="text-center"></td>
+                </tr>
+            </thead>
+            <tbody class="table-dark">
+                {% for item in workshop %}
+                <tr>
+                    <td style="width:20%">{{item.id_request}}</td>
+                    <td style="width:30%">{{item.user.memberprofile.degree}}</td>
+                    <td style="width:15%">{{item.created.date}}</td>
+                    {% if item.status == 'accepted_by_manager' or item.status == 'accepted_by_expert' %}
+                    <td style="width:15%" class="text-center"><span class="mx-auto">Accepted</span></td>
+                    {% elif item.status == 'rejected_by_manager' or item.status == 'rejected_by_expert' %}
+                    <td style="width:15%" class="text-center"><span class="mx-auto">Rejected</span></td>
+                    {% else %}
+                    <td style="width:15%" class="text-center"><span class="mx-auto">Under process</span></td>
+                    {% endif %}
+                    <td style="width:20%" class="text-center"><a class="btn btn-success" href="{% url 'request:workshop-request-detail' item.pk %}">View</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <!--<h5>There is nothing to show.</h5>-->
+        {% endif %}
+    
+    
+    
+</div>
+
+
+<!--<div class="details bg-dark">
+   <!-- <div class="recentOrders bg-light">
+        
+    </div>-->
+    <!--<div class="filter">
+        <div class="cardHeader">
+            <h2>Filter</h2>
+            <p class="btn clear-filter">All</p>
+        </div>
+        <ul>
+            <span>By Form Type</span>
+            <li>Badge request</li>
+            <li>Supervisor request</li>
+            <li>Workshop request</li>
+        </ul>
+        <ul>
+            <span>By Date</span>
+            <li>Today</li>
+            <li>Last week</li>
+            <li>Last month</li>
+            <li>Last 2 month</li>
+        </ul>
+    </div>--
+</div>-->
+{% endblock %}

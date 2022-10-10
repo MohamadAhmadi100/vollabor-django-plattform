@@ -1,0 +1,38 @@
+{% extends "ivc_website/news.html" %}
+{% block title %}{{category.title}}{% endblock %}
+{% block news %}
+<div class="ag-timeline_list mb-5">
+    {% for new in category.news.published %}
+    <div class="js-timeline_item js-ag-animated ag-timeline_item">
+        <div class="ag-timeline-card_item">
+            <div class="ag-timeline-card_inner">
+                <div class="ag-timeline-card_title big ms-2">
+                    {{new.title}}
+                </div>
+                <div class="ag-timeline-card_img-box d-flex justify-content-center align-items-center">
+                    <img src="{{new.thumbnail.url}}"
+                         class="ag-timeline-card_img" style="width: 300px; height: 300px;"/>
+                </div>
+                <div class="ag-timeline-card_info">
+                    <div class="ag-timeline-card_desc">
+                        {{new.description|truncatewords:30|safe}}
+                    </div>
+                    <a class="ag_timeline_card_btn" href="{% url 'news-detail' new.pk %}" style="font-size: 11px;">
+                        <span>Read more</span>
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+
+                </div>
+            </div>
+            <div class="ag-timeline-card_arrow">
+                <div class="ag-timeline-card_meta">{{new.date}}</div>
+            </div>
+        </div>
+        <div class="js-timeline-card_point-box ag-timeline-card_point-box">
+            <div class="ag-timeline-card_point">2021</div>
+        </div>
+        <div class="ag-timeline-card_meta-box"></div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock news %}

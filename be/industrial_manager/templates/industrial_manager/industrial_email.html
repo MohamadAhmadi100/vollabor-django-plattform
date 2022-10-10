@@ -1,0 +1,295 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+
+{% block css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+<header id="main-header" class="py-2 bg-danger text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-envelope-square"></i> Industrial Email</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="contract">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+    <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content" id="filter-container">
+                            <div class="row">
+                                <div class="col text-center">
+                                    <h3>Getting data from google sheet...</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+                <div class="col-md-12 mt-4 mb-5">
+                    <div class="wrapper wrapper-content animated fadeInUp">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                <div class="row mb-3">
+                                    <div class="col-lg-12 text-center">
+                                        <h3><i class="fa fa-edit"></i> Email</h3>
+                                    </div>
+                                </div>
+                                <hr>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    {{email_form|crispy}}
+                                    <button class="btn btn-success"><i class="fa fa-check"></i> Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+{% endblock content %}
+
+{% block script %}
+<script>
+    function set_a_country_listener() {
+        let clicked_button = $(this);
+
+        $.ajax({
+                url: "{% url 'industrial-email-page' %}",
+                type: "POST",
+                data: {
+                    'get-a-country-number': true,
+                    'country-name': clicked_button.text(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data['success']) {
+                        let current_number = parseInt($('#email-numbers').text());
+
+                        if (clicked_button.hasClass('btn-outline-dark')) {
+                            clicked_button.removeClass('btn-outline-dark');
+                            clicked_button.addClass('btn-dark');
+                            $('#email-numbers').text(current_number + data['number']);
+                        }
+                        else {
+                            clicked_button.removeClass('btn-dark');
+                            clicked_button.addClass('btn-outline-dark');
+                            $('#email-numbers').text(current_number - data['number']);
+                        }
+
+                    }
+                }
+            });
+    }
+
+    function add_a_country_button(item, index) {
+        let country_button = $('<button/>',
+            {
+                text: item,
+                click: set_a_country_listener,
+                class: 'btn btn-outline-dark m-1'
+            });
+
+        $('#countries-container').append(country_button);
+    }
+
+    function set_country_listener() {
+        $('#country-button').on('click', function () {
+
+            $.ajax({
+                url: "{% url 'industrial-email-page' %}",
+                type: "POST",
+                data: {
+                    'get-country-list': true,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data['success']) {
+                        $('#country-button').removeClass('btn-outline-dark');
+                        $('#country-button').addClass('btn-dark');
+                        $('#all-button').removeClass('btn-dark');
+                        $('#all-button').addClass('btn-outline-dark');
+
+                        $('#country-button').off();
+                        set_all_listener();
+
+                        $('#email-numbers').text(0);
+
+                        data['list'].forEach(add_a_country_button);
+                    }
+                }
+            });
+        });
+    }
+    function set_all_listener() {
+        $('#all-button').on('click', function () {
+
+            $.ajax({
+                url: "{% url 'industrial-email-page' %}",
+                type: "POST",
+                data: {
+                    'get-all-list': true,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data['success']) {
+                        $('#all-button').removeClass('btn-outline-dark');
+                        $('#all-button').addClass('btn-dark');
+                        $('#country-button').removeClass('btn-dark');
+                        $('#country-button').addClass('btn-outline-dark');
+
+                        $('#all-button').off();
+                        set_country_listener();
+
+                        $('#email-numbers').text(data['length']);
+                        $('#countries-container').html('')
+                    }
+                }
+            });
+
+
+        });
+
+    }
+
+    function set_update_listener(data) {
+        $('#update-button').on('click', function () {
+            $('#filter-container').html(
+                "<div class=\"row\">\n" +
+                "     <div class=\"col text-center\">\n" +
+                "          <h3>Updating data from google sheet... <i class='fa fa-sync'></i></h3>\n" +
+                "     </div>\n" +
+                "</div>"
+            )
+
+            $.ajax({
+                url: "{% url 'industrial-email-page' %}",
+                type: "POST",
+                data: {
+                    'update-data': true,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data['success']) {
+                        update_filter_container(data);
+                    }
+                }
+            });
+        })
+    }
+
+    function update_filter_container(data) {
+        $('#filter-container')
+            .html(
+            "<div class=\"row\">\n" +
+            "   <div class=\"col-lg-12 text-center\">\n" +
+            "      <h3><i class=\"fas fa-filter\"></i> Filter</h3>\n" +
+            "   </div>\n" +
+            "</div>\n" +
+            "<div class=\"row mb-3\">\n" +
+            "   <div class=\"col text-center\">\n" +
+            `      <p class=\"text-muted mb-0\">(<span id='email-numbers'>${data['length']}</span> emails)</p>\n` +
+            `      <p class=\"text-muted\">Last download time: <span id='last-download-time'>${data['last_modification_time']}</span></p>\n` +
+            "      <button class='btn btn-success' id='update-button'><i class='fa fa-sync'></i> Update</button>\n" +
+            "   </div>\n" +
+            "</div>\n" +
+            "<div class=\"row\">\n" +
+            "   <div class=\"col text-center\">\n" +
+            "      <button class=\"btn btn-dark\" id=\"all-button\">All</button>\n" +
+            "      <button class=\"btn btn-outline-dark\" id=\"country-button\">Country</button>\n" +
+            "   </div>\n" +
+            "</div>" +
+            "<div class=\"row mb-4\">\n" +
+            "   <div class=\"col text-center\" id='countries-container'>\n" +
+            "   </div>\n" +
+            "</div>"
+        );
+
+        set_update_listener();
+        set_country_listener();
+        set_all_listener();
+
+        var secondsInterval = setInterval(function () {
+                        updateSeconds(secondsInterval)
+                    }, 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#div_id_category').addClass('d-none')
+        $.ajax({
+            url: "{% url 'industrial-email-page' %}",
+            type: "POST",
+            data: {
+                'get-data': true,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (data) {
+                if (data['success']) {
+                    update_filter_container(data);
+                    setInterval(updateTime, 60000);
+                }
+            }
+        });
+    })
+
+    // Intervals
+    function updateTime() {
+        $.ajax({
+            url: "{% url 'industrial-email-page' %}",
+            type: "POST",
+            data: {
+                'get-last-modification_time': true,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (data) {
+                if (data['success']) {
+                    $('#last-download-time').text(data['last_modification_time']);
+                }
+            }
+        });
+    }
+    function updateSeconds(secondsInterval) {
+        if ($('#last-download-time').text().includes('now'))
+            $('#last-download-time').text('1 seconds ago');
+        else if ($('#last-download-time').text().includes('seconds')) {
+            let number = parseInt($('#last-download-time').text()) + 1;
+            if (number < 60)
+                $('#last-download-time').text(`${number} seconds ago`);
+            else {
+                clearInterval(secondsInterval);
+            }
+        }
+        else {
+            clearInterval(secondsInterval);
+        }
+    }
+
+</script>
+{% endblock script %}

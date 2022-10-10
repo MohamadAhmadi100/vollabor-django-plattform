@@ -1,0 +1,48 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+<header id="main-header" class="py-2 bg-warning text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-dollar-sign"></i> Responsibility Fee Checkout: Paypal</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="paypal">
+    <div class="container">
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <div class="alert alert-success"> {{ message }}</div>
+        {% else %}
+        <div class="alert alert-danger"> {{ message }}</div>
+        {%endif %}
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <h3>Selected amount: <span
+                                    class="badge badge-success">$ {{amount}}</span></h3>
+                            <hr>
+                            {{form.render}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

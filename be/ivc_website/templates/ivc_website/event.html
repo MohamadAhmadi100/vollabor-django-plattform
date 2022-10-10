@@ -1,0 +1,174 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load calendar_convertor %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+    
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/timeline.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div>
+    <div class="t-header">
+        <div class="row justify-content-center">
+            <div class="col-md-6 d-flex justify-content-center">
+                <div class="desc-header">
+                    <h1 class="title_page text-center">{% block title %}Event{% endblock %}</h1>
+                    <p class="text-center">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda atque corporis dicta
+                        doloremque libero nesciunt, odit, officia perspiciatis placeat quas quisquam quos recusandae
+                        saepe sint sunt suscipit tempora velit .
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="ag-timeline-block">
+            <div class="container-fluid">
+                <div class="ag-timeline_title-box d-flex justify-content-between">
+                    <div class="buttons">
+                        <div class="dropdown buttons_header">
+                            <button class="btn btn-date " type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div>
+                                    <input placeholder="Start Date" type="text" name="checkIn" id="date_start" value=""
+                                           class="calendar">
+                                    <i class="fas fa-calendar-check icon"></i>
+                                </div>
+
+                            </button>
+                            <button class="btn btn-date " type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div>
+                                    <input placeholder="End Date" type="text" name="checkIn" id="date_end" value=""
+                                           class="calendar">
+                                    <i class="fas fa-calendar-check icon"></i>
+                                </div>
+
+                            </button>
+                        </div>
+                    </div>
+                    <div class="search w-50">
+                        <div class="input-group justify-content-end">
+                            <div class="form-outline w-75">
+                                <input id="search-focus" type="search" class="form-control border-0"
+                                       placeholder="search ..."/>
+                            </div>
+                            <button type="button" class="btn submit-search">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-5">
+                <section class="ag-section my-5">
+                    <div class="ag-format-container">
+                        <div class="js-timeline ag-timeline">
+                            <div class="js-timeline_line ag-timeline_line">
+                                <div class="js-timeline_line-progress ag-timeline_line-progress"></div>
+                            </div>
+                            {% block event %}
+                            <div class="ag-timeline_list mb-5">
+                                {% for new in event %}
+                                <div class="js-timeline_item js-ag-animated ag-timeline_item">
+                                    <div class="ag-timeline-card_item">
+                                        <div class="ag-timeline-card_inner">
+                                            <div class="ag-timeline-card_title big ms-2">
+                                                {{new.title}}
+                                            </div>
+                                            <div class="ag-timeline-card_img-box d-flex justify-content-center align-items-center">
+                                                <img src="{{new.thumbnail.url}}"
+                                                     class="ag-timeline-card_img" style="width: 300px; height: 300px;"/>
+                                            </div>
+                                            <div class="ag-timeline-card_info">
+                                                <div class="ag-timeline-card_desc">
+                                                    {{new.description|truncatewords:30|safe}}
+                                                </div>
+                                                <a class="ag_timeline_card_btn" href="{% url 'event-detail' new.pk %}" style="font-size: 11px;">
+                                                    <span>Read more</span>
+                                                    <i class="fas fa-angle-right"></i>
+                                                </a>
+
+                                            </div>
+                                        </div>
+                                        <div class="ag-timeline-card_arrow">
+                                            <div class="ag-timeline-card_meta">{{new.date}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="js-timeline-card_point-box ag-timeline-card_point-box">
+                                        <div class="ag-timeline-card_point">2021</div>
+                                    </div>
+                                    <div class="ag-timeline-card_meta-box"></div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endblock %}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="{% static 'ivc_website/news/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/main.js' %}"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+    $(document).ready(function () {
+        const searchFocus = document.getElementById('search-focus');
+        const keys = [
+            {keyCode: 'AltLeft', isTriggered: false},
+            {keyCode: 'ControlLeft', isTriggered: false},
+        ];
+        window.addEventListener('keydown', (e) => {
+            keys.forEach((obj) => {
+                if (obj.keyCode === e.code) {
+                    obj.isTriggered = true;
+                }
+            });
+
+            const shortcutTriggered = keys.filter((obj) => obj.isTriggered).length === keys.length;
+
+            if (shortcutTriggered) {
+                searchFocus.focus();
+            }
+        });
+        window.addEventListener('keyup', (e) => {
+            keys.forEach((obj) => {
+                if (obj.keyCode === e.code) {
+                    obj.isTriggered = false;
+                }
+            });
+        });
+
+        /* drop down */
+
+
+        $('.dropdown.buttons_header ul li a').click(function () {
+            $('.dropdown.buttons_header ul li a').removeClass('active');
+            $(this).addClass('active');
+            let text = $(this).text();
+            console.log(text)
+            $('#categories').html(text)
+        })
+        $('#date_start').datepicker({
+            format: 'dd-mm-yyyy',
+            startDate: '+1d'
+        });
+        $('#date_end').datepicker({
+            format: 'dd-mm-yyyy',
+            startDate: '+1d'
+        });
+    })
+</script>
+
+{% endblock content %}

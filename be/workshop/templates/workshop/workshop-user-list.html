@@ -1,0 +1,287 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/researchtheme.css' %}">
+    
+    
+    <title>Workshop director view</title>
+{% endblock css %}
+
+{% block content %}
+
+
+    <header class="bg-color6 text-dark py-2 w-100">
+        <div class="container">
+            <h1 class="px-4"><i class="far fa-edit"></i> <span> Workshop list </span></h1>
+        </div>
+    </header>
+
+    <div class="container  card-page">
+        <div class="row justify-content-center align-items-center">
+            {% if request.GET.filter == 'workshops'%}
+            <div class="col col-md-3 pink active" id="workshop_btn">
+            {% else %}
+            <div class="col col-md-3 " id="workshop_btn">
+            {% endif %}
+                <a href="{% url 'show-workshops-to-users' %}?filter=workshops" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">All workshops</h4>
+                    <p class="number">{{workshops_number}}</p>
+                </a>
+            </div>
+            {% if request.GET.filter == 'my-workshop'%}
+            <div class="col col-md-3 pink active" id="my_workshop_btn">
+            {% else %}
+            <div class="col col-md-3 " id="my_workshop_btn">
+            {% endif %}
+                <a href="{% url 'show-workshops-to-users' %}?filter=my-workshop" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">My workshop list</h4>
+                    <p class="number ">{{user_number}}</p>
+                </a>
+            </div>
+            {% if request.GET.filter == 'notpayworkshops'%}
+            <div class="col col-md-3 pink active" id="workshop_btn">
+            {% else %}
+            <div class="col col-md-3  " id="workshop_btn">
+            {% endif %}
+                <a href="{% url 'show-workshops-to-users' %}?filter=notpayworkshops" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">unpaid workshop</h4>
+                    <p class="number">{{Notpay_workshop_count}}</p>
+                </a>
+            </div>
+
+
+        </div>
+
+       
+        
+        <div class="container mt-2">
+            {% if messages %}
+                {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success"> {{ message|safe }}</div>
+                        {% else %}
+                            <div class="alert alert-danger"> {{ message|safe }}</div>
+                        {%endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <!-- workshop list-->
+        {% if request.GET.filter == 'workshops'%}
+        <div class="row" id="workshop_list">
+            <div class="w-100 d-md-flex justify-content-md-center">
+                {% if workshops %}
+                <table class="table table-hover  mt-5 ws-notif-table" style="color:#F9F9F9">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th style="width:2%">ID</th>
+                            <th style="width:38%">Title</th>
+                            <th style="width:10%">Price</th>
+                            <th style="width:20%">Holding date</th>
+                            <th class="text-center" style="width:20%">helding status</th>
+                            <th style="width:20%">Action</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody class="table-white">
+                    {% for workshop in workshops %}
+                        <tr>
+                            <td style="width:2%">{{workshop.unique_id}}</td>
+                            <td style="width:38%">{{workshop.title}}</td>
+                            <td style="width:10%">{{workshop.price}}</td>
+                            <td style="width:20%">{{workshop.date}}</td>
+                            <td class="text-center">
+                                {%if workshop.expire%}
+                                    <span  class="badge badge-danger">Held</span>
+                                {%endif%}
+                            </td>
+                            <td style="width:10%;">
+                                <a href="{% url 'view-workshop' workshop.id %}" class="btn btn-success py-2">View</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: #f9f9f9; margin-top: 10px;">There is nothing to show you</h1>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% elif request.GET.filter == 'my-workshop'%}
+        <!--my workshop list-->
+        <div class="row" id="my_workshop_list">
+            <div class="w-100 d-md-flex justify-content-md-center">
+                {% if user_workshop %}
+                <table class="table table-hover mt-5 ws-notif-table" style="color:#F9F9F9">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th style="width:2%">ID</th>
+                            <th style="width:38%">Title</th>
+                            <th style="width:20%">Holding date</th>
+                            <th style="width:20%">Start time</th>
+                            <th style="width:20%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-white">
+                    {% for item in user_workshop %}
+                        <tr>
+                            <td style="width:2%">{{workshop.unique_id}}</td>
+                            <td style="width:38%">{{item.workshop.title}}</td>
+                            <td style="width:20%">{{item.workshop.date}}</td>
+                            <td style="width:20%">{{item.workshop.time_to_start}}</td>
+                            <td style="width:20%;display:flex">
+                                <!--<a href="" class="btn btn-warning py-2">Video</a>-->
+                                {% if item.workshop.title %}
+                                <a href="{% url 'view-workshop' item.workshop.id %}" class="btn btn-success py-2">View</a>
+                                {% for certificate in certificates %}
+                                    {% if certificate.workshop == item.workshop %}
+                                        {% comment %} <a href="{% url 'download-certificate' pk=item.pk %}" class="btn btn-warning py-2">Certificate</a> {% endcomment %}
+                                        <a href="../../media/{{item.certificate}}" class="btn btn-warning py-2">Certificate</a>
+                                    {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: #f9f9f9; margin-top: 10px;">There is nothing to show you</h1>
+                {% endif %}
+            </div>
+        </div>
+        {% elif request.GET.filter == 'notpayworkshops'%}
+        <!--Notpay workshop list-->
+        <div class="row" id="my_workshop_list">
+            <div class="w-100 d-md-flex justify-content-md-center">
+                {% if Notpay_workshop %}
+                <table class="table table-hover mt-5 ws-notif-table" style="color:#F9F9F9">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th style="width:2%">ID</th>
+                            <th style="width:38%">Title</th>
+                            <th style="width:20%">Holding date</th>
+                            <th style="width:20%">Start time</th>
+                            <th style="width:20%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-white">
+                    {% for item in Notpay_workshop %}
+                        <tr>
+                            <td style="width:2%">{{workshop.unique_id}}</td>
+                            <td style="width:38%">{{item.workshop.title}}</td>
+                            <td style="width:20%">{{item.workshop.date}}</td>
+                            <td style="width:20%">{{item.workshop.time_to_start}}</td>
+                            <td style="width:20%">
+                                <!--<a href="" class="btn btn-warning py-2">Video</a>-->
+                                {% if item.workshop.title %}
+                                <a href="{% url 'is-login' item.workshop.id %}" class="btn btn-success py-2">Pay</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: #f9f9f9; margin-top: 10px;">There is nothing to show you</h1>
+                {% endif %}
+            </div>
+        </div>
+
+        {% else %}
+        <div class="row" id="workshop_list">
+            <div class="w-100 d-md-flex justify-content-md-center">
+                {% if workshops %}
+                <table class="table table-hover  mt-5 ws-notif-table" style="color:#F9F9F9">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th style="width:2%">ID</th>
+                            <th style="width:38%">Title</th>
+                            <th style="width:10%">Price</th>
+                            <th style="width:20%">Holding date</th>
+                            <th class="text-center" style="width:20%">helding status</th>
+                            <th style="width:20%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-white">
+                    {% for workshop in workshops %}
+                        <tr>
+                            <td style="width:2%">{{workshop.unique_id}}</td>
+                            <td style="width:38%">{{workshop.title}}</td>
+                            <td style="width:10%">{{workshop.price}}</td>
+                            <td style="width:20%">{{workshop.date}}</td>
+                            <td class="text-center">
+                                {%if workshop.expire%}
+                                    <span  class="badge badge-danger">Held</span>
+                                {%endif%}
+                            </td>
+                            <td style="width:10%;">
+                                <!--<a href="{% url 'is-login' workshop.id %}" class="btn btn-warning py-2">Pay</a>-->
+                                <a href="{% url 'view-workshop' workshop.id %}" class="btn btn-success py-2">View</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: #f9f9f9; margin-top: 10px;">There is nothing to show you</h1>
+                {% endif %}
+            </div>
+        </div>
+        <script>
+        $(document).ready(function() {
+            let add_exp_btn = $('#workshop_btn');
+            add_exp_btn.addClass('active');
+        })
+        </script>
+        {% endif %}
+    </div>
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+    <!--<script>
+        let workshop_button = $('#workshop_btn');
+        let my_workshop_button = $('#my_workshop_btn');
+
+        let workshop_row = $('#workshop_list');
+        let my_workshop_row = $('#my_workshop_list');
+
+        function change_button_colors(clicked_button, other1) {
+            clicked_button.addClass('active');
+            other1.removeClass('active');
+        }
+
+        function change_row_visibility(our_row, other1) {
+            our_row.removeClass('d-none');
+            other1.addClass('d-none');
+        }
+
+        function show(value){
+            if (value == 'workshop_list'){
+                change_button_colors(workshop_button, my_workshop_button);
+                change_row_visibility(workshop_row, my_workshop_row);
+            }
+            else if (value == 'my_workshop_list'){
+                change_button_colors(my_workshop_button, workshop_button);
+                change_row_visibility(my_workshop_row, workshop_row);
+            }
+        }
+    </script>-->
+
+{% endblock content %}

@@ -1,0 +1,601 @@
+@import url('https://fonts.googleapis.com/css?family=Gothic+A1|Kaushan+Script|Libre+Baskerville|Lobster');
+.body{
+	width:100%;
+	font-family: 'Gothic A1', sans-serif;
+	font-size:16px;
+	margin:0px !important;
+	}
+	p{
+	color:#6c6c6f;
+	font-size:1em;
+	}
+	h1,h2,h3,h4,h5,h6{color:#323233;}
+.navbar-brand  span{
+	color: #fed136;
+	font-size:25px;font-weight:700;letter-spacing:0.1em;
+    font-family: 'Kaushan Script','Helvetica Neue',Helvetica,Arial,cursive;
+}
+.navbar-brand {
+	color: #fff;
+	font-size:25px;
+    font-family: 'Kaushan Script','Helvetica Neue',Helvetica,Arial,cursive;
+	font-weight:700;
+	letter-spacing:0.1em;
+}
+#collapsibleNavbar{
+	
+	font-size:13px;
+	
+}
+
+#mainDiv{
+	padding-left:200px;
+	padding-top:25px;
+	background-image:url("../img/Group3.png");
+	
+	background-repeat: no-repeat;
+    /*background-attachment: scroll;*/
+    background-position: center center;
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+	
+	
+}
+
+.navbar-nav .nav-item .nav-link{
+	padding: 1.1em 1em!important;
+	font-size: 120%;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: #fff;
+   font-family: 'Gothic A1', sans-serif;
+   
+}
+.navbar-nav .nav-item:hover{border-top:3px solid #fff;}
+#lgnLink:hover{border-top:3px solid #fff;color:#fed136 !important;text-shadow: 1px 1px 5px orange;}
+.navbar-nav .nav-item .nav-link:hover{color:#fed136;text-shadow: 1px 1px 5px orange;}
+.navbar-expand-md .navbar-nav .dropdown-menu{
+	border-top:3px solid #fed136;
+}
+.dropdown-item:hover{background-color:#fed136;color:gray; font-weight:bold}
+nav{-webkit-transition: padding-top .3s,padding-bottom .3s;
+    -moz-transition: padding-top .3s,padding-bottom .3s;
+    transition: padding-top .3s,padding-bottom .3s;
+    border: none;
+	}
+	
+ .shrink {
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: #212529;
+}
+
+
+
+.banner1{
+	/*background-image:url('http://www.hd-freewallpapers.com/latest-wallpapers/abstract-website-backgrounds.jpg');*/
+	background-image:url('file.gif');
+	text-align: center;
+    color: #fff;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+	height:450px;
+	
+}
+.banner2{
+	
+	position: absolute;
+    top: 5px;
+    right: 30px;
+    width: 850px;
+    height: 650px;
+  	background-image:url('Group 2.png');
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: right top;
+	-webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+	
+}
+#bannerText{
+	
+	padding-top:180px;
+	padding-left:30px;
+	font-size:30px
+	
+}
+.banner-text{
+	padding:250px 0 600px 0;
+}
+.banner-heading{
+	font-family: Helvetica,Arial;
+	font-size: 35px;
+    font-weight: 700;
+    line-height: 100px;
+    margin-bottom: 30px;
+	color:#fff;
+}
+.banner-sub-heading{
+	font-family: 'Libre Baskerville', serif;
+	font-size: 30px;
+    font-weight: 300;
+    line-height: 30px;
+    margin-bottom: 50px;
+	color:#fff;
+}
+
+.btn-banner{
+	padding:5px 20px;
+	border-radius:10px;
+	font-weight:700;
+	line-height:1.5;
+	text-align:center;
+	color:#fff;
+	text-transform:uppercase;
+}
+.text-intro{
+	width:90%;
+	margin:auto;
+	text-align:center;
+	padding-top:30px;
+}
+
+
+/* mobile view */
+@media (max-width:500px)
+{
+	
+	body {
+		
+	  /*overflow-x: hidden !important;*/
+	}
+	.container-fluid {
+		
+		/*overflow-x: hidden !important;*/
+	}
+	.banner1{
+		width: 150%;
+		height:350px;
+		padding: 0;
+		margin: 0;
+		
+	}
+		
+	
+	.banner2{
+	
+		position: absolute;
+		top: 70px;
+		left:120px;
+		right: 0px;
+		width: 480px;
+		height: 450px;
+		background-image:url('Group 2.png');
+		background-repeat: no-repeat;
+		/*background-attachment: scroll;*/
+		background-position: right top;
+		-webkit-background-size: contain;
+		-moz-background-size: contain;
+		-o-background-size: contain;
+		background-size: contain;
+		
+}
+
+#bannerText{
+	
+	padding-top:150px;
+	padding-left:30px;
+	font-size:25px
+	
+}
+	
+	/*#collapsibleNavbar{
+		background-color:#000;
+		border-top:3px solid #fed136;
+		color:#fff;
+		z-index:1;
+		margin-top:5px;
+		
+	}
+	
+	.navbar-nav .nav-item .nav-link{
+	padding: 0.7em 1em!important;
+	font-size: 100%;
+    font-weight: 500;
+    }
+	.banner1{
+	 width: 100%;
+    
+    padding: 0;
+    margin: 0;
+		
+	}
+	.banner-text{
+	/*padding:150px 0 150px 0;
+}
+.banner-heading{
+	font-size: 30px;
+    line-height: 30px;
+    margin-bottom: 20px;
+}
+.banner-sub-heading{
+	font-size: 10px;
+    font-weight: 200;
+    line-height: 10px;
+    margin-bottom: 40px;
+}*/
+
+#mainDiv{
+	padding-left:50px;
+	padding-top:1px;
+	background-image:url(Group3.png);
+	background-repeat: no-repeat;
+    
+    background-position: center center;
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+	
+	
+}
+
+
+}
+
+@media (max-width:768px){
+	.banner-text{
+	padding:150px 0 150px 0;
+}
+	.banner-sub-heading{
+	font-size: 23px;
+    font-weight: 200;
+    line-height: 23px;
+    margin-bottom: 40px;
+}
+}
+
+footer {
+  background: #16222A;
+  background: -webkit-linear-gradient(59deg, #3A6073, #16222A);
+  background: linear-gradient(59deg, #3A6073, #16222A);
+  color: white;
+  margin-top:100px;
+}
+
+footer a {
+  color: #fff;
+  font-size: 14px;
+  transition-duration: 0.2s;
+}
+
+footer a:hover {
+  color: #FA944B;
+  text-decoration: none;
+}
+
+.copy {
+  font-size: 12px;
+  padding: 10px;
+  color:#fff;
+}
+
+.footer-middle {
+  padding-top: 2em;
+  color: white;
+}
+
+
+/*SOCİAL İCONS*/
+
+/* footer social icons */
+
+ul.social-network {
+  list-style: none;
+  display: inline;
+  margin-left: 0 !important;
+  padding: 0;
+}
+
+ul.social-network li {
+  display: inline;
+  margin: 0 5px;
+}
+
+
+/* footer social icons */
+
+.social-network a.icoFacebook:hover {
+  background-color: #3B5998;
+}
+
+.social-network a.icoLinkedin:hover {
+  background-color: #007bb7;
+}
+
+.social-network a.icoFacebook:hover i,
+.social-network a.icoLinkedin:hover i {
+  color: #fff;
+}
+
+.social-network a.socialIcon:hover,
+.socialHoverClass {
+  color: #44BCDD;
+}
+
+.social-circle li a {
+  display: inline-block;
+  position: relative;
+  margin: 0 auto 0 auto;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  text-align: center;
+  width: 30px;
+  height: 30px;
+  font-size: 15px;
+}
+
+.social-circle li i {
+  margin: 0;
+  line-height: 30px;
+  text-align: center;
+}
+
+.social-circle li a:hover i,
+.triggeredHover {
+  -moz-transform: rotate(360deg);
+  -webkit-transform: rotate(360deg);
+  -ms--transform: rotate(360deg);
+  transform: rotate(360deg);
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+.social-circle i {
+  color: #595959;
+  -webkit-transition: all 0.8s;
+  -moz-transition: all 0.8s;
+  -o-transition: all 0.8s;
+  -ms-transition: all 0.8s;
+  transition: all 0.8s;
+}
+
+.social-network a {
+  background-color: #F9F9F9;
+}
+
+
+.NewsCard{
+	height:400px;
+	background-image:url(d.jfif);
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: center center;
+	-webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+	
+	
+	
+	
+	
+}
+
+
+/*Ideas*/
+
+.carousel-inner,.carousel,.carousel-item,.container,.fill {
+   /* height:100%;
+    min-height:400px;
+    width:100%;
+    background-position:center center;
+    background-size:cover;*/
+}
+/*.slide-wrapper{display:inline;}*/
+.slide-wrapper .container{padding:0;}
+
+
+/*------------------------------ vertical bootstrap slider----------------------------*/
+
+.vertical.carousel .carousel-inner> .carousel-item.carousel-item-next ,
+.vertical.carousel .carousel-inner > .carousel-item.active.carousel-item-right{ 
+    transform: translate3d(0, 100%, 0); -webkit-transform: translate3d(0, 100%, 0); -ms-transform: translate3d(0, 100%, 0); -moz-transform: translate3d(0, 100%, 0); -o-transform: translate3d(0, 100%, 0);  top: 0;
+    
+}
+.vertical.carousel .carousel-inner > .carousel-item.carousel-item-prev ,
+.vertical.carousel .carousel-inner > .carousel-item.active.carousel-item-left{ 
+    transform: translate3d(0,-100%, 0); -webkit-transform: translate3d(0,-100%, 0);  -moz-transform: translate3d(0,-100%, 0);-ms-transform: translate3d(0,-100%, 0); -o-transform: translate3d(0,-100%, 0); top: 0;
+    
+}
+.vertical.carousel .carousel-inner > .carousel-item.next.carousel-item-left ,
+.vertical.carousel .carousel-inner > .carousel-item.carousel-item-prev.carousel-item-right ,
+.vertical.carousel .carousel-inner > .carousel-item.active{
+    transform:translate3d(0,0,0); -webkit-transform:translate3d(0,0,0);-ms-transform:translate3d(0,0,0);; -moz-transform:translate3d(0,0,0); -o-transform:translate3d(0,0,0); top:0;
+    
+}
+
+/*------------------------------- vertical carousel indicators ------------------------------*/
+.carousel-indicators{
+    position:absolute;
+    top:0;
+    bottom:0;
+    margin:auto;
+    height:20px;
+    right:10px; left:auto;
+    width:auto;
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+.carousel-indicators li{
+    display:block; margin-bottom:5px; border:1px solid #00a199; 
+    
+}
+.carousel-indicators li.active{
+    margin-bottom:5px; background:#00a199;
+    
+}
+
+ .vertical.carousel .carousel-control {
+      bottom: auto;
+      width: 100%;
+      height: 15%;
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0, rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0)));
+      background: -moz-linear-gradient(top, rgba(0,0,0,0.5) 0, rgba(0,0,0,0) 100%);
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0, rgba(0, 0, 0, 0) 100%);
+  }
+  .vertical.carousel .carousel-control.right {
+    top: auto;
+    bottom: 0;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.5)));
+    background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+  }
+  .vertical.carousel .carousel-control .glyphicon {
+    -webkit-transform: rotate(90deg);
+            transform: rotate(90deg);
+  }
+  .vertical.carousel .carousel-indicators {
+    bottom: auto;
+    top: 50%;
+    left: auto;
+    right: 10px;
+    width: 14px;
+    margin: 0;
+    -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+  }
+  .vertical.carousel .carousel-inner > .item {
+    left: 0;
+    top: 0;
+  }
+  .vertical.carousel .carousel-inner > .item > img {
+    width: 100%;
+  }
+  .vertical.carousel .carousel-inner > .item.next,
+  .vertical.carousel .carousel-inner > .item.active.right {
+    -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0);
+    top: 0;
+  }
+  .vertical.carousel .carousel-inner > .item.prev,
+  .vertical.carousel .carousel-inner > .item.active.left {
+    -webkit-transform: translate3d(0, -100%, 0);
+            transform: translate3d(0, -100%, 0);
+    top: 0;
+  }
+  .vertical.carousel .carousel-inner > .item.next.left,
+  .vertical.carousel .carousel-inner > .item.prev.right,
+  .vertical.carousel .carousel-inner > .item.active {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+    top: 0;
+  }
+  .vertical.carousel .carousel-inner > .active,
+  .vertical.carousel .carousel-inner > .next.left,
+  .vertical.carousel .carousel-inner .prev.right {
+    top: 0;
+  }
+  .vertical.carousel .carousel-inner > .next,
+  .vertical.carousel .carousel-inner > .active.right {
+    top: 100%;
+    left: 0;
+  }
+  .vertical.carousel .carousel-inner > .prev,
+  .vertical.carousel .carousel-inner > .active.left {
+    top: -100%;
+    left: 0;
+  }
+ 
+.IdeaCard{
+	width:500px;
+	
+	
+	
+}
+
+.dot {
+  height: 40px;
+  width: 40px;
+  background-color: #bbb;
+  border-radius: 50%;
+  margin:3px;
+  display: inline-block;
+}
+
+
+.vidcard{
+background: rgba(255, 255, 255, 0);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(0px);
+-webkit-backdrop-filter: blur(0px);
+	
+	
+	
+}
+
+
+.block-ellipsis {
+  display: block;
+  display: -webkit-box;
+  max-width: 100%;
+  height: 50px;
+  margin: 0 auto;
+  font-size: 14px;
+  line-height: 1.2;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.textProjects {
+  display: block;
+  display: -webkit-box;
+  max-width: 95%;
+  height: 50px;
+  margin: 10 auto;
+  font-size: 14px;
+  line-height: 1.2;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.starchecked {
+  color: orange;
+}
+#first::after{
+    content: "\a";
+    white-space: pre;
+}
+
+#aboutBtn:hover{
+	color:black !important;
+	box-shadow: 5px 5px 10px grey;
+	}
+#aboutBtn:hover > #chevronbtn { transform:translateX(10px); }
+
+#suggestionTitle:hover{
+	
+cursor:pointer;
+}
+#suggestionTitle:hover + #suggestionBoxDiv { display:block !important;  }

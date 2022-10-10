@@ -1,0 +1,125 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'dashboard/forum/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/forum/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/forum/css/custom.css' %}">
+    <title>Activity</title>
+
+</head>
+
+<body>
+
+    <header id="main-header" class="py-2 text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-dark">
+                    <h1><i class="far fa-chart-bar"></i> Comment managment</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div class="my-5 container forum-tab">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
+                    role="tab" aria-controls="home" aria-selected="true">Research</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Project ID</th>
+                            <th>Comment</th>
+                            <th>Submission date</th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                {% for i in comments %}
+                    <tr class="comment">
+                        <td class="ml-2">{{i.commentproject.project.client_form.formclint.id_project}}</td>
+                        <td class="ml-2">{{i.comment}} </td>
+                        <td><span class="text-muted ml-2">{{i.created|naturaltime}}</span></td>
+                        <td><span class="ml-2 mb-3">{{i.user.get_full_name}}</span></td>
+                        <td><span class="ml-2 mb-3">{{i.email}}</span></td>
+                        
+                        <td class="d-flex justify-content-end comment-info">
+                            
+                            <button type="button" data-bs-toggle="modal"
+                                data-bs-target="#accept_{{i.id}}" class="btn btn-success mx-2">
+                                Accept
+                            </button>
+                        
+                            <button type="button" data-bs-toggle="modal"
+                                data-bs-target="#reject_{{i.id}}" class="btn btn-danger mx-2">
+                                Reject
+                            </button>
+                            
+                            <div class="modal fade" id="accept_{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+        
+                                        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                            <div class="modal-body">
+                                               
+                                                <h6 style="color: black">Are you sure to accept the comment?</h6>
+                                                <input type="hidden" name="id_comment" value="{{i.id}}">
+                                                <input type="hidden" name="status" value="accepted">
+                                                    
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Yes</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="modal fade" id="reject_{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+        
+                                        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                            <div class="modal-body">
+                                               
+                                                <h6 style="color: black">Are you sure to reject the comment?</h6>
+                                                <input type="hidden" name="id_comment" value="{{i.id}}">
+                                                <input type="hidden" name="status" value="rejected">
+                                                    
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Yes</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+{% endblock %}

@@ -1,0 +1,324 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+
+{% block content %}
+<header id="main-header" class="py-2 bg-color4 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-user-tie"></i> Research Expert </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="contract">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content text-center" style="overflow-x:auto;">
+                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link {% if not request.GET.my_projects %}active {% endif %}" id="pills-request-tab" data-toggle="pill"
+                                       href="#pills-request" role="tab" aria-controls="pills-request"
+                                       aria-selected="true">Requests <span class="badge badge-danger">{{request_projects.count}}</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if request.GET.my_projects %}active {% endif %}" id="pills-project-tab" data-toggle="pill"
+                                       href="#pills-project" role="tab" aria-controls="pills-project"
+                                       aria-selected="false">Projects <span class="badge badge-danger">{{projects.count}}</span></a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content mb-5" id="pills-tabContent">
+                                <div class="tab-pane fade {% if not request.GET.my_projects %}show active {% endif %}" id="pills-request" role="tabpanel"
+                                     aria-labelledby="pills-request-tab">
+                                    {% if not request_projects %}
+                                    <h3>No request yet ...</h3>
+                                    {% endif %}
+                                    {% for project in request_projects %}
+                                        {% if request.GET.project == project.pk|to_str %}
+                                        <a href="./"
+                                           class="btn {% if project.expert_is_accepted %}btn-dark{%else%}btn-danger{%endif%} my-2">
+                                        {% else %}
+                                            <a href="?project={{project.pk}}"
+                                               class="btn {% if project.expert_is_accepted %}btn-outline-dark{%else%}btn-outline-danger{%endif%} my-2">
+                                        {% endif %}
+                                                {{project.title}}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="tab-pane fade {% if request.GET.my_projects %}show active{% endif %} " id="pills-project" role="tabpanel" aria-labelledby="pills-project-tab">
+                                    {% if not projects %}
+                                    <h3>No project yet ...</h3>
+                                    {% endif %}
+                                    {% for project in projects %}
+                                        {% if request.GET.project == project.pk|to_str %}
+                                        <a href="?my_projects=1"
+                                           class="btn {% if project.expert_is_accepted %}btn-dark{%else%}btn-danger{%endif%} my-2">
+                                        {% else %}
+                                            <a href="?my_projects=1&project={{project.pk}}"
+                                               class="btn {% if project.expert_is_accepted %}btn-outline-dark{%else%}btn-outline-danger{%endif%} my-2">
+                                        {% endif %}
+                                                {{project.title}}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 ">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content" style="overflow-x:auto;">
+                            {% if request.GET.project %}
+                                {% if selected_project.expert_is_accepted %}
+                                <div class="row">
+                                    <div class="col-12 text-right">
+                                        <a href="{% url 'dashboard-project-view-page' project_primary_key=selected_project.pk%}"
+                                           class="btn btn-info">{% if not selected_project.is_valid %}Edit{% else %}View{% endif %} project</a>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {% if not selected_project.expert_is_accepted %}
+                                    <h5>If you want to <span class="text-success">accept</span>/<span class="text-danger">reject</span> the project, you need to click <span class="text-info">"View project"</span> button.</h5>
+                                    <a href="{% url 'dashboard-project-view-page' project_primary_key=selected_project.pk%}"
+                                           class="btn btn-info">View project</a>
+                                {% else %}
+                                    <ul class="nav nav-pills mb-3" id="reviewer-tab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" id="reviewer-assignment-tab" data-toggle="pill"
+                                               href="#pills-reviewer-assignment" role="tab" aria-controls="pills-request"
+                                               aria-selected="true">Reviewers</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="reviewer-scoring-tab" data-toggle="pill"
+                                               href="#pills-reviewer-scoring" role="tab" aria-controls="pills-project"
+                                               aria-selected="false">Scoring</a>
+                                        </li>
+                                    </ul>
+
+                                    <div class="tab-content mb-5" id="reviewer-tabContent">
+                                        <div class="tab-pane fade show active" id="pills-reviewer-assignment" role="tabpanel"
+                                             aria-labelledby="pills-request-tab">
+                                            <h5><span class="text-success">Number of submitted proposals:</span> <span class="badge badge-dark">{{total_submitted_proposal_numbers}}</span></h5>
+                                            {% if project_reviewers %}
+                                                <h3>Current reviewers:</h3>
+                                                <table class="table table-hover p-table mt-4">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Reviewer</th>
+                                                        <th>Scoring numbers</th>
+                                                        <th></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for project_reviewer in project_reviewers %}
+                                                    <tr>
+                                                        <td class="p-name">
+                                                            {{project_reviewer.user.first_name}} {{project_reviewer.user.last_name}}
+                                                        </td>
+                                                        <td>{{project_reviewer|get_scored_numbers}} of {{total_submitted_proposals.count}} proposals</td>
+                                                        <td class="text-right">
+                                                            {% if project_reviewer|get_scored_numbers == 0 %}
+                                                            <form method="post">
+                                                                {% csrf_token %}
+                                                                <input type="text" name="remove-reviewer" class="d-none"
+                                                                       value="{{project_reviewer.pk}}">
+                                                                <button class="btn btn-danger" type="submit">Remove</button>
+                                                            </form>
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            {% endif %}
+                                            {% if project_reviewers.count < 2 %}
+                                                <h3>Choose the reviewers:</h3>
+                                                {% if total_submitted_proposal_numbers == 0 %}
+                                                    <h5 class="text-danger">There has to be at least one proposal before choosing the reviewers</h5>
+                                                {% else %}
+                                                    <form method="post">
+                                                        {% csrf_token %}
+                                                        <input type="text" class="d-none" name="assign-reviewer" value="1">
+                                                        <div class="input-group my-2">
+                                                            <select class="selectpicker" name="reviewer-pk-1"
+                                                                    data-live-search="true" data-container="body">
+                                                                {% for reviewer in experts %}
+                                                                    {% if not project_reviewers.count == 2 or reviewer is not experts.1 %}
+                                                                        <option value="{{reviewer.user.pk}}"
+                                                                                data-content="<img src='{{reviewer.user.memberprofile.image.url}}' style='height: 25px;'> {{reviewer.user.first_name}} {{reviewer.user.last_name}}">
+                                                                            {{reviewer.user.pk}}
+                                                                        </option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        {% if project_reviewers.count == 0 %}
+                                                        <div class="input-group my-2">
+                                                            <select class="selectpicker" name="reviewer-pk-2"
+                                                                    data-live-search="true" data-container="body">
+                                                                {% for reviewer in experts %}
+                                                                    {% if reviewer is not experts.0%}
+                                                                        <option value="{{reviewer.user.pk}}"
+                                                                                data-content="<img src='{{reviewer.user.memberprofile.image.url}}' style='height: 25px;'> {{reviewer.user.first_name}} {{reviewer.user.last_name}}">
+                                                                            {{reviewer.user.pk}}
+                                                                        </option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        {% endif %}
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <button class="btn btn-success"><i class="fa fa-plus"></i> Add</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        <div class="tab-pane" id="pills-reviewer-scoring" role="tabpanel" aria-labelledby="pills-project-tab">
+                                            {% if total_submitted_proposals %}
+                                                {% if project_reviewers %}
+                                                <h5 class="text-info">To observe the scores in greater detail, click on the desired score in the table.</h5>
+                                                {% else %}
+                                                <h5 class="text-info">Please assign reviewers to score these proposals (No one can apply to be the main supervisor afterwards)</h5>
+                                                {% endif %}
+                                                <table class="table table-hover p-table mt-4">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Supervisor Applicant</th>
+                                                        {% for project_reviewer in project_reviewers %}
+                                                        <th class="p-team">
+                                                            <a data-toggle='tooltip' data-placement='top' title='{{project_reviewer.user.first_name}} {{project_reviewer.user.last_name}}'>
+                                                                        <img alt="image" class="m-1" src="{{project_reviewer.user.memberprofile.image.url}}">
+                                                            </a>
+                                                        </th>
+                                                        {% endfor %}
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for proposal in total_submitted_proposals %}
+                                                    <tr>
+                                                        <td class="p-name">
+                                                            {{proposal.project_supervisor.supervisor.first_name}} {{proposal.project_supervisor.supervisor.last_name}}
+                                                        </td>
+                                                        {% for project_reviewer in project_reviewers %}
+                                                        <td>
+                                                            {% with proposal|get_mean_score:project_reviewer as score %}
+                                                                {% if score <= 3.33 %}
+                                                                    <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                                        <span class="badge badge-danger">{{score}}</span>
+                                                                    </a>
+                                                                {% elif score <= 6.66 %}
+                                                                    <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                                        <span class="badge badge-warning">{{score}}</span>
+                                                                    </a>
+                                                                {% elif score <= 10 %}
+                                                                    <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                                        <span class="badge badge-success">{{score}}</span>
+                                                                    </a>
+                                                                {% else %}
+                                                                    <span class="badge badge-info">{{score}}</span>
+                                                                {% endif %}
+                                                            {% endwith %}
+                                                        </td>
+                                                        {% endfor %}
+                                                    </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            {% else %}
+                                            <h5 class="text-danger">No one has applied for the project yet..</h5>
+                                            {% endif %}
+                                            <hr class="mt-5">
+                                            <h5><i class="fa fa-comment"></i> Final Comment:</h5>
+                                            {% if not has_every_reviewer_scored %}
+                                            <p class="text-danger">Every proposal should be scored by all of the reviewers. After that, you can write the final comment.</p>
+                                            {% endif %}
+                                            <form method="post" class="mt-3">
+                                                {% csrf_token %}
+                                                <textarea name="final-comment" class="form-control" placeholder="Enter final comment here.."
+                                                {% if not has_every_reviewer_scored or not total_submitted_proposals %} disabled {% endif %}>{% if selected_project.final_comment %}{{selected_project.final_comment}}{% endif %}</textarea>
+                                                <button class="btn btn-success mt-3" {% if not has_every_reviewer_scored or not total_submitted_proposals %} disabled {% endif %}><i class="fa fa-check"></i> Submit</button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                {% endif %}
+                            {% else %}
+                            <h5>Please select from the items above</h5>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('select[name="reviewer-pk-1"]').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selected_item_pk = $(`select[name="reviewer-pk-1"] option:eq(${clickedIndex})`).text().trim();
+        let previous_item_data = $(`select[name="reviewer-pk-1"] option[value=${previousValue}]`).attr('data-content');
+
+
+        // remove selected item from the other one
+        $(`select[name="reviewer-pk-2"] option[value=${selected_item_pk}]`).remove();
+        // add previous item data to the other one
+        $('select[name="reviewer-pk-2"]').append(`<option value="${previousValue}" data-content="${previous_item_data}">${previousValue}</option>`);
+        // refresh
+        $('select[name="reviewer-pk-2"]').selectpicker('refresh');
+
+        // remove previous item from this element
+        $(`select[name="reviewer-pk-1"] option[value=${previousValue}]`).remove();
+        $('select[name="reviewer-pk-1"]').selectpicker('refresh');
+    });
+
+    $('select[name="reviewer-pk-2"]').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selected_item_pk = $(`select[name="reviewer-pk-2"] option:eq(${clickedIndex})`).text().trim();
+        let previous_item_data = $(`select[name="reviewer-pk-2"] option[value=${previousValue}]`).attr('data-content');
+        console.log(selected_item_pk);
+        console.log(previous_item_data);
+
+        // remove selected item from the other one
+        $(`select[name="reviewer-pk-1"] option[value=${selected_item_pk}]`).remove();
+        // add previous item data to the other one
+        $('select[name="reviewer-pk-1"]').append(`<option value="${previousValue}" data-content="${previous_item_data}">${previousValue}</option>`);
+        // refresh
+        $('select[name="reviewer-pk-1"]').selectpicker('refresh');
+
+        // remove previous item from this element
+        $(`select[name="reviewer-pk-2"] option[value=${previousValue}]`).remove();
+        $('select[name="reviewer-pk-2"]').selectpicker('refresh');
+    });
+</script>
+{% endblock script %}

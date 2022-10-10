@@ -1,0 +1,43 @@
+{% extends 'emails/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} Create template {% endblock %}
+{% block main %}
+<div style="margin-left: 450px; margin-bottom: 10px">
+
+</div>
+<div style="padding-left: 220px; padding-right: 220px" class="col-md-12">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"></h3>
+        </div>
+            <div style="padding-bottom: 150px;" class="card-body">
+                <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="form-row">
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            {{ form.title|as_crispy_field }}
+                            {{ form.description|as_crispy_field }}
+
+                            <div class="form-group col-md-12 mb-0">
+                                <div id="div_id_status" class="form-group">
+                                    <label for="id_status" class=" requiredField">
+                                    Category<span class="asteriskField">*</span>
+                                    </label>
+                                    <div class="">
+                                            <select name="categories" class="select form-control" id="id_categories">
+                                            {% for i in category %}
+                                                <option value="{{i.id}}">{{i.title}}</option>
+                                            {% endfor %}
+                                            </select>
+                                    </div>
+                                </div>
+                            </div>
+                            {{ form.template|as_crispy_field }}
+                            {{ form.img|as_crispy_field }}
+                        </div>
+                    </div>
+                    <button style="margin-left: 275px" class="btn btn-primary" type="submit">Save</button>
+                </form>
+            </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,207 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<head>
+    <link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+</head>
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-user-tie"></i> Expert's panel  </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="industry-director">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alsert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <!-- new -->
+        <div class="card-page">
+            <div class="row justify-content-center align-items-center">
+                <!-- 1 -->
+                
+                {% if request.GET.filter == "proposal-resubmition" %}
+                <div class="col green">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Proposal resubmition</h4>
+                        <p class="number ">{{count_request_reviewer}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=proposal-resubmition" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Proposal resubmition</h4>
+                        <p class="number ">{{count_request_reviewer}}</p>
+                    </a>
+                </div>
+                {% endif %}
+                
+                {% if request.GET.filter == "project-resubmition" %}
+                <div class="col green">
+                    <a href="" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Project resubmition</h4>
+                        <p class="number ">{{projects_resubmition_count}}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col pink">
+                    <a href="?filter=project-resubmition" class="text-center text-white">
+                        <i class="fa fa-check-circle"></i>
+                        <h4 class="text-white titlestyle">Project resubmition</h4>
+                        <p class="number ">{{projects_resubmition_count}}</p>
+                    </a>
+                </div>
+                {% endif %}
+                
+            </div>
+        </div>
+
+        {% if request.GET.filter == "project-resubmition" %}
+        <table class="table table-hover table-striped table-dark table-striped">
+            <thead>
+            <tr>
+                <th>Project ID</th>
+                <th>Title</th>
+                <th>Fund</th>
+                <th>Submission date</th>
+                <th>Suggested start date</th>
+                <th>Suggested end date</th>
+                <th>Owner</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for project in projects_resubmition %}
+                    <tr>
+                        <td class="p-name">
+                            <p style="overflow: hidden; width: 150px">{{project.formclint.id_project}}</p>
+                        </td>
+                         <td class="p-name">
+                            <p style="overflow: hidden; width: 200px">{{project.formclint.title|truncatechars:50}}</p>
+                        </td>
+                        
+                        <td class="p-name">
+                            ${{project.formclint.fund}}
+                        </td>
+                        <td class="p-name">
+                            {{project.formclint.created|date:'m-d-Y'}}
+                        </td>
+                        <td class="p-name">
+                            {{project.formclint.start_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.formclint.end_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.formclint.user.get_full_name}}
+
+                            {% if project.formclint.main_supervisor %}
+                            <span style="color: green;">Main Supervisor</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            The client resubmitted the project and pending for your decision
+                        </td>
+                        <td class="text-right">
+                             <a href="{% url 'industry:research-access-expert-detail' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View 
+                             </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+
+        {% if request.GET.filter == "proposal-resubmition" %}
+        <table class="table table-hover table-striped table-dark table-striped">
+            <thead>
+            <tr>
+                <th>Project ID</th>
+                <th>Title</th>
+                <th>Fund</th>
+                <th>Submission date</th>
+                <th>Suggested start date</th>
+                <th>Suggested end date</th>
+                <th>Owner</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for project in request_review %}
+                    <tr>
+                        <td class="p-name">
+                            <p style="overflow: hidden; width: 150px">{{project.formclint.id_project}}</p>
+                        </td>
+                         <td class="p-name">
+                            <p style="overflow: hidden; width: 200px">{{project.formclint.title|truncatechars:50}}</p>
+                        </td>
+                        
+                        <td class="p-name">
+                            ${{project.formclint.fund}}
+                        </td>
+                        <td class="p-name">
+                            {{project.formclint.created|date:'m-d-Y'}}
+                        </td>
+                        <td class="p-name">
+                            {{project.formclint.start_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.formclint.end_date}}
+                        </td>
+                        <td class="p-name">
+                            {{project.formclint.user.get_full_name}}
+
+                            {% if project.formclint.main_supervisor %}
+                            <span style="color: green;">Main Supervisor</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-name">
+                            The supervisor resubmitted the proposal and pending for your decision
+                        </td>
+                        <td class="text-right">
+                             <a href="{% url 'industry:industry-expert-resubmition-list' project.pk %}" class="btn btn-primary btn-xs mb-1">
+                                 <i class="fa fa-eye"></i> View 
+                                 <span class="badge badge-danger" style="background-color: white; color: #41cac0">{{project.forms_clients.resubmition_count.count}}</span>
+                             </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+ 
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+</script>
+{% endblock script %}

@@ -1,0 +1,178 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+
+{% block content %}
+<header id="main-header" class="py-2 bg-color9 text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><img src="{% static 'dashboard/icons/experience-badge.svg' %}" class="img-fluid" width="50">
+                    Change experience badges: {{selected_user.first_name}} {{selected_user.last_name}}</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="interviewer">
+    <div class="container">
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <div class="alert alert-success"> {{ message }}</div>
+        {% else %}
+        <div class="alert alert-danger"> {{ message }}</div>
+        {%endif %}
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <form method="post">
+                                {% csrf_token %}
+                                <table class="table table-hover p-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Badge</th>
+                                        <th>Score (0-100)</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="table-body">
+                                    {% if current_badges %}
+                                    {% for current_badge in current_badges %}
+                                    <tr class="table-row">
+                                        <td class="p-name">
+                                            <select class="selectpicker" name="chosen-badge-1"
+                                                    data-live-search="true" data-container="body">
+                                                {% for experience_badge in experience_badges %}
+
+                                                <option data-content="<img src='{{experience_badge.icon.url}}' style='height: 25px;'> {{experience_badge.title}}" {% if experience_badge.pk == current_badge.badge.pk %} selected {% endif %}>
+                                                    {{experience_badge.pk}}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="score-{{forloop.counter}}" min="0" max="100"
+                                                   class="form-control score-input" value="{{current_badge.score}}" required>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-danger remove-btn"><i class="fa fa-times"></i> Remove
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr class="table-row">
+                                        <td class="p-name">
+                                            <select class="selectpicker" name="chosen-badge-1"
+                                                    data-live-search="true" data-container="body">
+                                                {% for experience_badge in experience_badges %}
+                                                <option data-content="<img src='{{experience_badge.icon.url}}' style='height: 25px;'> {{experience_badge.title}}">
+                                                    {{experience_badge.pk}}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="score-1" min="0" max="100"
+                                                   class="form-control score-input" required>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-danger remove-btn"><i class="fa fa-times"></i> Remove
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                                <div class="m-2" id="add-more" style="cursor: pointer">
+                                    <i class="fa fa-plus text-success"></i> Add more
+                                </div>
+
+                                <button class="btn btn-success"><i class="fa fa-check"></i> Save changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{% block script %}
+<script>
+    $( document ).ready(function() {
+        if ($('[name="score-3"]').length === 1) {
+             $('#add-more').addClass('d-none');
+        }
+    });
+
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    function on_remove_click() {
+        let clicked_row = $(this).parent().parent();
+        let row_number = parseInt(clicked_row.find('.score-input').attr('name').split('-')[1])
+
+        if (row_number === 2) {
+            $('[name="score-3"]').attr('name', 'score-2');
+            $('[name="chosen-badge-3"]').attr('name', 'chosen-badge-2');
+        } else if (row_number === 1) {
+            $('[name="score-2"]').attr('name', 'score-1');
+            $('[name="chosen-badge-2"]').attr('name', 'chosen-badge-1');
+
+            $('[name="score-3"]').attr('name', 'score-2');
+            $('[name="chosen-badge-3"]').attr('name', 'chosen-badge-2');
+        }
+
+        clicked_row.remove();
+        $('#add-more').removeClass('d-none');
+    }
+
+    $("[type='number']").keypress(function (evt) {
+        let entered_number = evt.originalEvent.key;
+        if (isNumeric(entered_number)) {
+            let current_value = $(evt.currentTarget).val();
+            let after_value = parseInt(current_value + entered_number)
+            if (after_value < 0 || after_value > 100) {
+                evt.preventDefault();
+            }
+        } else {
+            evt.preventDefault();
+        }
+    });
+
+    $('#add-more').on('click', () => {
+        let cloned_row = $('.table-row').last().clone();
+        cloned_row.find('.bootstrap-select').replaceWith(function () {
+            return $('select', this);
+        });
+        cloned_row.find('select').selectpicker('refresh');
+
+        let row_number = parseInt(cloned_row.find('.score-input').attr('name').split('-')[1])
+        cloned_row.find('.score-input').attr('name', `score-${row_number + 1}`);
+        cloned_row.find('.selectpicker').attr('name', `chosen-badge-${row_number + 1}`);
+
+        $('.table-body').append(cloned_row);
+
+        $('.remove-btn').on('click', on_remove_click);
+
+        if (row_number + 1 === 3) {
+            $('#add-more').addClass('d-none');
+        }
+    })
+
+    $('.remove-btn').on('click', on_remove_click);
+</script>
+{% endblock script %}

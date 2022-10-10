@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css?family=Mukta');
+
+body{
+    font-family: 'Mukta', sans-serif !important;
+	min-height:550px !important;
+	position:relative !important;
+   
+}
+a{
+  text-decoration:none;
+  color:#444444;
+}
+.login-reg-panel{
+	text-align:center;
+    background-color: #154c79;
+	color:#B8B8B8;
+	height:300px;
+	margin-top:70px;
+	
+	
+}
+.register-info-box{
+	width:80%;
+    padding:100px 30px;
+    text-align:center;
+	
+}
+.register-info-box h2{
+	color:#B8B8B8;
+}
+.register-info-box button a{
+	color:#B8B8B8;
+}
+#log-login-show{
+	width:90%;
+	max-width:300px;
+}
+.logodiv{
+	 /*background-color: #444444;*/
+	 max-width:300px;
+	 margin:10px auto;
+	 min-width:300px;
+}
+.white-panel{
+	text-align:center;
+    background-color: rgba(255,255, 255, 1);
+    height:550px;
+    box-shadow: 0 0 15px 9px #00000096;
+	min-width:250px;
+	
+	
+}
+
+
+
+.login-show{
+    color:#242424;
+    text-align:left;
+    padding:20px;
+	margin:5px;
+	
+}
+
+.login-show input[type="text"], .login-show input[type="password"]{
+    width: 100%;
+    display: block;
+    margin:5px 0;
+    padding: 15px;
+    border: 1px solid #b5b5b5;
+    outline: none;
+}
+.login-show button[type="submit"] {
+    width: 100%;
+    background: #444444;
+    color: #f9f9f9;
+    border: none;
+    /*text-transform: uppercase;*/
+    border-radius: 2px;
+    cursor:pointer;
+	padding:10px;
+	margin:5px 0;
+}
+.login-show a{
+    display:inline-block;
+    text-decoration:none;
+    color:#2c7715;
+
+}
+
+
+
+
+@media screen and (max-height: 767px){
+    #rc-imageselect, .g-recaptcha {
+            transform:scale(0.77);
+            -webkit-transform:scale(0.77);
+            transform-origin:0 0;
+            -webkit-transform-origin:0 0;
+        }
+    }
+	
+	
+	
+
+
+    
+    

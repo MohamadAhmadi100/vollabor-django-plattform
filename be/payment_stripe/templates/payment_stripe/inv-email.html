@@ -1,0 +1,322 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+<title>Invoice Page</title>
+
+<style>
+body{
+    margin-top:20px;
+    background-color: #f7f7ff;
+    font-family: Merriweather;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 500;
+    line-height: 14px;
+
+
+}
+#invoice {
+    padding: 0px;
+}
+
+.invoice {
+    position: relative;
+    background-color: #FFF;
+    min-height: 680px;
+    padding: 15px
+}
+
+.invoice header {
+    padding: 10px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+
+
+.invoice .inform {
+    margin-bottom: 20px
+}
+
+.invoice .inform span{
+    font-weight: bold;
+}
+
+
+
+.invoice main {
+    padding-bottom: 50px
+}
+
+.invoice main .thanks {
+    
+    margin: 50px 25px;
+	font-size:2em;
+}
+
+.invoice main .notices {
+    padding-left: 6px;
+    border-left: 6px solid #0d6efd;
+    background: #e7f2ff;
+    padding: 10px;
+}
+
+.invoice main .notices .notice {
+    font-size: 1.2em
+}
+
+.invoice table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-bottom: 20px
+}
+
+.invoice table tbody{
+	border-bottom: 1px solid #0d6efd !important;;
+	font-size:18px;
+	font-weight:bold;
+}
+
+.invoice table tbody td,
+.invoice table th {
+    padding: 15px;
+    background: #eee;
+    border-bottom: 1px solid #fff
+}
+
+
+.invoice table th {
+	 background-color:#040F8F !important;
+	color:#fff;
+    white-space: nowrap;
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+.invoice table td {
+    margin: 5px 5px;
+    font-size: 1.1em
+}
+
+
+
+
+.invoice table .total {
+    background: #0d6efd;
+    color: #fff
+}
+
+.invoice table tbody tr:last-child td {
+    border: none
+}
+
+
+
+.invoice table tfoot tr td {
+    color: #0d6efd;
+    font-size: 1.2em;
+    font-weight:bold;
+	padding: 15px 15px;
+	border-top-width: 5px;
+	border-top-style: solid;
+	border-top-color:#0d6efd !important;
+}
+
+
+
+.invoice footer {
+    width: 100%;
+    text-align: center;
+    color: #777;
+    border-top: 1px solid #aaa;
+    padding: 8px 0
+}
+
+@media print {
+    .invoice {
+        font-size: 11px !important;
+        overflow: hidden !important
+    }
+    .invoice footer {
+        position: absolute;
+        bottom: 10px;
+        page-break-after: always
+    }
+    .invoice>div:last-child {
+        page-break-before: always
+    }
+}
+
+.invoice main .notices {
+    padding-left: 6px;
+    border-left: 6px solid #0d6efd;
+    background: #e7f2ff;
+    padding: 10px;
+}
+
+</style>
+</head>
+<body>
+<div>
+    <div>
+        <div>
+            <div id="invoice">
+                <div class="invoice">
+                    <div style="min-width: 600px">
+                        <header>
+                            <div style="background-color:#444444;width:100%; overflow:auto">
+                                
+									<div style="margin:10px 10px;width:55%;float:left">
+										<img src="http://tecvico.com/static/ivc_website/img/logo1.png" style="min-width:250px" width="35%" alt="">
+									</div>
+									<div  style="font-weight:bold;font-size:18px;width:40%;float:left">
+										<div style="float:right; color:white; margin:20px 10px">
+                                            {% if obj_pay.pymeny_method == 'zarinpal' %}
+											<p style="text-align:left;margin-bottom:5px; font-size:1.1em">Invoice : {{RefID}}<span></span></p>
+                                            {% else %}
+                                            <p style="text-align:left;margin-bottom:5px; font-size:1.1em">Invoice : <span>{{obj_pay.id_pay}}</span></p>
+                                            {% endif %}
+											<p style="text-align:left;margin-bottom:1px;font-size:1.1em">Date : <span>{{obj_pay.success_date}}</span></p>
+										</div>
+									</div>
+                            </div>
+                        </header>
+                        <main>
+							<div style="width:100%">
+							<h1 class="thanks">Thank you for trusting us</h1>
+							
+							</div>
+						<hr>
+						
+                            <div style="width:100%;overflow:auto;padding-top:20px">
+                                <div style="width:45%;min-height:300px;float:left;padding-left:50px;font-size:1.3em">
+                                    
+                                    <h2 style="color: #0d6efd">From:</h2>
+									<p>Name: <span style="font-weight:bold">TECVICO</span></p>
+                                    <p>Address: <span style="font-weight:bold">6694 Acacia Avenue Burnaby, BC, Canada, V5E 3J7</span></p>
+                                    <p>Email: <span style="font-weight:bold">payment@tecvico.com</span></p>
+                                </div>
+                                <div style="width:45%;min-height:300px;float:left;padding-left:50px;font-size:1.3em">
+                                    <h2 style="color: #0d6efd">Billed to:</h2>
+                                    <p>Name: <span style="font-weight:bold">{{obj_pay.user.get_full_name}}</span></p>
+                                    <p>Country: <span style="font-weight:bold">{{obj_pay.country}}</span></p>
+									<p>Phone number: <span style="font-weight:bold">{{obj_pay.user.memberprofile.phone}}</span></p>
+									<p>Email: <span style="font-weight:bold">{{obj_pay.user.email}}</span></p>
+									<p>Gateway: <span style="font-weight:bold">{{obj_pay.pymeny_method}}</span></p>
+                                </div>
+                            </div>
+                            {% if obj_pay.pymeny_method == 'zarinpal' %}
+                            <table>
+                                <thead>
+                                    <tr>
+                                        
+                                        <th colspan="2" style="text-align:center">Description</th>
+										<th style="text-align:center">Price (Rial)</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        
+                                        <td  colspan="2"  style="text-align:left">
+                                            Balance charge
+                                        </td>
+                                        <td style="text-align:center">{{obj_pay.amount}}</td>
+                                        
+                                    </tr>
+                                    
+                                    <tr>
+                                       
+                                        <td rowspan="3" style="text-align:left">TAX 12%</td>
+										<td>GST 5%</td>
+                                        <td style="text-align:center">{{obj_pay.gsp}}</td>
+                                    </tr>
+									<!--<tr>-->
+                                       
+                                        
+									<!--	<td>PST 7%</td>-->
+         <!--                               <td style="text-align:center">{{obj_pay.pst}}</td>-->
+         <!--                           </tr>-->
+									<!--<tr>-->
+                                       
+                                        
+									<!--	<td>Additional fee</td>-->
+         <!--                               <td style="text-align:center">{{obj_pay.additional_fee}}</td>-->
+         <!--                           </tr>-->
+                                    
+                               </tbody>
+							   <tfoot>
+							   <tr>
+                                    <td style="text-align:left" colspan="2">GRAND TOTAL</td>
+                                    <td style="text-align:center">{{obj_pay.total}}</td>
+                                </tr>
+							   
+							   </tfoot>
+                            </table>
+                            {% else %}
+                            <table>
+                                <thead>
+                                    <tr>
+                                        
+                                        <th colspan="2" style="text-align:center">Description</th>
+										<th style="text-align:center">Price ($ USA)</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        
+                                        <td  colspan="2"  style="text-align:left">
+                                            Balance charge
+                                        </td>
+                                        <td style="text-align:center">${{obj_pay.amount}}</td>
+                                        
+                                    </tr>
+                                    
+                                    <tr>
+                                       
+                                        <td rowspan="3" style="text-align:left">TAX 12%</td>
+										<td>GST 5%</td>
+                                        <td style="text-align:center">${{obj_pay.gsp}}</td>
+                                    </tr>
+									<tr>
+                                       
+                                        
+										<td>PST 7%</td>
+                                        <td style="text-align:center">${{obj_pay.pst}}</td>
+                                    </tr>
+									<tr>
+                                       
+                                        
+										<td>Additional fee</td>
+                                        <td style="text-align:center">${{obj_pay.additional_fee}}</td>
+                                    </tr>
+                                    
+                               </tbody>
+							   <tfoot>
+							   <tr>
+                                    <td style="text-align:left" colspan="2">GRAND TOTAL</td>
+                                    <td style="text-align:center">${{obj_pay.total}}</td>
+                                </tr>
+							   
+							   </tfoot>
+                            </table>
+                            {% endif %}
+                        </main>
+                        
+                    </div>
+                    <!--DO NOT DELETE THIS div. IT is responsible for showing footer always at the bottom-->
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

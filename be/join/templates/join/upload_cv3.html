@@ -1,0 +1,227 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<div id="loader"></div>
+<div id="loader-background"></div>
+
+<!-- HEADER SECTION -->
+<div id="cv-header-section" style="padding-top:150px;">
+    <div class="dark-overlay">
+        <div class="cv-header-inner">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center" dir="auto">
+                    <h1 class="display-4">{% trans "Join Us" %}</h1>
+                    <p>{% trans "Show your interest by uploading your information" %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<section id="upload-cv-section" class="bg-light text-dark py-5 px-3">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+        <div class="row">
+            <div class="col-12 text-center" dir="auto">
+                <p class="h6">{% trans 'We appreciate your interest in Tecvico. Please select from the options below.' %}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4 mx-auto text-center">
+                <div class="list-group mb-5" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action active"
+                href="#list-natural-person" id="list-natural-person-list"
+                 data-toggle="list">{% trans 'Individual' %}</a>
+                <a class="list-group-item list-group-item-action"
+                href="#list-legal-person" id="list-legal-person-list"
+                 data-toggle="list">{% trans 'Company' %}</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active"
+                id="list-natural-person" role="tabpanel">
+                    <div class="card border-success mb-5 mx-auto" style="max-width: 25rem;">
+                      <div class="card-body text-primary">
+                        <div class="text-dark">
+                            {% if LANGUAGE_CODE == 'en-us' %}
+                            <form method="POST" enctype="multipart/form-data" id="natural-form">
+                            {% else %}
+                            <form method="POST" enctype="multipart/form-data" class="text-right" id="natural-form" dir="rtl">
+                            {% endif %}
+                                {% csrf_token %}
+                                {{ form|crispy }}
+                                <input type="text" name="phone_region" id="natural_phone_region" class="d-none">
+                                <div class="g-recaptcha my-3" data-sitekey="6LfNkwsaAAAAALzFdst8DfNe0qxir5VResjWdJhf"></div>
+                                <button type="submit" class="btn btn-outline-info">{% trans "Submit" %}</button>
+                            </form>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade"
+                id="list-legal-person" role="tabpanel">
+                    <div class="card border-success mb-5 mx-auto" style="max-width: 25rem;">
+                      <div class="card-body text-primary">
+                        <div class="text-dark">
+                            {% if LANGUAGE_CODE == 'en-us' %}
+                            <form method="POST" id="legal-form">
+                            {% else %}
+                            <form method="POST" class="text-right" id="legal-form" dir="rtl">
+                            {% endif %}
+                                {% csrf_token %}
+                                {{ legal_form|crispy }}
+                                <input type="text" name="phone_region" id="legal_phone_region" class="d-none" required>
+                                <div class="g-recaptcha my-3" data-sitekey="6LfNkwsaAAAAALzFdst8DfNe0qxir5VResjWdJhf"></div>
+                                <button type="submit" class="btn btn-outline-info ">{% trans "Submit" %}</button>
+                            </form>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src='https://www.google.com/recaptcha/api.js'></script>
+
+<script src="{% static 'ivc_website/js/intlTelInput.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/utils.js' %}"></script>
+<script>
+  var $loading = $('#loader, #loader-background').hide();
+
+
+  var input = document.querySelector("#id_phone");
+  var iti = window.intlTelInput(input, {
+    initialCountry: "auto",
+    geoIpLookup: function(callback) {
+    $.get('https://ipinfo.io', function() {}, "jsonp").always(function(resp) {
+      var countryCode = (resp && resp.country) ? resp.country : "us";
+      callback(countryCode);
+    });}
+  });
+
+  input.addEventListener("countrychange", function() {
+      region = iti.getSelectedCountryData().iso2
+      $('#natural_phone_region').val(region);
+  });
+
+
+  var legal_input = document.querySelector("#legal_phone");
+  var legal_iti = window.intlTelInput(legal_input, {
+    initialCountry: "auto",
+    geoIpLookup: function(callback) {
+    $.get('https://ipinfo.io', function() {}, "jsonp").always(function(resp) {
+        var countryCode = (resp && resp.country) ? resp.country : "us";
+        callback(countryCode);
+    });}
+  });
+
+  input.addEventListener("countrychange", function() {
+      $('#natural_phone_region_error').remove()
+    let region = iti.getSelectedCountryData().iso2
+    $('#legal_phone_region').val(region);
+  });
+  legal_input.addEventListener("countrychange", function() {
+      $('#legal_phone_region_error').remove()
+      let region = legal_iti.getSelectedCountryData().iso2
+      $('#legal_phone_region').val(region);
+  });
+
+  $('select[name="field_of_study"]').change(function() {
+    let selected_value_is_other = this.value == "Other";
+    if (selected_value_is_other) {
+        let new_field = '<input type="text" name="field_suggestion" placeholder="Enter your field here." class="textinput textInput form-control my-2" required id="id_field_suggestion">';
+        $(new_field).insertAfter(this);
+    }
+    else
+        $('input[name="field_suggestion"]').remove();
+  });
+
+  $('#natural-form').submit(e => {
+      e.preventDefault();
+      let flag_is_selected = Object.keys(iti.getSelectedCountryData()).length
+      if (iti.isValidNumber() && flag_is_selected) {
+          $loading.show();
+          e.currentTarget.submit();
+      }
+      else {
+          if(!flag_is_selected) {
+            if ($('#natural_phone_region_error').length == 0)
+              $( "<p class=\"text-danger mb-0\" id='natural_phone_region_error'>\n" +
+                      "Please select your phone region from the country list\n" +
+                      "</p>" ).insertAfter($('#id_phone').parent());
+          }
+
+          $('html, body').animate({
+              scrollTop: $("#id_phone").offset().top - 100
+          });
+      }
+  })
+
+  $('#legal-form').submit(e => {
+      e.preventDefault();
+      let flag_is_selected = Object.keys(legal_iti.getSelectedCountryData()).length
+      if (legal_iti.isValidNumber() && flag_is_selected) {
+          $loading.show();
+          e.currentTarget.submit();
+      }
+      else {
+          if(!flag_is_selected) {
+            if ($('#legal_phone_region_error').length == 0)
+              $( "<p class=\"text-danger mb-0\" id='legal_phone_region_error'>\n" +
+                      "Please select your phone region from the country list\n" +
+                      "</p>" ).insertAfter($('#legal_phone').parent());
+          }
+          $('html, body').animate({
+              scrollTop: $("#legal_phone").offset().top - 100
+          });
+      }
+  })
+
+  $('#id_phone').focusout(() => {
+      if (iti.isValidNumber()) {
+          $('#id_phone').removeClass("is-invalid");
+          $('#natural_phone_error').remove();
+          $('label[for=id_field_of_study]').removeClass('mt-3');
+      }
+      else {
+          $('#id_phone').addClass("is-invalid");
+          if ($('#natural_phone_error').length == 0)
+              $( "<p class=\"text-danger mb-0\" id='natural_phone_error'>\n" +
+                      "Format is wrong\n" +
+                      "</p>" ).insertAfter( $("#id_phone").parent() );
+
+          $('label[for=id_field_of_study]').addClass('mt-3');
+
+      }
+  })
+
+  $('#legal_phone').focusout(() => {
+      if (legal_iti.isValidNumber()) {
+          $('#legal_phone').removeClass("is-invalid");
+          $('#legal_phone_error').remove();
+      }
+      else {
+          $('#legal_phone').addClass("is-invalid");
+          if ($('#legal_phone_error').length == 0)
+              $( "<p class=\"text-danger mb-0\" id='legal_phone_error'>\n" +
+                      "Format is wrong\n" +
+                      "</p>" ).insertAfter($('#legal_phone').parent());
+      }
+  })
+</script>
+{% endblock content %}

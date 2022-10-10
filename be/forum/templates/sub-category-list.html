@@ -1,0 +1,488 @@
+{% extends 'ivc_website/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags_forum %}
+{% block style %}
+ 
+    <link rel="stylesheet" href="{% static 'forum/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'forum/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'forum/css/select2.min.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+
+<main id="forum">
+    <div id="carouselExampleIndicators" class="banner_top carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active ">
+                <div class="row">
+                    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h2 class="text-white ">
+                            If you look for the good, you will always find it!
+
+                        </h2>
+                       
+                    </div>
+                    <div class="col-md-6 position-relative">
+                        <img class="img-fluid" src="{% static 'forum/img/img-contact.png' %}" style="height: 300px;max-height: max-content"
+                             alt="">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="container p-3 text-start">
+        <div class="back-link d-flex flex-row text-start justify-content-start align-items-center mt-3">
+            <a href="{% url 'home-page' %}" class="">Home</a>
+            <i class="fa fa-angle-right  mx-2"></i>
+            <a href="{% url 'forum:category' %}" class="">Categories page</a>
+            <i class="fa fa-angle-right  mx-2"></i>
+            <a href="{% url 'forum:category-detail' category.sub_category.slug %}" class="">Sub categories page</a>
+            <i class="fa fa-angle-right  mx-2"></i>
+            <h6 class="active mt-2">Topics</h6>
+        </div>
+    </div>
+    <div class="container-fluid p-3">
+        <div class="sm_sidebar mt-3 align-items-center justify-content-start w-100">
+<!--             <button class="btn btn-outline-primary filter_right sm_sidebar1">
+                <i class="fa fa-filter"></i>
+                <span>Filter</span>
+            </button> -->
+            <button type="button" class="btn btn-outline-warning create-topic mx-3"
+                    data-bs-toggle="modal" data-bs-target="#create_topic">
+                <i class="fa fa-plus"></i>
+                <span>Create Topic</span>
+            </button>
+        </div>
+    </div>
+    <div class="container-fluid p-1">   
+        <div class="wrapper d-flex justify-content-center">
+<!--             <div class="sidebar_filter">
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between ">
+                        <span>Search</span>
+                    </a>
+                    <input type="text" class="border border-dark form-control mt-2 mb-2" placeholder="search by title & keywords">
+
+                </div>
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between">
+                        <span>Categories</span>
+                        <i class="fa fa-angle-down "></i>
+                    </a>
+                    <div class="preloader d-none">
+                        <i class="fa-filter"></i>
+                    </div>
+                    <ul class="unstyled centered" name="main[]">
+                        <li>
+                            <input class="styled-checkbox" id="cat-1" type="checkbox" value="Industry">
+                            <label for="cat-1">Industry</label>
+                        </li>
+                        <li>
+                            <input class="styled-checkbox" id="cat-2" type="checkbox" value="Research">
+                            <label for="cat-2">Research</label>
+                        </li>
+                        <li>
+                            <input class="styled-checkbox" id="cat-3" type="checkbox" value="Competition">
+                            <label for="cat-3">Competition</label>
+                        </li>
+                        <li>
+                            <input class="styled-checkbox" id="cat-4" type="checkbox" value="Competition">
+                            <label for="cat-4">Workshop</label>
+                        </li>
+                    </ul>
+                </div>
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between">
+                        <span>Date</span>
+                        <i class="fa fa-angle-down "></i>
+                    </a>
+                    <div class="preloader d-none">
+                        <i class="fa-filter"></i>
+                    </div>
+                    <ul class="unstyled centered" name="date[]">
+                        <li>
+                            <input class="styled-checkbox" id="date-1" type="checkbox" value="English">
+                            <label for="date-1">New</label>
+                        </li>
+                        <li>
+                            <input class="styled-checkbox" id="date-2" type="checkbox" value="English">
+                            <label for="date-2">Last week</label>
+                        </li>
+                        <li>
+                            <input class="styled-checkbox" id="date-3" type="checkbox" value="English">
+                            <label for="date-3">Last month</label>
+                        </li>
+                    </ul>
+                </div>
+            </div> -->
+            <!-- <form method="POST">{% csrf_token %}-->
+            <!--    <div class="sidebar_filter">-->
+            <!--        <form action="{% url 'industry:industry-project-search' %}">-->
+            <!--            <div class="item">-->
+            <!--                <a class="main d-flex align-items-center justify-content-between ">-->
+            <!--                    <span>Search</span>-->
+            <!--                </a>-->
+            <!--                <input type="text" class="form-control mt-2 mb-2" placeholder="search by title & keywords">-->
+                            
+            <!--            </div>-->
+            <!--        </form>-->
+                    
+            <!--        <div class="item">-->
+            <!--            <a class="main d-flex align-items-center justify-content-between">-->
+            <!--                <span>Status</span>-->
+            <!--                <i class="fa fa-angle-down "></i>-->
+            <!--            </a>-->
+            <!--            <div class="preloader d-none">-->
+            <!--                <i class="fa-filter"></i>-->
+            <!--            </div>-->
+            <!--            <ul class="unstyled centered" name="status[]">-->
+            <!--                 <li>-->
+            <!--                    <input class="styled-checkbox status" id="status-1" type="checkbox" value="new">-->
+            <!--                    <label for="status-1">New</label>-->
+            <!--                    <hr>-->
+            <!--                </li>-->
+            <!--                <li>-->
+            <!--                    <input class="styled-checkbox status" id="status-2" type="checkbox" value="on_going">-->
+            <!--                    <label for="status-2">OnGoing</label>-->
+            <!--                    <hr>-->
+            <!--                </li>-->
+            <!--                <li>-->
+            <!--                    <input class="styled-checkbox status" id="status-3" type="checkbox" value="done">-->
+            <!--                    <label for="status-3">Done</label>-->
+            <!--                    <hr>-->
+            <!--                </li> -->
+
+            <!--            </ul>-->
+
+            <!--        </div>-->
+
+            <!--        <div class="item">-->
+            <!--            <a class="main d-flex align-items-center justify-content-between">-->
+            <!--                <span>Grade</span>-->
+            <!--                <i class="fa fa-angle-down "></i>-->
+            <!--            </a>-->
+            <!--            <div class="preloader d-none">-->
+            <!--                <i class="fa-filter"></i>-->
+            <!--            </div>-->
+            <!--            <ul class="unstyled centered" name="date[]">-->
+            <!--                <li>-->
+            <!--                    <input class="styled-checkbox grade" id="date-1" type="checkbox" value="hard">-->
+            <!--                    <label for="date-1">Gold</label>-->
+            <!--                </li>-->
+            <!--                <li>-->
+            <!--                    <input class="styled-checkbox grade" id="date-2" type="checkbox" value="normal">-->
+            <!--                    <label for="date-2">Silver</label>-->
+            <!--                </li>-->
+            <!--                <li>-->
+            <!--                    <input class="styled-checkbox grade" id="date-3" type="checkbox" value="easy">-->
+            <!--                    <label for="date-3">Bronze</label>-->
+            <!--                </li>-->
+
+            <!--            </ul>-->
+            <!--        </div>-->
+            <!--    </div>-->
+            <!--</form>-->
+            <div class="content ms-2 d-flex flex-column justify-content-center align-items-center">
+                {% for i in topics %}
+                    <div class="item d-flex align-items-center ">
+                        <div class="text ">
+                            <h6 class="fw-bold mt-2">{{i.title}}</h6>
+                            <div class="icon&btn d-flex  align-items-center justify-content-between ">
+                                <div class="icon d-flex align-items-center">
+                                    <div class="date d-flex align-items-center justify-content-center mx-2">
+                                        <img src="{% static 'forum/img/peoples.svg' %}" class="mx-2 " alt="">
+                                    </div>
+                                    <span class="text-muted mt-1 ml-2">Views: {{i.view_topic.all.count}}</span>
+                                    <span class="text-muted mt-1 ml-2"> ---- </span>
+                                    <span class="text-muted mt-1 ml-2">Comments: {% count_comment_topic i.id %} </span>
+                                    <span class="text-muted mt-1 ml-2"> ---- </span>
+                                    <span class="text-muted mt-1 ml-2">Likes: {{i.like_topic.Active.count}} </span>
+                                </div>
+
+                                <div class=" d-flex align-items-center">
+                                    <a href="{% url 'forum:detail-title' i.pk %}" class="btn btn-primary mx-2">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <nav aria-label="Page navigation example" class="d-flex justify-content-center my-5">
+        {% if page_obj.has_other_pages %}
+        <ul  class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="{% url 'forum:category-topic' category.slug page_obj.previous_page_number %}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for i in paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">
+                        {{ i }}
+                        </a>
+                    </li>   
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'forum:category-topic' category.slug i %}">
+                            {{ i }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{% url 'forum:category-topic' category.slug page_obj.next_page_number %}">
+                    <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+        {% endif %}
+    </nav>
+</main>
+
+<div class="sidebar_bg ">
+    <div class="sidebar_right  ">
+        <a class=" btn clos">
+            <i class="fa fa-times-circle "></i>
+        </a>
+        <div class="filters">
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between ">
+                    <span>Search</span>
+                </a>
+                <input type="text" class="border border-dark form-control mt-2 mb-2" placeholder="search by title & keywords">
+
+            </div>
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between">
+                    <span>Categories</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <div class="preloader d-none">
+                    <i class="fa-filter"></i>
+                </div>
+                <ul class="unstyled centered" name="main[]">
+                    <li>
+                        <input class="styled-checkbox" id="cat-1-1" type="checkbox" value="Industry">
+                        <label for="cat-1-1">Industry</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="cat-1-2" type="checkbox" value="Research">
+                        <label for="cat-1-2">Research</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="cat-1-3" type="checkbox" value="Competition">
+                        <label for="cat-1-3">Competition</label>
+                    </li>
+                </ul>
+            </div>
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between">
+                    <span>Date</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <div class="preloader d-none">
+                    <i class="fa-filter"></i>
+                </div>
+                <ul class="unstyled centered" name="date[]">
+                    <li>
+                        <input class="styled-checkbox" id="date-1-1" type="checkbox" value="English">
+                        <label for="date-1-1">Next week</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-2" type="checkbox" value="English">
+                        <label for="date-1-2">Next month</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-3" type="checkbox" value="English">
+                        <label for="date-1-3">Next two month</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-4" type="checkbox" value="English">
+                        <label for="date-1-4">Last week</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-5" type="checkbox" value="English">
+                        <label for="date-1-5">Last month</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade"  id="create_topic" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-secondary text-dark">
+              <h5 class="modal-title text-white" id="InfoModalLabel">Create topic</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              
+            </div>
+            <form method="POST"  id="create_topic_form">{% csrf_token %}
+                <div class="modal-body text-dark">
+                    <div class="form-group col-md-12 mb-0">
+                        <label>Text <span style="color: red;">*</span></label>
+                        <textarea id="topic_text" class="form-control" rows="4" name="text" oninput="ClearErr('topic_text')"></textarea>
+                        <div id="topic_text_error" style="color:red;font-size:12px"></div>
+                    </div>
+                </div>
+                <div class="row px-5">
+                    <p id="selectedRole" class="text-dark"></p>
+                    
+                </div>
+
+                
+                <div class="modal-footer">
+                    <button type="button" id="createBtn" class="btn btn-primary" >Submit</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- js files -->
+<!--<script src="{% static 'forum/js/jquery-3.6.0.min.js' %}"></script>-->
+<!--<script src="{% static 'forum/js/bootstrap.bundle.min.js' %}"></script>-->
+<!--<script src="{% static 'forum/js/select2.full.min.js' %}"></script>-->
+
+
+
+<!--<script src="{% static 'forum/js/main.js' %}"></script>-->
+
+{% endblock %}
+
+{% block script %}
+<script>
+  /*  $('.floating-group').find('.floating-control').each(function (index, ele) {
+        var $ele = $(ele);
+        if($ele.val() != '' || $ele.is(':selected') === true){
+            $ele.parents('.floating-group').addClass('focused');
+        }
+    })
+    $('.floating-control').on('focus', function (e) {
+        $(this).parents('.floating-group').addClass('focused');
+    }).on('blur', function(){
+        if($(this).val().length > 0){
+            $(this).parents('.floating-group').addClass('focused');
+        }else{
+            $(this).parents('.floating-group').removeClass('focused');
+        }
+    });
+    $('.floating-control').on('change', function (e) {
+        if($(this).is('select')){
+            if($(this).val() === $("option:first", $(this)).val()) {
+                $(this).parents('.floating-group').removeClass('focused');
+            }
+            else{
+                $(this).parents('.floating-group').addClass('focused');
+            }
+        }
+    })*/
+
+    // --------select2-------
+    $(document).ready(function() {
+        //---- select2 single----
+    /*    $('.customSelect').each(function() {
+            var dropdownParents = $(this).parents('.select2Part')
+            $(this).select2({
+                dropdownParent: dropdownParents,
+                minimumResultsForSearch: -1
+            }).on("select2:open", function (e) {
+                $(this).parents('.floating-group').addClass('focused');
+            }).on("select2:close", function (e) {
+                if($(this).find(':selected').val() === ''){
+                    $(this).parents('.floating-group').removeClass('focused');
+                }
+            });
+        });*/
+
+        //---- select2 multiple----
+    /*    $('.customSelectMultiple').each(function() {
+            var dropdownParents = $(this).parents('.select2Part');
+            // var placehldrget = $(this).attr("data-placeholder");
+            $(this).select2({
+                dropdownParent: dropdownParents,
+                // placeholder: placehldrget,
+                // tags: true,
+                // closeOnSelect: false,
+            }).on("select2:open", function (e) {
+                $(this).parents('.floating-group').addClass('focused');
+            }).on("select2:close", function (e) {
+                if($(this).val() != ''){
+                    $(this).parents('.floating-group').addClass('focused');
+                }else{
+                    $(this).parents('.floating-group').removeClass('focused');
+                }
+            }).on("select2:select", function (e) {
+                $(this).parents('.floating-group').addClass('focused');
+            }).on("select2:unselect", function (e) {
+                $(this).parents('.floating-group').addClass('focused');
+            })
+        });*/
+   
+   
+   
+   document.getElementById("createBtn").addEventListener("click",CreateTopicCheck);
+   
+   
+   
+   
+   
+   
+   
+   
+   
+    });
+
+
+function CreateTopicCheck(){
+    
+    var topic = document.getElementById("topic_text").value;
+    
+    if(topic==""){
+        
+        document.getElementById("topic_text_error").innerHTML = "Error: Please enter the topic";
+    
+    }else{
+        
+        document.getElementById("create_topic_form").submit();
+        $('#create_topic').modal('hide');
+    }
+}
+
+
+function ClearErr(id){
+    document.getElementById(id+"_error").innerHTML="";
+    
+}
+
+
+
+</script>
+
+{% endblock %}

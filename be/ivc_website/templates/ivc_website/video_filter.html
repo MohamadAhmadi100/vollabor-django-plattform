@@ -1,0 +1,41 @@
+{% load static %}
+{% for video in videos %}
+<div class="col-lg-4 col-sm-6 my-2" style="width:350px; max-width:350px;">
+    <a href="{% url 'video-detail' video.pk %}">
+        <div class="item video_item d-flex align-items-center flex-column justify-content-center ">
+            <div class="bag_top">
+                <img src="{% static 'video/img/hot.png' %}" alt="">
+                <span>Hot</span>
+            </div>
+            <img class="workshop_img" style="object-fit: cover;
+                                            overflow: hidden;
+                                            height: 90%;
+                                            width: 90%;" src="{{video.image.url}}" alt="">
+            <div class="text pt-3">
+                <div class="profile justify-content-between ">
+                    <div>
+                        <img class="mx-2" src="{% static 'video/img/peoples.svg' %}" alt="">
+                        <span> Tecvico</span>
+                    </div>
+                    <div class="btn d-flex align-items-center justify-content-center text-muted">
+                        <span>{{video.seen}}</span>
+                        <i class="fa fa-eye mx-1"></i>
+                    </div>
+                </div>
+                <h5 class="fw-bold p-3  ">
+                    {{video.title}}
+                </h5>
+                <div class="icon&btn d-flex  align-items-center justify-content-between ">
+                    <div class="icon d-flex align-items-center">
+                        <div class="date d-flex justify-content-center align-items-center mx-2">
+                            <img src="{% static 'video/img/date.svg' %}" class="mx-1" alt="">
+                            <span class="text-muted">{{video.created.date}}</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+{% endfor %}

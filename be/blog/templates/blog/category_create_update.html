@@ -1,0 +1,82 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+
+{% block css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+{% load blog_filter %}
+
+<header id="main-header" class="py-2 bg-info text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-blog"></i> Manage BLog - Edit Post</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="blog-manager">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <a  href="{% url 'blog:blog-manager-page' %}" class="btn btn-outline-dark" id="new-post"><i class="fa fa-list"></i> Manage Posts</a>
+                    <a  href="{% url 'blog:create-article' %}" class="btn btn-outline-dark"><i class="fa fa-plus"></i> New Post</a>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12 mb-5">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <div class="row mb-3">
+                                <div class="col-lg-12 text-center">
+                                    <h3><i class="fas fa-edit"></i> Create Category</h3>
+                                </div>
+                            </div>
+                            <hr>
+                            <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                                <div class="row">
+                                    <div class="col-6">
+                                        {{ category.title|as_crispy_field }}
+                                        {{ category.status|as_crispy_field }}
+                                    </div>
+                                    <div class="col-6">
+                                        {{ category.slug|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <button class="btn btn-success">Send</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block script %}
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"> </script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% endblock script %}
+

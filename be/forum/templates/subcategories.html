@@ -1,0 +1,339 @@
+{% extends 'ivc_website/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+{% block style %}
+
+    <link rel="stylesheet" href="{% static 'forum/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'forum/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'forum/css/select2.min.css' %}">
+
+
+{% endblock %}
+{% block content %}
+
+
+
+<main id="forum" class="mt-5 pt-5">
+    <div id="carouselExampleIndicators" class="banner_top carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active ">
+                <div class="row">
+                    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h2 class="text-white ">
+                            If you look for the good, you will always find it!
+
+                        </h2>
+                        
+                    </div>
+                    <div class="col-md-6 position-relative">
+                        <img class="img-fluid" src="{% static 'forum/img/img-contact.png' %}"
+                             style="height: 300px;max-height: max-content"
+                             alt="">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="container p-5 text-start" >
+        <div class="back-link d-flex flex-row text-start justify-content-start align-items-center mt-3">
+            <a href="{% url 'home-page' %}" class="">Home</a>
+            <i class="fa fa-angle-right  mx-2"></i>
+            <a href="{% url 'forum:category' %}" class="">Categories page</a>
+            <i class="fa fa-angle-right  mx-2"></i>
+            <h6 class="active mt-2">Sub category page</h6>
+        </div>
+    </div>
+    <div class="container-fluid p-5" >
+        <div class="wrapper d-flex justify-content-center"  >
+            <div class="content ms-2 d-flex flex-column justify-content-center align-items-center subcat_item">
+                {% for i in object_list %}
+                <div class="item d-flex align-items-center " >
+                    <img class="workshop_img" style="width: 300px !important; height: 200px !important;" src="{{i.img.url}}" alt="">
+                    <div class="text pt-3">
+
+                        <h6 class="fw-bold">{{i.title}}</h6>
+                        <div class="icon&btn d-flex  align-items-center justify-content-between ">
+                            <div class="icon d-flex align-items-center">
+                                <div class="date d-flex align-items-center mx-2">
+                                    <span class="text-muted">Topic :</span>
+                                    <span class="mx-2 text-dark">{{i.postes.Published.count}}</span>
+                                </div>
+                            </div>
+                            <div class="btn d-flex align-items-center">
+                                <a href="{% url 'forum:category-topic' i.slug %}" class="btn btn-primary view  mx-2">View</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <nav aria-label="Page navigation example" class="d-flex justify-content-center my-5">
+        {% if page_obj.has_other_pages %}
+        <ul  class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="{% url 'forum:category-detail' category.slug page_obj.previous_page_number %}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for i in paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">
+                        {{ i }}
+                        </a>
+                    </li>   
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'forum:category-detail' category.slug i %}">
+                            {{ i }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{% url 'forum:category-detail' category.slug page_obj.next_page_number %}">
+                    <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+        {% endif %}
+    </nav>
+</main>
+
+<div class="sidebar_bg ">
+    <div class="sidebar_right  ">
+        <a class=" btn clos">
+            <i class="fa fa-times-circle "></i>
+        </a>
+        <div class="filters">
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between ">
+                    <span>Search</span>
+                </a>
+                <input type="text" class="border border-dark form-control mt-2 mb-2" placeholder="search by title & keywords">
+
+            </div>
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between">
+                    <span>Categories</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <div class="preloader d-none">
+                    <i class="fa-filter"></i>
+                </div>
+                <ul class="unstyled centered" name="main[]">
+                    <li>
+                        <input class="styled-checkbox" id="cat-1-1" type="checkbox" value="Industry">
+                        <label for="cat-1-1">Industry</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="cat-1-2" type="checkbox" value="Research">
+                        <label for="cat-1-2">Research</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="cat-1-3" type="checkbox" value="Competition">
+                        <label for="cat-1-3">Competition</label>
+                    </li>
+                </ul>
+            </div>
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between">
+                    <span>Date</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <div class="preloader d-none">
+                    <i class="fa-filter"></i>
+                </div>
+                <ul class="unstyled centered" name="date[]">
+                    <li>
+                        <input class="styled-checkbox" id="date-1-1" type="checkbox" value="English">
+                        <label for="date-1-1">Next week</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-2" type="checkbox" value="English">
+                        <label for="date-1-2">Next month</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-3" type="checkbox" value="English">
+                        <label for="date-1-3">Next two month</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-4" type="checkbox" value="English">
+                        <label for="date-1-4">Last week</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-5" type="checkbox" value="English">
+                        <label for="date-1-5">Last month</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal justify-content-center" id="myModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Creating Toooopic</h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body p-3">
+                <section>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="">
+                                <div class="form-area">
+                                    <div class="form-inner">
+                                        <form action="javascript:void(0);">
+                                            <div class="form-group floating-group">
+                                                <label class="floating-label">Title</label>
+                                                <input type="text" class="form-control floating-control"/>
+                                            </div>
+                                            <div class="form-group floating-group floating-diff">
+                                                <label class="floating-label">Select 1</label>
+                                                <select id="select1" name="select1"
+                                                        class="form-control floating-control">
+                                                    <option value="">Select1</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group floating-group floating-diff">
+                                                <label class="floating-label">Select 2</label>
+                                                <select id="select2" name="select1"
+                                                        class="form-control floating-control">
+                                                    <option value="">Select2</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                    <option value="**">*****</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group select2Part select2multiple w-100 floating-group">
+                                                <label class="floating-label">Select Multiple</label>
+                                                <select name="select_multiple" id="select_multiple"
+                                                        class="form-control customSelectMultiple floating-control"
+                                                        multiple>
+                                                    <option value="***">***</option>
+                                                    <option value="***">***1</option>
+                                                    <option value="***">***2</option>
+                                                    <option value="***">***3</option>
+                                                    <option value="***">***4</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group floating-group">
+                                                <label class="floating-label">Description</label>
+                                                <textarea name="" id="" rows="4"
+                                                          class="form-control floating-control"></textarea>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!------ js files ----->
+
+<!--<script src="{% static 'forum/js/bootstrap.bundle.min.js' %}"></script>-->
+<script src="{% static 'forum/js/select2.full.min.js' %}"></script>
+
+<script src="{% static 'forum/js/main.js' %}"></script>
+
+<!------ js files ----->
+<script src="{% static 'projects/js/main.js' %}"></script>
+<script>
+    let project_status = []
+    let project_grade = []
+    $(document).ready(function(){
+        $('.styled-checkbox.status').click(function (){
+        if ($(this).is(":checked")){
+            project_status.push($(this).attr('value'))
+        }
+        else {
+            let val = $(this).attr('value')
+            const index = project_status.indexOf(val);
+            if (index > -1) {
+                project_status.splice(index, 1);
+                }
+            }
+        })
+        
+        $('.styled-checkbox.grade').click(function (){
+        if ($(this).is(":checked")){
+            project_grade.push($(this).attr('value'))
+        }
+        else {
+            let val = $(this).attr('value')
+            const index = project_grade.indexOf(val);
+            if (index > -1) {
+                project_grade.splice(index, 1);
+                }
+            }
+        })
+        
+        $('.styled-checkbox').click(function () {
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'ajax_project_filter' %}",
+                data: {
+                    'project_status':project_status,
+                    'project_grade':project_grade,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $('#project-filter').html(data);
+                },
+                error: function (request, errors) {
+                    alert(errors.responseText)
+                }
+            });
+        });
+    })
+</script>
+
+{% endblock %}

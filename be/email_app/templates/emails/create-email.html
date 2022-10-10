@@ -1,0 +1,73 @@
+{% extends 'emails/base.html' %}
+{%load static %}
+{% load crispy_forms_tags %}
+{% block title %} Edit email {% endblock %}
+{% block main %}
+<link rel="stylesheet" href="{% static 'emails/dist/css/jquery.tagsinput-revisited.css' %}">
+<style>
+	.tag{
+		position: relative;
+		background: #556270;
+		display: block;
+		max-width: 100%;
+		word-wrap: break-word;
+		color: #fff;
+		padding: 5px 30px 5px 5px;
+		border-radius: 2px;
+		margin: 0 5px 5px 0;
+	}
+</style>
+<div style="margin-left: 450px; margin-bottom: 10px">
+
+</div>
+<div style="padding-left: 220px; padding-right: 220px" class="col-md-12">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title"></h3>
+        </div>
+            <div style="padding-bottom: 150px;" class="card-body">
+                <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="form-row">
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            {{ form.company_agent_first_name|as_crispy_field }}
+                        </div>
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            {{ form.company_agent_surname|as_crispy_field }}
+                        </div>
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            {{ form.agent_position|as_crispy_field }}
+                        </div>
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            {{ form.agent_academic_degree|as_crispy_field }}
+                        </div>
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            {{ form.gender|as_crispy_field }}
+                        </div>
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            {{ form.agent_email_address|as_crispy_field }}
+                        </div>
+
+                        <div class="card border-info mb-3" style="width: 100%;">
+                            <div class="card-header">Tags</div>
+                            <div style="display:flex" class="card-body text-info">
+                                {% for tag in tags %}
+                                <a  id="{{tag.id}}"><span class="tag"><span class="select tag-text">{{tag.name}}</span></span></a>
+                                {%endfor%}
+                            </div>
+                          </div>
+                        <div style="margin-left: 150px" class="form-group col-md-6 mb-0">
+                            {{ form.tags |as_crispy_field }}
+                        </div>
+                    </div>
+                    <button style="margin-left: 275px" class="btn btn-primary" type="submit">Save</button>
+                </form>
+            </div>
+    </div>
+</div>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'emails/dist/js/jquery.tagsinput-revisited.js' %}"></script>
+<script>
+    $('#id_tags').tagsInput();
+</script>
+{% endblock %}

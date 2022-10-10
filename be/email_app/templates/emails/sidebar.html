@@ -1,0 +1,187 @@
+{% load static %}
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <!-- Brand Logo -->
+
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar user panel (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+
+      <div class="info">
+        <h4 style="color: white; font-size: 17px">{{user.get_full_name}}</h4>
+      </div>
+    </div>
+
+    <!-- SidebarSearch Form -->
+<!--     <div class="form-inline">
+      <div class="input-group" data-widget="sidebar-search">
+        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+        <div class="input-group-append">
+          <button class="btn btn-sidebar">
+            <i class="fas fa-search fa-fw"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+ -->
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->        
+
+        <li class="nav-item menu-open">
+          <a href="#" class="nav-link active">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+              Creating
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            {% if request.user.is_superuser or request.user.adrole.create_company == True %}
+              <li class="nav-item">
+                <a href="{% url 'email:create-category' %}" class="nav-link {% if request.resolver_match.url_name == 'create-category' %}active{% endif %}">
+                  <i class="fa fa-edit nav-icon"></i>
+                  <p>Create a company</p>
+                </a>
+              </li>
+            {% endif %}
+
+            {% if request.user.is_superuser or request.user.adrole.create_institute == True %}
+              <li class="nav-item">
+                <a href="{% url 'email:create-institute' %}" class="nav-link {% if request.resolver_match.url_name == 'create-institute' %}active{% endif %}">
+                  <i class="fa fa-edit nav-icon"></i>
+                  <p>Create a institute</p>
+                </a>
+              </li>
+            {% endif %}
+
+            {% if request.user.is_superuser or request.user.adrole.create_template_category == True %}
+            <li class="nav-item">
+              <a href="{% url 'email:create-category-template' %}" class="nav-link {% if request.resolver_match.url_name == 'create-category-template' %}active{% endif %}">
+                <i class="fa fa-edit nav-icon"></i>
+                <p>Create a template category</p>
+              </a>
+            </li>
+            {% endif %}
+            {% if request.user.is_superuser or request.user.adrole.create_category == True %}
+            <li class="nav-item">
+              <a href="{% url 'email:create-category-new' %}" class="nav-link {% if request.resolver_match.url_name == 'create-category-new' %}active{% endif %}">
+                <i class="fa fa-edit nav-icon"></i>
+                <p>Create a category</p>
+              </a>
+            </li>
+            {% endif %}
+            {% if request.user.is_superuser or request.user.adrole.create_template == True %}
+            <li class="nav-item">
+              <a href="{% url 'email:create-template' %}" class="nav-link {% if request.resolver_match.url_name == 'create-template' %}active{% endif %}">
+                <i class="fas fa-at"></i>
+                <p>Create template</p>
+              </a>
+            </li>
+            {% endif %}
+            {% if request.user.is_superuser or request.user.adrole.upload_image == True  %}
+            <li class="nav-item">
+              <a href="{% url 'email:upload-img' %}" class="nav-link {% if request.resolver_match.url_name == 'upload-img' %}active{% endif %}">
+                <i class="fas fa-envelope-open-text"></i>
+                <p>Upload image</p>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </li>
+
+        <li class="nav-item menu-open">
+          <a href="#" class="nav-link active">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+              Email App
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{% url 'email:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                <i class="fas fa-list-ul"></i>
+                <p>Home</p>
+              </a>
+            </li>
+            {% if request.user.is_superuser or request.user.adrole.send_email == True or request.user.adrole.send_email_template == True %}
+            <li class="nav-item">
+              <a href="{% url 'email:send-email' %}" class="nav-link {% if request.resolver_match.url_name == 'send-email' %}active{% endif %}">
+                <i class="fas fa-envelope-open-text"></i>
+                <p>Send email <span id="send_email_notif"></span></p>
+              </a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a href="{% url 'email:history' %}" class="nav-link {% if request.resolver_match.url_name == 'history' %}active{% endif %}">
+                <i class="fas fa-history"></i>
+                <p>History</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+
+      {% if request.user.is_superuser or request.user.adrole.research_workshop_projects == True  %}
+       <li class="nav-item menu-open">
+          <a href="#" class="nav-link active">
+            <i class="nav-icon fas fa-ad"></i>
+            <p>
+              Ad info
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            
+            <li class="nav-item">
+              <a href="{% url 'email:research-list-ad' %}" class="nav-link {% if request.resolver_match.url_name == 'research-list-ad' %}active{% endif %}">
+                <i class="fas fa-book nav-icon"></i>
+                <p>Project</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'email:workshop-list' %}" class="nav-link {% if request.resolver_match.url_name == 'workshop-list' %}active{% endif %}">
+                <i class="fas fa-chalkboard-teacher nav-icon"></i>
+                <p>Workshop</p>
+              </a>
+            </li>
+            
+          </ul>
+        </li>
+      {% endif %}
+
+
+
+      {% if request.user.is_superuser or request.user.adrole.Director == True  %}
+              <li class="nav-item menu-open">
+                <a href="#" class="nav-link active">
+                  <i class="nav-icon fas fa-ad"></i>
+                  <p>
+                    Director
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  
+                  <li class="nav-item">
+                    <a href="{% url 'email:email-director' %}" class="nav-link {% if request.resolver_match.url_name == 'research-list-ad' %}active{% endif %}">
+                      <i class="fas fa-book nav-icon"></i>
+                      <p>Department</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
+      {% endif %}
+        
+        
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+</aside>

@@ -1,0 +1,362 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-color4 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-user-tie"></i> Corresponding expert </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="contract">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content text-center" style="overflow-x:auto;">
+                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link {% if not request.GET.my_projects %}active {% endif %}" id="pills-request-tab" data-toggle="pill"
+                                       href="#pills-request" role="tab" aria-controls="pills-request"
+                                       aria-selected="true">Requests <span class="badge badge-danger">{{request_projects.count}}</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if request.GET.my_projects %}active {% endif %}" id="pills-project-tab" data-toggle="pill"
+                                       href="#pills-project" role="tab" aria-controls="pills-project"
+                                       aria-selected="false">Projects <span class="badge badge-danger">{{projects.count}}</span></a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content mb-5" id="pills-tabContent">
+                                <div class="tab-pane fade {% if not request.GET.my_projects %}show active {% endif %}" id="pills-request" role="tabpanel"
+                                     aria-labelledby="pills-request-tab">
+                                    {% if not request_projects %}
+                                    <h3>No request yet ...</h3>
+                                    {% endif %}
+                                    {% for project in request_projects %}
+                                        {% if request.GET.project == project.pk|to_str %}
+                                        <a href="./"
+                                           class="btn {% if project.expert_is_accepted %}btn-dark{%else%}btn-danger{%endif%} my-2">
+                                        {% else %}
+                                            <a href="?project={{project.pk}}"
+                                               class="btn {% if project.expert_is_accepted %}btn-outline-dark{%else%}btn-outline-danger{%endif%} my-2">
+                                        {% endif %}
+                                                {{project.title}}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="tab-pane fade {% if request.GET.my_projects %}show active{% endif %} " id="pills-project" role="tabpanel" aria-labelledby="pills-project-tab">
+                                    {% if not projects %}
+                                    <h3>No project yet ...</h3>
+                                    {% endif %}
+                                    {% for project in projects %}
+                                        {% if request.GET.project == project.pk|to_str %}
+                                        <a href="?my_projects=1"
+                                           class="btn {% if project.expert_is_accepted %}btn-dark{%else%}btn-danger{%endif%} my-2">
+                                        {% else %}
+                                            <a href="?my_projects=1&project={{project.pk}}"
+                                               class="btn {% if project.expert_is_accepted %}btn-outline-dark{%else%}btn-outline-danger{%endif%} my-2">
+                                        {% endif %}
+                                                {{project.title}}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 ">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content" style="overflow-x:auto;">
+                            {% if request.GET.project %}
+                                {% if selected_project.expert_is_accepted %}
+                                <div class="row">
+                                    <div class="col-12 text-right">
+                                        <a href="{% url 'dashboard-project-view-page' project_primary_key=selected_project.pk%}"
+                                           class="btn btn-info">{% if not selected_project.is_valid %}Edit{% else %}View{% endif %} project</a>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {% if not selected_project.expert_is_accepted %}
+                                    <h5>If you want to <span class="text-success">accept</span>/<span class="text-danger">reject</span> the project, you need to click <span class="text-info">"View project"</span> button.</h5>
+                                    <a href="{% url 'dashboard-project-view-page' project_primary_key=selected_project.pk%}"
+                                           class="btn btn-info">View project</a>
+                                {% else %}
+                                    {% if not selected_project.is_valid %}
+                                        <h6>If you want to <span class="text-success">add</span>/<span class="text-danger">remove</span>
+                                            areas, you have to click on <span class="text-info">"Edit project"</span> button</h6>
+                                        {% if selected_project.status != 'Rejected' %}
+                                            <table class="table table-hover p-table mt-4">
+                                                <thead>
+                                                <tr>
+                                                    <th>Expert</th>
+                                                    <th>Area</th>
+                                                    <th>Form is completed</th>
+                                                    <th></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for project_area in project_areas %}
+                                                        <tr>
+                                                            <td class="p-name">
+                                                                {% if project_area.expert is not None %}
+                                                                    {{project_area.expert.first_name}} {{project_area.expert.last_name}}
+                                                                {% else %}
+                                                                    <select class="selectpicker" name="select-{{project_area.pk}}"
+                                                                        data-live-search="true" data-container="body">
+                                                                        {% for expert in experts %}
+                                                                        <option data-content="<img src='{{expert.user.memberprofile.image.url}}' style='height: 25px;'> {{expert.user.first_name}} {{expert.user.last_name}}">
+                                                                            {{expert.user.pk}}
+                                                                        </option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="p-name">
+                                                                {{project_area.area}}
+                                                            </td>
+                                                            {% if project_area.expert is not None %}
+                                                                {% if project_area|form_is_completed %}
+                                                                <td class="p-name"><i class="fa fa-check text-success"></i></td>
+                                                                {% else %}
+                                                                <td class="p-name"><i class="fa fa-times text-danger"></i></td>
+                                                                <td class="text-right">
+                                                                    <form method="post">
+                                                                        {% csrf_token %}
+                                                                        <input type="text" name="remove-expert-from-area" class="d-none"
+                                                                               value="{{project_area.pk}}">
+                                                                        <button class="btn btn-danger" type="submit">Remove</button>
+                                                                    </form>
+                                                                </td>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                <td></td>
+                                                                <td class="text-right">
+                                                                    <form method="post" id="form-{{project_area.pk}}">
+                                                                        {% csrf_token %}
+                                                                        <input type="text" name="chosen-expert" id="expert-{{project_area.pk}}" class="d-none">
+                                                                        <input type="text" name="assign-expert-to-area" class="d-none"
+                                                                               value="{{project_area.pk}}">
+                                                                        <button class="btn btn-success assign-expert-btn" type="button"
+                                                                                area-pk="{{project_area.pk}}">
+                                                                            <i class="fa fa-plus"></i> Assign expert to area
+                                                                        </button>
+                                                                    </form>
+                                                                </td>
+                                                            {% endif %}
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if is_waiting_for_technical_manager %}
+                                            <h5>Now you have to wait. Chosen main supervisor is needed to be <span class="text-success">accepted</span>/<span class="text-danger">rejected</span> by the technical manager.</h5>
+                                        {% elif it_is_approved_main_supervisor %}
+                                            <h3> Needed to be implemented ... (Managing collaborators)</h3>
+                                        {% else %}
+                                            <ul class="nav nav-pills mb-3" id="second-pills-tab" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" id="pills-reviewer-tab" data-toggle="pill"
+                                                       href="#pills-reviewer" role="tab" aria-controls="pills-reviewer"
+                                                       aria-selected="true">Reviewers </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="pills-proposal-tab" data-toggle="pill"
+                                                       href="#pills-proposal" role="tab" aria-controls="pills-proposal"
+                                                       aria-selected="false">Scored Proposals</a>
+                                                </li>
+                                            </ul>
+
+                                            <div class="tab-content mb-5" id="second-pills-tabContent">
+                                                <div class="tab-pane fade show active" id="pills-reviewer" role="tabpanel"
+                                                     aria-labelledby="pills-reviewer-tab">
+                                                    <h3>Choose the reviewers</h3>
+                                                    <form method="post">
+                                                        {% csrf_token %}
+                                                        <input type="text" class="d-none" name="add-reviewer">
+                                                        <select class="selectpicker" name="chosen-reviewer"
+                                                                data-live-search="true" data-container="body">
+                                                            {% for reviewer in reviewers %}
+                                                            <option data-content="<img src='{{reviewer.user.memberprofile.image.url}}' style='height: 25px;'> {{reviewer.user.first_name}} {{reviewer.user.last_name}}">
+                                                                {{reviewer.user.pk}}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                        <button class="btn btn-success"><i class="fa fa-plus"></i> Add</button>
+                                                    </form>
+                                                    <hr>
+                                                    {% if project_reviewers %}
+                                                        <h3>Current reviewers:</h3>
+                                                        <table class="table table-hover p-table mt-4">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>Reviewer</th>
+                                                                <th>Scoring numbers</th>
+                                                                <th></th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {% for project_reviewer in project_reviewers %}
+                                                            <tr>
+                                                                <td class="p-name">
+                                                                    <a class="nav-link text-dark" style="font-size:16px"
+                                                                       href="{% url 'dashboard-profile-page' user_id=project_reviewer.user.id %}">
+                                                                        {{project_reviewer.user.first_name}} {{project_reviewer.user.last_name}}
+                                                                    </a>
+                                                                </td>
+                                                                <td>{{project_reviewer|get_scored_numbers}} of {{total_submitted_proposals.count}} proposals</td>
+                                                                <td class="text-right">
+                                                                    {% if project_reviewer|get_scored_numbers == 0 %}
+                                                                    <form method="post">
+                                                                        {% csrf_token %}
+                                                                        <input type="text" name="remove-reviewer" class="d-none"
+                                                                               value="{{project_reviewer.pk}}">
+                                                                        <button class="btn btn-danger" type="submit">Remove</button>
+                                                                    </form>
+                                                                    {% endif %}
+                                                                </td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    {% endif %}
+                                                </div>
+
+                                                <div class="tab-pane fade" id="pills-proposal" role="tabpanel" aria-labelledby="pills-proposal-tab">
+                                                    <h5 class="text-info">To observe the scores in greater detail, click on the desired score in the table.</h5>
+                                                    <table class="table table-hover p-table mt-4">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Supervisor Applicant</th>
+                                                            {% for project_reviewer in project_reviewers %}
+                                                            <th class="p-team">
+                                                                <a data-toggle='tooltip' data-placement='top' title='{{project_reviewer.user.first_name}} {{project_reviewer.user.last_name}}'>
+                                                                            <img alt="image" class="m-1" src="{{project_reviewer.user.memberprofile.image.url}}">
+                                                                </a>
+                                                            </th>
+                                                            {% endfor %}
+                                                            <th></th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% for proposal in total_submitted_proposals %}
+                                                        <tr>
+                                                            <td class="p-name">
+                                                                 <a class="nav-link text-dark" style="font-size:16px"
+                                                                    href="{% url 'dashboard-profile-page' user_id=proposal.project_supervisor.supervisor.id %}">
+                                                                     {{proposal.project_supervisor.supervisor.first_name}} {{proposal.project_supervisor.supervisor.last_name}}
+                                                                </a>
+                                                            </td>
+                                                            {% for project_reviewer in project_reviewers %}
+                                                            <td>
+                                                                {% with proposal|get_mean_score:project_reviewer as score %}
+                                                                    {% if score <= 3.33 %}
+                                                                        <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                                            <span class="badge badge-danger">{{score}}</span>
+                                                                        </a>
+                                                                    {% elif score <= 6.66 %}
+                                                                        <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                                            <span class="badge badge-warning">{{score}}</span>
+                                                                        </a>
+                                                                    {% elif score <= 10 %}
+                                                                        <a href="{% url 'review-in-detail-page' proposal_pk=proposal.pk reviewer_pk=project_reviewer.pk %}">
+                                                                            <span class="badge badge-success">{{score}}</span>
+                                                                        </a>
+                                                                    {% else %}
+                                                                        <span class="badge badge-info">{{score}}</span>
+                                                                    {% endif %}
+                                                                {% endwith %}
+                                                            </td>
+                                                            {% endfor %}
+                                                        </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                    <h4 class="mt-5">Choose the main supervisor</h4>
+                                                    <form method="post">
+                                                        {% csrf_token %}
+                                                        <input type="text" name="accept-main-supervisor" class="d-none" value="1">
+                                                        <select class="selectpicker" name="chosen-supervisor"
+                                                                data-live-search="true" data-container="body">
+                                                            {% for project_supervisor in project_supervisors %}
+                                                            <option data-content="<img src='{{project_supervisor.supervisor.memberprofile.image.url}}' style='height: 25px;'> {{project_supervisor.supervisor.first_name}} {{project_supervisor.supervisor.last_name}}">
+                                                                {{project_supervisor.pk}}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                        <textarea name="accept-proposal-reason" class="form-control my-2" placeholder="Write your reason here" required></textarea>
+                                                        {% if project_supervisors.select_related %}
+                                                            <button class="btn btn-success"><i class="fa fa-plus"></i> Choose</button>
+                                                        {% endif %}
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                            <h5>Please select from the items above</h5>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('.assign-selected-expert').on('click', function () {
+        let project_id = $(this).attr('id');
+        let expert_pk = $(`#select-${project_id}`).val();
+        $(`#accept-${project_id}`).val(expert_pk);
+        $(`#form-${project_id}`).submit();
+    });
+
+    //// Prevent Scroll
+    var body = document.getElementsByTagName('body')[0];
+    $(".dropdown-menu").mouseover(function disableBodyScroll() {
+    body.style.overflow = 'hidden';
+    });
+    $(".dropdown-menu").mouseout(function enableBodyScroll() {
+    body.style.overflow = 'auto';
+    });
+
+    $('.assign-expert-btn').on('click', (event) => {
+
+        const area_pk = $(event.target).attr('area-pk');
+        const selected_expert = $(`select[name="select-${area_pk}"]`).val();
+        $(`#expert-${area_pk}`).val(selected_expert)
+        $(`#form-${area_pk}`).submit();
+    });
+</script>
+{% endblock script %}

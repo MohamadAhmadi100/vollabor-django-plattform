@@ -1,0 +1,388 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+{% load base %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+{% endblock %}
+
+
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1><i class="fa fa-eye"></i> Project detail</h1>
+            </div>
+            <div class="col-md-6 text-right">
+                    <h5 class="btn btn-secondary fw-bold mb-1" style="font-weight:bold; color:#1AE8F9 ">
+                       Balance: ${{user.memberprofile.balance}}
+                        <br/>
+                        <a class="btn btn-warning btn-sm text-dark fw-bold px-4 my-1 mx-2" href="{% url 'create-checkout-session' %}"> 
+                            <i class="fas fa-money-check-alt text-dark" style='font-size:14px'></i> Charge
+                        </a>
+                    </h5>
+                    
+                </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}project{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is new</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container content">
+        <div class="row">
+            {% if selected_project.is_valid %}
+                {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                <div class="col-md-3 my-1">
+                        <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        <!-- new -->
+        <main class="container-fluid  ">
+            <div class="content my-4">
+                <div class="row px-4 py-2">
+                    <div class="col-md-12">
+                        <h2 style="overflow: hidden">{{selected_project.title}}</h2>
+                        {% if selected_project.fund > 0 %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                    ${{selected_project.fund}}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if selected_project.status == 'Rejected' %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-control">
+                                 
+                                <span class="badge badge-danger">Reason of rejection</span>
+                                {{selected_project.reject_reason}}                            
+                                </div>
+                            </div>
+                        </div>
+        
+                        {% endif %}
+        
+                        {% if project_areas %}
+                            <div class="col-md-12">
+                                <label class="form-label">Project Areas:</label>
+                                <div class="form-group ">
+                                    <span class="text-info bold"></span>
+                                        {% for project_area in project_areas %}
+                                        <span class="badge
+                                        {% if project_area.is_confirmed %}
+                                            {% if project_area.area.confirmed %}
+                                            badge-success
+                                            {% else %}
+                                            badge-danger
+                                            {% endif %}
+                                        {% else %}
+                                            badge-warning
+                                        {% endif %}
+                                            ">{{project_area.area}}</span>
+                                            {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+        
+        
+                       
+        
+                    </div>
+                </div>
+                
+                <div class="row px-4 py-2">
+                    <div class="col-md-12">
+        
+                        <div class="form-group ">
+                            <label class="form-label">Title</label>
+                            <textarea class="form-control" rows="2" disabled>{{object.client_form.formclint.title}}</textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row px-4 py-2">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Submission date</label>
+                            <input type="text" class="form-control" value="{{object.client_form.formclint.created|date:'M-d-Y'}}" disabled>
+                        </div>
+                    </div>
+                     <div class="col-md-4">
+                        <div class="form-group ">
+                            <label class="form-label">  Suggested start date</label>
+                            <input type="text" class="form-control" value="{{object.client_form.formclint.start_date}}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group ">
+                            <label class="form-label"> Suggested end date</label>
+                            <input type="text" class="form-control" value=" {{object.client_form.formclint.end_date}}" disabled>
+                        </div>
+                    </div>
+                     
+        
+                    
+                </div>
+                
+                 <div class="row px-4">
+                    <div class="col-10">
+                        <hr class="bg-secondary">
+                    </div>
+                    <div class="col-2"><a href="#" class="text-primary" id="textMore">Show more</a> <i class="fa fa-arrow-circle-down text-primary" onclick="showMore()" id="MoreBtn" style="font-size:24px;" aria-hidden="true"></i></div>
+                </div>
+                <div id="more" style="display:none">
+                
+                 
+                <div class="row px-4 py-2">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Fund</label>
+                            <input type="text" class="form-control" value="${{object.client_form.formclint.fund}}" disabled>
+                        </div>
+                    </div>
+                   
+               
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="form-label">Dataset link</label>
+                            <div class="form-control">
+                                {% if object.client_form.formclint.data_set_link%}
+                                <a href="{{object.client_form.formclint.data_set_link}}">Click </a>
+                                {% else %}
+                                <h6>There is no link</h6>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row px-4 py-2">
+                    <div class="col-md-12">
+                        <div class="form-group ">
+                            <label class="form-label">Abstract</label>
+                            <textarea  class="form-control" rows="5" disabled>{{object.client_form.formclint.abstrack}}</textarea>
+                        </div>
+                    </div>
+                </div>
+                 
+                <div class="row px-4 py-2">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Equipment</label>
+                            <textarea class="form-control" rows="5" disabled>{{object.client_form.formclint.equipment}}</textarea>
+                        </div>
+                    </div>
+        
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Requirement</label>
+                            <textarea class="form-control" rows="5" disabled>{{object.client_form.formclint.requirement}}</textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+                
+                 <div class="row px-4 py-2">     
+                    {% if object.client_form.formclint.pri_file %}
+                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12" >
+                        <div class="cardy border-primary bg-dark mb-3" style="color: white">
+                          <div class="card-header"><h6>PRI file</h6></div>
+                          <div class="card-body text-danger">
+                            
+                            <a target="_blank" style="text-decoration:none;color:none" href="{{object.client_form.formclint.pri_file.url}}">
+                                <h6 id="AddExpertBtn3" class="btn btn-outline-success m-1 text-center text-white"><i class="fa fa-check"></i> Download </h6>
+                            </a>
+
+                          </div>
+                        </div>
+                    </div>
+                    {% endif %}    
+                    <div class="col-md-6" >
+                        <div class="card text-info border-secondary bg-dark mb-3">
+                          <div class="card-header"><h5>Expert's information</h5></div>
+                          <div class="card-body text-light">
+                              <h6 >Email: {{object.client_form.expert.researchrole.expert_email_address}}</h6>
+                          </div>
+                        </div>
+                    </div>
+                   </div> 
+                   
+
+                    {% if object.contract_supervisor and object.reason_reject %}
+                    <div class="row px-4 py-2">      
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" >
+                        <div class="card text-info border-secondary bg-dark mb-3" style="height:170px">
+                          <div class="card-header"><h5>Revision reason:</h5></div>
+                          <div class="card-body text-light">
+                              <p style="color: white">{{object.reason_reject}}</p>
+                          </div>
+                        </div>
+                        
+                    </div>
+                    </div>
+                    {% endif %}
+                <div class="row px-4">
+                     {% if object.client_form.formclint.main_supervisor %}
+                     <div class="col-12 pt-4 ">
+                                <a target="_blank" class="btn btn-primary mx-1" href="{{object.client_form.formclint.main_supervisor.url}}">Download the proposal</a>
+                                <a target="_blank" class="btn btn-primary mx-1" href="{{object.Contract.url}}">Download the contract</a>
+                                <a target="_blank" class="btn btn-primary mx-1" href="{% url 'industry:industry-supervisor-see-contract-total' object.pk %}">Evaluation score</a>
+                             
+                    </div>
+            
+                   
+                    {% else %}
+                    <div class="col-12  ">
+                                <a target="_blank"  class="btn btn-primary mx-1" href="{{object.propzar.url}}">Download the proposal</a>
+                   
+                                <a target="_blank" class="btn btn-primary mx-1" href="{{object.Contract.url}}">Download the contract </a>
+                  
+            
+                    
+                        <a target="_blank" class="btn btn-primary mx-1" href="{% url 'industry:industry-supervisor-see-contract-total' object.pk %}">Evaluation score</a>
+                    </div>
+                    {% endif %}
+            
+                  
+                        
+                        
+                        
+                </div><!--end row -->
+                    
+                   
+            
+                    <div class="col-md-12 mt-2 text-center">
+            
+                        <hr style="background-color: black;">
+                        {% if object.contract_supervisor %}
+                        <a href="{% url 'industry:industry-time-programming' object.pk %}">
+                        <h5 class="btn btn-success mx-auto">Next</h5></a>
+                        {% else %}
+                        <a href="{% url 'industry:industry-form-advertiment' object.pk %}">
+                        <h5 class="btn btn-success mx-auto">Next</h5></a>
+                        {% endif %}
+                    </div>
+             
+        
+            </div>
+        
+            
+        </main>
+        <!-- old -->
+
+    </div>
+
+
+   
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    
+    function showMore() {
+  var moreDiv = document.getElementById("more");
+  var moreBtn = document.getElementById("MoreBtn");
+ var textmore = document.getElementById("textMore");
+
+  if (moreDiv.style.display === "none") {
+    moreDiv.style.display = "block";
+    moreBtn.classList.remove("fa-arrow-circle-down");
+    moreBtn.classList.add("fa-arrow-circle-up");
+   // textmore.textContent="Show more";
+    $('#textMore').text('Show less');
+    
+  } else {
+    moreDiv.style.display = "none";
+    moreBtn.classList.remove("fa-arrow-circle-up");
+    moreBtn.classList.add("fa-arrow-circle-down");
+    //textmore.textContent="Show less";
+    $('#textMore').text('Show more');
+  }
+}
+    
+    
+</script>
+
+
+{% endblock script %}

@@ -1,0 +1,55 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!-- HEADER SECTION -->
+<div id="cv-header-section" style="padding-top:150px;">
+    <div class="dark-overlay">
+        <div class="cv-header-inner">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">{% trans "Email Confirmation" %}</h1>
+                    <p>{% trans "Confirm your email by entering verification code sent to your email" %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<section id="email-activation-section" class="bg-light text-dark py-5 px-3">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+        <div class="card border-success mb-3 mx-auto" style="max-width: 25rem;">
+          <div class="card-body text-primary">
+            <div class="text-dark">
+                {% if LANGUAGE_CODE == 'en-us' %}
+                 <form method="post">
+                 {% else %}
+                 <form method="post" class="text-right" dir="rtl">
+                 {% endif %}
+                    {% csrf_token %}
+                     <div class="form-group">
+                        <label>{% trans "Verification Code" %}</label>
+                        <input type="text" class="form-control" placeholder="{% trans 'Enter verification code' %}" name="verification_code">
+                         <div class="g-recaptcha my-3" data-sitekey="6LfNkwsaAAAAALzFdst8DfNe0qxir5VResjWdJhf"></div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-info ">{% trans "Confirm" %}</button>
+                </form>
+            </div>
+          </div>
+        </div>
+
+    </div>
+</section>
+<script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock content %}

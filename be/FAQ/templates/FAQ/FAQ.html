@@ -1,0 +1,395 @@
+{% extends 'ivc_website/base.html' %}
+{% load static %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'ivc_website/FAQ/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/FAQ/css/css/font-awesome.min.css">
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+/*    * {*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    box-sizing: border-box;*/
+/*}*/
+/*html {*/
+/*    font-family: sans-serif;*/
+/*    font-size: 10px;*/
+/*}*/
+/*body {*/
+/*    width: 100%;*/
+/*    min-height: 100vh;*/
+/*    font-size: 1.6rem;*/
+/*    line-height: 140%;*/
+/*    background-color: #f3f6f6;*/
+/*    opacity: 0.3;*/
+/*    opacity: 1;*/
+/*    display: grid;*/
+/*    place-items: center;*/
+/*}*/
+.card {
+    background: #fff;
+    color: #333;
+    margin: 1rem auto;
+    width: 90%;
+    max-width: 1200px;
+    min-height: 30rem;
+    border-radius: 2rem;
+}
+
+/*.hero {*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    transform: translateY(-55%);*/
+/*}*/
+/*.hero .img {*/
+/*    filter: drop-shadow(0rem 1.5rem rgba(0,0,0,0.1));*/
+/*    transition: 0.3s ease-out;*/
+/*}*/
+.card:hover .img {
+    filter: drop-shadow(0rem 2.5rem rgba(0,0,0,0.1));
+}
+
+.title {
+    text-align: center;
+    font-size: 5rem;
+    padding: 1rem;
+}
+
+.acc-container {
+    /*padding: 4rem 2rem;*/
+}
+.acc-btn {
+    width: 100%;
+    padding: 1.6rem 2rem;
+    /*font-size: 1.6rem;*/
+    cursor: pointer;
+    background: inherit;
+    border: none;
+    outline: none;
+    text-align: left;
+    transition: all 0.5s linear;
+}
+.acc-btn:after {
+    content: "\27A4";
+    color: #0043e1;
+    float: right;
+    transition: all 0.3s linear;
+}
+.acc-btn.is-open:after {
+    transform: rotate(90deg);
+}
+.acc-btn:hover, .acc-btn.is-open {
+    color: #000;
+    font-weight: bold;
+}
+
+.acc-content {
+    max-height: 0;
+    color: rgba(0,0,0,0.75);
+    /*font-size: 1.5rem;*/
+    margin: 0 2rem;
+    padding-left: 1rem;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    border-bottom: 1px solid #ccc;
+}
+
+.credit {
+    text-align: center;
+    padding: 1rem;
+}
+.credit a {
+    text-decoration: wavy underline;
+    color: dodgerblue;
+}
+</style>
+
+<div id="FQ" class="fle">
+    <div id="carouselExampleIndicators" class="banner_top carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+        </div>
+        <div class="carousel-inner ">
+            <div class="carousel-item active h-100 ">
+                <div class="row" style="height: 80%">
+                    <div class="col-lg-6 col-md-12  d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h1 class="text-white  fw-bold">
+                            Frequently asked questions
+                        </h1>
+                        
+                    </div>
+                    <div class="col-md-6 position-relative">
+                        <img class="img-fluid" src="{% static 'ivc_website/FAQ/img/FAQ-Logo.png' %}" style="height: 275px;max-height: max-content"
+                             alt="">
+                    </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="container-fluid ">
+        <!--<div class="back-link d-flex align-items-center mt-3">-->
+        <!--    <a href="#" class="">Home</a>-->
+        <!--    <i class="fa fa-angle-right fa-2x mx-2"></i>-->
+        <!--    <a href="#" class="active">F&Q</a>-->
+        <!--</div>-->
+
+<main class="card">
+  <!--<h2 class="title">FAQ</h2>-->
+
+  <div class="acc-container">
+<!--1-->
+    
+<!--2-->
+    <button class="acc-btn">
+      In the projects section I can only see the titles of the projects in three status, how can I find more information about the projects? 
+    </button>
+    <div class="acc-content">
+      <p>
+        To apply for projects, after you have selected the project you want from the “Projects” section in your dashboard, you have to pay the project entry coin.To do this, you should buy Responsiveness Coins for the first time.
+      </p>
+    </div>
+<!--3-->
+    <button class="acc-btn">
+      I have not been in any project so far before Tecvico, and I have very little experience of artificial intelligence, can I apply for projects?
+    </button>
+    <div class="acc-content">
+      <p>
+        Of course. You can enter projects with the role of Learner and obtain the experiences and knowledge from being in the project to gain enough skills to do the project.
+      </p>
+    </div>
+<!--4-->
+    <button class="acc-btn">
+      In the projects section I can only see the titles of the projects in three status, how can I find more information about the projects?
+    </button>
+    <div class="acc-content">
+      <p>
+         Hi, I just got acquainted with your site and created a profile. What are the uses of these roles given to us? I am now given the role of a member. 
+      </p>
+    </div>
+<!--5-->
+    <button class="acc-btn">
+        Can't we buy experience coins? 
+    </button>
+    <div class="acc-content">
+      <p>
+          No, only responsiveness coins can be bought. To gain experience coins, you must take part in projects and perform well. 
+      </p>
+    </div>
+
+    <button class="acc-btn">
+      What is the main job of Tecvico?
+    </button>
+    <div class="acc-content">
+      <p>
+          It aims to facilitate the connection between industry and researchers /experts. To do this, Tecvico is interested in joining all levels of researchers (beginner, intermediate and advanced) to collaborate on projects that are defined in the company in various fields.
+        
+      </p>
+    </div>
+
+ <!--***later What types of projects do we have in Tecvico?-->
+ <!--*** How many types of projects do we have in Tecvico? -->
+    <button class="acc-btn">
+   What are Responsiveness and Experience coins? 
+    </button>
+    <div class="acc-content">
+      <p>
+        Coins are entry permits for projects. They are divided into two main classes:
+        <b>Responsiveness Coin (Res Coin) :</b>
+        This coin indicates how much a member was responsible for projects that he/she already attended depending on the responsibility of researchers in different projects, they are assigned points by projects' supervisors. These points are convert-able to Responsiveness Coins. These coins have financial value and can be bought/sold.
+        <b>Experience Coin (Ex Coin) :</b>        
+        This coin shows how much a member knows a subject and how much he/she is skilled in programming, using tools and software. Depending on how much members were successful to use their skills and knowledge to proceed on a project, they are given points. These points are given by supervisors. Based on these points, researchers are awarded Experience Coins. These coins cannot be traded, and are only acquired through projects
+      </p>
+    </div>
+
+    <button class="acc-btn">
+      What is the main job of Tecvico? 
+    </button>
+    <div class="acc-content">
+      <p>
+        It aims to facilitate the connection between industry and researchers /experts. To do this, Tecvico is interested in joining all levels of researchers (beginner, intermediate and advanced) to collaborate on projects that are defined in the company in various fields.
+      </p>
+    </div>
+
+    <button class="acc-btn">
+     What roles do we have in Tecvico? 
+    </button>
+    <div class="acc-content">
+      <p>
+        We have four roles in Tecvico : "Supervisor" as a project manager, "Mentor" as an advisor, "Member" as a project member, and "Learner" as an intern. 
+      </p>
+    </div>
+  
+   <button class="acc-btn">
+     How can we apply for projects?
+    </button>
+    <div class="acc-content">
+      <p>
+        You must be a member of TECVICO to apply for projects. After registering on TECVICO website, “Projects” will be shown in your dashboard. In this section, you can join your favourite project. To apply for any of these projects, you must have the minimum required coins to join that project.
+
+      </p>
+      
+    </div>
+  
+  
+    <button class="acc-btn">
+     How can we apply for projects?
+    </button>
+    <div class="acc-content">
+      <p>
+          You must be a member of Tecvico to apply for projects. After registering on Tecvico website, a section called "Projects" will be shown in your dashboard. In this section, you can choose the type of projects you want from "Research", "Competition", and "Industry" sectors. To apply for any of these projects, you must have the minimum required coins to join that project.
+      </p>
+    </div>
+  
+    <button class="acc-btn">
+     Why is it good for us to apply for projects? 
+    </button>
+    <div class="acc-content">
+      <p>
+   After completing the projects you can get: Financial benefits (money) based on your contributions in a project. Scientific and Publication benefits (having your names in scientific publications). Having work experience in an international company and adding that to your resume. Receiving a certificate (after confirmation) from Tecvico. You can enjoy all these benefits by participating in projects and doing your best to complete them. So why not? 
+      </p>
+    </div>
+    
+    
+     <button class="acc-btn">
+    How can I apply to conduct a workshop for the first time? 
+    </button>
+    <div class="acc-content">
+      <p>
+          
+After registration and login on to the website you have your “dashboard” page and click on the “Form” on the “Request” card. Then go to “workshop presenter” and submit the required documents.   
+After approving your documents, you will be able to define a workshop.
+      </p>
+    </div>
+    
+    
+       <button class="acc-btn">
+    What is the responsibility fee?
+    </button>
+    <div class="acc-content">
+      <p>
+          
+The workshop holder pays the responsibility fee as a guarantee to conduct the workshop at a specific time. If he/she holes the workshop, the responsibility fee will be paid back to the workshop holder.
+      </p>
+    </div>
+
+    
+       <button class="acc-btn">
+    How can I conduct a workshop when I don’t have a guarantor?
+    </button>
+    <div class="acc-content">
+      <p>
+          You have to pay the responsibility fee.
+
+      </p>
+    </div>
+    
+      <button class="acc-btn">
+    why should I conduct my workshop in TECVICO?
+    </button>
+    <div class="acc-content">
+      <p>
+          TECVICO will have facilities to find interested people to participate in the workshop. Therefore, more participants will join the workshop. This can increase the financial benefit for the workshop holder.
+
+      </p>
+    </div>
+    
+     <button class="acc-btn">
+   what is the benefit of participating in a workshop?
+    </button>
+    <div class="acc-content">
+      <p>
+          You will learn of highly educated workshop holders and TECVICO will issue an international certificate to the participant as well.
+          
+      </p>
+    </div>
+    
+    
+    
+  </div>
+  
+  
+  
+</main>
+
+
+     
+    </div>
+    
+</div>
+
+
+
+<!--js-->
+<script src="{% static 'ivc_website/FAQ/js/main.js' %}"></script>
+
+<script>
+
+
+    $(document).ready(function () {
+        // prevent page from jumping to top from  # href link
+        $('.fq-q li.list-group-item > a').click(function (e) {
+            e.preventDefault();
+
+        });
+
+        /* show content and activate */
+        $('.answer').hide();
+        $('#apply').show();
+        $('.list-group-item').click(function () {
+            $('.list-group-item').removeClass('active');
+            $(this).addClass('active');
+            let data = $(this).attr('data-id');
+            $(".answer").each(function () {
+                $(this).hide();
+                if ($(this).attr('id') === data) {
+                    $(this).show();
+                }
+            });
+        })
+
+    });
+</script>
+
+
+<!--faq-->
+<script>
+    const btns = document.querySelectorAll(".acc-btn");
+
+// fn
+function accordion() {
+  // this = the btn | icon & bg changed
+  this.classList.toggle("is-open");
+
+  // the acc-content
+  const content = this.nextElementSibling;
+
+  // IF open, close | else open
+  if (content.style.maxHeight) content.style.maxHeight = null;
+  else content.style.maxHeight = content.scrollHeight + "px";
+}
+// event
+btns.forEach((el) => el.addEventListener("click", accordion));
+/*
+   
+       Jokes are from > 
+        https://chartcons.com/100-funny-trick-questions-answers/
+        Background image from > 
+        https://www.magicpattern.design/tools/css-backgrounds
+   
+*/
+
+</script>
+
+
+
+
+
+{% endblock %}

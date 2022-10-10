@@ -1,0 +1,114 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+
+    
+    
+    <link rel="stylesheet" href="{% static 'users/css/signup.css' %}">
+    <title>Login</title>
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+{% endblock %}
+{% block content %}
+
+
+
+    <div class="background-design">
+      
+        
+
+
+        <div class="p-section p-section2 d-lg-flex">
+            <div class="text-center p-info" id="myDIV">
+                <img src="{% static 'users/img/teclogo.png' %}" alt="teclogo" title="tecvico">
+                <div class="p-info-head">
+                    <h2>Welcome To TECVICO</h2>
+                    <p>
+                    {% comment %} hello {% endcomment %}
+                    </p>
+                </div>
+            </div>
+            <div class="signup mt-1 mx-auto">
+                <div class="signup-section ">
+                    {% if LANGUAGE_CODE == 'en-us' %}
+                        <form method="post" class="text-left" dir="ltr">
+                        {% else %}
+                        <form method="post" class="text-left" dir="ltr">
+                        {% endif %}
+                            {% csrf_token %}
+                        <div class="col-md-6 w-90 mx-auto">
+                            <div class="signin-section mx-auto">
+                                <div class="signin-title text-center mt-2 pt-2 mb-1 mx-0">
+                                    <h2 class="text-capitalize">Sign In</h2>
+                                    
+                                    <span class="text-capitalize enter-text">Enter your Email and Password</span>
+                                </div>
+                                <div class="mx-auto">
+                                    {{ form|crispy }}
+                                    <div class="mt-4 g-recaptcha mx-0" style="position:relative" data-sitekey="6LfNkwsaAAAAALzFdst8DfNe0qxir5VResjWdJhf"></div>
+                                </div>
+                                
+                                
+                                <div class="signin-form mt-1">
+                                    <button type="submit" class="d-block" name="signin" id="signup">Log In</button>
+                                    <div class="gg-log mt-1">
+                                        {% comment %} <a href="#" class="text-capitalize google-inp mb-3"><i
+                                                class="fab fa-google me-2"></i>Sign up with google</a> {% endcomment %}
+                                        <span class="text-capitalize d-block text-center">Don't have an account? <a
+                                                href="{% url 'cv-upload-page' %}">sign up</a></span>
+                                        <span class="text-capitalize d-block text-center">Forgot password?<a
+                                                href="{% url 'password_reset' %}">forgot password</a></span>
+                                    </div>
+                                </div>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+
+       <!-- <span class="gradient1"></span>
+        <span class="gradient2"></span>
+        <span class="gradient3"></span>-->
+    </div>
+    </div>
+   
+
+
+
+
+    <script src="{% static 'users/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'users/js/popper.min.js' %}"></script>
+    <script src="{% static 'users/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'users/js/signup.js' %}"></script>
+    
+    <script>
+    $(document).ready(function(){
+        
+        $(window).resize(function() {
+            var element = document.getElementById("myDIV");
+            if(screen.width>1000){
+                
+                element.classList.add("p-info");
+            
+            }else{
+                
+                
+                element.classList.remove("p-info");
+            
+            }
+        
+        })
+        
+    });
+        
+        
+    </script>
+
+
+{% endblock content %}

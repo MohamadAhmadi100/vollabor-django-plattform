@@ -1,0 +1,604 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/researchtheme.css' %}">
+    
+    
+    <title>Workshop director view</title>
+{% endblock css %}
+
+{% block content %}
+
+
+    <header class="bg-danger text-white py-2 w-100">
+        <div class="container">
+            <h1 class="px-4"><i class="far fa-edit"></i> <span> Workshop director view</span></h1>
+        </div>
+    </header>
+    
+    <div class="container card-page">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success">asdasds {{ message|safe }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message|safe }}</div>
+                    {%endif %}
+            {% endfor %}
+            {% endif %}
+        <div class="row justify-content-center align-items-center">
+            {% if request.GET.filter == 'add-expert'%}
+            <div class="col gold active" id="new_workshop_btn">
+            {% else %}
+            <div class="col gold" id="new_workshop_btn">
+            {% endif %}
+                <a href="{% url 'manager-workshop' %}?filter=add-expert" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Associate an expert</h4>
+                    <p class="number">{{workshop_number}}</p>
+                </a>
+            </div>
+            {% if request.GET.filter == 'pending'%}
+            <div class="col blue active" id="new_workshop_btn">
+            {% else %}
+            <div class="col blue" id="new_workshop_btn">
+            {% endif %}
+                <a href="{% url 'manager-workshop' %}?filter=pending" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Pending</h4>
+                    <p class="number">{{pending_number}}</p>
+                </a>
+            </div>
+            {% if request.GET.filter == 'accept-reject'%}
+            <div class="col green active" id="accept_reject_btn">
+            {% else %}
+            <div class="col green" id="accept_reject_btn">
+            {% endif %}
+                <a href="{% url 'manager-workshop' %}?filter=accept-reject" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Accept/Reject</h4>
+                    <p class="number">{{acc_rej_number}}</p>
+                </a>
+            </div>
+            {% if request.GET.filter == 'Contracts'%}
+            <div class="col pink active" id="accepted_list_btn">
+            {% else %}
+            <div class="col pink" id="accepted_list_btn">
+            {% endif %}
+                <a href="{% url 'manager-workshop' %}?filter=Contracts" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Contracts</h4>
+                    <p class="number ">{{contracts_number}}</p>
+                </a>
+            </div>
+
+            {% if request.GET.filter == 'workshop-advertisement'%}
+            <div class="col pink active" id="accepted_list_btn">
+            {% else %}
+            <div class="col pink" id="accepted_list_btn">
+            {% endif %}
+                <a href="{% url 'manager-workshop' %}?filter=workshop-advertisement" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Landingpage</h4>
+                    <p class="number ">{{accept_number}}</p>
+                </a>
+            </div>
+
+            {% if request.GET.filter == 'workshop-list'%}
+            <div class="col pink active" id="accepted_list_btn">
+            {% else %}
+            <div class="col pink" id="accepted_list_btn">
+            {% endif %}
+                <a href="{% url 'manager-workshop' %}?filter=workshop-list" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Show workshops</h4>
+                    <p class="number ">{{accept_number}}</p>
+                </a>
+            </div>
+           
+            {% if request.GET.filter == 'History'%}
+            <div class="col pink active" id="accepted_list_btn">
+            {% else %}
+            <div class="col pink" id="accepted_list_btn">
+            {% endif %}
+                <a href="{% url 'manager-workshop' %}?filter=History" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">History</h4>
+                    <p class="number ">{{accept_number}}</p>
+                </a>
+            </div>
+        </div>
+        <div class="container-fluid">
+        {% if request.GET.filter == 'add-expert' %}
+        <!--new workshop list-->
+        <div class="row" id="new_workshop_list">
+            <div class="w-100 d-md-flex justify-content-md-center">
+                {% if new_workshop %}
+                <table class="table table-hover  mt-5 ">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th style="width:2%">ID</th>
+                            <th style="width:33%">Title</th>
+                            <th style="width:10%">Price ($ USA)</th>
+                            <th style="width:15%">Holding date</th>
+                            <th style="width:15%">Submited date</th>
+                            <th style="width:15%">Owner</th>
+                            <th style="width:15%">Status</th>
+                            <th style="width:10%">Proceed</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-dark">
+                    {% for workshop in new_workshop%}
+                        <tr>
+                            <td style="width:2%">{{workshop.unique_id}}</td>
+                            <td style="width:33%">{{workshop.title|truncatechars:40}}</td>
+                            <td style="width:10%">{{workshop.price}}</td>
+                            <td style="width:15%">{{workshop.date}}</td>
+                             <td style="width:15%">{{workshop.created.date}}</td>
+                            <td style="width:15%">{{workshop.top_user.get_full_name}}</td>
+                            <td style="width:15%">
+                                {% for s in status %}
+                                    {%if s.status == workshop.status%}
+                                        {{s.msg}}
+                                    {%endif%}
+                                {%endfor%}
+                            </td>
+                            <td style="width:10%"><button class="btn btn-success"><a class="text-white" href="{% url 'add_expert' workshop.id %}">View</a></button></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: gold; margin-top: 10px;">There is nothing to show you.</h1>
+                {% endif %}
+            </div>
+        </div>
+        {% elif request.GET.filter == 'pending' %}
+        <!--new workshop list-->
+        <div class="row" id="new_workshop_list">
+            <div class="w-100 d-md-flex justify-content-md-center">
+                {% if pending %}
+                <table class="table table-hover  mt-5 ">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th style="width:2%">ID</th>
+                            <th style="width:33%">Title</th>
+                            <th style="width:15%">Owner</th>
+                            <th style="width:10%">Price ($ USA)</th>
+                            <th style="width:15%">Holding date</th>
+                            <th style="width:15%">Submited date</th>
+                            <th style="width:15%">Expert</th>
+                            <th style="width:10%">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-dark">
+                    {% for comment in pending %}
+                        <tr>
+                            <td style="width:2%">{{comment.workshop.unique_id}}</td>
+                            <td style="width:33%">{{comment.workshop.title|truncatechars:40}}</td>
+                            <td style="width:15%">{{comment.workshop.top_user.get_full_name}}</td>
+                            <td style="width:10%">{{comment.workshop.price}}</td>
+                            <td style="width:15%">{{comment.workshop.date}}</td>
+                            <td style="width:15%">{{comment.workshop.created.date}}</td>
+                            <td style="width:15%">{{comment.expert.get_full_name}}</td>
+                            <td style="width:10%">
+                            {% if comment.status == 'Decline' %}
+                            <p class="text-danger"><b>Declined</b></p>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#comment" id="expertComment">Comment</button>
+                            <input type="hidden" id="decline-comment" value="{{comment.comment}}">
+                            {% else %}
+                                            {%for s in status%}
+                                                {%if s.status == comment.workshop.status%}
+                                                    <p>{{s.msg}}</p>
+                                                {%endif%}
+                                            {%endfor%}
+                                    </td>
+                            {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: #05a1cc; margin-top: 10px;">There is nothing to show you.</h1>
+                {% endif %}
+            </div>
+        </div>
+        {% elif request.GET.filter == 'accept-reject'%}
+        <!--accept reject list-->
+        <div class="row" id="accept_reject_list">
+            <div class="justify-content-md-center">
+                {% if acc_rej %}
+                <table class="table table-hover mt-5">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th style="width:2%">ID</th>
+                            <th style="width:33%">Title</th>
+                            <th style="width:15%">Owner</th>
+                            <th style="width:10%">Price ($ USA)</th>
+                            <th style="width:15%">Holding date</th>
+                            <th style="width:15%">Submited date</th>
+                            <th style="width:15%">Status</th>
+                            <th style="width:15%">Expert</th>
+                            <th style="width:10%">Proceed</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-dark">
+                    {% for comment in acc_rej%}
+                        <tr>
+                            <td style="width:2%">{{comment.workshop.unique_id}}</td>
+                            <td style="width:33%">{{comment.workshop.title|truncatechars:40}}</td>
+                            <td style="width:15%">{{comment.workshop.top_user.get_full_name}}</td>
+                            <td style="width:10%">{{comment.workshop.price}}</td>
+                            <td style="width:15%">{{comment.workshop.date}}</td>
+                            <td style="width:15%">{{comment.workshop.created.date}}</td>
+                            <td style="width:15%">
+                                    {%for s in status%}
+                                        {%if s.status == comment.workshop.status%}
+                                            <p>{{s.msg}}</p>
+                                        {%endif%}
+                                    {%endfor%}
+                            </td>
+                            <td style="width:15%">{{comment.expert.get_full_name}}</td>
+                            <td style="width:10%"><button class="btn btn-success"><a class="text-white" href="{% url 'accept-reject' comment.id %}">View</a></button></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: rgb(32, 248, 104); margin-top: 10px;">There is nothing to show you.</h1>
+                {% endif %}
+            </div>
+        </div>
+
+        {% elif request.GET.filter == 'Contracts'%}
+        <!--accept reject list-->
+        <div class="row" id="accept_reject_list">
+            <div class="justify-content-md-center">
+                {% if contracts %}
+                <table class="table table-hover mt-5">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th style="width:2%">ID</th>
+                            <th style="width:33%">Title</th>
+                            <th style="width:15%">Owner</th>
+                            <th style="width:10%">Price ($ USA)</th>
+                            <th style="width:15%">Holding date</th>
+                            <th style="width:15%">Submited date</th>
+                            <th style="width:15%">Status</th>
+                            <th style="width:15%">Expert</th>
+                            <th style="width:10%">Proceed</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-dark">
+                    {% for contract in contracts%}
+                        <tr>
+                            <td style="width:2%">{{contract.unique_id}}</td>
+                            <td style="width:33%">{{contract.title|truncatechars:40}}</td>
+                            <td style="width:15%">{{contract.top_user.get_full_name}}</td>
+                            <td style="width:10%">{{contract.price}}</td>
+                            <td style="width:15%">{{contract.date}}</td>
+                            <td style="width:15%">{{contract.created.date}}</td>
+                            <td style="width:15%">
+                                    {%for s in status%}
+                                        {%if s.status == contract.status%}
+                                            <p>{{s.msg}}</p>
+                                        {%endif%}
+                                    {%endfor%}
+                            </td>
+                            <td style="width:15%">{{contract.expert.get_full_name}}</td>
+                            <td style="width:10%"><button class="btn btn-success"><a class="text-white" href="{% url 'manager-contract-status' contract.id %}">View</a></button></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: rgb(32, 248, 104); margin-top: 10px;">There is nothing to show you.</h1>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% elif request.GET.filter == 'workshop-list'%}
+        <!--accepted list-->
+        <div class="row px-2" id="accepted_list">
+            <div class="table-responsive justify-content-md-center">
+                {% if accepted %}
+                <table class="table table-hover table-sm mt-5" style="font-size:0.9em">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th class="text-center" style="width:5% !important;vertical-align:middle">ID</th>
+                            <th class="text-center" style="width:20% !important;vertical-align:middle">Title</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Owner</th>
+                            <th class="text-center pt-4" style="width:15% !important;vertical-align:middle">Price <p style="font-size:0.7em">($USA)</p></th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Submited date</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Holding date</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Status</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Accpeted / Rejected by</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Members count</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Proceed</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-dark">
+                    {% for workshop in accepted %}
+                        <tr>
+                            <td class="text-center" style="width:5% !important;vertical-align:middle">{{workshop.unique_id}}</td>
+                            <td style="width:20% !important;vertical-align:middle">{{workshop.title|truncatechars:35}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.top_user.get_full_name}}</td>
+                            <td class="text-center" style="width:15% !important;vertical-align:middle">{{workshop.price}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.created.date}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.date}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">
+                                    {%for s in status%}
+                                        {%if s.status == workshop.status%}
+                                            <p>{{s.msg}}</p>
+                                        {%endif%}
+                                    {%endfor%}
+                            </td>
+                            {% if workshop.accept_reject %}
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.accept_reject.user.get_full_name}}</td>
+                            {% else %}
+                            <td class="text-center text-danger" style="width:10% !important;vertical-align:middle">Not determined yet</td>
+                            {% endif %}
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.count}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">
+                                {% if workshop.status == 'Accept' %}
+                                <button class="btn btn-warning mb-2"><a href="{% url 'view-registrants-workshop' workshop.id %}" class="py-2 px-1 text-white">Registrants</a></button>
+                                <button class="btn btn-success"><a class="text-white" href="{% url 'view-workshop' workshop.id %}">View</a></button>
+                                {% else %}
+                                <p>No action</p>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: #f02652; margin-top: 10px;">There is nothing to show you.</h1>
+                {% endif %}
+            </div>
+        </div>
+
+        {% elif request.GET.filter == 'workshop-advertisement'%}
+        <!--accepted list-->
+        <div class="row px-2" id="accepted_list">
+            <div class="table-responsive justify-content-md-center">
+                {% if accepted %}
+                <table class="table table-hover table-sm mt-5" style="font-size:0.9em">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th class="text-center" style="width:5% !important;vertical-align:middle">ID</th>
+                            <th class="text-center" style="width:20% !important;vertical-align:middle">Title</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Owner</th>
+                            <th class="text-center pt-4" style="width:15% !important;vertical-align:middle">Price <p style="font-size:0.7em">($USA)</p></th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Submited date</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Holding date</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Status</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Accpeted / Rejected by</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Members count</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Proceed</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-dark">
+                    {% for workshop in accepted %}
+                        <tr>
+                            <td class="text-center" style="width:5% !important;vertical-align:middle">{{workshop.unique_id}}</td>
+                            <td style="width:20% !important;vertical-align:middle">{{workshop.title|truncatechars:35}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.top_user.get_full_name}}</td>
+                            <td class="text-center" style="width:15% !important;vertical-align:middle">{{workshop.price}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.created.date}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.date}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">
+                                    {%for s in status%}
+                                        {%if s.status == workshop.status%}
+                                            <p>{{s.msg}}</p>
+                                        {%endif%}
+                                    {%endfor%}
+                            </td>
+                            {% if workshop.accept_reject %}
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.accept_reject.user.get_full_name}}</td>
+                            {% else %}
+                            <td class="text-center text-danger" style="width:10% !important;vertical-align:middle">Not determined yet</td>
+                            {% endif %}
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.count}}</td>
+                            <td style="display:flex" class="text-center" style="width:10% !important;vertical-align:middle">
+                                {% if workshop.status == 'Accept' %}
+                                {%if workshop.landing_page%}
+                                    <button class="btn btn-primary mb-2"><a href="{% url 'landingpage' workshop.landing_page.id %}" class="py-2 px-1 text-white">View</a></button>
+                                    <button class="btn btn-warning mb-2"><a href="{% url 'landingpage-edit' workshop.landing_page.id %}" class="py-2 px-1 text-white">Edit</a></button>
+                                    <form method="POST" action="{% url 'landingpage-delete' %}">
+                                        {%csrf_token%}
+                                        <input type="hidden" name='id' value="{{workshop.landing_page.id}}">
+                                        <button type="submit" class="btn btn-danger mb-2">Delete</button>
+                                    </form>
+                                    {%else%}
+                                    <button class="btn btn-success mb-2"><a href="{% url 'create-landingpage' workshop.id %}" class="py-2 px-1 text-white">Add landing page</a></button>
+                                {%endif%}
+                                {% else %}
+                                <p>No action</p>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: #f02652; margin-top: 10px;">There is nothing to show you.</h1>
+                {% endif %}
+            </div>
+        </div>
+        {% elif request.GET.filter == 'History'%}
+        <!--accepted list-->
+        <div class="row px-2" id="accepted_list">
+            <div class="table-responsive justify-content-md-center">
+                {% if accepted %}
+                <table class="table table-hover table-sm mt-5" style="font-size:0.9em">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th class="text-center" style="width:5% !important;vertical-align:middle">ID</th>
+                            <th class="text-center" style="width:20% !important;vertical-align:middle">Title</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Owner</th>
+                            <th class="text-center pt-4" style="width:15% !important;vertical-align:middle">Price <p style="font-size:0.7em">($USA)</p></th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Submited date</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Holding date</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Status</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Accpeted / Rejected by</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Members count</th>
+                            <th class="text-center" style="width:10% !important;vertical-align:middle">Proceed</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-dark">
+                    {% for workshop in accepted %}
+                        <tr class="text-center">
+                            <td class="text-center" style="width:5% !important;vertical-align:middle">{{workshop.unique_id}}</td>
+                            <td style="width:20% !important;vertical-align:middle">{{workshop.title|truncatechars:35}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.top_user.get_full_name}}</td>
+                            <td class="text-center" style="width:15% !important;vertical-align:middle">{{workshop.price}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.created.date}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.date}}</td>
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">
+                                    {%for s in status%}
+                                        {%if s.status == workshop.status%}
+                                            <p>{{s.msg}}</p>
+                                        {%endif%}
+                                    {%endfor%}
+                            </td>
+                            {% if workshop.accept_reject %}
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.accept_reject.user.get_full_name}}</td>
+                            {% else %}
+                            <td class="text-center text-danger" style="width:10% !important;vertical-align:middle">Not determined yet</td>
+                            {% endif %}
+                            <td class="text-center" style="width:10% !important;vertical-align:middle">{{workshop.count}}</td>
+                            <td  class="text-center" style="width:10% !important;vertical-align:middle">
+                               
+                                    <button class="btn btn-success mb-2"><a href="{% url 'workshop-history' pk=workshop.pk %}" class="py-2 px-1 text-white">View</a></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: #f02652; margin-top: 10px;">There is nothing to show you.</h1>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <!--new workshop list-->
+        <div class="row" id="new_workshop_list">
+            <div class="justify-content-md-center">
+                {% if new_workshop %}
+                <table class="table table-hover mt-5 ">
+                    <thead style="background-color:#ADD8E6;color:black">
+                        <tr>
+                            <th style="width:5%">ID</th>
+                            <th style="width:30%">Title</th>
+                            <th style="width:10%">Price ($ USA)</th>
+                            <th style="width:15%">Holding date</th>
+                            <th style="width:15%">Submited date</th>
+                            <th style="width:15%">Owner</th>
+                            <th style="width:10%">Proceed</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-dark">
+                    {% for workshop in new_workshop%}
+                        <tr>
+                            <td style="width:2%">{{workshop.unique_id}}</td>
+                            <td style="width:33%">{{workshop.title|truncatechars:40}}</td>
+                            <td style="width:10%">{{workshop.price}}</td>
+                            <td style="width:15%">{{workshop.date}}</td>
+                             <td style="width:15%">{{workshop.created.date}}</td>
+                            <td style="width:15%">{{workshop.top_user.get_full_name}}</td>
+                            <td style="width:10%"><button class="btn btn-success"><a class="text-white" href="{% url 'add_expert' workshop.id %}">View</a></button></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h1 style=" color: gold; margin-top: 10px;">There is nothing to show you.</h1>
+                {% endif %}
+            </div>
+        </div>
+        </div>
+        <script>
+        $(document).ready(function() {
+            let add_exp_btn = $('#new_workshop_btn');
+            add_exp_btn.addClass('active');
+        })
+        </script>
+        {% endif %}
+
+
+    </div>
+    <div class="modal fade text-black" style="color:black" id="comment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <label>Reason of rejection:</label>
+                    <textarea class="w-100 form-control" style="width: 350px;" id="showExpertComment" readonly></textarea>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+    
+    <script>
+        $("#expertComment").click(function(){
+            var comment = $('#decline-comment').val();
+            $('#showExpertComment').html(comment);
+        });
+    </script>
+
+    <!--<script>
+        let new_workshop_button = $('#new_workshop_btn');
+        let accept_reject_button = $('#accept_reject_btn');
+        let accepted_button = $('#accepted_list_btn');
+
+        let new_workshop_row = $('#new_workshop_list');
+        let accept_reject_row = $('#accept_reject_list');
+        let accepted_row = $('#accepted_list');
+
+        function change_button_colors(clicked_button, other1, other2) {
+            clicked_button.addClass('active');
+            other1.removeClass('active');
+            other2.removeClass('active');
+        }
+
+        function change_row_visibility(our_row, other1, other2) {
+            our_row.removeClass('d-none');
+            other1.addClass('d-none');
+            other2.addClass('d-none');
+        }
+
+        function show(value){
+            if (value == 'new_workshop_list'){
+                change_button_colors(new_workshop_button, accept_reject_button, accepted_button);
+                change_row_visibility(new_workshop_row, accept_reject_row, accepted_row);
+            }
+            else if(value == 'accept_reject_list'){
+                change_button_colors(accept_reject_button, new_workshop_button, accepted_button);
+                change_row_visibility(accept_reject_row, new_workshop_row, accepted_row);
+            }
+            else {
+                change_button_colors(accepted_button, new_workshop_button, accept_reject_button);
+                change_row_visibility(accepted_row, new_workshop_row, accept_reject_row);
+            }
+        }
+    </script>-->
+
+{% endblock content %}

@@ -1,0 +1,310 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Invoice Page</title>
+<link rel="stylesheet" href="normalize.css">
+<link rel="stylesheet" href="bootstrap.min.css">
+<style>
+body{margin-top:20px;
+background-color: #f7f7ff;
+}
+#invoice {
+    padding: 0px;
+}
+
+.invoice {
+    position: relative;
+    background-color: #FFF;
+    min-height: 680px;
+    padding: 15px
+}
+
+.invoice header {
+    padding: 10px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.invoice .company-details {
+    text-align: right
+}
+
+.invoice .company-details .name {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+.invoice .inform {
+    margin-bottom: 20px
+}
+
+.invoice .inform span{
+    font-weight: bold;
+}
+
+.invoice .invoice-to {
+    text-align: left;
+	padding-left:50px;
+}
+
+.invoice .invoice-to .to {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+.invoice .invoice-details {
+    text-align: left;
+}
+
+.invoice .invoice-details .invoice-id {
+    margin-top: 0;
+    color: #0d6efd
+}
+
+.invoice main {
+    padding-bottom: 50px
+}
+
+.invoice main .thanks {
+    font-size: 2em;
+    margin-bottom: 50px
+}
+
+.invoice main .notices {
+    padding-left: 6px;
+    border-left: 6px solid #0d6efd;
+    background: #e7f2ff;
+    padding: 10px;
+}
+
+.invoice main .notices .notice {
+    font-size: 1.2em
+}
+
+.invoice table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-bottom: 20px
+}
+
+.invoice table tbody{
+	border-bottom: 1px solid #0d6efd !important;;
+	font-size:18px;
+	font-weight:bold;
+}
+
+.invoice table tbody td,
+.invoice table th {
+    padding: 15px;
+    background: #eee;
+    border-bottom: 1px solid #fff
+}
+
+
+.invoice table th {
+	background-color:#040F8F !important;
+	color:#fff;
+    white-space: nowrap;
+    font-weight: bold;
+    font-size: 20px
+}
+
+.invoice table td h3 {
+    margin: 0;
+    font-weight: 400;
+    color: #0d6efd;
+    font-size: 1.2em
+}
+
+.invoice table .qty,
+.invoice table .total,
+.invoice table .unit {
+    text-align: right;
+    font-size: 1.2em
+}
+
+.invoice table .no {
+    color: #fff;
+    font-size: 1.6em;
+    background: #0d6efd
+}
+
+.invoice table .unit {
+    background: #ddd
+}
+
+.invoice table .total {
+    background: #0d6efd;
+    color: #fff
+}
+
+.invoice table tbody tr:last-child td {
+    border: none
+}
+
+
+
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 0px solid rgba(0, 0, 0, 0);
+    border-radius: .25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%), 0 2px 6px 0 rgb(206 206 238 / 54%);
+}
+
+.invoice table tfoot tr td {
+    color: #0d6efd;
+    font-size: 1.4em;
+    
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color:#0d6efd !important;
+}
+
+
+
+.invoice footer {
+    width: 100%;
+    text-align: center;
+    color: #777;
+    border-top: 1px solid #aaa;
+    padding: 8px 0
+}
+
+@media print {
+    .invoice {
+        font-size: 11px !important;
+        overflow: hidden !important
+    }
+    .invoice footer {
+        position: absolute;
+        bottom: 10px;
+        page-break-after: always
+    }
+    .invoice>div:last-child {
+        page-break-before: always
+    }
+}
+
+.invoice main .notices {
+    padding-left: 6px;
+    border-left: 6px solid #0d6efd;
+    background: #e7f2ff;
+    padding: 10px;
+}
+
+</style>
+</head>
+<body style="margin-top:20px; background-color: #f7f7ff;">
+<div class="container">
+    <div class="card" style="position: relative; display: flex; flex-direction: column; min-width: 0; word-wrap: break-word; background-color: #fff; background-clip: border-box; border: 0px solid rgba(0, 0, 0, 0); border-radius: .25rem; margin-bottom: 1.5rem; box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%), 0 2px 6px 0 rgb(206 206 238 / 54%);">
+        <div class="card-body">
+            <div id="invoice" style="padding: 0px;">
+                <div class="invoice overflow-auto" style="position: relative; background-color: #FFF; min-height: 680px; padding: 15px">
+                    <div style="min-width: 600px">
+                        <header style="padding: 10px 0; margin-bottom: 20px; border-bottom: 1px solid #eee;">
+                            <div class="row" style="background-color: #444444;">
+                                
+									<div class="col-md-9">
+										<img src="teclogo.png" width="40%" alt="">
+									</div>
+									<div class="col-md-3 text-white text-end py-4" style="font-weight:bold;font-size:18px;">
+										<p style="text-align:left; margin-bottom:1px; color:#fff; margin-left: 10px; padding-bottom: 5px;">Invoice : <span>{{pay_info.payment_intent}}</span></p>
+										<p style="text-align:left; margin-bottom:1px; color:#fff; margin-left: 10px; padding-bottom: 5px;">Date : <span>{{pay_info.date_created.date}}</span></p>
+									
+									</div>
+												
+                                
+                                
+                            </div>
+                        </header>
+                        <main style="padding-bottom: 50px">
+							<div class="row">
+							<h3 class="thanks" style="font-size: 2em; margin-bottom: 50px">Thank you for trusting us</h3>
+							
+							</div>
+						<hr>
+						
+                            <div class="row inform" style="margin-bottom: 20px">
+                                <div class="col invoice-to" style="text-align: left; padding-left:50px;">
+                                    
+                                    <h1 class="invoice-id">From:</h1>
+									<p>Name: <span style="font-weight: bold;">TECVICO</span></p>
+                                    <p class="address">Address: <span style="font-weight: bold;">Vancouver</span></p>
+                                    <p class="email">Email: <span style="font-weight: bold;"><a href="#">admin@gmail.com</a></span></p>
+                                </div>
+                                <div class="col invoice-details" style="text-align: left;">
+                                    <h1 class="invoice-id" style="margin-top: 0; color: #0d6efd">Billed to:</h1>
+                                    <p>Name: <span style="font-weight: bold;">{{pay_info.user.get_full_name}}</span></p>
+									<p>Address: <span style="font-weight: bold;">No Address</span></p>
+									<p>Phone number: <span style="font-weight: bold;">{{pay_info.user.memberprofile.phone}}</span></p>
+									<p>Email: <span style="font-weight: bold;">{{pay_info.user.email}}</span></p>
+									<p>Gateway: <span style="font-weight: bold;">None</span></p>
+                                    <p>Account number: <span style="font-weight: bold;"></span></p>
+                                </div>
+                            </div>
+                            <table style="width: 100%; border-collapse: collapse; border-spacing: 0; margin-bottom: 20px">
+                                <thead class="headtbl">
+                                    <tr>
+                                        
+                                        <th colspan="2"  class="text-left" style="padding: 15px; background: #eee; border-bottom: 1px solid #fff; background-color:#040F8F !important; color:#fff; white-space: nowrap; font-weight: bold; font-size: 20px">Description</th>
+										<th class="text-center" style="padding: 15px; background: #eee; border-bottom: 1px solid #fff; background-color:#040F8F !important; color:#fff; white-space: nowrap; font-weight: bold; font-size: 20px; text-align: left;">Price ($ USA)</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody style="border-bottom: 1px solid #0d6efd !important; font-size:18px; font-weight:bold;">
+                                    <tr>
+                                        <td  colspan="2"  class="text-left" style="padding: 15px; background: #eee; border-bottom: 1px solid #fff">
+                                            Balance charge
+                                        </td>
+                                        <td class="text-center" style="padding: 15px; background: #eee; border-bottom: 1px solid #fff">$-</td>
+                                    </tr>
+                                    <tr>
+                                        <td rowspan="3" style="padding: 15px; background: #eee; border-bottom: 1px solid #fff" >TAX 12%</td>
+										<td style="padding: 15px; background: #eee; border-bottom: 1px solid #fff">GST 5%</td>
+                                        <td class="text-center" style="padding: 15px; background: #eee; border-bottom: 1px solid #fff">$-</td>
+                                    </tr>
+									<tr>
+										<td style="padding: 15px; background: #eee; border-bottom: 1px solid #fff">PST 7%</td>
+                                        <td class="text-center" style="padding: 15px; background: #eee; border-bottom: 1px solid #fff">$-</td>
+                                    </tr>
+									<tr>
+                                       
+                                        
+										<td style="padding: 15px; background: #eee; border-bottom: 1px solid #fff">Additional fee</td>
+                                        <td class="text-center" style="padding: 15px; background: #eee; border-bottom: 1px solid #fff">$-</td>
+                                    </tr>
+                                    
+                               </tbody>
+							   <tfoot>
+							   <tr>
+                                    <td class="text-left" colspan="2" style="color: #0d6efd; font-size: 1.4em; border-top-width: 1px; border-top-style: solid; border-top-color:#0d6efd !important;">GRAND TOTAL</td>
+                                    <td class="text-center" style="color: #0d6efd; font-size: 1.4em; border-top-width: 1px; border-top-style: solid; border-top-color:#0d6efd !important;">{{pay_info.payment_intent}</td>
+                                </tr>
+							   
+							   </tfoot>
+                            </table>
+                            
+                        </main>
+                        <footer style="width: 100%; text-align: center; color: #777; border-top: 1px solid #aaa; padding: 8px 0"></footer>
+                    </div>
+                    <!--DO NOT DELETE THIS div. IT is responsible for showing footer always at the bottom-->
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

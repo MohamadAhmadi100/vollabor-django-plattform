@@ -1,0 +1,179 @@
+{% extends 'ivc_website/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% block style %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/css/intlTelInput.css" rel="stylesheet"
+        media="screen">
+    <link rel="stylesheet" href="{% static 'users/css/JoinUs.css' %}">
+     <link rel="stylesheet" href="{% static 'users/css/phone.css' %}">
+   
+{% endblock %}
+{% block content %}
+
+<div class="user">
+		<div class="user_options-container">
+			<div class="user_options-text">
+				  
+				  <div class="user_options-registered">
+					<!--<h2 class="user_registered-title">Have an account?</h2>-->
+					<h3 class="user_company-text text-warning">Registration as a company</h3>
+					<button class="user_registered-login text-warning" id="corporation-button">Sign Up</button>
+				  </div>
+				  <div class="user_options-unregistered">
+					<!--<h2 class="user_unregistered-title">Don't have an account?</h2>-->
+					<h3 class="user_individual-text text-info">Registration as an individual</h3>
+					<button class="user_individual-signup text-info" id="individual-button">Sign Up</button>
+				  </div>
+			</div>
+			<div class="user_options-forms py-0" id="user_options-forms" style="overflow-y: scroll;">
+				<div class="user_forms-individual m-0 py-0" id="user_forms-individual">
+					<h2 class="text-center bg-dark text-info my-1 p-2">Registration Form</h2>
+					<form class="forms_form">
+					  <fieldset class="forms_fieldset">
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <input type="text" placeholder="First Name" class="forms_field-input" required autofocus />
+						    </div>
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <input type="text" placeholder="Last Name" class="forms_field-input" required autofocus />
+						    </div>
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <input type="email" placeholder="Email" class="forms_field-input" required autofocus />
+						    </div>
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <select class="forms_field-input" required autofocus>
+								<option disabled selected>Phone</option>
+							  </select>
+						    </div>
+						</div>
+						
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <select name="StudyField" class="forms_field-input" required autofocus >
+								<option>Field of Study</option>
+							  
+							  </select>
+						    </div>
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <select class="forms_field-input" required autofocus >
+									<option disabled selected>Degree</option>
+							  
+							  </select>
+						    </div>
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <select class="forms_field-input" required autofocus >
+									<option disabled selected>status</option>
+							  </select>
+						    </div>
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+							  <select class="forms_field-input" required autofocus >
+									<option disabled selected>Referred by</option>
+							  </select>
+						    </div>
+						</div>
+												
+						<div class="row">
+							
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 px-3">
+								<div class="form-check">
+								  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+								  <label class="form-check-label" for="flexCheckDefault">
+									internship
+								  </label>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								
+							  <input type="file" placeholder="CV File" class="form-control" required autofocus />
+						    </div>
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								
+							  <a href="#">CV Sample</a>
+						    </div>
+						</div>
+						<div class="row mx-auto"><div class="g-recaptcha" data-theme="light" data-sitekey="6Ld4K3IeAAAAAE4AA1Ku1CuoxpwEAKQb3w4h7U_r"></div>
+						</div>
+						
+					  </fieldset>
+					  <div class="row mt-2">
+						  <div class="forms_buttons mx-auto my-3">
+							<input type="submit" value="Sign Up" class="forms_buttons-action">
+						  </div>
+					  </div>
+					</form>
+				</div>
+				<div class="user_forms-corporation" id="user_forms-corporation">
+					<h2 class="text-center bg-dark text-warning p-2 my-1">Registration Form</h2>
+					<form class="forms_form">
+					  <fieldset class="forms_fieldset">
+						<div class="forms_field">
+							<div class="row">
+								<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								  <input type="text" placeholder="Agent First Name" class="forms_field-input" required autofocus />
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								  <input type="text" placeholder="Agent Last Name" class="forms_field-input" required autofocus />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								  <input type="text" placeholder="Company Name" class="forms_field-input" required autofocus />
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								  <input type="email" placeholder="Email" class="forms_field-input" required autofocus />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+								  <select class="forms_field-input" required autofocus>
+								<option disabled selected>Phone</option>
+							  </select>
+								</div>
+								
+							</div>
+							<div class="row">
+								<div class="forms_buttons">
+									<input type="submit" value="Sign up" class="forms_buttons-action">
+							    </div>
+							</div>
+						  
+						</div>
+						
+					  </fieldset>
+					  
+					</form>
+				</div>
+			</div>
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</div>
+		
+	</div>
+
+
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
+    <script src="{% static 'users/js/JoinUs.js' %}"></script>
+    <script src="{% static 'users/js/phone.js' %}"></script>
+
+{% endblock %}

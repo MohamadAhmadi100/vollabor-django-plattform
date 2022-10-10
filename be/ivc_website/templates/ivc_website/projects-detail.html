@@ -1,0 +1,371 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'ivc_website/css/owl.carousel.min.css' %}">
+<link rel="stylesheet" href="{% static 'ivc_website/css/owl.theme.default.min.css' %}">
+<link rel="stylesheet" href="{% static 'ivc_website/project_detail/css/main.css' %}">
+<!--<link rel="stylesheet" href="{% static 'ivc_website/project_detail/css/font-awesome.min.css' %}">-->
+<!--<link rel="stylesheet" href="{% static 'project/css/bootstrap.min.css' %}">-->
+<!--<link rel="stylesheet" href="{% static 'project/css/all.min.css' %}">-->
+<!--<link rel="stylesheet" href="{% static 'project/css/workshop.css' %}">-->
+
+
+/*  <style>*/
+        
+/*        .project_item .item .bg-logo {*/
+/*    background-color: black;*/
+/*    height: 50px;*/
+/*    display:flex;*/
+/*    justify-content: space-between;*/
+/*    align-items:center;*/
+
+/*}*/
+
+/*.project_item .item .bg-logo img {*/
+/*    width: 150px;*/
+/*    height: 30px;*/
+/*    position: relative;*/
+/*    left: 14px;*/
+/*}*/
+
+/*.project_item .item .bg-logo span {*/
+/*    font-size:18;*/
+/*    font-weight:bold;*/
+/*    margin:0 2rem;*/
+/*}*/
+
+        
+        
+        
+/*    </style>*/
+
+
+{% endblock css %}
+
+{% block content %}
+<div class="container">
+
+    {% if messages %}
+        {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                    <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+        {% endfor %}
+    {% endif %}
+</div>
+
+<div id="single_project"  >
+    <div class="back-dark pt-5">
+        <div class="row p-5 d-flex flex-md-row flex-column-reverse">
+            <div class="col-md-8">
+                <div class="back-link d-flex flex-md-row flex-column-reverse justify-content-start align-items-center   mt-3 mb-5">
+                    <div class="d-flex align-items-center ">
+                        <a href="{% url 'home-page' %}" class="">Home</a>
+                        <i class="fa fa-angle-right fa-2x mx-2"></i>
+                        <a href="{% url 'projects-page' %}" class="">Project page</a>
+                        <i class="fa fa-angle-right fa-2x mx-2"></i>
+                        <a href="" class="active">Detail project</a>
+                    </div>
+                </div>
+                <div class="d-flex flex-column justify-content-start  mt-3">
+                    <h6 class="text-white">Project ID: {{object.project.client_form.formclint.id_project}}</h6>
+                    <h5 class="fw-bold">{{object.project.client_form.formclint.title}}</h5>
+                    {% if object.status_value == 'hard' %}
+                    <div class="grade mt-3 d-flex align-items-center">
+                        <span class="gold">gold</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if object.status_value == 'normal' %}
+                    <div class="grade mt-3 d-flex align-items-center">
+                        <span class="silver">silver</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if object.status_value == 'easy' %}                    
+                    <div class="grade mt-3 d-flex align-items-center">
+                        <span class="bronze">bronze</span>
+                    </div>
+                    {% endif %}
+                                      
+                    
+                    
+                                      
+
+                    
+                    <div class="author text-white mt-3">
+                        <span>Supervisor:</span>
+                        <span class="fw-bold">{{object.project.supervisor.get_full_name}}</span>
+                    </div>
+                    <div class="author text-white mt-3">
+                        <span>Fund: </span>
+                        {% if object.project.client_form.formclint.fund == 0 %}
+                        <span class="fw-bold"> Free</span>
+                        {% else %}
+                        <span class="fw-bold">${{object.project.client_form.formclint.fund}}</span>
+                        {% endif %}
+                    </div>
+                    <div class="time mt-3 d-flex flex-column flex-md-row">
+                        <span class="me-3 mt-3 mt-md-0">
+                            <i class="fa fa-bookmark mx-1"></i>
+                            <span class="fw-bold text-white">Status:</span>
+                            <span class="fw-bold text-white">{{object.status}}</span>
+                        </span>
+                        <span class="me-3 mt-3 mt-md-0">
+                            <!-- <i class="fa fa-language mx-1"></i> -->
+                            <!-- <span class="fw-bold text-white">English</span> -->
+                        </span>
+                        <span class="me-3 mt-3 mt-md-0">
+                            <i class="fa fa-users mx-1"></i>
+                            <span class="fw-bold text-white">{{memebrs_count}}</span>
+                        </span>
+                    </div>
+                    <div class="btn d-flex align-items-center">
+                        <a href="{% url 'industry:industry-project-apply' object.pk %}" class="btn btn-warning   mt-3 d-flex align-items-center text-dark">Apply</a>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4  d-md-block">
+                <div class="back-white">
+                    <div class="img" style="border-radius: 12px;">
+                        <img class="img-fluid" style="z-index:1;height:300px;width:300px;background-size:contain"  src="{{object.project.upload_pictures.url}}" alt="">
+                        <!--<img class="img-fluid" style="z-index:1;border-radius: 12px" src="{% static 'blog/img/blog/news-header.jpg' %}" alt="">-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid p-5">
+        <div class="description">
+            <div class="require">
+                <h5 class="fw-bold">Skills:</h5>
+                <p style="text-align: justify">
+                    {{object.project.skills_required}}
+                </p>
+            </div>
+            <div class="require">
+                <h5 class="fw-bold">Requirements:</h5>
+                <p style="text-align: justify">
+                    {{object.project.client_form.formclint.requirement}}
+                </p>
+            </div>
+            <hr>
+            <div class="person">
+                <h5 class="mb-3 fw-bold">This project includes:</h5>
+                <div class="row">
+                    {% if supervisor %}
+                    <div class="col-md-6">
+                        <div class="d-flex flex-column justify-content-start mt-3">
+                            <div class="icon d-flex align-items-center ">
+                                <i class="fa fa-check"></i>
+                                <span class="mx-2">Advisors:</span>
+                            </div>
+                            <div class="person mx-2">
+                                {% for i in supervisor %}
+                                <a href=""><img src="{{i.user.memberprofile.image.url}}" class="img-fluid" alt=""></a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if Mentor %}
+                    <div class="col-md-6">
+                        <div class="d-flex flex-column justify-content-start mt-3">
+                            <div class="icon d-flex align-items-center ">
+                                <i class="fa fa-check"></i>
+                                <span class="mx-2">Mentors:</span>
+                            </div>
+                            <div class="person mx-2">
+                                {% for i in Mentor %}
+                                <a href=""><img src="{{i.user.memberprofile.image.url}}" class="img-fluid" alt=""></a>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if Member %}
+                    <div class="col-md-6">
+                        <div class="d-flex flex-column justify-content-start mt-3">
+                            <div class="icon d-flex align-items-center ">
+                                <i class="fa fa-check"></i>
+                                <span class="mx-2">Members:</span>
+                            </div>
+                            <div class="person mx-2">
+                                {% for i in Member %}
+                                <a href=""><img src="{{i.user.memberprofile.image.url}}" class="img-fluid" alt=""></a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if Lerner %}
+                    <div class="col-md-6">
+                        <div class="d-flex flex-column justify-content-start mt-3">
+                            <div class="icon d-flex align-items-center ">
+                                <i class="fa fa-check"></i>
+                                <span class="mx-2">Learners:</span>
+                            </div>
+                            <div class="person mx-2">
+                                {% for i in Lerner %}
+                                <a href=""><img src="{{i.user.memberprofile.image.url}}" class="img-fluid" alt=""></a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <hr>
+            <div class="desc">
+                <h5 class="fw-bold"> Description:</h5>
+                <p style="text-align: justify">{{object.project.client_form.formclint.abstrack}}
+                </p>
+            </div>
+        </div>
+        <div class="my-5">
+            <div class="container-fluid project_item news_item owl-carousel owl-theme owl-loaded owl-drag">
+                {% for i in products %}
+                    {% if i.question_2 %}
+                                <div class="item">
+                                   <div class="py-3 px-3">
+                                        <p class="fw-bold">
+                                           {{i.question_1}}
+                                        </p>
+                                        <p>
+                                          {{i.question_2}}
+                                        </p>
+                                        <a target="_blank" href="{% url 'industry:project-upload-paper' i.pk %}" class="btn btn-primary">Read more</a>
+                                    </div>
+                                </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div> 
+        
+        
+        
+        
+        
+
+
+        <section id="top_prj" class="my-5" data-animate-in="fadeIn" data-animate-in-delay="100">
+            <div class="container-fluid title_sc ">
+                <div class="mx-3 my-3 text-center">
+                    <h2 class="title">Similar projects </h2>
+                    <p class="line_sample mt-3"></p>
+         
+                     <!--<h5>TECVICO is holding new workshops.</h5> -->
+                </div>
+            </div>
+            <div class="tab-content" id="myTabContent">
+                <!--res-->
+                        <!--new-->
+                <div  id="project_item" class="container-fluid project_item owl-carousel owl-theme">
+                    <p>test</p>
+                 {% for i in simila_projects %}
+                 <div class="item">
+                     <!--{% static 'ivc_website/img/project/prj_1.webp' %}-->
+                    <img class="img-fluid img-top" src="{{i.project.upload_pictures.url}}" alt="">
+                    <div class="bg-logo">
+                        <img src="{% static 'ivc_website/img/logo_project_section.png' %}" alt="">
+                        <span class="prj-new text-white" >
+                            {{i.status|title}}
+                        </span>
+                        
+                    </div>
+                    <div class="py-3 px-3">
+                        <p class="fw-bold">
+                            {{i.project.client_form.formclint.title|truncatechars:80}}
+                          
+                        </p>
+                        <p>
+                        {{i.project.client_form.formclint.abstrack|truncatechars:90 }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'projects-page-detail' i.pk %}" class="btn btn-primary read_more">Read more</a>
+                            {% if i.status == 'new' %}
+                            <a href="{% url 'industry:industry-project-apply' i.pk %}" class="btn btn-success apply_btn">Apply</a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+                 {% endfor %}
+                 </div>
+            </div>
+        </section>
+        
+        
+        
+        
+        <form method="post" class="border p-3">{% csrf_token %}
+            <div class="row">
+                <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
+                    <label class="form-label">Comment<span style="color:red">*</span></label>
+                    <textarea name="comment" id="comment" class="form-control" rows="3"></textarea>
+                    <div id="comment_error" style="color:red"></div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                    <div class="row">
+                         <label class="form-label">Email<span style="color:red">*</span></label>
+                        <input type="email" class="form-control" name="email" id="email">
+                        <div id="email_error" style="color:red"></div>
+                    </div>
+                    <input type="hidden" class="form-control" name="id_project" id="id_project" value="{{object.pk}}">
+                    <div class="row mt-2">
+                        {% if user.is_authenticated %}
+                            <button type="submit" class="btn btn-primary" id="sendBtn">Send</button>
+                        {% else %}
+                            <button type="submit" disabled class="btn btn-primary" id="sendBtn">Send</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </form>
+        
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Comment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in comments %}
+                        <tr>
+                            <td>
+                                {{i.user.get_full_name}}
+                            </td>
+                            <td>
+                                {{i.comment}}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+
+<!--<script src="{% static 'ivc_website/project_detail/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'ivc_website/project_detail/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'ivc_website/project_detail/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'ivc_website/project_detail/js/bootstrap.bundle.min.js' %}"></script>-->
+<script src="{% static 'ivc_website/js/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/owl.js' %}"></script>
+
+
+
+{% endblock script %}

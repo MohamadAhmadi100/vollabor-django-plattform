@@ -1,0 +1,119 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+{% block css %}
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+{% endblock %}
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 text-start">
+                <h1><i class="fas fa-project-diagram"></i> My project </h1>
+            </div>
+            <!--<div class="col-md-6 text-right">-->
+                
+            <!--    <h5 class="btn btn-secondary fw-bold mb-1" style="font-weight:bold; color:#1AE8F9 ">-->
+            <!--       Balance: ${{user.memberprofile.balance}}-->
+            <!--        <br/>-->
+            <!--        <a class="btn btn-warning btn-sm text-dark fw-bold px-4 my-1 mx-2" href="{% url 'create-checkout-session' %}"> -->
+            <!--            <i class="fas fa-money-check-alt text-dark" style='font-size:14px'></i> Charge-->
+            <!--        </a>-->
+            <!--    </h5>-->
+                
+                
+                
+                
+           
+            <!--</div>-->
+        </div>
+    </div>
+</header>
+
+<section id="industry-director">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div style="margin-left: 600px">
+    </div>
+    <div class="container">
+        <div class="card-page">
+            <div class="row justify-content-center align-items-center">
+
+            <div class="col gold ">
+                <a href="{% url 'industry:applicant-list-contract' %}" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white titlestyle"> Applicant's contract</h4>
+                    <p class="number ">{{count_contract_applicant}}</p>
+                </a>
+            </div>
+
+            <div class="col gold ">
+                <a href="{% url 'industry:industry-supervisor-contract-list' %}" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white titlestyle"> Main supervisor's contract</h4>
+                    <p class="number ">{{count_contract_supervisor_project_industry}}</p>
+                </a>
+            </div>
+
+            <div class="col gold ">
+                <a href="{% url 'industry:contract-client-list' %}" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white titlestyle">Clinet's contract</h4>
+                    <p class="number ">{{count_contract_client}}</p>
+                </a>
+            </div>
+          
+        
+            
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selectedItem = $(this).val();
+        let itemClasses = {
+            "Golden": "bg-warning text-dark",
+            "Silver": "bg-secondary text-white",
+            "Bronze": "bg-danger text-white",
+            "Normal": "bg-dark text-white",
+        };
+        $(this).selectpicker('setStyle', itemClasses[previousValue], 'remove');
+        $(this).selectpicker('setStyle', itemClasses[selectedItem], 'add');
+
+    });
+</script>
+
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    $("[name='project-value']").keypress(function (evt) {
+        let entered_value = evt.originalEvent.key;
+        let current_value = $(evt.currentTarget).val();
+        if (isNumeric(entered_value) || (entered_value === '.' && !(current_value.includes('.')))) {
+            // let input be entered
+        }
+        else {
+            evt.preventDefault();
+        }
+    });
+</script>
+{% endblock script %}

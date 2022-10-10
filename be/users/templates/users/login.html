@@ -1,0 +1,99 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block css %}
+     <link rel="stylesheet" href="{% static 'users/css/login.css' %}">
+      <script src="{% static 'ivc_website/js/jquery.min.js' %}"></script>
+      <script src="{% static 'users/js/login.js' %}"></script>
+     <script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+{% block content %}
+
+        
+	l
+<div class="container" style="padding-top:150px; padding-bottom:100px;">
+    <div class="text-center p-info" id="myDIV">
+        <div class="p-info-head">
+            <div class="container">
+                {% if messages %}
+                    {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success"> {{ message }}</div>
+                            {% else %}
+                                <div class="alert alert-danger"> {{ message }}</div>
+                            {%endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+		<div class="row p-2">
+			<div class="col-xl-5 col-lg-5 col-md-11 col-sm-11 col-xs-11 mb-0 white-panel">
+					<div class="login-show">
+						<form method="post">
+						    {% csrf_token %}
+							<div class="row my-3 px-0"><div class="logodiv"><img src="{% static 'users/img/teclogo.png' %}"></div></div>
+							<div class="row"><h2 class="text-center">Login</h2></div>
+							<div class="row"><input type="text" name="username" placeholder="Email"></div>
+							<div class="row"><input type="password" name="password" placeholder="Password"></div>
+							<div class="row mx-auto"><div class="g-recaptcha" data-theme="light" data-sitekey="6LfNkwsaAAAAALzFdst8DfNe0qxir5VResjWdJhf"></div></div>
+							<div class="row px-0">
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 px-0"><button type="submit" name="signin" id="signup">Login</button></div>
+								<div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 text-center"><div class="text-center py-3"><a href="{% url 'password_reset' %}">Forgot password?</a></div></div>
+							</div>
+						</form>
+					</div>
+			</div>
+			<div class="col-xl-6 col-lg-6 col-md-11 col-sm-11 col-xs-11 login-reg-panel">
+											
+				<div class="register-info-box mx-auto">
+					<h2>Don't have an account?</h2>
+					<button type="button" class="btn btn-outline-light" name="active-log-panel" id="log-login-show"><a href="{% url 'cv-upload-page' %}">Register</a></button>
+				</div>
+									
+				
+			</div>
+		</div>
+		
+</div>
+
+
+
+
+
+
+
+
+
+
+<!--	<div class="container" style="padding-top:300px; padding-bottom:300px;">
+		<div class="login-reg-panel">
+										
+			<div class="register-info-box">
+				<h2>Don't have an account?</h2>
+				<button type="button" class="btn btn-outline-light" name="active-log-panel" id="log-login-show">Register</button>
+			</div>
+								
+			
+		</div>
+		<div class="white-panel">
+				<div class="login-show">
+    				<form method="post">
+    				     {% csrf_token %}
+    					<div class="row my-3 px-0 "><div class="logodiv"><img src="{% static 'users/img/teclogo.png' %}"></div></div>
+    					<div class="row"><h2 class="text-center">LOGIN</h2></div>
+    					<div class="row"><input type="text" placeholder="Email"></div>
+    					<div class="row"><input type="password" placeholder="Password"></div>
+    				    <div class="mx-auto">
+                                   
+                                    <div class="mt-4 g-recaptcha mx-0" style="position:relative" data-sitekey="6LfNkwsaAAAAALzFdst8DfNe0qxir5VResjWdJhf"></div>
+                                </div>
+    					<div class="row px-0">
+    						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 px-0"><input type="submit" name="signin" id="signup" value="Login"></div>
+    						<div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 px-0"><a href="{% url 'password_reset' %}">Forgot password?</a></div>
+    					</div>
+    				</form>
+				</div>
+		</div>
+	</div>-->
+  
+{% endblock content %}

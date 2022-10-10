@@ -1,0 +1,54 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color: #f8f8f8;
+}
+.suggestion_box{
+    background-color: #FFFFFF;
+}
+.suggestion_box form{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.suggestion_box form .row{
+    width: 50%;
+}
+.suggestion_box>form>.row > div{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+.suggestion_box>form>.row input{
+    height: 50px;
+}
+.suggestion_box>form>.row input,
+.suggestion_box>form>.row textarea{
+    outline: none;
+    border: none;
+    background-color: #f8f8f8;
+    border-radius: 15px;
+}
+.suggestion_box>form>.row input:focus,
+.suggestion_box>form>.row textarea:focus {
+    border: 1px solid #C6C4C4;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+}
+.btn_form{
+    background: linear-gradient(157.09deg, #E8A93D 42.52%, rgba(231, 191, 114, 0) 127.12%);
+    color: white;
+    width: 120px;
+    height: 40px;
+    border-radius: 8px;
+}
+.btn_form:hover{
+    background: linear-gradient(157.09deg, #D08F1F 42.52%, rgba(233, 175, 62, 0) 127.12%);
+    box-shadow: 0px 5px 15px 1px rgba(99, 96, 93, 0.42);
+    color: white;
+    transition: all 0.3s;
+    transform: scale(1.05);
+}

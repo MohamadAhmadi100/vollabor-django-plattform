@@ -1,0 +1,251 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load jformat %}
+{% load crispy_forms_tags %}
+
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'ivc_website/css/collaborate-with-us.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+{% endblock %}
+
+
+{% block content %}
+
+<!-- HEADER SECTION -->
+<header id="collaborate-header-section">
+    <div class="collaborate-header-inner">
+        <div class="row d-flex flex-wrap align-items-center">
+            <div class="col-12 text-center">
+                <h1 class="display-4">{% trans "Collaborate with us" %}</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="collaborate-with-us-section" class="text-dark py-5 px-3" style="background:#eee;">
+    {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+    {% endif %}
+<div class="container {% if LANGUAGE_CODE != 'en-us' %} text-right {% endif %}">
+    <div class="row" dir="auto">
+
+        <div class="col-md-5 p-0" dir="auto">
+          <div class="row box">
+              <div class="col-md-12 text-center">
+                  <h3 class="gold-text">{% trans 'What are we looking for?' %}</h3>
+              </div>
+              <div class="col-md-12">
+                  <p>{% trans 'For the time being, we are merely seeking someone to assist us in producing videos for machine learning courses.' %}</p>
+                  <img src="{% static 'ivc_website/img/handshake-computer.jpg' %}" class="img-fluid">
+                  <p class="mt-2">{% trans 'Feel free to join us if you believe you are qualified in this field. We are delighted to have you as part of our team.' %}</p>
+              </div>
+              <div class="col-md-12 text-center">
+                  <h3 class="gold-text">{% trans 'Our syllabus' %}</h3>
+              </div>
+              <div class="col-md-12">
+                  <img src="{% static 'ivc_website/img/Syllabus.jpeg' %}" class="img-fluid">
+              </div>
+          </div>
+      </div>
+      <div class="col-md-6 box {% if LANGUAGE_CODE != 'en-us' %} mr-auto {% else %} ml-auto {% endif %}">
+          <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="form-row">
+                    <div class="col">
+                      {{ form.first_name|as_crispy_field }}
+                    </div>
+                    <div class="col">
+                      {{ form.last_name|as_crispy_field }}
+                    </div>
+              </div>
+              <div class="form-row">
+                    <div class="col">
+                      {{ form.email|as_crispy_field }}
+                    </div>
+              </div>
+              <div class="form-row">
+                    <div class="col">
+                      {{ form.city|as_crispy_field }}
+                    </div>
+                    <div class="col">
+                      <div class="d-none">
+                          {{ form.phone_region|as_crispy_field }}
+                      </div>
+                      {{ form.phone|as_crispy_field }}
+                    </div>
+              </div>
+              <div class="form-row">
+                    <div class="col">
+                        {% for error in form.cv.errors %}
+                        <div class="text-danger mt-0">
+                            <small>{{error}}</small>
+                        </div>
+                        {% endfor %}
+                      {{ form.cv|as_crispy_field }}
+                    </div>
+              </div>
+              <div class="form-row">
+                    <div class="col">
+                      {{ form.time_spend|as_crispy_field }}
+                    </div>
+              </div>
+              <div class="form-row">
+                  <div class="col">
+                      <label for="interest">{% trans 'Select your interest*' %}</label>
+                      <select class="selectpicker" id="interest" name="interest-areas"
+                              data-live-search="true" multiple data-size="10" data-container="body"
+                              data-selected-text-format="count > 0" data-width="90%" required>
+                          <optgroup label="Python" class="bg-primary text-white">
+                            <option disabled data-content="Introduction <span class='badge badge-danger'>Closed</span>"></option>
+                            <option>Libraries - OpenCV</option>
+                            <option>Libraries - PyTorch</option>
+                            <option>Libraries - Tensorflow & Keras</option>
+                            <option>Libraries - ScikitLearn</option>
+                          </optgroup>
+                          <optgroup label="Optimization" class="bg-dark text-white">
+                            <option>Gradient Descent</option>
+                            <option>Univariate</option>
+                            <option>Multivariate</option>
+                            <option>Stochastic</option>
+                          </optgroup>
+                          <optgroup label="ML" class="bg-success text-white">
+                            <option>SVM</option>
+                            <option>Metaheuristics</option>
+                            <option>Linear Regression</option>
+                            <option>Logistic Regression</option>
+                            <option>KNN</option>
+                            <option disabled data-content="Decision Tree <span class='badge badge-danger'>Closed</span>"></option>
+                            <option disabled data-content="Random Forest <span class='badge badge-danger'>Closed</span>"></option>
+                            <option>Neural Networks</option>
+                          </optgroup>
+                            <option class="bg-info text-white">Others</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="form-row my-2 d-none" id="recommendation-container">
+                  <div class="col">
+                      <label for="recommendation">Recommendation*</label>
+                      <input type="text" id="recommendation" name="recommendation" class="form-control">
+                  </div>
+              </div>
+              <div class="form-row">
+                    <div class="col">
+                      {{ form.about|as_crispy_field }}
+                    </div>
+              </div>
+              <div class="form-row ml-5">
+                    <div class="col">
+                      {{ form.is_member|as_crispy_field }}
+                    </div>
+              </div>
+              <div class="form-row d-none" id="project-row">
+                  <div class="col">
+                      <label for="projects-collaborated">{% trans 'Select your projects*' %}</label>
+                      <select class="selectpicker" id="projects-collaborated" name="projects-collaborated"
+                              data-live-search="true" multiple data-size="5" data-container="body"
+                              data-selected-text-format="count > 0" data-width="90%">
+                          <option data-content="<span class='badge badge-danger'>Without Project</span>">Without Project</option>
+                          {% for project in projects %}
+                          {% if project.status == "Ongoing" %}
+                          <option data-content="<span class='badge badge-primary'>{{project.title|truncatechars:80}}</span>">{{project.id}}</option>
+                          {% elif project.status == "New"%}
+                          <option data-content="<span class='badge badge-secondary'>{{project.title|truncatechars:80}}</span>">{{project.id}}</option>
+                          {% elif project.status == "Pending" %}
+                          <option data-content="<span class='badge badge-info'>{{project.title|truncatechars:80}}</span>">{{project.id}}</option>
+                          {% elif project.status == "On Hold" %}}
+                          <option data-content="<span class='badge badge-danger'>{{project.title|truncatechars:80}}</span>">{{project.id}}</option>
+                          {% endif %}
+                          {% endfor %}
+                      </select>
+                  </div>
+              </div>
+              <div class="form-row mt-3">
+                  <div class="col">
+                      <button class="btn btn-success"><i class="fa fa-check" type="submit"></i> Submit</button>
+                  </div>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+</section>
+
+
+{% endblock content %}
+
+{% block script %}
+<script src="{% static 'dashboard/js/bootstrap-select.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/intlTelInput.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/utils.js' %}"></script>
+<script>
+    $('input[name="is_member"]').on('change', function () {
+        let is_checked = this.checked;
+        if (is_checked) {
+            $('#project-row').removeClass('d-none');
+            $('#projects-collaborated').attr('required', true);
+        }
+        else {
+            $('#project-row').addClass('d-none')
+            $('#projects-collaborated').removeAttr('required');
+        }
+    });
+    $('select').selectpicker();
+    $('select').on('show.bs.select', function (e) {
+        $('html, body').animate(
+            {
+                scrollTop: $(this).offset().top - 110,
+            }
+        )
+    })
+
+    var input = document.querySelector("#id_phone");
+    var iti = window.intlTelInput(input, {
+        initialCountry: "auto",
+        geoIpLookup: function(callback) {
+            $.get('https://ipinfo.io', function() {}, "jsonp").always(function(resp) {
+                var countryCode = (resp && resp.country) ? resp.country : "us";
+                callback(countryCode);
+            });}
+    });
+
+    input.addEventListener("countrychange", function() {
+        region = iti.getSelectedCountryData().iso2;
+        $('input[name="phone_region"]').val(region);
+    });
+
+    $('#id_phone').focusout(() => {
+      if (iti.isValidNumber()) {
+          $('#id_phone').removeClass("is-invalid");
+      }
+      else {
+          $('#id_phone').addClass("is-invalid");
+          if ($('.phone-feedback').length == 0)
+              $( "<div class=\"invalid-feedback phone-feedback position-absolute \">\n" +
+                      "Format is wrong\n" +
+                      "</div>" ).insertAfter( "#id_phone" );
+      }
+    });
+
+    $('#interest').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selected_item = $(`#interest option:eq(${clickedIndex})`).text();
+        if (selected_item === "Others") {
+            if (isSelected) {
+                $('#recommendation-container').removeClass('d-none');
+                $('#recommendation').attr('required', true);
+            }
+            else {
+                $('#recommendation-container').addClass('d-none');
+                $('#recommendation').removeAttr('required');
+            }
+        }
+    });
+</script>
+{% endblock script %}

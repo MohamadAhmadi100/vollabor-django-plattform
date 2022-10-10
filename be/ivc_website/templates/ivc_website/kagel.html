@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'ivc_website/news/css/timeline.css' %}">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MV42WCDPR9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-MV42WCDPR9');
+    </script>
+</head>
+<body>
+<main class="single_page">
+    <div class="t-header">
+        <div class="row justify-content-center">
+            <div class="col-md-6 d-flex justify-content-center">
+                <div class="desc-header">
+                    <h1 class="title_single_page text-center">Hecktor 2021 Competition:
+                        HEad and neCK TumOR segmentation and outcome prediction in PET-CT images
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="mt-3 p-5">
+        <div class="container d-flex justify-content-center align-items-center flex-column">
+            <div class="row my-3">
+                <div class="col-md-6">
+                    <h4 style="color: #0b5ed7">Competition Description :</h4>
+                    <p>
+                        A team was sent from TECVICO to participate in this competition. The following is an explanation
+                        of the competition topic and the performance of the TECVICO team.
+                        Competition Description
+                        Five times more deadly than the flu, COVID-19 causes significant morbidity and mortality. Like
+                        other pneumonia, a lung infection with COVID-19 leads to inflammation and fluid in the lungs.
+                        COVID-19 looks very similar to other viral and bacterial pneumonia on chest x-rays, making it
+                        difficult to diagnose. Their computer vision model to detect and localize COVID-19 would help
+                        doctors make a quick and safe diagnosis. This would allow patients to get the right treatment
+                        before the virus' most serious effects occur. Currently, COVID-19 can be diagnosed using a
+                        polymerase chain reaction to detect genetic material from the virus or a chest x-ray. However,
+                        it can take a few hours and sometimes days for the molecular test results to come back. In
+                        contrast, chest x-rays can be taken in minutes. While there are guidelines to help radiologists
+                        differentiate COVID-19 from other types of infection, their assessments vary.
+
+                    </p>
+                </div>
+                <div class="col-md-6 d-flex justify-content-center ">
+                    <img src="{% static 'ivc_website/news/img/kagel.png' %}" class="img-fluid w-100" alt="">
+                </div>
+            </div>
+            <p class="mt-3">
+                In addition, non-radiologists could be supported in better localizing the disease, for example with a
+                visual bounding box. As the leading healthcare organization in its field, the Society for Imaging
+                Informatics in Medicine (SIIM) aims to advance medical imaging informatics through education, research
+                and innovation. SIIM has partnered with the Valencia Region Health and Biomedical Research Foundation
+                (FISABIO), the Valencia Region Medical Imaging Database (BIMCV) and the Radiological Society of North
+                America (RSNA) for this competition. In this competition, it will identified and located COVID-19
+                anomalies on chest x-rays. Specifically, categorize the x-rays as negative for pneumonia or typical,
+                indeterminate, or atypical for COVID-19. The proposed model work with imaging data and annotations from
+                a group of radiologists. If successful, it will help radiologists diagnose the millions of COVID-19
+                patients more safely and quickly. This also helps doctors understand the severity of the condition and
+                make treatment decisions. Depending on the severity, affected patients may need hospitalization,
+                admission to an intensive care unit, or supportive therapies such as mechanical ventilation. With a
+                better diagnosis, more patients will quickly get the best care for their condition, which could mitigate
+                the most serious effects of the virus.
+
+            </p>
+
+            <h4 class="text-start middle-text fw-bold my-2" style="color: #0b5ed7">TECVICO <span>Team</span></h4>
+
+            <p>
+                In TECVICO, our team consists of three groups. First group worked on preprocessing of data which it was
+                the x-ray images of lung belong to the patients. The other groups as image classification and object
+                detection had the tasks for predictions of both a study (multi-image) and image level. In the study
+                level task, classification of the x-ray images done for prediction of labels which may contain more than
+                one label. They are as follows: "negative", "typical", "indeterminate", "atypical". In the image level
+                task, detection of the desired object as “opacity” with a confidence score and bounding box should be
+                predicted. The final result of our team was the accuracy of 0.597 vs 0.635 as top result of leaderboard
+                in this challenge and got the 235 rank between 1305 teams. Here is the link to the leaderboard of the
+                challenge in Kaggle site:
+
+                <a href="https://www.kaggle.com/c/siim-covid19-detection/leaderboard"
+                   class="d-inline-block"
+                   target="_blank"
+                >
+                    Here
+                </a>
+                <a href="news.html" class="d-flex justify-content-center align-items-center btn-news-back  ">
+                    <i class="fas fa-angle-left mx-2"></i>
+                    Back To News
+                </a>
+            </p>
+
+            <div class="social-media d-flex justify-content-center align-items-center my-4" >
+                <a href=""><i class="fab fa-linkedin"></i></a>
+                <a href=""><i class="fab fa-instagram"></i></a>
+                <a href=""><i class="fab fa-twitter"></i></a>
+                <a href=""><i class="fab fa-facebook"></i></a>
+                <a href=""><i class="fab fa-telegram"></i></a>
+            </div>
+
+        </div>
+    </section>
+</main>
+<div>
+</div>
+
+</body>
+<script src="{% static 'ivc_website/news/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'ivc_website/news/js/main.js' %}"></script>
+
+</html>
+<script>
+</script>

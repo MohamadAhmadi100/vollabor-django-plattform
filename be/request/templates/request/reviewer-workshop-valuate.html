@@ -1,0 +1,604 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fas fa-paper-plane"></i> Evaluating the skill</h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="w-100 d-flex rs-box">
+                <div class="container">
+                    <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+                            <div class="w-100 mt-5">
+                                <h3 class=" w-100  py-3 ps-2">Related education/training (degree/certification, coursework)</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4" id="q0">Does the candidate have the appropriate educational qualifications or training for this position?</p>
+                                   
+                                   <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal1" style="cursor: pointer;" > Help  </a>
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required name="score" class="scores" id="id_score" oninput="ClearErr('id_score')" min="0" max="100">
+                                </div>
+                                 <div id="id_score_error"  style="color:red"></div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps- 2">Related experience (work history and patents/publications)</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4" id="q1">Has the candidate acquired similar skills or qualifications through past work experiences?</p>
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal2" style="cursor: pointer;" > Help  </a>
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required name="score_1" class="scores" id="id_score_1" oninput="ClearErr('id_score_1')" min="0" max="100">
+                                </div>
+                                <div id="id_score_1_error"  style="color:red"></div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps-2">Collaborative experience (teamwork, and international collaboration)</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4" id="q2">Has the candidate collaborated in any international teamwork project?</p>
+                                
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal3" style="cursor: pointer;" > Help  </a>
+                                
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required name="score_2" class="scores" id="id_score_2" oninput="ClearErr('id_score_2')" min="0" max="100">
+                                </div>
+                                 <div id="id_score_2_error"  style="color:red"></div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps-2"> Technical & Management skills (software skills and how much s/he is expert in each software?)</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4" id="q3">Does the candidate have the technical& management skills which are necessary for this position (supervisor, advisor, mentor, member, or learner)?</p>
+                                    
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal4" style="cursor: pointer;" > Help  </a>
+                                    
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required name="score_3" class="scores" id="id_score_3" oninput="ClearErr('id_score_3')" min="0" max="100">
+                                </div>
+                                 <div id="id_score_3_error"  style="color:red"></div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps-2">Communication (clarity of ideas, direct answers, comprehension)</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4" id="q4">How were the candidate communication skills during the interview?</p>
+                                    
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal5" style="cursor: pointer;" > Help  </a>
+                                   
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required name="score_4" class="scores" id="id_score_4" oninput="ClearErr('id_score_4')" min="0" max="100">
+                                </div>
+                                 <div id="id_score_4_error"  style="color:red"></div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps-2"> Initiative skill</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4" id="q5">Did the candidate demonstrate a high degree of initiative skill (discovery of a problem and solving it)?</p>
+                                   
+                                   <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal6" style="cursor: pointer;" > Help  </a>
+                                   
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required name="score_5" class="scores" id="id_score_5" oninput="ClearErr('id_score_5')" min="0" max="100">
+                                </div>
+                                <div id="id_score_5_error"  style="color:red"></div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps-2"> Innovative skill</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4" id="q6">Did the candidate demonstrate a high degree of innovation?</p>
+                                  
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal7" style="cursor: pointer;" > Help  </a>
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required name="score_6" class="scores" id="id_score_6" oninput="ClearErr('id_score_6')" min="0" max="100">
+                                </div>
+                                <div id="id_score_6_error"  style="color:red"></div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps-2">Candidate interest (motivation and reason to apply for the job)</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4" id="q7">How much was the candidate interested in working at this company? </p>
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal6" style="cursor: pointer;" > Help  </a>
+                                    
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required name="score_7" class="scores" id="id_score_7" oninput="ClearErr('id_score_7')" min="0" max="100">
+                                </div>
+                                 <div id="id_score_7_error"  style="color:red"></div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps-2">Time management</h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4" id="q8">How may s/he be able to manage the time on given task? </p>
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal6" style="cursor: pointer;" > Help  </a>
+                                   
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required name="score_8" class="scores" id="id_score_8" oninput="ClearErr('id_score_8')" min="0" max="100">
+                                </div>
+                                 <div id="id_score_8_error"  style="color:red"></div>
+                            </div>
+                            <hr>
+                            <div class="w-100 mt-5">
+                                <h3 class="py-3 ps-2"> Personal score of interviewer </h3>
+                                <div class="w-100 d-flex justify-content-between px-3">
+                                    <p class="w-50 mt-4" id="q9">What do Interviewer overall think about the candidate?</p>
+                                    <a class='text-primary'  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal6" style="cursor: pointer;" > Help  </a>
+                                   
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    <label for="quantity">Score (between 0 and 100)<span style="color: red">*</span> :</label>
+                                     <input type="number" required name="score_9" class="scores" id="id_score_9" oninput="ClearErr('id_score_9')" min="0" max="100">
+                                </div>
+                                 <div id="id_score_9_error"  style="color:red"></div>
+                            </div>
+                            
+                            <hr>
+                            <div class="form-group col-md-12 mb-0">
+                                <div id="div_id_status" class="form-group">
+                                    <input type="hidden" name="status" id="id_status" value="e" >
+                                </div>
+                            </div>
+                             
+                            <div class="d-block w-100 text-end">
+                                <input type="text" name="form_id" class="form_id d-none" value="{{form.pk}}">
+                                <input type="text" name="form_type" class="form_type d-none" value="{{form_type}}">
+                                <input type="text" name="form_url" class="form_url d-none" value="">
+                                <button type="button" class="btn-primary btn-lg my-5" id="scrBtn">Submit</button>
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Understanding the problem</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                        Applicant’s proposal demonstrates a clear and detailed understanding of all aspects of the work to be performed.
+                        <br>
+                        <b>90 to 100 points</b>
+                        <hr>
+
+                        Applicant’s proposal demonstrates a good understanding of the work to be performed.
+                        <br>
+                        <b>70 to 89 points</b>
+                        <hr>
+
+                        Applicant’s proposal demonstrates only a general understanding of the work to be performed.
+                        <br>
+                        <b>50 to 69 points</b>
+                        <hr>
+
+                        Applicant’s proposal demonstrates a lack of understanding of significant aspects of the work to be performed.
+                        <br>
+                        <b>0 to 49 points</b>
+                        <hr>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Approach to solving the problem</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+
+                        Approach selected utilizes techniques and procedures that will produce complete and reliable results and contains alternative methods and materials that will produce improved results. 
+                        <br>
+                        <b>90 to 100 points </b>
+                        <hr>
+
+                        Approach selected utilizes techniques and procedures that will provide an acceptable level of completeness in a reasonable reliable manner.
+                        <br>
+                        <b>70 to 89 points </b>
+                        <hr>
+
+                        Approach selected utilizes techniques and procedures for which the level of completeness and/or the level of reliability is uncertain. 
+                        <br>
+                        <b>50 to 69 points </b>
+                        <hr>
+
+                        Approach selected utilizes techniques and procedures for which the level of completeness and/or the level of reliability is suspect. 
+                        <br>
+                        <b>0 to 49 points </b>
+                        <hr>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Availability/Quality of data</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+
+                        Large-scale, accessible (public and private), preprocessed, multicenter dataset. 
+                        <br>
+                        <b>90 to 100 points </b>
+                        <hr>
+
+                        Large-scale, accessible (public or private), not preprocessed, not multicenter dataset.
+                        <br>
+                        <b>70 to 89 points </b>
+                        <hr>
+
+                        Large-scale, accessible (public and private), preprocessed, multicenter dataset.
+                        <br>
+                        <b>50 to 69 points </b>
+                        <hr>
+
+                        Not large-scale, accessible (public or private), not preprocessed, not multicenter dataset. 
+                        <br>
+                        <b>0 to 49 points </b>
+                        <hr>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Probability of success</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+
+                        Proposal contains sufficient planning and detail to demonstrate that all tasks can be successfully accomplished within the time frame allocated; and adequately anticipates minor setbacks.
+                        <br>
+                        <b>90 to 100 points </b>
+                        <hr>
+
+                        Proposal contains sufficient planning and detail to demonstrate that all tasks can be successfully accomplished within the time frame allocated; but does not allow for minor setbacks.
+                        <br>
+                        <b>70 to 89 points </b>
+                        <hr>
+
+                        Proposal does not contain sufficient planning or detail to demonstrate that all tasks can be successfully accomplished within the time frame allocated.
+                        <br>
+                        <b>50 to 69 points </b>
+                        <hr>
+
+                        Proposal does not contain sufficient planning or detail to demonstrate that all tasks can be successfully accomplished.
+                        <br>
+                        <b>0 to 49 points </b>
+                        <hr>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal5" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="examplemodallabel">Qualifications and experience of key personnel</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+
+                        Both the institution and the principal investigator are renown for their expertise in the field of the work to be performed. Principal investigator or key personnel have extensive (5 or more years) work experience in performing related work.
+                        <br>
+                        <b>90 to 100 points </b>
+                        <hr>
+
+                        Primary investigator or key personnel are renown for their expertise in a field of study directly related to the work to be performed. Principal investigator or key personnel have 2 to 5 years past experience in performing related work.
+                        <br>
+                        <b>70 to 89 points </b>
+                        <hr>
+
+                        Principal investigator or key personnel hold at minimum a master’s degree in a field of study directly related to work to be performed and have published at least one technical paper in a related field of work. Principal investigator or key personnel have less than 2 years past experience in performing related work.
+                        <br>
+                        <b>50 to 69 points </b>
+                        <hr>
+
+                        Principal investigator or key personnel hold academic degrees in a related field. Principal investigator and key personnel have no past experience in the performing related work. Personnel may have past research experience in unrelated areas of study.
+                        <br>
+                        <b>0 to 49 points </b>
+                        <hr>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal6" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="examplemodallabel">Quality of facilities to perform the work</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+
+                        Current facilities are well-suited for the work to be performed. Facilities are fully available to the research team as a dedicated facility for the period required to accomplish the work.
+                        <br>
+                        <b>90 to 100 points </b>
+                        <hr>
+
+                        current facilities are adequate for the work to be performed. facilities are available to the research team on a shared basis; but will have top priority for the time required to accomplish the work.
+                        <br>
+                        <b>70 to 89 points </b>
+                        <hr>
+
+                        Current facilities require minor modifications but will not delay work. Facilities are available to the research team on a dedicated or priority basis for the time required to complete the work.
+                        <br>
+                        <b>50 to 69 points </b>
+                        <hr>
+
+                        Current facilities require modifications and the start/completion of the work is likely to be impacted. Facilities are accessible to the research team on an “as-available” basis without priority for first use.
+                        <br>
+                        <b>0 to 49 points </b>
+                        <hr>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal7" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Limitation of study</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+
+                        Sufficient and recent related work (if it existed), sufficient evaluation, sufficient statistical test, sufficient hardware or laboratory space.
+                        <br>
+                        <b>90 to 100 points </b>
+                        <hr>
+
+                        Sufficient and recent related work (if it existed), sufficient evaluation, sufficient statistical test, insufficient hardware or laboratory space.
+                        <br>
+                        <b>70 to 89 points </b>
+                        <hr>
+
+                        Insufficient and old related work (if it existed), sufficient evaluation, sufficient statistical test, insufficient hardware or laboratory space.
+                        <br>
+                        <b>50 to 69 points </b>
+                        <hr>
+
+                        Insufficient and old related work (if it existed), insufficient evaluation, insufficient statistical test, insufficient hardware or laboratory space.
+                        <br>
+                        <b>0 to 49 points </b>
+                        <hr>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            
+            
+            
+            
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+<script>
+$(document).ready(function () {
+    document.getElementById("scrBtn").addEventListener("click", SendScore);   
+        
+        
+});
+
+
+function SendScore(){
+     var scores = document.getElementsByClassName("scores");
+        var count = 0;
+        for(var i=0;i< scores.length;i++){
+           var scoreID =scores[i].id;
+           var scoreIDMax =parseInt(scores[i].max);
+           var scoreIDMin =parseInt(scores[i].min);
+           var scoreVal = document.getElementById(scoreID).value;
+           //alert("scoreID: " + scoreID + " scoreIDMax: " + scoreIDMax + " scoreIDMin: " + scoreIDMin + " scoreVal: " + scoreVal);
+           if(scoreVal==""){
+               document.getElementById(scoreID + "_error").innerHTML="Error: please complete the field.";
+               count++;
+               
+           }else if(scoreVal>scoreIDMax){
+               document.getElementById(scoreID + "_error").innerHTML="Error: The entered score is more than the allowed value.";
+               count++;
+           }else if(scoreVal<scoreIDMin){
+               document.getElementById(scoreID + "_error").innerHTML="Error: The entered score is less than the allowed value.";
+               count++;
+           }
+          
+        }
+            
+                
+            
+          
+       
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    if(count==0){
+        document.getElementById('scrBtn').disabled = true;
+    
+   
+    var Q_S_list_json = [];
+    var q0 = document.getElementById("q0").innerHTML;
+    var q1 = document.getElementById("q1").innerHTML;
+    var q2 = document.getElementById("q2").innerHTML;
+    var q3 = document.getElementById("q3").innerHTML;
+    var q4 = document.getElementById("q4").innerHTML;
+    var q5 = document.getElementById("q5").innerHTML;
+    var q6 = document.getElementById("q6").innerHTML;
+    var q7 = document.getElementById("q7").innerHTML;
+    var q8 = document.getElementById("q8").innerHTML;
+    var q9 = document.getElementById("q9").innerHTML;
+    
+   
+    var score0 = document.getElementById("id_score").value;
+    var score1 = document.getElementById("id_score_1").value;
+    var score2 = document.getElementById("id_score_2").value;
+    var score3 = document.getElementById("id_score_3").value;
+    var score4 = document.getElementById("id_score_4").value;
+    var score5 = document.getElementById("id_score_5").value;
+    var score6 = document.getElementById("id_score_6").value;
+    var score7 = document.getElementById("id_score_7").value;
+    var score8 = document.getElementById("id_score_8").value;
+    var score9 = document.getElementById("id_score_9").value;
+    
+    Q_S_list_json.push([q0,score0],[q1,score1],[q2,score2],[q3,score3],[q4,score4],[q5,score5],[q6,score6],[q7,score7],[q8,score8],[q9,score9]);
+   
+    var Q_S_list = JSON.stringify(Q_S_list_json)
+    
+    var score_total = parseInt(score0)+parseInt(score1)+parseInt(score2)+parseInt(score3)+parseInt(score4)+parseInt(score5)+parseInt(score6)+parseInt(score7)+parseInt(score8)+parseInt(score9);
+    
+    var url = $('.form_url').val();
+    
+    jQuery.ajax({
+            type: "POST",
+            url: "{% url 'request:reviewer-workshop-evaluate' obj_review.pk %}",
+            enctype: 'multipart/form-data',
+            data:{
+                "Q_S_list":Q_S_list,
+                "score_total":score_total,
+                "score0": score0,
+                "score1": score1,
+                "score2": score2,
+                "score3": score3,
+                "score4": score4,
+                "score5": score5,
+                "score6": score6,
+                "score7": score7,
+                "score8": score8,
+                "score9": score9,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            success: function(data){
+                window.location.href = "{% url 'request:reviewer-workshop-accept' obj_review.pk %}";
+            }, error: function (data,errors,jqXHR){
+                alert(jqXHR.responseText)
+                                
+            }, complete: function(data){
+                    
+            }
+                    
+            
+    });
+ 
+  
+    }
+}
+  
+ function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+  
+}    
+    
+    
+</script>
+
+
+{% endblock %}
+

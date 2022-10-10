@@ -1,0 +1,1227 @@
+{% load static %}
+{% load seo_filter %}
+
+{% block style %}
+{% endblock style %}
+<!Doctype HTML5>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="msvalidate.01" content="C7881A0BE7312ADEE0E489C7DE45C11B"/>
+	<meta name="enamad" content="778288"/>
+    {% if request.path|has_title_and_description %}
+        {% with request.path|get_title_and_description as meta_title_description %}
+        {% if meta_title_description.title %}
+        <title>{{meta_title_description.title}}</title>
+        {% else %}
+        <title>Tecvico</title>
+        {% endif %}
+        {% if meta_title_description.description %}
+        <meta name="description" content="{{meta_title_description.description}}">
+        {% endif %}
+        {% if meta_title_description.keyword %}
+        <meta name="keywords" content="{{meta_title_description.keyword}}">
+        {% endif %}
+        {% endwith %}
+    {% else %}
+    <title>Tecvico</title>
+    {% endif %}
+	
+	<!--<meta name="viewport" content="width=1024">-->
+	<link rel="canonical" href="https://tecvico.com{{request.path}}"/>
+	<link href="{% static 'ivc_website/css/normalize.css' %}" rel="stylesheet">
+	
+	<link rel="stylesheet" href="{% static 'ivc_website/css/owl.carousel.min.css' %}">
+	<link rel="stylesheet" href="{% static 'ivc_website/css/owl.theme.default.min.css' %}">
+	
+	<link href="{% static 'ivc_website/css/bootstrap.min.css' %}" rel="stylesheet" >
+	<link href="{% static 'ivc_website/css/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet" >
+	
+	<!--<link href="{% static 'ivc_website/css/glightbox.min.css' %}" rel="stylesheet">-->
+	<!--<link href="{% static 'ivc_website/css/swiper-bundle.min.css' %}" rel="stylesheet">-->
+	
+	<!--<link rel="stylesheet" href="{% static 'ivc_website/css/homePage2.css' %}">-->
+
+
+	<link href="{% static 'ivc_website/css/main_page.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'ivc_website/css/main_page2.css' %}">
+	
+
+	<!--<link href="{% static 'ivc_website/css/main_page3.css' %}" rel="stylesheet">-->
+	
+	<link href="{% static 'ivc_website/css/font-awesome.min.css' %}" rel="stylesheet" >
+	<link rel="shortcut icon" type="image/png" href="{% static 'favicon-v2.ico' %}"/>
+	
+    <link href="{% static 'ivc_website/css/helpbox.css' %}" rel="stylesheet">
+
+	
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C0P9P0JS3S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-C0P9P0JS3S');
+    </script>
+	
+	
+	
+	<!-- Hotjar Tracking Code for https://tecvico.com/ -->
+    <script>
+        (function(h,o,t,j,a,r){
+            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+            h._hjSettings={hjid:3151626,hjsv:6};
+            a=o.getElementsByTagName('head')[0];
+            r=o.createElement('script');r.async=1;
+            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+            a.appendChild(r);
+        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    </script>
+
+	
+	
+	
+	
+	
+	
+	<style>
+	    /*.mapouter{position:relative;text-align:right;height:400px;width:400px;}
+        .gmap_canvas {overflow:hidden;background:none!important;height:400px;width:400px;}*/
+        
+        
+    .card-block {
+        font-size: 1em;
+        position: relative;
+        margin: 0;
+        padding: 1em;
+        border: none;
+        /*border-top: 1px solid rgba(34, 36, 38, .1);*/
+        box-shadow: none;
+     
+    }
+    .card {
+        font-size: 1em;
+        overflow: hidden;
+        padding: 5;
+        border: none;
+        border-radius: .28571429rem;
+        box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
+        margin-top:20px;
+        height:120px;
+    }
+    
+     .card-title{
+         font-size:16px;
+         font-weight:bold;
+     
+     }       
+        
+        
+    </style>
+</head>
+
+<body>
+  <!--<div id="preloader"></div> -->
+  <a href="#" id="scroll" style="display: none;"><span></span></a>
+<!--<header id="header" class="fixed-top d-flex align-items-center" style="padding: 0px 0px !important;background-color:#f9f9f9;">-->
+<header id="header" class="fixed-top" style="background-color:#f9f9f9;margin:0px 0px 20px 0px;">
+    <!--<div class="container d-flex justify-content-between" style="margin-top:20px; padding:0px 0px !important; " >  -->
+          
+      
+     <nav id="navbar" class="navbar navbar-expand-lg navbar-light bg-light" >
+  
+        <div class="container-fluid">
+            <div class="logo px-4">
+            <a class="mx-auto" href="/"><img src="{% static 'ivc_website/img/teclogo.png' %}" width="150" height="50" alt="Tecvico" class="img-fluid" style="border-bottom:3px solid #cd9527;">
+                <small class="d-block mx-auto fw-bold" style="color:#cd9527;font-size: 9px;">Technological Virtual Collaboration</small>
+            </a>
+        </div> 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon text-dark"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0"  >
+          
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-number4" href="#" id="navbarDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false"><b>Project </b> <!--<i class="bi bi-chevron-down"></i>--></a>
+           
+         
+                        
+                        
+                        
+                        
+                        <ul class="dropdown-menu text-number5" aria-labelledby="navbarDropdown1" >
+                          <li><a class="dropdown-item scrollto" href="{% url 'projects-page' %}"><i class="bi bi-card-checklist"></i><b style="padding-left: 10px;">Projects list</b></a></li>
+                          {% if user.is_authenticated %}
+                             <li><a class="dropdown-item scrollto" href="{% url 'industry:form-clint' %}"><i class="bi bi-pencil-square"></i><b style="padding-left: 10px;">Define a project</b></a></li>
+                            
+                          {% else %}
+                            <li><a class="dropdown-item scrollto" href="{% url 'login' %}"><i class="bi bi-pencil-square"></i><b style="padding-left: 10px;">Define a project</b></a></li>
+                             
+                          {% endif %}
+                          
+                          
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-number4" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false"><b>Workshop</b> <!--<i class="bi bi-chevron-down"></i>--></a>
+                        <ul class="dropdown-menu text-number5" aria-labelledby="navbarDropdown2" >
+                            
+                          
+                           <li><a class="dropdown-item scrollto" href="{% url 'list-for-all' %}"><i class="bi bi-card-checklist"></i><b style="padding-left: 10px;">Workshops list</b></a></li>
+                          <li><a class="dropdown-item scrollto" href="{% url 'add-workshop-page' %}"><i class="bi bi-pencil-square"></i><b style="padding-left: 10px;">Define a workshop</b></a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-number4" href="#" id="navbarDropdown3" role="button" data-bs-toggle="dropdown" aria-expanded="false"><b>Community </b> <!--<i class="bi bi-chevron-down"></i>--></a>
+                        <ul class="dropdown-menu text-number5" aria-labelledby="navbarDropdown3" >
+                            <li class="" ><a class="dropdown-item" href="{% url 'about-us' %}"><i class="bi bi-info-square"></i><b style="padding-left: 10px;">About us</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'guideline' %}"><i class="bi bi-check-square"></i><b style="padding-left: 10px;">Guidelines</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'videos-page' %}"><i class="bi bi-play-btn"></i><b style="padding-left: 10px;">Videos</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'blog:blog-page' %}"><i class="bi bi-book"></i><b style="padding-left: 10px;">Blog</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'news-page' %}"><i class="bi bi-newspaper"></i><b style="padding-left: 10px;">News</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'forum:category' %}"><i class="bi bi-people"></i><b style="padding-left: 10px;">Forum</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'FAQ-page' %}"><i class="bi bi-question-square"></i><b style="padding-left: 10px;">FAQ</b></a></li>
+                            <li class="" ><a class="dropdown-item" href="{% url 'contact-us' %}"><i class="bi bi-telephone-inbound"></i><b style="padding-left: 10px;">Contact us</b></a></li>
+                        </ul>
+                    </li>
+       {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-number4" href="#" id="navbarDropdown4" role="button" data-bs-toggle="dropdown" aria-expanded="false"><b>My dashboard </b> <!--<i class="bi bi-chevron-down"></i>--></a>
+                        <ul class="dropdown-menu text-number5" aria-labelledby="navbarDropdown4">
+                            <li><a class="dropdown-item" href="{% url 'dashboard-page' %}"><i class="bi bi-window-dock"></i><b style="padding-left: 10px;">My Dashboard</b></a></li>    
+                            <li><a class="dropdown-item" href="{% url 'profile-page' %}"><i class="bi bi-person-square"></i><b style="padding-left: 10px;">My profile</b></a></li>
+                            <li><a class="dropdown-item" href="{% url 'dashboard-myprojects-reserach' %}"><i class="bi bi-gear"></i><b style="padding-left: 10px;">My projects</b></a></li>
+                            <li><a class="dropdown-item" href="{% url 'show-workshops-to-users' %}"><i class="bi bi-cast"></i><b style="padding-left: 10px;">My workshops</b></a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounting:financial' %}"><i class="bi bi-person-square"></i><b style="padding-left: 10px;">My transactions</b></a></li>
+                            <li><a class="dropdown-item" href="https://webmail.tecvico.com" target="_blank"><i class="bi bi-envelope-open"></i><b style="padding-left: 10px;">Mail</b></a></li>
+                            
+                          {% if request.user.staff_user.all %}
+                            <li><a class="dropdown-item" href="https://tecvicoautomation.com" target="_blank"><i class="bi bi-building"></i><b style="padding-left: 10px;">Automation</b></a></li>
+                          {% endif %}
+                            <li>
+                                <div class="p-1 text-center bg-dark rounded " >
+                                    <div class="text-amber">
+                                        <b> Upgrade to Pro Account </b>
+                                    </div>
+                                    <div class="p-1 text-white text-center">
+                                        <small> Get payment terms and more </small>
+                                    </div>
+                                    <div class=" text-center">
+                                        <a href="{% url 'request:request' %}" type="button" class="btn text-white btn-success" >
+                                            Upgrade
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                          
+                        </ul> 
+                        
+                    </li>
+                    <li class="nav-item">
+                         <a class="nav-link scrollto" href="{% url 'notification-page' %}"> 
+                      
+                        <i style="   font-size: 1.3rem;" class="fa fa-2x fa-bell"></i>
+                        <span  class="badge rounded-pill badge-notification bg-danger"> {{notifications.count}}</span>
+                         
+                         </a>
+                      
+                      
+                    </li>
+                </ul>
+            
+                <ul class="navbar-nav">
+                     <li class="nav-item"><a class="nav-link text-number4" href="{% url 'logout' %}" > <b style="background-color:#cd9527; padding:2px 10px; border-radius:5px;">Logout</b> </a></li>
+                     <li class="header-menu-item" >
+                         <a href="{% url 'profile-page' %}">
+                         <img style="border-radius: 100px; width: 26px; margin-left: 20px" src="{{request.user.memberprofile.image.url}}" class="img-fluid" alt="">
+                         </a>
+                     </li>
+                </ul>
+        {% else %}
+                </ul>
+                <ul class="navbar-nav"> 
+                    <li class="nav-item"><a class="nav-link text-number4" href="{% url 'login' %}"><b class="">  Sign in </b></a></li>
+                    <li class="nav-item"><a class="nav-link text-number4"  href="{% url 'cv-upload-page' %}"><b style="background-color:#cd9527; padding:2px 10px; border-radius:5px;" class="">  Register </b></a></li>
+                
+                </ul> 
+        
+        {% endif %}
+            
+            </div>
+        
+        </div>   
+            
+        
+        
+        
+          
+        
+        
+        <!--<i class="bi bi-list mobile-nav-toggle text-dark"></i>-->
+       
+      </nav>
+
+   <!-- </div>-->
+  </header>
+
+   
+ <!--slider 332022-->
+<div id="carouselExampleDark" class="carousel  slide " data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active"
+                aria-label="Slide 1" aria-current="true"></button>
+        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"
+                class=""></button>
+        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"
+                class=""></button>
+    </div>
+	
+    <div class="carousel-inner">
+        <div class="carousel-item active " data-bs-interval="20000"
+             style="background-color:#00262b ;height: 70vh;
+              background-attachment: scroll;background-size: cover;
+              background-repeat: no-repeat;background-position: center;">
+            <div class="row h-100 flex-nowrap align-items-center">
+                <div class="col-xl-6 col-12 mx-5 px-5 d-flex justify-content-center align-items-center  d-md-block">
+                    <div class="mx-5">
+                        <h1 class="text-white mx-4" style="font-size: 24px;font-weight: bold;white-space: nowrap;">
+                            TECVICO leads you to success
+                        </h1>
+                        <h6 class="text-white mx-4 mt-3">
+                            A bridge between industry and researchers
+                        </h6>
+
+                        <div class="d-flex flex-md-row  align-items-center  mx-3 my-3">
+                            <a href="{% url 'videos-page' %}"
+                               class="btn-slider d-none d-md-block d-lg-block d-xl-block d-xxl-block  mt-3  mx-2  text-white rounded-pill btn btn-outline-light"> What people say</a>
+                            <a href="{% url 'about-us' %}"
+                               class="btn-slider d-none d-md-block d-lg-block d-xl-block d-xxl-block  d-md-block  mt-3 mx-2  text-white rounded-pill btn btn-outline-light">
+                                <i class="fa fa-watchman-monitoring"></i>
+                               About us
+                            </a>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-xl-6 d-none d-md-block">
+                    <img src="{% static 'ivc_website/img/home_slider/Slider1-1.png' %}"
+                         style="width: 550px; position: relative;top: 20px;"
+                         class="img-fluid" alt="tecvico">
+                </div>
+            </div>
+
+        </div>
+        <div class="carousel-item " data-bs-interval="20000"
+             style="background-color:#00262b ;height: 70vh;
+              background-attachment: scroll;background-size: cover;
+              background-repeat: no-repeat;background-position: center;">
+            <div class="row h-100 flex-nowrap align-items-center">
+                <div class="col-xl-6 col-12 mx-5 px-5 d-flex justify-content-center align-items-center  d-md-block">
+                    <div class="mx-5 ">
+                        <h2 class="text-white mx-4 " style="font-size: 48px;font-weight: bold;white-space: nowrap;">
+                            	Team up with experts
+                        </h2>
+                        <h6 class="text-white mx-4 mt-3">
+                            Global platform to perform projects
+                        </h6>
+
+                        <div class="d-flex  mx-3 my-3">
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'dashboard-projects-page' %}"
+                               class="btn-slider d-none d-md-block d-lg-block d-xl-block d-xxl-block  mt-3 ms-3 mx-2  text-white rounded-pill btn btn-outline-light">
+                                Join a project</a>
+                            <a href="{% url 'industry:form-clint' %}" class="btn-slider d-none d-md-block d-lg-block d-xl-block d-xxl-block  mt-3 mx-2  text-white rounded-pill btn btn-outline-light">
+                                <i class="fa fa-watchman-monitoring"></i>
+                                Define a project
+                            </a>
+                            {% else %}
+                              
+                                 <a href="{% url 'projects-page' %}"
+                               class="btn-slider d-none d-md-block d-lg-block d-xl-block d-xxl-block  mt-3 ms-3 mx-2  text-white rounded-pill btn btn-outline-light">
+                                Join a project</a>
+                              
+                                <a href="{% url 'login' %}" class="btn-slider d-none d-md-block d-lg-block d-xl-block d-xxl-block  mt-3 mx-2  text-white rounded-pill btn btn-outline-light">
+                                <i class="fa fa-watchman-monitoring"></i>
+                                Define a project
+                            </a>
+                            
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 d-none d-md-block">
+                    <img src="{% static 'ivc_website/img/home_slider/Slider3-1.png' %}" style="width: 400px; height: 350px;"
+                         class="img-fluid" alt="tecvico">
+                </div>
+            </div>
+
+        </div>
+        <div class="carousel-item " data-bs-interval="20000"
+             style="background-color:#00262b ;height: 70vh;
+              background-attachment: scroll;background-size: cover;
+              background-repeat: no-repeat;background-position: center;">
+            <div class="row flex-nowrap h-100  align-items-center">
+                <div class="col-xl-6 col-12 mx-5 px-5 d-flex justify-content-center align-items-center  d-md-block">
+                    <div class="mx-5">
+                        <h1 class="text-white mx-4 fw-bold fs-3" style="white-space: nowrap;" >
+                           Worldwide Workshop Platform  
+                        </h1>
+                        <h6>
+                            
+                        </h6>
+                     <div class="d-flex  mx-3 my-3">
+                            {% if user.is_authenticated %}
+                             <a href="{% url 'list-for-all' %}"
+                               class="btn-slider d-none d-md-block d-lg-block d-xl-block d-xxl-block  mt-3 ms-3 mx-2  text-white rounded-pill btn btn-outline-light">
+                                Create a workshop</a>
+                            <a href="{% url 'show-workshops-to-users' %}" class="btn-slider d-none d-md-block d-lg-block d-xl-block d-xxl-block  mt-3 mx-2  text-white rounded-pill btn btn-outline-light">
+                                <i class="fa fa-watchman-monitoring"></i>
+                                Join a workshop
+                            </a>
+                            
+                            {% else %}
+                            <a href="{% url 'login' %}"
+                               class="btn-slider d-none d-md-block d-lg-block d-xl-block d-xxl-block  mt-3 ms-3 mx-2  text-white rounded-pill btn btn-outline-light">
+                                Create a workshop</a>
+                            <a href="{% url 'list-for-all' %}" class="btn-slider d-none d-md-block d-lg-block d-xl-block d-xxl-block  mt-3 mx-2  text-white rounded-pill btn btn-outline-light">
+                                <i class="fa fa-watchman-monitoring"></i>
+                                Join a workshop
+                            </a>
+                            
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 d-none d-md-block">
+                    <img src="{% static 'ivc_website/img/home_slider/Slider2-1.png' %}"
+                         style="width: 550px; height: 500px; position: relative;top: 26px;"
+                         class="img-fluid " alt="tecvico">
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+  
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+<!--end slider-->
+
+<!--start of all sections-->
+
+<section id="service_company" style="background-color:#fff; padding:45px 0px 15px 0px;">
+    
+    <div class="container services">
+        <div class="row  justify-content-center">
+            <div class="col-md-3 item d-flex justify-content-center align-items-center flex-column p-1" >
+                <div class="card p-3" style="background-color:#00262b; height:400px; border-radius:20px;">
+                    <img src="{% static 'ivc_website/img/Financial Benefits.svg' %}" alt="">
+                    <h3>Financial Benefits</h3>
+                </div>
+                
+            </div>
+             <div class="col-md-3 item d-flex justify-content-center align-items-center flex-column p-1" >
+                <div class="card p-3" style="background-color:#00262b; height:400px; border-radius:20px;">
+                <img src="{% static 'ivc_website/img/sup2.svg' %}" alt="">
+                <h3>24/7 Support</h3>
+                </div>
+            </div>
+            <div class="col-md-3  item d-flex justify-content-center align-items-center flex-column p-1" >
+                <div class="card p-3" style="background-color:#00262b; height:400px; border-radius:20px;">
+                <img src="{% static 'ivc_website/img/Quality Assurance.svg' %}"  alt="">
+                <h3>Quality Assurance</h3>
+                </div>
+            </div>
+            <div class="col-md-3  item d-flex justify-content-center align-items-center flex-column p-1" >
+                <div class="card p-3" style="background-color:#00262b; height:400px; border-radius:20px;">
+                <img src="{% static 'ivc_website/img/International Workshops.svg' %}"  alt="">
+                <h3>International Workshop</h3>
+                </div>
+            </div>
+            
+           
+            
+
+        </div>
+    </div>
+
+</section>
+
+<section id="top_prj" class="my-5" data-animate-in="fadeIn" data-animate-in-delay="100">
+    <div class="container-fluid title_sc ">
+        <div class="mx-3 my-3 text-center text-amber1">
+            <h2 class="title">Top Project </h2>
+            <p class="line_sample mt-3"></p>
+ 
+             <!--<h5>TECVICO is holding new workshops.</h5> -->
+        </div>
+    </div>
+    <ul class=" d-flex justify-content-center nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active text-amber1" id="home-tab" data-bs-toggle="tab" data-bs-target="#hiResearch"
+                    type="button"
+                    role="tab" aria-controls="home" aria-selected="true">New
+            </button>
+        </li>
+        {% if research_on_going %}
+         <li class="nav-item" role="presentation">
+            <button class="nav-link text-amber1" id="contact-tab" data-bs-toggle="tab" data-bs-target="#hiCompetition" type="button"
+                    role="tab" aria-controls="contact" aria-selected="false">Ongoing
+            </button>
+        </li>
+        {% endif %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link text-amber1" id="profile-tab" data-bs-toggle="tab" data-bs-target="#hiIndustry" type="button"
+                    role="tab" aria-controls="profile" aria-selected="false">Done
+            </button>
+        </li>
+       
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        <!--res-->
+        <div id="hiResearch" aria-labelledby="home-tab" role="tabpanel" class="tab-pane fade show active bg_project "
+             style="margin-top: 2px">
+            <div id="project_item" class="container-fluid project_item owl-carousel owl-theme">
+                <!--new-->
+                
+                 {% for i in research_new %}
+                 <div class="item" style="background-color:#F9F9f9">
+                     <!--{% static 'ivc_website/img/project/prj_1.webp' %}-->
+                    <img class="img-fluid img-top" src="../..{{i.project.upload_pictures.url}}" alt="">
+                    <div class="bg-logo" style="background-color:#00262b">
+                        <!--<img src="{% static 'ivc_website/img/logo_project_section.png' %}" alt="">-->
+                        <div class="date d-flex align-items-center justify-content-center mx-2 text-white">
+                            
+                            {% if i.project.client_form.formclint.fund == 0 %}
+                            <span class="fw-bold">Fund: Free</span>
+                            {% else %}
+                            <span class="fw-bold">Fund: ${{i.project.client_form.formclint.fund}}</span>
+                            {% endif %}
+                        </div>
+                        <span class="prj-new text-white" >
+                            {{i.status|title}}
+                        </span>
+                        
+                    </div>
+                    <div class="py-3 px-3">
+                        <p class="fw-bold">
+                            {{i.project.client_form.formclint.title|truncatechars:70}}
+                          
+                        </p>
+                        <p>
+                        {{i.project.client_form.formclint.abstrack|truncatechars:85 }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'projects-page-detail' i.pk %}" class="btn read_more">Read more</a>
+                            <a href="{% url 'industry:industry-project-apply' i.pk %}" class="btn apply_btn">Apply</a>
+                        </div>
+
+                    </div>
+                </div>
+                 {% endfor %}
+            </div>
+            <!--<div class="link_more mt-5">-->
+            <!--    <a href="/projects">-->
+            <!--        <span>View projects</span>-->
+            <!--        <i class="fa fa-angle-double-right"></i>-->
+            <!--    </a>-->
+            <!--</div>-->
+        </div>
+        
+        <!--end res-->
+        {% if research_on_going %}  
+        <div id="hiCompetition" aria-labelledby="profile-tab" role="tabpanel" class="tab-pane fade  bg_project "
+             style="margin-top: 2px">
+            <div id="project_item2" class="container-fluid project_item owl-carousel owl-theme">
+                <!--ongo-->
+                      
+                 {% for i in research_on_going %}
+                 <div class="item">
+                     <!--{% static 'ivc_website/img/project/prj_1.webp' %}-->
+                    <img class="img-fluid img-top" src="../..{{i.project.upload_pictures.url}}" alt="">
+                    <div class="bg-logo" style="background-color:#00262b">
+                        <!--<img src="{% static 'ivc_website/img/logo_project_section.png' %}" alt="">-->
+                        <div class="date d-flex align-items-center justify-content-center mx-2 text-white">
+                            
+                            {% if i.project.client_form.formclint.fund == 0 %}
+                            <span class="fw-bold">Fund: Free</span>
+                            {% else %}
+                            <span class="fw-bold">Fund: ${{i.project.client_form.formclint.fund}}</span>
+                            {% endif %}
+                        </div>
+                        <span class="prj-new text-white" >
+                            Ongoing
+                        </span>
+                        
+                    </div>
+                    <div class="py-3 px-3">
+                        <p class="fw-bold">
+                            {{i.project.client_form.formclint.title|truncatechars:80}}
+                          
+                        </p>
+                        <p>
+                        {{i.project.client_form.formclint.abstrack|truncatechars:90 }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'projects-page-detail' i.pk %}" class="btn read_more">Read more</a>
+                            <!--<a href="{% url 'industry:industry-project-apply' i.pk %}" class="btn apply_btn">Apply</a>-->
+                        </div>
+
+                    </div>
+                </div>
+                 {% endfor %}
+            </div>
+            <!--<div class="link_more">-->
+            <!--    <a href="/projects">-->
+            <!--        <span>View projects</span>-->
+            <!--        <i class="fa fa-angle-double-right"></i>-->
+            <!--    </a>-->
+            <!--</div>-->
+        </div>
+        {% endif %} 
+        <div id="hiIndustry" aria-labelledby="contact-tab" role="tabpanel" class="tab-pane fade  bg_project "
+             style="margin-top: 2px">
+            <div id="project_item3" class="container-fluid project_item owl-carousel owl-theme">
+                {% for i in research_done %}
+                 <div class="item " >
+                     <!--{% static 'ivc_website/img/project/prj_1.webp' %}-->
+                    <img class="img-fluid img-top" src="../..{{i.project.upload_pictures.url}}" alt="">
+                    <div class="bg-logo" style="background-color:#00262b">
+                        <!--<img src="{% static 'ivc_website/img/logo_project_section.png' %}" alt="">-->
+                        <div class="date d-flex align-items-center justify-content-center mx-2 text-white">
+                            
+                            {% if i.project.client_form.formclint.fund == 0 %}
+                            <span class="fw-bold">Fund: Free</span>
+                            {% else %}
+                            <span class="fw-bold">Fund: ${{i.project.client_form.formclint.fund}}</span>
+                            {% endif %}
+                        </div>
+                        <span class="prj-new text-white" >
+                            {{i.status|title}}
+                        </span>
+                        
+                    </div>
+                    <div class="py-3 px-3">
+                        <p class="fw-bold">
+                            {{i.project.client_form.formclint.title|truncatechars:80}}
+                          
+                        </p>
+                        <p>
+                        {{i.project.client_form.formclint.abstrack|truncatechars:90 }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'projects-page-detail' i.pk %}" class="btn read_more">Read more</a>
+                            <!--<a href="{% url 'industry:industry-project-apply' i.pk %}" class="btn apply_btn">Apply</a>-->
+                        </div>
+
+                    </div>
+                </div>
+                 {% endfor %} 
+            </div>
+            <!--<div class="link_more">-->
+            <!--    <a href="/projects">-->
+            <!--        <span>View projects</span>-->
+            <!--        <i class="fa fa-angle-double-right"></i>-->
+            <!--    </a>-->
+            <!--</div>-->
+        </div>
+    </div>
+</section>
+
+<!--workshop-->
+<section id="intro_workshop" class="my-3" data-animate-in="fadeIn" data-animate-in-delay="100">
+    <div class="container-fluid title_sc ">
+        <div class="mx-3 my-3 text-center text-amber1">
+            <h2 class="title">Top Workshop</h2>
+            <p class="line_sample mt-2"></p>
+        </div>
+    </div>
+    <div class="bg_workshop my-5 " style="margin-top: 2px">
+        <div class="container-fluid workshop_item owl-carousel owl-theme">
+            {% for i in workshop %}
+                <div class="item">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 d-flex align-items-center justify-content-center">
+                            <img class="img-fluid img-top" style="border-radius:5px" src="{{i.image.url}}" alt="">
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="pt-5 pb-3 px-1 w-auto">
+                                <!--<p class="fw-bold workshop-done" > Done </p>-->
+                                <h3 class="text-white mt-3">{{i.title}}</h3>
+                                <p class="text-white mt-4">{{i.description|truncatewords:50}}</p>
+                                <div class="row">
+                                    <p class="text-white d-flex align-items-center" style="font-size:12px" >
+                                          Workshop ID: 
+                                          <span class=" fw-bold mx-3" >{{i.unique_id}}</span>
+                                        </p>
+                                    
+                                </div>
+                                 <div class="text-white d-flex" >
+                                    
+                                    <div class="col-md-4" >
+                                        
+                                        <p class="text-white d-flex align-items-center" >
+                                          <i class="fs-4 fa fa-usd"></i> 
+                                          <span class=" fw-bold mx-3" >{{i.price}} </span>
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mx-0 px-0 text-end" >
+                                      <a href="{% url 'view-workshop' i.pk %}" class=" btn read_more">Read more</a>
+                                    </div> 
+                                    <div class="col-md-4 px-0 text-start" >
+                                      <button class="btn btn-warning buyBtn  mx-1"><a class="text-white" href="{% url 'is-login' i.id %}">Buy <i class="fa fa-shopping-cart" aria-hidden="true"></i></a></button>
+                                    </div>
+                                 </div>
+                                
+                                
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!--emp-->
+<section id="intro_guide" class="my-3" data-animate-in="fadeIn" data-animate-in-delay="100">
+    <div class="container-fluid title_sc ">
+        <div class="mx-3 my-3 text-center text-amber1">
+            <h2 class="title">How to define a project?</h2>
+            <p class="line_sample mt-3"></p>
+            <!--            <img src="img/mid_line.svg" alt="">-->
+        </div>
+    </div>
+    <div id="member" class=" " style="margin-top: 2px">
+        <div class="container-fluid guide_member   ">
+            <div class="row my-5">
+                <div class="col-md-6 d-flex justify-content-center h-auto">
+                    <div class="w-75 play">
+                        
+                        <img src="{% static 'ivc_website/img/guide_member.png' %}" style="height: 350px;width: 100%" class="img-fluid text-center"
+                             alt="">
+                        <!--                        <i class="fa fa-play-circle"></i>-->
+
+                        <a class="button is-play" href="#member">
+                            <div class="button-outer-circle has-scale-animation"></div>
+                            <div class="button-outer-circle has-scale-animation has-delay-short"></div>
+                            <div class="button-icon is-play">
+                                <svg height="120px" width="120px" fill="#fc0">
+                                    <polygon class="triangle" points="5,0 30,15 5,30" viewBox="0 0 30 15"></polygon>
+                                    <path class="path" d="M5,0 L30,15 L5,30z" fill="none" stroke="#fc0"
+                                          stroke-width="1"></path>
+                                </svg>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="vide_if d-none w-75">
+                        <iframe  class="video_item  my-1 mx-auto pl-5"
+                                src="https://drive.google.com/file/d/1BWzAKTemAJU_cLZtRwuP39nsL1EfRJWd/preview"
+                                allow="autoplay"  allowfullscreen="" width="100%" height="350px"></iframe>
+                    </div>
+
+                </div>
+                <div class="col-md-6 item h-auto p-3 position-relative">
+                    <div class="row align-items-center position-relative text-amber1">
+                        <div class="col-md-6">
+                            <div class="d-flex rounded align-items-center">
+                                <span class="cir purple" style="background-color: #028CA8">01 </span>
+                                <b class="text mx-3"> Sign up</b>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex rounded align-items-center">
+                                <span class="cir blue" style="background-color: #028CA8">02 </span>
+                                <b class="text mx-3"> Charge your account balance.</b>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex rounded align-items-center">
+                                <span class="cir blue_light" style="background-color: #00B4D8">03 </span>
+                                <b class="text mx-3"> Define your project.</b>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex rounded align-items-center">
+                                <span class="cir blue" style="background-color: #00B4D8">04 </span>
+                                <b class="text mx-3"> Track your project.</b>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex rounded align-items-center">
+                                <span class="cir purple" style="background-color: #00D5FF">05 </span>
+                                <b class="text mx-3"> Achieve your goal</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between justify-content-md-start" style="position:  absolute ; bottom: 0">
+                        <!--<a href="#" class="btn read_more text-center  d-flex align-items-center justify-content-center"-->
+                        <!--   style="background-color: #22a6b3 !important;background-image: none;width: 180px;height: 50px;border-radius: 12px;text-align: center;">-->
+                        <!--    <p class="text-center m-0" style="font-size: 18px;">More Details</p>-->
+                        <!--</a>-->
+                      
+                         {% if user.is_authenticated %}
+                          
+                          {% else %}
+                            <a href="{% url 'cv-upload-page' %}" class="btn apply_btn text-center mx-3 d-flex align-items-center justify-content-center"
+                               style="background-color: #f0932b !important;background-image: none;width: 180px;height: 50px;border-radius: 12px;text-align: center;">
+                                <p class="text-center m-0" style="font-size: 18px;">Join us</p>
+                            </a>
+                            
+                          {% endif %}
+          
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<!--clinet-->
+<div class="container-fluid title_sc ">
+        <div class="mx-3 mt-5 text-center text-amber1">
+            <h2 class="title">How to participate in a project?</h2>
+            <p class="line_sample mt-3"></p>
+            <!--            <img src="img/mid_line.svg" alt="">-->
+        </div>
+</div>
+<section id="guide_master" class="my-3" data-animate-in="fadeIn" data-animate-in-delay="100">
+    <div class="d-flex justify-content-center align-items-center" style="margin-top: 2px">
+        <img class="w-100 mt-5" src="{% static 'ivc_website/img/Group_152.svg' %}" alt="">
+    </div>
+
+</section>
+
+<!--news-->
+
+<section  id="news_section"  style="display:block" class="my-3">
+    
+     <div class="container-fluid title_sc ">
+        <div class="mx-3 m-3 text-center text-amber1">
+            <h2 class="title">Top News</h2>
+            <p class="line_sample mt-2"></p>
+
+        </div>
+    </div>
+    
+    <div class="container-fluid" >
+        
+        <div class="row">
+             <div class="col-xl-6 col-lg-6 order-2 col-md-12 order-md-1 col-sm-12 order-sm-1 my-5">
+                    <div class="text-center">
+                        <img class="img-fluid img-top mx-auto" id="img_plc" src="{{news.0.thumbnail.url}}" alt="news_img" style="height:250px">
+                    </div>  
+                        <div class="py-3 px-3" style="height:200px">
+                            <p class="fw-bold pc" id="title_plc">
+                               {{news.0.title|truncatechars:100}}
+                            </p>
+                            <div class="pc" id="des_plc"  style="overflow:auto;">
+                                {{news.0.description|safe}}
+                            </div>
+                            <a href="{% url 'news-detail' news.0.pk %}" class="btn btn-primary mt-3" id="MoreBtn">Read more</a>
+                        </div>
+                   
+                
+                
+            </div>
+            <div class="col-xl-6 col-lg-6 order-1 col-md-12 order-md-2 col-sm-12 order-sm-2 my-5" style="height:400px;overflow:auto;">
+                {% for i in news %}
+                <div class="card float-right news_card" style="cursor: pointer;" id="{{i.pk}}">
+                      <div class="row">
+                        <div class="col-5">
+                          <img class="d-block m-2" id="news_img{{i.pk}}" src="{{i.thumbnail.url}}" alt="" style="height:100px">
+                        </div>
+                        <div class="col-7">
+                          <div class="card-block">
+                               <h5 class="card-title my-3"  id="title{{i.pk}}">{{i.title|truncatechars:100}}</h5>
+                                <input type="hidden" value="{{i.description}}"  id="news_des{{i.pk}}" />
+                                <input type="hidden" value="{% url 'news-detail' i.pk %}"  id="news_link{{i.pk}}" />
+                               
+                            <br>
+                            
+                          </div>
+                        </div>
+                 
+                      </div>
+                </div>
+                {% endfor %} 
+                
+            </div>
+            
+           
+            
+            
+            
+            
+        </div>
+        
+        
+        
+    </div>
+    
+    
+    
+    
+</section>
+
+
+
+
+<!--<section data-animate-in="fadeIn" data-animate-in-delay="100" id="intro_news" class="my-3">
+    <div class="container-fluid title_sc ">
+        <div class="mx-3 mt-3 text-center text-amber1">
+            <h2 class="title">Top News</h2>
+            <p class="line_sample mt-3"></p>
+
+        </div>
+    </div>
+    <div class=" " style="margin-top: 2px">
+        <div class="container-fluid project_item news_item owl-carousel owl-theme owl-loaded owl-drag">
+
+             
+                    {% for i in news %}
+                        <div class="item">
+                                        <img class="img-fluid img-top" src="{{i.thumbnail.url}}" alt="">
+                                        <div class="bg-logo">
+                                            <img src="{% static 'ivc_website/img/logo_project_section.png' %}" alt="">
+                                        </div>
+                                      
+                                        <div class="py-3 px-3">
+                                            <p class="fw-bold pc">
+                                               {{i.title|truncatechars:90}}
+                                            </p>
+                                            <p class="pc">
+                                              {{i.description|truncatechars:115|safe }}
+                                            </p>
+                                            <a href="{% url 'news-detail' i.pk %}" class="btn btn-primary">Read more</a>
+                                        </div>
+                        </div>
+                    {% endfor %} 
+                      
+                    {% for i in events %}
+                        <div class="item">
+                                        <img class="img-fluid img-top" src="{{i.thumbnail.url}}" alt="">
+                                        <div class="bg-logo">
+                                            <img src="{% static 'ivc_website/img/logo_project_section.png' %}" alt="">
+                                        </div>
+                                        
+                                        <div class="py-3 px-3">
+                                            <p class="fw-bold pc">
+                                               {{i.title|truncatechars:90}}
+                                            </p>
+                                            <p class="pc">
+                                              {{i.description|truncatechars:115|safe }}
+                                            </p>
+                                            <a href="{% url 'event-detail' i.pk %}" class="btn btn-primary">Read more</a>
+                                        </div>
+                        </div>
+                    {% endfor %}  
+
+                    <!--<div class="owl-stage-outer">-->
+            <!--    <div class="owl-stage"-->
+            <!--         style="transform: translate3d(-890px, 0px, 0px); transition: all 2s ease 0s; width: 2225px;">-->
+                    
+                  
+                    
+            <!--    </div>-->
+            <!--</div>-->
+                    <!--<div class="owl-nav">-->
+            <!--    <button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button>-->
+            <!--    <button type="button" role="presentation" class="owl-next disabled"><span aria-label="Next">›</span>-->
+            <!--    </button>-->
+            <!--</div>-->
+                    <!--<div class="owl-dots">-->
+            <!--    <button role="button" class="owl-dot"><span></span></button>-->
+            <!--    <button role="button" class="owl-dot active"><span></span></button>-->
+            <!--</div>--
+        </div>
+        
+        
+        <div class="link_more mt-4">
+            <a href="/news">
+                <span class="text-amber1">View all news</span>
+                <i class="fa fa-angle-double-right text-amber1"></i>
+            </a>
+        </div>
+        
+    </div>
+
+</section>-->
+
+<!--testonomial-->
+<section id="speak_company" class="mb-3">
+    {% if testimonials %}
+    <div class="container-fluid title_sc my-2 ">
+        <div class=" my-3 text-center">
+            <h2 class="title">Testimonials</h2>
+            <p class="line_sample mt-3"></p>
+
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="container-fluid d-flex pb-4 speak_item owl-carousel owl-theme">
+        {% for i in testimonials %}
+        <div class="item mx-3 pb-3 ">
+            <div class="">
+                <p class="m-0  fw-bold "   >{{i.commentproject.project.client_form.formclint.title|truncatewords:10}}</p>
+                <h6 class=" ml-3 fw-bold " style="font-size: 16px">Project ID: <span class="m-0 " style="font-size: 14px">{{i.commentproject.project.client_form.formclint.id_project}}</span></h6>
+                <p style=" word-break: break-all;" >
+                    <i class="fa fa-quote-left"></i>
+                    {{i.comment|truncatewords:15}}
+                    <i class="fa fa-quote-right"></i>
+                </p>
+            </div>
+            <div class="d-flex header justify-content-between align-items-center">
+                <div class="d-flex align-items-center  ps-0">
+                    <img src="{{i.user.memberprofile.image.url}}" alt="">
+                    <div class=" ">
+                        <p class="fw-bold m-0 p-0 mx-4 " style="font-size: 20px;">{{i.user.get_full_name}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+<!--contact-->
+<section id="get_email" class="email container-fluid  my-5">
+   <div class=" container d-flex justify-content-center px-5   flex-column h-100 ">
+       <div class="row justify-content-center align-items-center">
+           <div class="col-md-6 col-12 px-5">
+               <h3 class=" fw-bold">Suggestion
+                   <span class="fw-bold text-warning">Box</span>
+               </h3>
+               	<form method="post" class="mx-1">
+               	    {% csrf_token %}
+                   <div class="form-group d-flex justify-content-center align-items-center">
+                       
+                       <input type="text" name="email" class="px-3" placeholder="Example@email.com">
+   					   <input type="text" name="title" class="d-none form-control mr-0" style="box-shadow: 2px 2px 5px grey;border-radius:10px" placeholder="Subject">
+
+                   </div>
+
+                   <div class="form-group d-flex mt-3 justify-content-center align-items-center" style="height: 150px">
+                       <textarea name="description" class="px-3" style="height: 150px" placeholder="message ..."></textarea>
+                   </div>
+                   <button type="submit" class="btn mt-3 lightBlue_btn fw-bold text-white ">Submit</button>
+
+               </form>
+             
+               
+               
+           </div>
+           <div class="col-md-6 col-12 ml-5">
+                   <!--<a class="m-auto" target="_blank" href="https://www.google.com/maps/place/TECVICO+CORP+(Technological+Virtual+Collaboration+Company)/@49.2536981,-123.1358457,12.13z/data=!4m5!3m4!1s0x0:0xc844d13107420432!8m2!3d49.2523964!4d-123.1566168">-->
+                   <!--    <img class="img-fluid map" src="img/icon_service/map.png" alt="">-->
+                   <!--</a>-->
+               <!--<iframe class="map"
+                       src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d76417.9070986776!2d-123.1358457485976!3d49.25369811945777!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xc844d13107420432!2sTECVICO%20CORP%20(Technological%20Virtual%20Collaboration%20Company)!5e0!3m2!1sen!2suk!4v1646324661135!5m2!1sen!2suk"
+                       width="600" height="450" style="border:0;" allowfullscreen="" ></iframe>-->
+                       
+                       
+                       
+                       
+                <div class="mapouter">
+                    <div class="gmap_canvas ">
+                        <iframe width="300" height="300" id="gmap_canvas" src="https://maps.google.com/maps?q=vancouver&t=&z=7&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                       
+                       
+                    </div>
+                </div>
+           </div>
+        </div>
+
+	
+
+   </div>
+</section>
+
+
+<!--HELPBOX-->
+<div id="sy-whatshelp">
+<div class="sywh-services">
+{% comment %} <a class="messenger" data-tooltip="" data-placement="left" target="_blank">
+<i class="fa fa-comments"></i>
+</a> {% endcomment %}
+<a href="//web.whatsapp.com/send?phone=+989334908774" class="whatsapp" data-tooltip="WhatsApp" data-placement="left" target="_blank">
+<i class="fa fa-whatsapp"></i>
+</a>
+<a href="{% url 'contact-us' %}" class="Contact us" data-tooltip="Contact us" data-placement="left">
+<i class="fa fa-envelope" aria-hidden="true"></i>
+</a>
+</div>
+<a class="sywh-open-services p-3" data-placement="left">
+<i class="far-solid far-messages-question"></i>
+<i class="bi bi-headset " aria-hidden="true"></i>
+</a>
+</div>
+
+
+
+
+<!--end  of all sections-->
+<!--footer area-->
+
+<footer class="mainfooter" role="contentinfo">
+
+  <div class="footer-middle px-5">
+  <div>
+    <div class="row">
+      <div class="col-md-3 col-12">
+        
+        <div class="footer-pad">
+         <div>
+			<a class="navbar-brand" href="#"><span><img class="img-fluid" src="{% static 'ivc_website/img/teclogo.png' %}" width="180" height="80" alt="logo" class="img-fluid" style="border-bottom:3px solid #cd9527;"></span></a>
+		  </div>
+		  <div>
+		  <a href="mailto:pr@tecvico.com"><p class="text-number6" ><i class="fa fa-envelope " aria-hidden="true"></i> pr@tecvico.com</p></a>
+		  </div>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="footer-pad">
+          <h4 class="text-number6">Company</h4>
+          <ul class="list-unstyled text-number5">
+            <li><a href="{% url 'home-page' %}">Home</a></li>
+            <!--<li><a href="#">Features</a></li>-->
+            <li><a href="{% url 'cv-upload-page' %}">Join us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="footer-pad">
+          <h4 class="text-number6">About</h4>
+          <ul class="list-unstyled text-number5">
+            <li><a href="{% url 'about-us' %}">About us</a></li>
+            <!--<li><a href="{% url 'members-page' %}">Members</a></li>-->
+            <li><a href="{% url 'news-page' %}">News</a></li>
+            <li><a href="{% url 'FAQ-page' %}">FAQ</a></li>
+            <li>
+              <a href="#"></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+	  <div class="col-md-2 col-6">
+        <div class="footer-pad">
+          <h4 class="text-number6">Learn</h4>
+          <ul class="list-unstyled text-number5">
+            <li><a href="{% url 'forum:category' %}">Forum</a></li>
+            <li><a href="{% url 'videos-page' %}">Video</a></li>
+            <li><a href="{% url 'documents-page' %}">Document</a></li>
+            <li><a href="{% url 'blog:blog-page' %}">Blog</a></li>
+            <li>
+              <a href="#"></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    	<div class="col-md-3">
+    		<h4 class="text-number6">Follow us</h4>
+            <ul class="social-network social-circle">
+             <li><a href="https://www.facebook.com/tecvico.co/" class="icoFacebook" title="Facebook"><i class="fa fa-facebook"></i></a></li>
+			 <li><a href="https://instagram.com/tecvico" class="icoInstagram" title="Instagram"><i class="fa fa-instagram"></i></a></li>
+             <li><a href="https://www.linkedin.com/company/tecvico/" class="icoLinkedin" title="Linkedin"><i class="fa fa-linkedin"></i></a></li>
+			 <li><a href="https://t.me/tecvico" class="icoTelegram" title="Telegram"><i class="fa fa-telegram"></i></a></li>
+			 <li><a href="https://twitter.com/tecvico/" class="icoTiwtter" title="Tiwtter"><i class="fa fa-twitter"></i></a></li>
+            </ul>				
+		</div>
+    </div>
+	<div class="row mt-5">
+		<div class="col-md-12 copy">
+			<p class="text-center text-number5" >&copy; Copyright 2021 TECVICO Group - All Rights Reserved.</p>
+		</div>
+	</div>
+
+
+  </div>
+  </div>
+</footer>
+
+<script src="{% static 'ivc_website/js/jquery.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/popper.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/bootstrap.min.js' %}"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>-->
+  
+<script src="{% static 'ivc_website/js/bootstrap.bundle.min.js' %}"></script>
+
+<script src="{% static 'ivc_website/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/glightbox.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/swiper-bundle.min.js' %}"></script>
+
+
+<script src="{% static 'ivc_website/js/owl.js' %}"></script>
+<!--<script src="{% static 'ivc_website/js/homePage.js' %}"></script>-->
+<script src="{% static 'ivc_website/js/main2.js' %}"></script>
+
+
+
+
+
+
+
+
+<script>
+function showVid(id){
+    var src = $('#'+id).attr("data-src");
+    document.getElementById("sv").src = src;
+    
+}
+
+
+
+jQuery(function ($) {
+$('a.sywh-open-services').click(function () {
+if ($('.sywh-services').hasClass('active')) {
+$('.sywh-services').removeClass('active');
+$('a.sywh-open-services i.fa-times').hide();
+$('a.sywh-open-services i.fa-comments').show();
+$('a.sywh-open-services').removeClass('data-tooltip-hide');
+$('.sywh-services a:nth-child(1)').delay(0).fadeOut();
+$('.sywh-services a:nth-child(2)').delay(100).fadeOut();
+$('.sywh-services a:nth-child(3)').delay(200).fadeOut();
+$('.sywh-services a:nth-child(4)').delay(300).fadeOut();
+$('.sywh-services a:nth-child(5)').delay(400).fadeOut();
+} else {
+$('.sywh-services').addClass('active');
+$('a.sywh-open-services i.fa-comments').hide();
+$('a.sywh-open-services i.fa-times').show();
+$('a.sywh-open-services').addClass('data-tooltip-hide');
+$('.sywh-services a:nth-child(5)').delay(0).fadeIn();
+$('.sywh-services a:nth-child(4)').delay(100).fadeIn();
+$('.sywh-services a:nth-child(3)').delay(200).fadeIn();
+$('.sywh-services a:nth-child(2)').delay(300).fadeIn();
+$('.sywh-services a:nth-child(1)').delay(400).fadeIn();
+}
+});
+});
+
+
+</script>
+
+
+</body>
+</html>
+

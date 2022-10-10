@@ -1,0 +1,93 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+{% endblock %}
+
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="far fa-calendar-times"></i> Reject request <span style="font-size: 19px">Main supervisor</span></h1>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div style="margin-left: 150px;" class="col-md-9 mt-3">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="">
+                        <div class="">
+                            <div class="modal-dialog modal-lg text-dark">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-danger text-white">
+                                        <div class="modal-title">Do you reject the request?</div>
+                                        <a href="{% url 'industry:industry-project-edit-request' %}"><button class="close" data-dismiss='modal'><span>&times;</span></button></a>
+                                    </div>
+                                    <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                        <div class="modal-body">
+                                        <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+
+
+                                        <div class="form-group col-md-12 mb-0">
+                                            <div id="div_id_status" class="form-group">
+                                                <input type="hidden" name="status" id="id_status" value="r" >
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-md-12 mb-0">
+                                            <div id="div_id_status" class="form-group">
+                                                <label for="id_status" class=" requiredField">
+                                                Status<span class="asteriskField">*</span>
+                                                </label>
+                                                <div class="">
+                                                        <select disabled name="status" class="select form-control" id="id_status">
+                                                        <option value="r">Reject</option>
+                                                        </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                            <button style="margin-left: 350px;" type="submit" class="btn btn-danger">Yes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+
+
+{% endblock script %}

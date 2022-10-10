@@ -1,0 +1,602 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+{% load base %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+{% endblock %}
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-eye"></i> Project view</h1>
+            </div>
+        </div>
+    </div>
+
+
+  <!--reject Modal -->
+  <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-dark" id="rejectModalLabel">Reason of rejection</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!-- start body -->
+        <div class="modal-body">
+        
+            <form method="POST">{% csrf_token %}
+                <div class="modal-body text-dark">
+                    <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            
+                        </div>
+
+                        <div class="form-group col-md-12 mb-0">
+                            <div id="div_id_status" class="form-group">
+                                <input type="hidden" name="status" id="id_status" value="r" >
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name='decision_key' value='reject' class="btn btn-danger">Reject</button>
+
+                    <button class="btn btn-secondary" onclick="window.history.back()" >Cancel</button>                </div>
+            </form>
+
+        
+        </div>
+        <!--end body-->
+  
+      </div>
+    </div>
+
+  </div>
+
+  <!--send to supervisor Modal -->
+  <div class="modal fade" id="sendsupModal" tabindex="-1" role="dialog" aria-labelledby="sendsupModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content text-dark">
+        <div class="modal-header text-dark">
+          <h5 class="modal-title" id="sendsupModalLabel"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!-- start body -->
+        <div class="modal-body">
+                         
+            <form method="POST">{% csrf_token %}
+                <div class="modal-body text-dark">
+                    <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            <p> Are you sure to send to supervisors? </p>
+                        </div>
+
+                        <div class="form-group col-md-12 mb-0">
+                            <div id="div_id_status" class="form-group">
+                              
+                                <input type="hidden" name="status" id="id_status" value="r" >
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name='decision_key' value='accept' class="btn btn-danger">Yes</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">No</button>
+                </div>
+            </form>
+
+        
+        </div>
+        <!--end body-->
+  
+      </div>
+    </div>
+
+  </div>
+
+
+
+</header>
+
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}project{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is new</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+
+    <div class="container ">
+
+        <div class="row">
+            {% if selected_project.is_valid %}
+                {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                <div class="col-md-3 my-1">
+                        <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+     
+       
+        <main class="container-fluid  ">
+        <div class="content my-4">
+            <div class="row px-4 py-2">
+                <div class="col-md-12">
+                    <!-- new -->
+                    <h2 style="overflow: hidden">{{selected_project.title}}</h2>
+
+                    {% if selected_project.fund > 0 %}
+                    <div class="col-md-12">
+                        <label class="form-label">Fund:</label>       
+                        <div class="form-group">
+                            <p><span class="badge badge-success"><i class="fa fa-dollar-sign"></i> Fund</span> <span class="bold">${{selected_project.fund}}</span></p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if selected_project.status == 'Rejected' %}
+                    <div class="col-md-12">
+                        <label class="form-label">Reason of rejection</label>                        
+                        <div class="form-group">
+                            <p><span class="badge badge-success"><i class="fa fa-dollar-sign"></i>   {{selected_project.reject_reason}}</span> <span class="bold">${{selected_project.fund}}</span></p>
+                        </div>
+                    </div>
+                    
+                    {% endif %}
+
+                    {% if project_areas %}                 
+                    <p><span class="text-info bold">Project Areas:</span>
+                        {% for project_area in project_areas %}
+                        <span class="badge
+                        {% if project_area.is_confirmed %}
+                            {% if project_area.area.confirmed %}
+                            badge-success
+                            {% else %}
+                            badge-danger
+                            {% endif %}
+                        {% else %}
+                            badge-warning
+                        {% endif %}
+                        ">{{project_area.area}}</span>
+                        {% endfor %}
+                    </p>
+                    {% endif %}                        
+
+                    {% if object.formclint.main_supervisor %}
+                        <p style="color: green;">Main Supervisor</dt> <dd style="margin-left: 20px; margin-bottom: 20px" ></p>
+                    {% endif %}
+
+                </div>
+            </div>
+            <div class="row px-4 py-2">
+                <div class="col-md-12">
+                    <div class="form-group ">
+                        <label class="form-label">Title</label>
+                        <textarea type="text" class="form-control" rows="2" disabled>{{object.formclint.title}}</textarea>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row px-4 py-2">
+                <div class="col-md-6">
+
+                    <div class="form-group ">
+                        <label class="form-label">ID</label>
+                        <input type="text" class="form-control" value="{{object.formclint.id_project}}" disabled>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+
+                    <div class="form-group ">
+                        <label class="form-label">Owner</label>
+                        <input type="text" class="form-control" value="{{object.formclint.name}}" disabled>
+                    </div>
+                </div>
+                
+                
+            </div>
+             <div class="row px-4 py-2">
+                 <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Fund</label>
+                        <input type="text" class="form-control" value="${{object.formclint.fund}}" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Submission date</label>
+                        <input type="text" class="form-control" value="{{object.formclint.created|date:'M-d-y'}}" disabled>
+                    </div>
+                </div>
+                 
+             </div>
+            <div class="row px-4 py-2">
+                <div class="col-md-6">
+                    <div class="form-group ">
+                        <label class="form-label">  Suggested start date</label>
+                        <input type="text" class="form-control" value="{{object.formclint.start_date}}" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group ">
+                        <label class="form-label"> Suggested end date</label>
+                        <input type="text" class="form-control" value=" {{object.formclint.end_date}}" disabled>
+                    </div>
+                </div>
+                
+                
+            </div>
+            <div class="row px-4 py-2">
+                <div class="col-md-12">
+                    <div class="form-group ">
+                        <label class="form-label">Dataset link</label>
+                        <div class="form-control">
+                            {% if object.client_form.formclint.data_set_link %}
+                            <a href="{{object.client_form.formclint.data_set_link}}">Click </a>
+                            {% else %}
+                            <h6>There is no link</h6>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+             <div class="row px-4 py-2">
+                  <div class="col-md-12">
+                    <div class="form-group ">
+                        <label class="form-label">Abstract</label>
+                        <textarea type="text" class="form-control" rows="3" disabled>{{object.formclint.abstrack}}</textarea>
+                    </div>
+                </div>
+                 
+             </div>
+             
+              <div class="row px-4 py-2">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Equipment</label>
+                            <textarea class="form-control" rows="3" disabled>{{object.formclint.equipment}}</textarea>
+                        </div>
+                    </div>
+                
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Requirement</label>
+                        <textarea class="form-control" rows="3" disabled>{{object.formclint.requirement}}</textarea>
+                    </div>
+                </div>
+                {% if object.status == 'revise_director_to_expert' %}
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="form-label">Revision reason</label>
+                        <textarea class="form-control" rows="3" disabled>{{object.description_forum}}</textarea>
+                    </div>
+                </div>
+                {% endif %}
+                  
+              </div>
+                <div class="my-2 mx-4 ">
+                    <div>
+                        <table class="table table-dark table-striped table-hover table-dark table-sm my-2 px-3">   
+                            <thead>
+                                <th>Reviewer's name</th>
+                                <th>Status</th>
+                                <th>Score</th>                        
+                                <th>Action</th>                        
+                            </thead>           
+                            <tr>
+
+
+                        {% for i in reviewers %}
+                            <tr>
+                                <td class="align-middle">
+                                    <h6 class="badge badge-success " style="font-size: 14px"> {{i.reviewer.get_full_name}}</h6>
+
+                                    <!-- <h6> {{i.reviewer}}: </h6>   -->
+                                </td>
+                                <td class="align-middle">      
+                                    {% if i.status == 'new_project' %}
+                                        <span style="margin-left: 20px"> <span >Pendding for reviewer's approval</span></span>
+                                                        
+                                    {% elif i.status == 'reject_project' %}
+                                        <span style="margin-left: 20px"> <span >Declined</span></span>
+                                                        
+                                    {% elif i.status == 'cancel_by_expert_p' %}
+                                      <span style="margin-left: 20px">Canceled</span>
+                                                        
+                                                        
+                                    {% elif i.status == 'automatically_cancel_p' %}
+                                      <span style="margin-left: 20px">Automatically canceled</span>
+                                                        
+                                    {% elif i.status == 'revise_by_expert' or  i.status == 'revise_by_expert_p' %}
+                                      <span style="margin-left: 20px">Revised</span>
+                            
+                                    {% elif i.status == 'accept_project' %}
+                                        <span style="margin-left: 20px"> <span >Pendding for reviewer's evaluation</span></span>
+
+                                    {% elif i.status == 'send_director_project' %}
+                                        <span style="margin-left: 20px"> <span > Evaluated</span></span>
+                                        
+                                    {% elif i.status == 'breach_of_promis' %}
+                                        <span style="margin-left: 20px"> <span >Breach of promis</span></span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle">
+                                    <h6 class="badge badge-primary">  {{ i | total_score }} / 400</h6>
+                                </td>
+                                <td class="align-middle">
+                                    {% if i.status == 'new_project' or i.status == 'accept_project' %}
+                                    <button type="button" class="btn btn-warning"  data-bs-toggle="modal" data-bs-target="#cancel_request{{i.pk}}">Cancel</button>
+                                    {% else %}
+                                    <button type="button" disabled class="btn btn-warning"  data-bs-toggle="modal" data-bs-target="#cancel_request{{i.pk}}">Cancel</button>
+                                    {% endif %}
+
+                                    {% if i.status == 'send_director_project' %}
+                                        <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                            data-bs-target="#revise_request{{i.pk}}" class="btn btn-danger mt-2">
+                                            Revise
+                                        </button>
+
+                                        <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                            data-bs-target="#comemnt-reviewer{{i.pk}}" class="btn btn-secondary mt-2">
+                                            Comment
+                                        </button>
+                                    {% else %}
+                                        <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                            data-bs-target="#revise_request{{i.pk}}" disabled class="btn btn-danger mt-2">
+                                            Revise
+                                        </button>
+
+                                        <button type="button" style="margin-bottom: 10px;" data-bs-toggle="modal"
+                                            data-bs-target="#comemnt-reviewer{{i.pk}}" disabled class="btn btn-secondary mt-2">
+                                            Comment
+                                        </button>
+                                    {% endif %}
+
+                                </td>
+                            </tr>
+
+                            <div class="modal fade text-black" style="color:black" id="comemnt-reviewer{{i.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <label class="ml-3">Comment <span style="color: red;">*</span></label>
+                                                <div class="col-12"><textarea class="form-control text-dark " required disabled rows="3">{{i.text}}</textarea></div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" id="clsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade text-black" style="color:black" id="revise_request{{i.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <form method="POST" action="{% url 'industry:revise-request-reviewer' %}" id="decform">{% csrf_token %}
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <input type="hidden" name="id_review" value="{{i.id}}">
+                                                <input type="hidden" name="id_obj" value="{{object.id}}">
+                                                <input type="hidden" name="position" value="expert">
+                                                <input type="hidden" name="model" value="project-expert">
+                                                <label>Revision reason<span style="color:red;"> *</span></label>
+                                                <div class="row">
+                                                    <div class="col-12"><textarea class="form-control" required name="reason" rows="3"></textarea></div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="clsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-danger" >Revise</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="modal fade text-black" style="color:black" id="cancel_request{{i.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <form method="POST" action="{% url 'industry:expert-cancel-reviewer' %}" id="decform">{% csrf_token %}
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <h6>Are you sure you want to cancel the request?</h6>
+                                                <input type="hidden" name="id_review" value="{{i.id}}">
+                                                <input type="hidden" name="id_obj" value="{{object.id}}">
+                                                <input type="hidden" name="position" value="expert">
+                                                <input type="hidden" name="model" value="project-expert">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-warning" >Cancel</button>
+                                                <button type="button" id="clsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    
+                        </tr>  
+                        </table>                
+                    </div>
+                </div>
+                {% if object.formclint.pri_file %}
+                <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12" >
+                    <div class="cardy border-primary bg-dark mb-3" style="height:120px; color: white">
+                      <div class="card-header"><h6>PRI file</h6></div>
+                      <div class="card-body text-danger">
+                        
+                        <a target="_blank" style="text-decoration:none;color:none" href="{{object.formclint.pri_file.url}}">
+                            <h6 id="AddExpertBtn" class="btn btn-outline-success m-1 text-center text-white"><i class="fa fa-check"></i> Download </h6>
+                        </a>
+
+                      </div>
+                    </div>
+                </div>
+                {% endif %}  
+                <div class="col-md-12">
+                    <div>
+
+                        <a  href="{% url 'industry:research-expert-send-reviewer' object.pk %}">
+                        <h5 style="margin-top: 10px" class="btn btn-warning">Send to reviewers</h5></a>
+                        <button type="button"  data-bs-toggle="modal"
+                            data-bs-target="#send_to_director" class="btn btn-primary">
+                            Send to the director
+                        </button>
+                      
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal fade" id="send_to_director" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="POST" id="rejform">{% csrf_token %}
+                            <div class="modal-body">
+                                <div class="modal-body">
+
+
+
+
+                                    <div class="row">
+                                        <div class="form-group col-md-12">
+                                            <label class="text-dark">Comment <span style="color: red">*</span></label>
+                                            <textarea class="form-control" required rows="4" name="comment"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-0" >
+                                            <label class="form-label text-dark">Spritial value($ USA)<span style="color:red">*</span></label>
+                                            <input type="number" name="value" id="value" required class="text-dark form-control"  min="1500" max="50000" oninput="ClearErr('value')" required>
+                                            <div id="value_error" style="color:red"></div>
+                                        </div>
+    
+                                        <div class="form-group col-md-6 mb-0">
+                                            <div id="div_id_status" class="form-group">
+                                                <label for="id_status" class="text-dark requiredField ">
+                                                Status<span style="color:red">*</span>
+                                                </label>
+                                                <div class="">
+                                                    <select name="status_value" required class="select form-control" id="id_status_value">
+                                                        {% if object.formclint.fund == 0 %}
+                                                            <option value="bronze">Bronze</option>
+                                                        {% else %}
+                                                            <option value="gold">Gold</option>
+                                                            <option value="silver">Silver</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <input type="hidden" name="status" value="send-to-the-director">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary" >Send</button>
+                                <button type="button" id="rejClsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        </main>
+    
+    </div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+<script>
+</script>
+
+
+{% endblock script %}
+

@@ -1,0 +1,327 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% load dashboard_filter %}
+{% load crispy_forms_tags %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'ivc_website/css/intlTelInput.css' %}">
+<link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+
+{% endblock css %}
+
+{% block content %}
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Advertisement form</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<form method="post" enctype="multipart/form-data" id="define-project-form">
+    {% csrf_token %}
+    <!-- ACTIONS -->
+    <section id="action" class="py-4 mb-4 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 mr-auto">
+                    <a href="{% url 'dashboard-page' %}" class="btn btn-light btn-block"><i class="fa fa-arrow-left"></i> Back to dashboard</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    
+    <!-- PROJECTS -->
+    <section id="projects">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="card mb-5 text-dark">
+                        <div class="card-header">
+                            <h4>Supervisor information</h4>
+                        </div>
+                            <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.title|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.start_date|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.end_date|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.email|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.phone|as_crispy_field }}
+                                </div>
+
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.grade|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.skills_required|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.project_ponsored|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.informative_bullets|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.fruitful_countries|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.motivating_keywords|as_crispy_field }}
+                                </div>
+
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.benefit_of_members|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-12 mb-0">
+                                    {{ form.supervisor_information|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-12 mb-0">
+                                    {{ form.social_platforms|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-12 mb-0">
+                                    <img class="img-fluid" src="{{sup.upload_pictures.url}}">
+                                    <br>
+                                    <a href="{{sup.upload_pictures.url}}"><h6 class="btn btn-primary mt-2"> Download image</h6></a>
+                                </div>
+                            
+                            <!--</div>
+                            <hr style="color: black">
+                            <br>
+                            <br>
+                            {% for i in prog %}
+                                <h5>Title: <span style="font-size: 15px">{{i.topic}}</span></h6>
+                                <br>
+                                <h5>Start date: <span style="font-size: 15px">{{i.start_date}}</span></h6>
+                                <br>
+                                <h5>End date: <span style="font-size: 15px">{{i.end_date}}</span></h6>
+                                <br>
+                                <br>
+                                <hr>
+                            {% endfor %}
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+{% endblock content %}
+
+
+{% block script %}
+<script src='https://www.google.com/recaptcha/api.js'></script>
+
+{% if user|is_member_profile %}
+<script>
+    $('#div_id_fund').addClass('d-none');
+
+    $('#id_funded').change(function(){
+        if(this.checked){
+            $('#div_id_fund').removeClass('d-none');
+        }
+        else{
+            $('#div_id_fund').addClass('d-none');
+        }
+    });
+</script>
+{% endif %}
+
+<script>
+    // Make fund input beautiful
+    $('input[name="fund"]').parent().addClass('input-group');
+    $('<span class="input-group-prepend"><span class="input-group-text">$</span></span>').insertBefore($('input[name="fund"]'));
+</script>
+
+{% if user|is_member_profile and user.memberprofile.position == "Supervisor" %}
+<script>
+    $('#div_id_proposal_file').addClass('d-none');
+    $('#id_proposal_file').removeAttr('required');
+
+    $('#id_supervisor_opinion').change(function(){
+        if(this.checked){
+            $('#div_id_proposal_file').removeClass('d-none');
+            $('#id_proposal_file').attr('required', true);
+
+            $('input[name="want-to-be-main-supervisor"]').val(1);
+        }
+        else{
+            $('#div_id_proposal_file').addClass('d-none');
+            $('#id_proposal_file').removeAttr('required');
+            $('input[name="want-to-be-main-supervisor"]').val(0);
+        }
+    });
+</script>
+{% endif %}
+
+{% if not user|is_member_profile %}
+<script src="{% static 'ivc_website/js/intlTelInput.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/utils.js' %}"></script>
+<script>
+    $('#div_id_phone_region').addClass('d-none');
+    $('#div_id_phone').addClass('d-none');
+    $('#div_id_skype').addClass('d-none');
+    $('#div_id_contact_preference').addClass('d-none');
+
+    var input = document.querySelector("#id_phone");
+    var iti = window.intlTelInput(input, {
+        initialCountry: "{{user.legalprofile.phone_region}}"
+    });
+    $('select[name="project-area"]').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let selected_item = $(`select[name="project-area"] option:eq(${clickedIndex})`).text();
+        if (selected_item === "Other") {
+           if (isSelected) {
+                $('#other-suggestions').removeClass('d-none');
+                $('input[name="other-suggestions"]').attr('required', true);
+                $('input[name="other-suggestions"]').attr('pattern', ".*\\S+.*");
+           }
+           else {
+                $('#other-suggestions').addClass('d-none');
+                $('input[name="other-suggestions"]').removeAttr('required');
+                $('input[name="other-suggestions"]').removeAttr('pattern');
+           }
+        }
+    });
+    $('input[type=radio][name=contact-way]').change(function() {
+        $('select[name=contact_preference]').val(this.value);
+
+        if (this.value === "Email Address") {
+            $('#div_id_phone').addClass('d-none');
+            $('#div_id_skype').addClass('d-none');
+            $('input[name="skype"]').removeAttr('required');
+            $('input[name="skype"]').removeAttr('pattern');
+
+        }
+
+        if (this.value === "Phone Number") {
+            $('#div_id_phone').removeClass('d-none');
+
+            $('#div_id_skype').addClass('d-none');
+            $('input[name="skype"]').removeAttr('required');
+            $('input[name="skype"]').removeAttr('pattern');
+        }
+
+        if (this.value == "Skype") {
+            $('#div_id_skype').removeClass('d-none');
+            $('input[name="skype"]').attr('required', true);
+            $('input[name="skype"]').attr('pattern', ".*\\S+.*");
+
+            $('#div_id_phone').addClass('d-none');
+        }
+    });
+
+    // phone validation
+    $('#id_phone').focusout(() => {
+        const only_digit = /^(\d|\s)+$/.test($('input[name="phone"]').val())
+        if (iti.isValidNumber() && only_digit) {
+            $('#id_phone').removeClass("is-invalid");
+            $('#phone_error').remove();
+        }
+        else {
+            $('#id_phone').addClass("is-invalid");
+            if ($('#phone_error').length == 0)
+                $( "<p class=\"text-danger mb-0\" id='phone_error'>\n" +
+                    "Format is wrong\n" +
+                    "</p>" ).insertAfter( $("#id_phone").parent() );
+          }
+    });
+
+    $('input[name="phone"]').keyup(() => {
+        console.log(":)");
+        const only_digit = /^(\d|\s)+$/.test($('input[name="phone"]').val())
+        if (iti.isValidNumber() && only_digit) {
+            $('#id_phone').removeClass("is-invalid");
+            $('#phone_error').remove();
+        }
+    });
+
+    $('#define-project-form').submit(e => {
+        e.preventDefault();
+        let flag_is_selected = Object.keys(iti.getSelectedCountryData()).length;
+        const only_digit = /^(\d|\s)+$/.test($('input[name="phone"]').val());
+        if (iti.isValidNumber() && flag_is_selected && only_digit) {
+            e.currentTarget.submit();
+        }
+        else {
+            if(!flag_is_selected) {
+                if ($('#phone_region_error').length == 0)
+                    $( "<p class=\"text-danger mb-0\" id='phone_region_error'>\n" +
+                        "Please select your phone region from the country list\n" +
+                        "</p>" ).insertAfter($('#id_phone').parent());
+            }
+
+        }
+    });
+</script>
+{% endif %}
+
+{% if user.memberprofile.position != "Supervisor" %}
+<script>
+    var url = "{% url 'define-projects-page'%}";
+    $( function() {
+        $( "#supervisor-user" ).autocomplete({
+          source: function(request, response) {
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        data: {
+                            term: request.term,
+                            meta: "Supervisor",
+                        },
+                        success: function(data) {
+                            response(data);
+                        }
+                    })
+                },
+          minLength: 2
+        });
+    });
+</script>
+
+
+{% endif %}
+
+<script>
+$(document).ready(function(){
+
+document.getElementById("chkfund").addEventListener("click", ShowfundDiv);
+
+
+
+});
+
+function ShowfundDiv(){
+    var checkBox = document.getElementById("chkfund");
+    if (checkBox.checked == true){
+        document.getElementById("fundDiv").style.display = "block";
+    } else {
+        document.getElementById("fundDiv").style.display = "none";
+    }
+      
+  }
+
+</script>
+
+
+{% endblock script %}

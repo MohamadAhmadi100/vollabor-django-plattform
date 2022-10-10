@@ -1,0 +1,45 @@
+<header class="d-lg-flex justify-content-lg-center nvb">
+
+            <nav>
+                <ul class="text-capitalize">
+                    <li class="navbar-link"><a href="{% url 'home-page' %}" class="link"> Home </a></li>
+                    <li class="navbar-link"><a href="{% url 'members-page' %}" class="link"> Members </a></li>
+                    <li class="navbar-link"><a href="{% url 'list-for-all' %}" class="link"> Workshop </a></li>
+                    <li class="navbar-link"><a href="{% url 'projects-page' %}" class="link"> projects </a></li>
+
+                    <li class="navbar-link dropdown">
+                        <a class="btn btn-secondary btn-sm dropdown-toggle dropbtn-archv link" role="button"
+                            id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            News
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" href="{% url 'news-page' %}">News</a></li>
+                            <li><a class="dropdown-item" href="#">Events</a></li>
+                        </ul>
+                    </li>
+                    <li class="navbar-link dropdown">
+                        <a class="btn btn-secondary btn-sm dropdown-toggle dropbtn-archv link" role="button"
+                            id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            Archieve
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" href="{% url 'documents-page' %}">Documents</a></li>
+                            <li><a class="dropdown-item" href="{% url 'videos-page' %}">Videos</a></li>
+                            <li><a class="dropdown-item" href="#">Forum</a></li>
+                            <li><a class="dropdown-item" href="{% url 'about-us' %}">About Us</a></li>
+                        </ul>
+                    </li>
+                    {% comment %} <li class="navbar-link">
+                        <a class="btn btn-secondary btn-sm dropdown-toggle dropbtn-archv link ms-lg-5" href="#"
+                            role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            en
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" href="#">english</a></li>
+                            <li><a class="dropdown-item" href="#">farsi</a></li>
+                        </ul>
+                    </li> {% endcomment %}
+                    {% comment %} <li class=""><a href="#" class="ms-lg-2 link"> Logout </a></li> {% endcomment %}
+                </ul>
+            </nav>
+        </header>

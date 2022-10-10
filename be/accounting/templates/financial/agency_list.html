@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{%load static %}
+{% block title %}Agency list{% endblock %}
+{% block main %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div id="ajax_message" class="container">
+
+</div>
+<div class="m-auto col-md-12">
+
+  <table id="discount-table" class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Country</th>
+          <th>Created</th>
+          <th>Expert</th>
+          <th>Info</th>
+          <th>Operation</th>
+
+        </tr>
+    </thead>
+    <tbody>
+      {%for d in object_list%}
+      <tr class="text-center">
+        <td>{{d.name}}</td>
+        <td>{{d.location}}</td>
+        <td>{{d.country}}</td>
+        <td>{{d.created}}</td>
+        <td>{{d.expert.username}}|{{d.expert.email}}</td>
+        <td>{{d.info}}</td>
+        <td>
+          <div style="display: flex;float: right;">
+            {% comment %} <button class="btn btn-sm btn-warning " id="m_{{d.id}}" data-toggle="modal" data-target="#show_more_{{d.id}}"><i class="fa-solid fa-circle-info"></i></button>         {% endcomment %}
+        
+            <a href="{% url 'accounting:agency-edit' pk=d.id %}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+            <button class="btn btn-sm btn-danger "  data-toggle="modal" data-target="#delete_{{d.id}}"><i class="fa-solid fa-ban"></i></button>        
+
+          </div>
+        </td>
+      </tr>
+
+          <!-- Modal -->
+          <div id="delete_{{d.id}}"  class="modal fade bd-example-modal-lg show" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-lg modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Delete {{d.name}}</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div style="height: auto;width: 100%;" class="modal-body">
+                    <p>Are you sure you want to delete "{{ d.name }}" agency?</p>
+                    <form method="POST">
+                      {% csrf_token %}
+                      <input name="id" type="hidden" value="{{d.id}}">
+                      <button type="submit" class="btn btn-success">Yes</button>
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                    </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+      {%endfor%}
+    </tbody>
+  </table>
+
+
+
+      
+
+
+
+
+
+
+  
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#discount-table').DataTable();
+  
+  
+  })
+  </script>
+{% endblock %}

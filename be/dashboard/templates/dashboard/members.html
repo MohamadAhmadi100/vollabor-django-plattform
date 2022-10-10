@@ -1,0 +1,694 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load dashboard_filter %}
+{% block content %}
+
+<header class="py-2 bg-warning text-white" id="main-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-users"></i> Members</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ACTIONS -->
+<section class="py-4 bg-light" id="action">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 ml-auto">
+                <form method="get">
+                    <div class="input-group">
+                        <input class="form-control" name="search" placeholder="Enter first or last name to search "
+                               type="text">
+                        <span class="input-group-btn">
+                                <button class="btn btn-warning" type="submit">Search</button>
+                            </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <hr>
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <div class="alert alert-success my-3"> {{ message }}</div>
+        {% else %}
+        <div class="alert alert-danger my-3"> {{ message }}</div>
+        {%endif %}
+        {% endfor %}
+        {% endif %}
+        <a class="btn btn-primary text-light mb-3 advanced-search-toggle" data-toggle="collapse"
+           href="#search-collapse">Advanced Search <i class="fa fa-caret-down"></i></a>
+        <button class="btn btn-dark mb-3" data-toggle="dropdown" type="button">
+            Sort by <i class="fa fa-caret-down"></i>
+        </button>
+        <form class="member-form" method="get">
+            <div class="dropdown-menu">
+                <input class="d-none" name="sort" type="text">
+                <a class="dropdown-item" name="sort_by">Join Date (Ascending)</a>
+                <a class="dropdown-item" name="sort_by">Join Date (Descending)</a>
+                <a class="dropdown-item" name="sort_by">Name</a>
+            </div>
+            <div class="collapse" id="search-collapse">
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <label>Project Selection Logic</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <input class="d-none" name="project-logic" type="text" value="AND">
+                                <button class="btn btn-success project-logic-button" type="button">AND</button>
+                                <button class="btn btn-outline-secondary project-logic-button" type="button">OR</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="input-group">
+                            <label for="new-limit">New Projects</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <input class="d-none" name="new-project-limit" type="text">
+                                    <button class="btn btn-outline-secondary new-project-button" type="button">More
+                                        Than
+                                    </button>
+                                    <button class="btn btn-outline-secondary new-project-button" type="button">Less
+                                        Than
+                                    </button>
+                                </div>
+                                <input class="form-control" id="new-limit" name="new-project-numbers" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="input-group">
+                            <label for="pending-limit">Pending Projects</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <input class="d-none" name="pending-project-limit" type="text">
+                                    <button class="btn btn-outline-secondary pending-project-button" type="button">More
+                                        Than
+                                    </button>
+                                    <button class="btn btn-outline-secondary pending-project-button" type="button">Less
+                                        Than
+                                    </button>
+                                </div>
+                                <input class="form-control" id="pending-limit" name="pending-project-numbers"
+                                       type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="input-group">
+                            <label for="ongoing-limit">Ongoing Projects</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <input class="d-none" name="ongoing-project-limit" type="text">
+                                    <button class="btn btn-outline-secondary ongoing-project-button" type="button">More
+                                        Than
+                                    </button>
+                                    <button class="btn btn-outline-secondary ongoing-project-button" type="button">Less
+                                        Than
+                                    </button>
+                                </div>
+                                <input class="form-control" id="ongoing-limit" name="ongoing-project-numbers"
+                                       type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="input-group">
+                            <label for="on-hold-limit">On Hold Projects</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <input class="d-none" name="on-hold-project-limit" type="text">
+                                    <button class="btn btn-outline-secondary on-hold-project-button" type="button">More
+                                        Than
+                                    </button>
+                                    <button class="btn btn-outline-secondary on-hold-project-button" type="button">Less
+                                        Than
+                                    </button>
+                                </div>
+                                <input class="form-control" id="on-hold-limit" name="on-hold-project-numbers"
+                                       type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="input-group">
+                            <label for="done-limit">Done Projects</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <input class="d-none" name="done-project-limit" type="text">
+                                    <button class="btn btn-outline-secondary done-project-button" type="button">More
+                                        Than
+                                    </button>
+                                    <button class="btn btn-outline-secondary done-project-button" type="button">Less
+                                        Than
+                                    </button>
+                                </div>
+                                <input class="form-control" id="done-limit" name="done-project-numbers" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="input-group">
+                            <label for="requested-limit">Requested Projects</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <input class="d-none" name="requested-project-limit" type="text">
+                                    <button class="btn btn-outline-secondary requested-project-button" type="button">
+                                        More Than
+                                    </button>
+                                    <button class="btn btn-outline-secondary requested-project-button" type="button">
+                                        Less Than
+                                    </button>
+                                </div>
+                                <input class="form-control" id="requested-limit" name="requested-project-numbers"
+                                       type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="search-degree">Degree:</label>
+                            <select class="selectpicker" data-live-search="true" id="search-degree"
+                                    multiple name="search-degree">
+                                {% for degree in degree_choices %}
+                                <option>{{degree.0}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="search-field-of-study">Field of Study:</label>
+                        <select class="selectpicker" data-live-search="true" id="search-field-of-study"
+                                multiple name="search-field-of-study">
+                            {% for field_of_study in field_of_study_choices %}
+                            <option>{{field_of_study.0}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="search-status">Status:</label>
+                        <select class="selectpicker" data-live-search="true" id="search-status"
+                                multiple name="search-status">
+                            {% for status in status_choices %}
+                            <option>{{status.0}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 my-2">
+                        <label for="datetimepicker">Joined Since:</label>
+                        <input class="form-control" id="datetimepicker" name="joined_since" type="text">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <button class="btn btn-info" type="submit">Search</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- MEMBERS -->
+<section id="members">
+    <div class="container pt-3">
+        <div class="row ng-scope">
+            <div class="col-md-3 col-md-push-9">
+                <h4>Results <span class="fw-semi-bold">Filtering</span></h4>
+                <p class="text-muted fs-mini">Listed content is categorized by the following groups:</p>
+                <ul class="nav nav-pills flex-column">
+                    {% for filter in filters %}
+                    {% if filter in url_filters %}
+                    <li class="nav-item filter-item active bg-light">
+                        {% else %}
+                    <li class="nav-item filter-item">
+                        {% endif %}
+                        {% if filter in url_filters %}
+                        <a class="nav-link text-dark" href="?{{url_filters|delete_filter:filter}}">
+                            {% elif url_filters != "" %}
+                            <a class="nav-link text-dark" href="?{{url_filters}}&filter={{filter}}">
+                                {% else %}
+                                <a class="nav-link text-dark" href="?filter={{filter}}">
+                                    {% endif %}
+                                    {{ filter }}
+                                    <span class="badge bg-dark text-light">{{filters|get_item:filter}}</span>
+                                </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-9 col-md-pull-3">
+                <p class="text-muted text-center">Total results: {{total_results}}
+
+                     {% if False %}
+                        <button user-pk="{{chosen_members}}" class="btn btn-color2 ml-5 email-btn" ><i class="fa fa-send"> </i> Send Email To All</button>
+                     {% endif %}
+
+                </p>
+
+                {% for member in chosen_members %}
+                <section class="search-result-item">
+                    <div class="image-link" href="#"><img class="image"
+                                                          src="{% if member|is_member_profile%}{{member.memberprofile.image.url}}{% else %}{{member.legalprofile.image.url}}{% endif %}">
+                    </div>
+                    <div class="search-result-item-body">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <h4 class="search-result-item-heading pb-1">
+                                    <div href="">
+                                        {% if member|is_member_profile %}
+                                        {{member.first_name}} {{member.last_name}}
+                                            {% if member.memberprofile.is_internship %}
+                                            <span class="badge badge-info">Intern</span>
+                                            {% endif %}
+                                        {% else %}
+                                        {{member.legalprofile.company_name}}
+                                        {% endif %}
+                                    </div>
+                                </h4>
+                                {% if member|is_member_profile %}
+                                {% if member.memberprofile.city or member.memberprofile.country %}
+                                <p class="info">
+                                    {% if member.memberprofile.city and member.memberprofile.country %}
+                                    {{member.memberprofile.city}}, {{member.memberprofile.country}}
+                                    {% elif member.memberprofile.city %}
+                                    {{member.memberprofile.city}}
+                                    {% else %}
+                                    {{member.memberprofile.country%}
+                                    {% endif %}
+                                </p>
+                                {% endif %}
+                                {% if member.memberprofile.interest %}
+                                <p class="info py-0 mb-0"><b>Interest:</b> {{member.memberprofile.interest}}</p>
+                                {% endif %}
+                                <p class="info py-0 mb-0"><b>Field of Study:</b> {{ member.memberprofile.field_of_study }}</p>
+                                <p class="info"><b>Degree:</b> {{ member.memberprofile.degree }}</p>
+                                {% if member.about_me %}
+                                <p class="description">{{member.about_me|truncatechars:100}}</p>
+                                {% endif %}
+                                {% else %}
+                                {% if member.legalprofile.city or member.legalprofile.country %}
+                                <p class="info">
+                                    {% if member.legalprofile.city and member.legalprofile.country %}
+                                    {{member.legalprofile.city}}, {{member.legalprofile.country}}
+                                    {% elif member.legalprofile.city %}
+                                    {{member.legalprofile.city}}
+                                    {% else %}
+                                    {{member.legalprofile.country%}
+                                    {% endif %}
+                                </p>
+                                {% endif %}
+                                {% if member.legalprofile.work_area %}
+                                <p class="info py-0 mb-0"><b>Work Area:</b> {{member.legalprofile.work_area}}</p>
+                                {% endif %}
+                                {% if member.legalprofile.about_company %}
+                                <p class="description">{{member.legalprofile.about_company|truncatechars:100}}</p>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                            <div class="col-sm-3 text-align-center">
+                                <a class="btn btn-primary btn-info btn-sm"
+                                   href="{% url 'dashboard-profile-page' user_id=member.id %}">
+                                    See Profile
+                                </a>
+                                {% if False %}
+                                    <button user-pk="{{member.pk}}" class="btn btn-warning mt-2 email-btn" ><i class="fa fa-send"> </i> Send Email</button>
+                                {% endif %}
+
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                {% endfor %}
+                <nav style="margin-bottom: 100px; margin-top: 30px">
+                    <ul class="pagination">
+                        {% if chosen_members.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?=page1">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?=page={{chosen_members.previous_page_number}}">Previous</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">First</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Previous</a>
+                        </li>
+                        {% endif %}
+                        {% for num in chosen_members.paginator.page_range %}
+                        {% if chosen_members.number == num %}
+                        <li class="page-item active">
+                            {% if url_filters != "" %}
+                            <a class="page-link" href="?page={{num}}&{{url_filters}}">{{num}}</a>
+                            {% else %}
+                            <a class="page-link" href="?page={{num}}">{{num}}</a>
+                            {% endif %}
+                        </li>
+                        {% elif num > chosen_members.number|add:'-3' and num < chosen_members.number|add:'3' %}
+                        <li class="page-item">
+                            {% if url_filters != "" %}
+                            <a class="page-link" href="?page={{num}}&{{url_filters}}">{{num}}</a>
+                            {% else %}
+                            <a class="page-link" href="?page={{num}}">{{num}}</a>
+                            {% endif %}
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if chosen_members.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{chosen_members.next_page_number}}&{{url_filters}}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{chosen_members.paginator.num_pages}}&{{url_filters}}">Last</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Last</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+<!-- BY SAJJAD -->
+<!-- EMAIL MODAL-->
+<form method="post">
+  {% csrf_token %}
+
+<div
+  class="modal fade"
+  id="email-modal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Send Mail</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-mdb-dismiss="modal"
+          aria-label="Close"
+          data-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="subject" class="col-form-label">Subject:</label>
+            <input type="text" class="form-control" id="subject" name="send-email-subject" />
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">Message:</label>
+            <textarea class="form-control" id="message-text" name="send-email-content"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal" data-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary send-message" name="send-email-user-pk">Send message</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<!--BY SAJJAD-->
+<!--ERROR MODAL-->
+<div
+  class="modal fade"
+  id="error-modal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Warning</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-mdb-dismiss="modal"
+          aria-label="Close"
+          data-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body">
+          <div class="alert alert-warning">
+                       fill all the fields!!
+
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal" data-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary " name="error-btn" data-dismiss="modal">ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+<script>
+    $('select').selectpicker();
+
+    $('.project-logic-button').on("click", function () {
+        if ($(this).hasClass('btn-outline-secondary')) {
+            $('input[name="project-logic"]').val($(this).html());
+            $(this).removeClass('btn-outline-secondary');
+            $(this).addClass('btn-success');
+            sibling_button = $(this).siblings('button');
+            if (sibling_button.hasClass('btn-success')) {
+                sibling_button.removeClass('btn-success');
+                sibling_button.addClass('btn-outline-secondary');
+            }
+        }
+    });
+
+    $('.new-project-button').on("click", function () {
+        if ($(this).hasClass('btn-outline-secondary')) {
+            $('input[name="new-project-limit"]').val($(this).html());
+            $(this).removeClass('btn-outline-secondary');
+            $(this).addClass('btn-success');
+            sibling_button = $(this).siblings('button');
+            if (sibling_button.hasClass('btn-success')) {
+                sibling_button.removeClass('btn-success');
+                sibling_button.addClass('btn-outline-secondary');
+            }
+        } else {
+            $(this).removeClass('btn-success');
+            $(this).addClass('btn-outline-secondary');
+            $('input[name="new-project-limit"]').val("");
+        }
+    });
+    $('.pending-project-button').on("click", function () {
+        if ($(this).hasClass('btn-outline-secondary')) {
+            $('input[name="pending-project-limit"]').val($(this).html());
+            $(this).removeClass('btn-outline-secondary');
+            $(this).addClass('btn-success');
+            sibling_button = $(this).siblings('button');
+            if (sibling_button.hasClass('btn-success')) {
+                sibling_button.removeClass('btn-success');
+                sibling_button.addClass('btn-outline-secondary');
+            }
+        } else {
+            $(this).removeClass('btn-success');
+            $(this).addClass('btn-outline-secondary');
+            $('input[name="pending-project-limit"]').val("");
+        }
+    });
+    $('.ongoing-project-button').on("click", function () {
+        if ($(this).hasClass('btn-outline-secondary')) {
+            $('input[name="ongoing-project-limit"]').val($(this).html());
+            $(this).removeClass('btn-outline-secondary');
+            $(this).addClass('btn-success');
+            sibling_button = $(this).siblings('button');
+            if (sibling_button.hasClass('btn-success')) {
+                sibling_button.removeClass('btn-success');
+                sibling_button.addClass('btn-outline-secondary');
+            }
+        } else {
+            $(this).removeClass('btn-success');
+            $(this).addClass('btn-outline-secondary');
+            $('input[name="ongoing-project-limit"]').val("");
+        }
+    });
+    $('.on-hold-project-button').on("click", function () {
+        if ($(this).hasClass('btn-outline-secondary')) {
+            $('input[name="on-hold-project-limit"]').val($(this).html());
+            $(this).removeClass('btn-outline-secondary');
+            $(this).addClass('btn-success');
+            sibling_button = $(this).siblings('button');
+            if (sibling_button.hasClass('btn-success')) {
+                sibling_button.removeClass('btn-success');
+                sibling_button.addClass('btn-outline-secondary');
+            }
+        } else {
+            $(this).removeClass('btn-success');
+            $(this).addClass('btn-outline-secondary');
+            $('input[name="on-hold-project-limit"]').val("");
+        }
+    });
+    $('.done-project-button').on("click", function () {
+        if ($(this).hasClass('btn-outline-secondary')) {
+            $('input[name="done-project-limit"]').val($(this).html());
+            $(this).removeClass('btn-outline-secondary');
+            $(this).addClass('btn-success');
+            sibling_button = $(this).siblings('button');
+            if (sibling_button.hasClass('btn-success')) {
+                sibling_button.removeClass('btn-success');
+                sibling_button.addClass('btn-outline-secondary');
+            }
+        } else {
+            $(this).removeClass('btn-success');
+            $(this).addClass('btn-outline-secondary');
+            $('input[name="done-project-limit"]').val("");
+        }
+    });
+    $('.requested-project-button').on("click", function () {
+        if ($(this).hasClass('btn-outline-secondary')) {
+            $('input[name="requested-project-limit"]').val($(this).html());
+            $(this).removeClass('btn-outline-secondary');
+            $(this).addClass('btn-success');
+            sibling_button = $(this).siblings('button');
+            if (sibling_button.hasClass('btn-success')) {
+                sibling_button.removeClass('btn-success');
+                sibling_button.addClass('btn-outline-secondary');
+            }
+        } else {
+            $(this).removeClass('btn-success');
+            $(this).addClass('btn-outline-secondary');
+            $('input[name="requested-project-limit"]').val("");
+        }
+    });
+
+    $('.advanced-search-toggle').on("click", function () {
+        font_awesome = $(this).children('i');
+        if (font_awesome.hasClass('fa-caret-down')) {
+            font_awesome.removeClass('fa-caret-down');
+            font_awesome.addClass('fa-caret-up');
+        } else {
+            font_awesome.removeClass('fa-caret-up');
+            font_awesome.addClass('fa-caret-down');
+        }
+    });
+
+    $(function () {
+        $("#datetimepicker").datetimepicker();
+    });
+
+    $('a[name ="sort_by"]').click(function () {
+        let clicked_element_name = $(this).html().toLowerCase();
+        $('input[name="sort"]').val(clicked_element_name);
+        $('.member-form').submit();
+    });
+
+
+     $(".email-btn").click(function() {
+            $('#email-modal').modal({
+                  show:true,
+                  closeOnEscape: true
+            });
+
+            var clicked_element = $(this);
+
+            var user_pk = clicked_element.attr('user-pk');
+            $("#email-modal").attr("user-pk",user_pk);
+
+
+            // clicked_element.addClass("btn-success");
+            //             clicked_element.children('i').removeClass("fa fa-send");
+            //             clicked_element.html("  sent  ");
+            //             clicked_element.addClass("fa fa-check")
+
+        });
+
+     $(".send-message").click(function (){
+
+         let email_content = $('textarea[name="send-email-content"]').val();
+         let email_subject = $('input[name="send-email-subject"]').val();
+         let user_pk = $("#email-modal").attr('user-pk');
+
+         if(!(email_subject && email_content)){
+               $('#error-modal').modal({
+                  show:true,
+                  closeOnEscape: true
+            });
+         }
+         else{
+             $.ajax({
+                    url: "{% url 'dashboard-members-page' %}",
+                    type: "POST",
+                    data: {
+                        'send-email-email':user_pk,
+                        'send-email-content': email_content,
+                        'send-email-subject': email_subject,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    global: false,
+                    success: function (data) {
+
+
+                        let clicked_btn = $(".email-btn");
+                        clicked_btn.removeClass("btn-warning");
+                        clicked_btn.children('i').removeClass("fa-send");
+
+                        if(data['success']){
+                            clicked_btn.addClass("btn-success");
+                            clicked_btn.html("  sent  ");
+                            clicked_btn.addClass("fa fa-check")
+                        }
+                        else{
+                            clicked_btn.addClass("btn-danger");
+                            clicked_btn.html("  didn't send  ");
+                            clicked_btn.addClass("fa fa-times")
+                        }
+                        $(function () {
+                            $('#email-modal').modal('toggle');
+                        });
+
+
+
+                    }
+                });
+}
+
+
+
+    })
+</script>
+{% endblock script %}

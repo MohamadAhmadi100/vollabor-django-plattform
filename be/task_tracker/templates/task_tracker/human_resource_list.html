@@ -1,0 +1,250 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load task_tracker_filter %}
+
+{% block body_class %}bg-light{% endblock body_class %}
+
+{% block content %}
+    <div class="bg-light">
+        <header id="main-header" class="py-2 bg-info text-light ">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1><i class="fa fa-clock"></i> list of tasks </h1>
+                    </div>
+                </div>
+                <div class="row ">
+                    <p class="card-text">you can see and export the task from here<span class="text-bold text-light"></span></p>
+                </div>
+            </div>
+        </header>
+
+        <div class="col-12 mt-3 text-center">
+            <a href="{% url 'attendance-list' %}" class="btn btn-outline-dark">
+                Attendance list
+                <span class="badge badge-danger"></span>
+            </a>
+        </div>
+        <div class="col-12 mt-3 text-center">
+            <form method="POST" action="{% url 'generate-pdf' %}">
+                {% csrf_token %}
+                <label for="user">Select user </label>
+                <select class="form-select form-select-lg mb-3" name="user" id="user">
+                    {% for user in users %}
+                        <option value={{user.id}}>{{user.get_full_name}}</option>
+                    {% endfor %}
+                </select>
+                <label for="task">Number of tasks </label>
+                <select class="form-select form-select-lg mb-3" name="task" id="task">
+                    <option value=10>10</option>
+                    <option value=20>20</option>
+                    <option value=30>30</option>
+                </select>
+                <div>
+                    <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+        <section id="task-tracker">
+            <div class="container">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success"> {{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger"> {{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="container my-5">
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table table-bordered mb-5" style="border-radius: 25px;">
+                            <thead>
+                            <tr class="table-info text-dark">
+                                <th class="text-center px-5">Title</th>
+                                <th class="text-center px-5">User</th>
+                                <th class="text-center px-5">Date</th>
+                                <th class="text-center px-5">Description</th>
+                                <th class="text-center px-5">Start time</th>
+                                <th class="text-center px-5">End time</th>
+                                <th class="text-center px-5">Manager Comment</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in tasks %}
+                                <tr>
+                                    <td class="text-center">
+                                        {{ item.task.title|linebreaks }}
+                                    </td>
+                                    <td class="p-name text-center">
+                                        {{ item.task.user.get_full_name }}
+                                    </td>
+                                    <td class="p-name text-center">
+                                        {{ item.task.date }}
+                                    </td>
+                                    <td class="p-name text-center">
+                                        {% if item.task.task == "" %}
+                                            <p class="badge badge-secondary">Nothing yet</p>
+                                        {% else %}
+                                            {{ item.task.task|linebreaks }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="p-name text-center">
+                                    {% if item.task.start_time == None %}
+                                        <p class="badge badge-warning">Not started</p>
+                                    {% else %}
+                                        {{ item.task.start_time }}
+                                    {% endif %}
+                                    </td>
+                                    <td class="p-name text-center">
+                                    {% if item.task.end_time == None %}
+                                        <p class="badge badge-warning">Not finished</p>
+                                    {% else %}
+                                        {{ item.task.end_time }}
+                                    {% endif %}
+                                    </td>
+                                    {% if item.task.status == 'Confirm' or item.task.status == 'Start' %}
+                                    <td class="p-name text-center">
+                                        <p class="badge badge-primary">New Task</p>
+                                    </td>
+                                    {% elif item.task.status == 'Finished' %}
+                                    <td class="p-name text-center">
+                                        {% if item.comment == "" %}
+                                            <p class="badge badge-secondary">wait for manager comment</p>
+                                        {% else %}
+                                            {{item.comment}}
+                                        {% endif %}
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <nav class="text-center">
+                    <ul class="pagination">
+                        {% if tasks.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?=page1">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?=page={{ tasks.previous_page_number }}">Previous</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">First</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Previous</a>
+                            </li>
+                        {% endif %}
+                        {% for num in tasks.paginator.page_range %}
+                            {% if tasks.number == num %}
+                                <li class="page-item active">
+                                    {% if url_filters != "" %}
+                                        <a class="page-link" href="?page={{ num }}&{{ url_filters }}">{{ num }}</a>
+                                    {% else %}
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    {% endif %}
+                                </li>
+                            {% elif num > tasks.number|add:'-3' and num < tasks.number|add:'3' %}
+                                <li class="page-item">
+                                    {% if url_filters != "" %}
+                                        <a class="page-link" href="?page={{ num }}&{{ url_filters }}">{{ num }}</a>
+                                    {% else %}
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if tasks.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ tasks.next_page_number }}&{{ url_filters }}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ tasks.paginator.num_pages }}&{{ url_filters }}">Last</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Last</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- ADD TASK MODAL -->
+            <div class="modal" id="addTaskModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-dark">Add Comment</h5>
+                            <button class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body text-dark">
+                            <form method="post" action="{% url 'manager-comment' %}">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" name="task" class="d-none">
+                                    <textarea name="comment" class="form-control"
+                                              placeholder="Add your comment here"
+                                              required></textarea>
+                                </div>
+                                <button class="btn btn-success my-2"><i class="fa fa-check"></i> Submit</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="modalClose" data-dismiss="modal">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+        </section>
+    </div>
+
+    <script language="JavaScript">
+        function showInput() {
+            document.getElementById('display').innerHTML =
+                document.getElementById("tomorrow").value;
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#delet").click(function () {
+                $("#display").empty();
+            })
+        })
+    </script>
+{% endblock content %}
+{% block script %}
+    <script>
+        $('#comment-btn').on('click', () => {
+            $('input[name="task"]').val($('#comment-btn').attr('data-value'));
+            $('#addTaskModal').modal({
+                show: true,
+                closeOnEscape: true
+            });
+        });
+
+        $('#modalClass').on('click', () => {
+            timerInterval = setInterval(moveTimer, 1000);
+            keepAliveInterval = setInterval(sendKeepAlive, 5000);
+        })
+    </script>
+{% endblock script %}
+</section>

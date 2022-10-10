@@ -1,0 +1,252 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+
+<header id="main-header" class="py-2 bg-color8 text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-question-circle"></i> Q & A </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="question-and-answer">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success"> {{ message }}</div>
+                {% else %}
+                <div class="alert alert-danger"> {{ message }}</div>
+                {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-3 text-center">
+                {% if request.GET.filter == "recently_defined_questions" %}
+                <a href="./" class="btn btn-dark">
+                {% else %}
+                <a href="?filter=recently_defined_questions" class="btn btn-outline-dark">
+                {% endif %}
+                    Recently Defined Questions
+                    <span class="badge {% if recently_defined_question_numbers == 0%}badge-danger{% else %}badge-success{% endif %}">{{recently_defined_question_numbers}}</span>
+                </a>
+
+                {% if request.GET.filter == "recent_answers" %}
+                <a href="./" class="btn btn-dark">
+                {% else %}
+                <a href="?filter=recent_answers" class="btn btn-outline-dark">
+                {% endif %}
+                    Recent Answers
+                    <span class="badge {% if recent_answer_numbers == 0%}badge-danger{% else %}badge-success{% endif %}">{{recent_answer_numbers}}</span>
+                </a>
+
+                {% if request.GET.filter == "rejected_questions" %}
+                <a href="./" class="btn btn-dark">
+                {% else %}
+                <a href="?filter=rejected_questions" class="btn btn-outline-dark">
+                {% endif %}
+                    Rejected Questions
+                    <span class="badge {% if rejected_question_numbers == 0%}badge-danger{% else %}badge-success{% endif %}">{{rejected_question_numbers}}</span>
+                </a>
+
+                {% if request.GET.filter == "rejected_answers" %}
+                <a href="./" class="btn btn-dark">
+                {% else %}
+                <a href="?filter=rejected_answers" class="btn btn-outline-dark">
+                {% endif %}
+                    Rejected Answers
+                    <span class="badge {% if rejected_answer_numbers == 0%}badge-danger{% else %}badge-success{% endif %}">{{rejected_answer_numbers}}</span>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mt-2">
+                <div class="wrapper wrapper-content animated fadeInUp">
+                    <div class="ibox">
+                        <div class="ibox-content mb-5" style="overflow-x:auto;">
+                            {% if request.GET.filter == "recently_defined_questions" %}
+                              <table class="table table-hover p-table mt-4">
+                                  <thead>
+                                      <tr>
+                                          <th>Question</th>
+                                          <th>Owner</th>
+                                          <th>Created Date</th>
+                                          <th></th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                        {% for question in recently_defined_questions %}
+                                            <tr>
+                                                <td class="p-name">
+                                                    {{question.question}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {% if question.user %}
+                                                    <a href="{% url 'dashboard-profile-page' user_id=question.user.id %}">
+                                                        {{question.user.first_name}} {{question.user.last_name}}
+                                                    </a>
+                                                    {% else %}
+                                                    {{question.full_name}} (Guest)
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {{question.date_created}}
+                                                </td>
+                                                <td>
+                                                    <form method="post" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <input type="text" class="d-none" name="accept-question" value="{{question.pk}}">
+                                                        <button class="btn btn-success my-1"><i class="fa fa-check"></i> Accept</button>
+                                                    </form>
+                                                    <form method="post" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <input type="text" class="d-none" name="reject-question" value="{{question.pk}}">
+                                                        <button class="btn btn-danger"><i class="fa fa-times"></i> Reject</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                              </table>
+                            {% elif request.GET.filter == "recent_answers" %}
+                              <table class="table table-hover p-table mt-4">
+                                  <thead>
+                                      <tr>
+                                          <th>Question</th>
+                                          <th>Answer</th>
+                                          <th>Respondent</th>
+                                          <th>Created Date</th>
+                                          <th></th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                        {% for answer in recent_answers %}
+                                            <tr>
+                                                <td class="p-name">
+                                                    {{answer.question}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{answer.answer}}
+                                                </td>
+                                                <td class="p-name">
+                                                    <a href="{% url 'dashboard-profile-page' user_id=answer.user.id %}">
+                                                        {{answer.user.first_name}} {{answer.user.last_name}}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {{answer.date_created}}
+                                                </td>
+                                                <td>
+                                                    <form method="post" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <input type="text" class="d-none" name="accept-answer" value="{{answer.pk}}">
+                                                        <button class="btn btn-success my-1"><i class="fa fa-check"></i> Accept</button>
+                                                    </form>
+                                                    <form method="post" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <input type="text" class="d-none" name="reject-answer" value="{{answer.pk}}">
+                                                        <button class="btn btn-danger"><i class="fa fa-times"></i> Reject</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                              </table>
+                            {% elif request.GET.filter == "rejected_questions" %}
+                              <table class="table table-hover p-table mt-4">
+                                  <thead>
+                                      <tr>
+                                          <th>Question</th>
+                                          <th>Owner</th>
+                                          <th>Created Date</th>
+                                          <th></th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                        {% for question in rejected_questions %}
+                                            <tr>
+                                                <td class="p-name">
+                                                    {{question.question}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {% if question.user %}
+                                                    <a href="{% url 'dashboard-profile-page' user_id=question.user.id %}">
+                                                        {{question.user.first_name}} {{question.user.last_name}}
+                                                    </a>
+                                                    {% else %}
+                                                    {{question.full_name}} (Guest)
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {{question.date_created}}
+                                                </td>
+                                                <td>
+                                                    <form method="post" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <input type="text" class="d-none" name="undo-question" value="{{question.pk}}">
+                                                        <button class="btn btn-success my-1"><i class="fa fa-undo"></i> Undo</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                              </table>
+                            {% elif request.GET.filter == "rejected_answers" %}
+                              <table class="table table-hover p-table mt-4">
+                                  <thead>
+                                      <tr>
+                                          <th>Question</th>
+                                          <th>Answer</th>
+                                          <th>Respondent</th>
+                                          <th>Created Date</th>
+                                          <th></th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                        {% for answer in rejected_answers %}
+                                            <tr>
+                                                <td class="p-name">
+                                                    {{answer.question}}
+                                                </td>
+                                                <td class="p-name">
+                                                    {{answer.answer}}
+                                                </td>
+                                                <td class="p-name">
+                                                    <a href="{% url 'dashboard-profile-page' user_id=answer.user.id %}">
+                                                        {{answer.user.first_name}} {{answer.user.last_name}}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {{answer.date_created}}
+                                                </td>
+                                                <td>
+                                                    <form method="post" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <input type="text" class="d-none" name="undo-answer" value="{{answer.pk}}">
+                                                        <button class="btn btn-success my-1"><i class="fa fa-undo"></i> Undo</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                              </table>
+                            {% else %}
+                              Select an item from above...
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

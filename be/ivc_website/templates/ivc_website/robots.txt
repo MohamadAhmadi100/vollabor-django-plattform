@@ -1,0 +1,3 @@
+user-agent: *
+Disallow: /*.pdf$
+sitemap: https://tecvico.com/sitemap.xml

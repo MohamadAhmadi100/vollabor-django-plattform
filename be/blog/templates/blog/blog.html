@@ -1,0 +1,347 @@
+{% extends 'ivc_website/base.html' %}
+{% load static %}
+
+{% block style %}
+<!--<link rel="stylesheet" href="{% static 'blog/css/normalize.css' %}">
+<link rel="stylesheet" href="{% static 'blog/css/bootstrap.min.css' %}">-->
+<link rel="stylesheet" href="{% static 'blog/css/owl.carousel.min.css' %}">
+<link rel="stylesheet" href="{% static 'blog/css/owl.theme.default.min.css' %}">
+<link rel="stylesheet" href="{% static 'blog/css/main.css' %}">
+<link rel="stylesheet" href="{% static 'blog/css/font-awesome.min.css' %}">
+
+
+
+{% endblock %}
+
+<!--a-->
+{% block content %}
+<div id="blog" class="mt-5 pt-5">
+    <div id="carouselExampleIndicators" class="banner_top carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active ">
+                <div class="row">
+                    <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center  mt-5">
+                        <h2 class="text-white" style="font-size:28px;">
+                            All men by nature desire knowledge.
+
+                        </h2>
+                       
+                       
+                    </div>
+                    <div class="col-md-6 position-relative">
+                        <img class="img-fluid" src="{% static 'blog/img/project.png' %}" style="height: 300px;max-height: max-content"
+                             alt="">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container-fluid p-5">
+        <div class="back-link d-flex align-items-center mt-3">
+            <a href="{% url 'home-page' %}" class="">Home</a>
+            <i class="fa fa-angle-right fa-2x mx-2"></i>
+            <a href="#" class="active">Blogs</a>
+        </div>
+
+        <div class="ag_buttons d-flex justify-content-between align-items-center mt-4">
+
+            <h3 class="mx-3">Top Articles</h3>
+            <div class="sm_sidebar  ">
+                <button class="btn btn-outline-primary filter_right  ">
+                    <i class="fa fa-filter"></i>
+                    <span>Filter</span>
+                </button>
+            </div>
+
+        </div>
+        
+        <hr class="mb-3">
+        <div class="container">
+            <div class="  d-flex justify-content-center ">
+                {% if top_article %}
+                <div class="owl-carousel owl-theme top_article">
+                    {% for post in top_article %}
+                    <div class="card-top-article mx-3 d-flex  flex-column">
+                        <img class="img-fluid mt-3" src="{{post.thumbnail.url}}" style="height:275px;" alt="">
+                        <div class="title d-flex  mt-3 w-100">
+                            
+                           
+                           <a class="text-primary text-left" href="{% url 'blog:blog-detail' post.slug %}">
+                                <div class="box blue mx-3">{{post.title}}</div>
+                               
+                            </a>
+                           
+                        </div>
+                      
+                        <div class="">
+                            
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+                {% else %}
+                    <div>There is no top article yet</div>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="wrapper d-flex justify-content-center">
+            <div class="sidebar_filter">
+
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between ">
+                        <span>Search</span>
+                        <div class="sm_sidebar ">
+                            <button class="btn btn-outline-primary filter_right d-md-none d-lg-none ">
+                                <i class="fa fa-filter"></i>
+                                <span>Filter</span>
+                            </button>
+
+                        </div>
+
+                    </a>
+                    <input type="text" class="form-control mt-2 mb-2" id="search_filter" placeholder="search by title">
+
+                </div>
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between">
+                        <span>Categories</span>
+                        <i class="fa fa-angle-down "></i>
+                    </a>
+                    <div class="preloader d-none">
+                        <i class="fa-filter"></i>
+                    </div>
+                    <ul class="unstyled centered" name="main[]">
+                        {% for num, cat in category.items %}
+                        <li>
+                            <input class="styled-checkbox category_list" id="cat-1-{{num}}" type="checkbox" value="{{cat.title}}">
+                            <label for="cat-1-{{num}}">{{cat.title}}</label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="item">
+                    <a class="main d-flex align-items-center justify-content-between ">
+                        <span>Date</span>
+                        <i class="fa fa-angle-down "></i>
+                    </a>
+                    <ul class="unstyled centered date">
+                       
+                        <li>
+                            <input class="styled-checkbox date1" id="date4" type="checkbox" value="Last week">
+                            <label for="date4">Last week</label>
+                        </li>
+                        <li>
+                            <input class="styled-checkbox date1" id="date5" type="checkbox" value="Last month">
+                            <label for="date5">Last month</label>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+            <div class="content ms-2 d-flex flex-column justify-content-center align-items-center">
+                <div class="blog-items">
+                    <div class="row" id="article">
+                        
+                        {% for post in posts %}
+                             
+                          <div class="col-sm-12 col-md-6 col-lg-6 my-1">
+                              <div class="card">
+                                <div class="card-image-wrapper p-2" >
+                                  <img src="{{post.thumbnail.url}}" class="card-img-top " style="height:350px !important;object-fit:contain" alt="...">
+                                </div>
+                                <div class="card-body">
+                                  <h5 class="card-title">{{post.title|truncatewords:8|safe}}</h5>
+                                  
+                                  <h6>{{post.category_to_str}}</h6>
+                                  <h6>{{post.date}}</h6>
+                                  <small>{{post.suggest_time}} MIN READ</small>
+                                  <div class="cardText" >
+                                      <p class="card-text">{{post.description|truncatewords:45|safe}}</p>
+                                  </div>
+                                  
+                                  
+                                  <a href="{% url 'blog:blog-detail' post.slug %}" class="btn btn-primary">Read more </a>
+                                  <span style="float:right" class="btn btn-danger"><i class="fa fa-eye"></i> {{post.counter}}</span>
+                                </div>
+                              </div>
+                        </div>
+    
+                             
+                        {% endfor %}
+                        
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    
+    </div>
+</div>
+
+
+<div class="sidebar_bg ">
+    <div class="sidebar_right  ">
+        <a class=" btn clos">
+            <i class="fa fa-times-circle "></i>
+        </a>
+        <div class="filters">
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between ">
+                    <span>Search</span>
+                </a>
+                <input type="text" class="form-control mt-2 mb-2" placeholder="search by title & keywords">
+
+            </div>
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between">
+                    <span>Categories</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <div class="preloader d-none">
+                    <i class="fa-filter"></i>
+                </div>
+                <ul class="unstyled centered" name="main[]">
+                    {% for num, cat in category.items %}
+                    <li>
+                        <input class="styled-checkbox" id="cat-1-{{num}}" type="checkbox" value="{{cat.title}}">
+                        <label for="cat-1-{{num}}">{{cat.title}}</label>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="item">
+                <a class="main d-flex align-items-center justify-content-between">
+                    <span>Date</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <div class="preloader d-none">
+                    <i class="fa-filter"></i>
+                </div>
+                <ul class="unstyled centered" name="date[]">
+                   <!-- <li>
+                        <input class="styled-checkbox" id="date-1-1" type="checkbox" value="English">
+                        <label for="date-1-1">Next week</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-2" type="checkbox" value="English">
+                        <label for="date-1-2">Next month</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-3" type="checkbox" value="English">
+                        <label for="date-1-3">Next two month</label>
+                    </li>-->
+                    <li>
+                        <input class="styled-checkbox" id="date-1-4" type="checkbox" value="English">
+                        <label for="date-1-4">Last week</label>
+                    </li>
+                    <li>
+                        <input class="styled-checkbox" id="date-1-5" type="checkbox" value="English">
+                        <label for="date-1-5">Last month</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'blog/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'blog/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'blog/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'blog/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'blog/js/main.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        let category_list = [];
+        let date_time = "";
+        let search_word = ""
+
+        $('.top_article').owlCarousel({
+            center: true,
+            loop: true,
+            margin: 10,
+            items: 4,
+            autoplay: true,
+            autoplayTimeout: 3000,
+            autoplayHoverPause: true,
+
+            responsive: {
+                768: {
+                    items: 3
+                },
+                300:{
+                    items:1
+                }
+            }
+        });
+        $('#search_filter').change(function(){
+            search_word = $('#search_filter').val()
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'blog:ajax_load_article' %}",
+                data: {
+                    'category_list': category_list,
+                    'date_time': date_time,
+                    'search_word': search_word,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $('#article').html(data)
+                },
+                error: function (request, errors) {}
+            });
+        })
+    $('.date1').click(function() {
+        $('.date1').not(this).prop('checked', false);
+        if ($(this).is(":checked")){
+            date_time = $(this).val()
+        }
+        else {
+            date_time = ""
+        }
+    });
+
+
+    $('.category_list').click(function (){
+        if ($(this).is(":checked")){
+            category_list.push($(this).attr('value'))
+        }
+        else {
+            let val = $(this).attr('value')
+            const index = category_list.indexOf(val);
+            if (index > -1) {
+                category_list.splice(index, 1);
+                }
+            }
+        });
+
+    $('.styled-checkbox').click(function () {
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'blog:ajax_load_article' %}",
+                data: {
+                    'category_list': category_list,
+                    'date_time': date_time,
+                    'search_word': search_word,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $('#article').html(data)
+                },
+                error: function (request, errors) {}
+            });
+        })
+    })
+</script>
+
+{% endblock %}

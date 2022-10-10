@@ -1,0 +1,642 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags_forum %}
+{% load humanize %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'dashboard/forum/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/forum/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/forum/css/custom.css' %}">
+    <title>Activity</title>
+    
+<style>
+    :root {
+  --darkgreen: #005361;
+  --white: #fff;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body,
+.tabs-to-dropdown .dropdown-toggle,
+.tabs-to-dropdown .dropdown-item {
+  font-size: 1.3rem;
+}
+
+.tabs-to-dropdown .nav-wrapper {
+  padding: 15px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.12);
+}
+
+.tabs-to-dropdown .nav-wrapper a {
+  color: var(--darkgreen);
+}
+
+.tabs-to-dropdown .nav-pills .nav-link.active {
+  background-color: var(--darkgreen);
+}
+
+.tabs-to-dropdown .nav-pills li:not(:last-child) {
+  margin-right: 30px;
+}
+
+.tabs-to-dropdown .tab-content .container-fluid {
+  max-width: 1250px;
+  padding-top: 20px;
+  padding-bottom: 70px;
+}
+
+.tabs-to-dropdown .dropdown-menu {
+  border: none;
+  box-shadow: 0px 5px 14px rgba(0, 0, 0, 0.08);
+}
+
+.tabs-to-dropdown .dropdown-item {
+  padding: 14px 28px;
+}
+
+.tabs-to-dropdown .dropdown-item:active {
+  color: var(--white);
+}
+
+@media (min-width: 1280px) {
+  .tabs-to-dropdown .nav-wrapper {
+    padding: 15px 30px;
+  }
+}
+
+
+/* FOOTER STYLES
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.page-footer {
+  position: fixed;
+  right: 15px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  padding: 5px;
+  background: var(--white);
+}
+
+.page-footer a {
+  margin-left: 4px;
+}
+    
+    
+    
+    
+</style>
+
+</head>
+
+<body>
+
+    <header id="main-header" class="py-2 text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1><i class="far fa-chart-bar"></i> Activity</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+<!--=======================================================================================================================-->
+<div class="tabs-to-dropdown" style="margin:5px 150px;">
+  <div class="nav-wrapper d-flex align-items-center justify-content-between">
+    <ul class="nav nav-pills d-none d-md-flex" id="pills-tab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="pills-company-tab" data-toggle="pill" href="#pills-company" role="tab" aria-controls="pills-company" aria-selected="true">Forum</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="pills-product-tab" data-toggle="pill" href="#pills-product" role="tab" aria-controls="pills-product" aria-selected="false">Q&A</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="pills-news-tab" data-toggle="pill" href="#pills-news" role="tab" aria-controls="pills-news" aria-selected="false">ALL</a>
+      </li>
+      
+    </ul>
+
+    
+  </div>
+
+  <div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="pills-company" role="tabpanel" aria-labelledby="pills-company-tab">
+        <div class="container-fluid">
+            <h2 class="mb-3 font-weight-bold">Forum</h2>
+            <ul class="nav nav-pills my-4" id="pills-tab" role="tablist">
+                <li  class="nav-item" role="presentation">
+                     <a href="?section=topics"><button class="btn btn-primary active" id="pills-home-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home"
+                        aria-selected="true">Topics</button></a>
+                </li>
+                {% if request.user.is_superuser or request.user.forumrole.create_category_subcategory == True %}
+                <li  class="nav-item" role="presentation">
+                    <a href="?section=categories"><button class="btn btn-success" id="pills-profile-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
+                        aria-selected="false">Categories</button></a>
+                </li>
+                <li  class="nav-item" role="presentation">
+                    <a href="?section=create_category"><button class="btn btn-warning" id="pills-profile-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
+                        aria-selected="false">Create category</button></a>
+                </li>
+                {% endif %}
+            </ul>
+            <hr>
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+             
+                {% if request.GET.section == "topics" %}
+                <table class="table table-hover table-striped ">
+                    <thead class="table-primary text-dark">
+                        <tr>
+                            <th>Title</th>
+                            <th>Creator</th>
+                            <th>Comment</th>
+                            <th>Like</th>
+                            <th>View</th>
+                            <th>Status</th>
+                            <th>Create time</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                {% for tit in object_list %}
+                
+                        <tr>
+                            <td class="text-left">{{tit.title}}</td>
+                            <td class="text-muted">{{tit.author}}</td>
+                            <td class="text-muted text-center">{% count_comment_topic tit.id %}</td>
+                            <td class="text-muted text-center">{{tit.like_topic.Active.count}}</td>
+                            <td class="text-muted text-center">{{tit.view_topic.all.count}}</td>
+                            <td>
+                                {% if tit.deleted == True %}
+                                    Deleted
+                                {% else %}
+                                    Published
+                                {% endif %}
+                            </td>
+                            
+                            <td><span class="text-muted">{{tit.created}}</span></td>
+                           
+                           <td>
+                            {% if user.is_superuser or request.user == tit.author or request.user.forumrole.delete_topic %}
+                                {% if tit.deleted == False %}
+                                <button class="btn btn-danger mx-auto" data-bs-toggle="modal" href="#delete_topic{{tit.id}}">Delete</button>
+                                <a class="mx-3 disc text-dark text-decoration-none btn btn-info" target="_blank" href="{% url 'forum:detail-title' tit.pk %}"><b style="margin-left: 10px">View</a> 
+                                {% else %}
+                                <button disabled class="btn btn-danger mx-auto" data-bs-toggle="modal">Delete</button>
+                                <button disabled class="btn btn-info mx-auto" data-bs-toggle="modal">View</button>
+                                {% endif %}
+                            {% endif %}
+                            
+
+                             <!----- Delete reply comment --- -->
+                                <div class="modal fade"  id="delete_topic{{tit.id}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                                    <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header modal-colored-header bg-secondary text-dark">
+                                              <h5 class="modal-title text-dark" id="InfoModalLabel">Deleted topic</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
+                                              
+                                            </div>
+                                            <form method="POST">{% csrf_token %}
+                                                <div class="modal-body text-dark">
+                                                    <input type="hidden" name="topic_id" value="{{tit.id}}">
+                                                    <h6>Are you sure delete topic? </h6>
+                                                </div>
+                                                <div class="row px-5">
+                                                    <p id="selectedRole" class="text-dark"></p>
+                                                    
+                                                </div>
+
+                                                
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div
+                            </td>
+                        </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+                {% endif %}
+
+                
+                {% if request.GET.section == "categories" %}
+                <ul>
+                    {% for i in categories %}
+                        {% if request.user.is_superuser or request.user.forumrole.create_category_subcategory == True or request.user == object.author %}
+                        <a data-bs-toggle="modal" class="text-dark ml-2" href="#createcategory{{i.pk}}" style="text-decoration:none;"><i style="color: green; font-size: 14px;" class="fas fa-plus"></i></a>
+                        {% endif %}
+                        {% if request.user.is_superuser or request.user.forumrole.edit_category_subcategory == True or request.user == object.author %}
+                        <a data-bs-toggle="modal" class="text-dark ml-2" href="#edit_category{{i.pk}}" style="text-decoration:none;"><i style="color: blue; font-size: 14px;" class="fa fa-edit nav-icon"></i></a>
+                        {% endif %}
+
+                        {% if request.user.is_superuser or request.user.forumrole.delete_category_subcategory == True or request.user == object.author %}
+                        <a data-bs-toggle="modal" class="text-dark ml-2" href="#deletecategory{{i.pk}}" style="text-decoration:none;"><i style="color: red; font-size: 14px;" class="fas fa-trash"></i></a>
+                        {% endif %}
+
+                        <li class="{% if i.status == False %}text-muted{% endif %}"><a style="font-weight: bold;" class="dropdown-item {% if i.status == False %}text-muted{% endif %}" data-class="created" target="_blank" href="{% url 'forum:category-detail' i.slug %}"></i> {{i.title}} </a>
+                        {% for sub in sub_categories %}
+                            {% if sub.sub_category == i %}
+
+                                {% if request.user.is_superuser or request.user.forumrole.delete_category_subcategory == True or request.user == object.author %}
+                                <a data-bs-toggle="modal" class="text-dark" href="#delete_sub_category{{sub.pk}}" style="text-decoration:none; margin-left: 70px;"><i style="color: red; font-size: 14px;" class="fas fa-trash"></i></a>
+                                {% endif %}
+
+                                {% if request.user.is_superuser or request.user.forumrole.edit_category_subcategory == True or request.user == object.author %}
+                                <a data-bs-toggle="modal" class="text-dark ml-2" href="#edit_sub_category{{sub.pk}}" style="text-decoration:none; "><i style="color: red; font-size: 14px;" class="fa fa-edit nav-icon"></i></a>
+                                {% endif %}
+
+
+                                <li class="ml-5 {% if i.status == False %}text-muted{% elif sub.status == False %}text-muted{% endif %}"><a style="font-weight: bold;" class="dropdown-item {% if i.status == False %}text-muted{% elif sub.status == False %}text-muted{% endif %}" data-class="created" href="{% url 'forum:category-detail' i.slug %}"></i> {{sub.title}} </a>
+                            {% endif %}
+
+                            <!-- Delete category -->
+                            <div class="modal fade"  id="delete_sub_category{{sub.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                                <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header modal-colored-header bg-secondary text-dark">
+                                          <h5 class="modal-title text-dark" id="InfoModalLabel">Deleted sub category</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
+                                          
+                                        </div>
+                                        <form method="POST">{% csrf_token %}
+                                            <div class="modal-body text-dark">
+                                                <input type="hidden" name="subcategory_id" value="{{sub.id}}">
+                                            </div>
+                                            <div class="row px-5">
+                                                <p id="selectedRole" class="text-dark"></p>
+                                                <h6>Are you sure delete sub category?</h6>
+                                                
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Edit Sub category -->
+                            <div class="modal fade"  id="edit_sub_category{{sub.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                                <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header modal-colored-header bg-secondary text-dark">
+                                          <h5 class="modal-title text-dark" id="InfoModalLabel">Edit sub category</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
+                                          
+                                        </div>
+                                        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+
+                                            <div class="form-group col-md-12 mb-0">
+                                                <label>Title <span style="color: red;">*</span></label>
+                                                <textarea class="form-control" required rows="4" name="title">{{sub.title}}</textarea>
+                                            </div>
+                                            <br>
+                                            <div class="form-group col-md-12 mb-0">
+                                                <label>Upload image</label>
+                                                <input type="file" class="form-control" name="img">
+                                                <a href="{{sub.img.url}}" target="_blank">View image</a>
+                                            </div>
+                                            <br>
+
+                                            <div class="form-group col-md-12 mb-0">
+                                                <label>To be displayed?</label>
+                                                {% if sub.status == True %}
+                                                    <input type="checkbox" checked name="status">
+                                                {% else %}
+                                                    <input type="checkbox" name="status">
+                                                {% endif %}
+
+                                            </div>
+                                            <input type="hidden" name="subcategory__id" value="{{sub.id}}">
+
+                                            <div class="row px-5">
+                                                <p id="selectedRole" class="text-dark"></p>
+                                                
+                                            </div>
+
+                                            
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Edit</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+
+                        <!-- Create cetegory -->
+                        <div class="modal fade"  id="createcategory{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                            <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header modal-colored-header bg-secondary text-dark">
+                                      <h5 class="modal-title text-dark" id="InfoModalLabel">Create sub category</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
+                                      
+                                    </div>
+                                    <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                        <div class="modal-body text-dark">
+                                            <input type="hidden" name="c_category_id" value="{{i.id}}">
+                                            <div class="form-group col-md-12 mb-0">
+                                                <label>Title <span style="color: red;">*</span></label>
+                                                <textarea class="form-control" required rows="4" name="c_title"></textarea>
+                                            </div>
+                                            <br>
+                                            <div class="form-group col-md-12 mb-0">
+                                                <label>Upload image <span style="color: red;">*</span></label>
+                                                <input type="file" class="form-control" name="img">
+                                            </div>
+                                            <br>
+                                            <div class="form-group col-md-12 mb-0">
+                                                <label>To be displayed?</label>
+                                                <input type="checkbox" checked name="c_status">
+                                            </div>
+                                        </div>
+                                        <div class="row px-5">
+                                            <p id="selectedRole" class="text-dark"></p>
+                                            
+                                        </div>
+
+                                        
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-sucess" data-bs-dismiss="modal">Create</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Delete cetegory -->
+                        <div class="modal fade"  id="deletecategory{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                            <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header modal-colored-header bg-secondary text-dark">
+                                      <h5 class="modal-title text-dark" id="InfoModalLabel">Deleted category</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
+                                      
+                                    </div>
+                                    <form method="POST">{% csrf_token %}
+                                        <div class="modal-body text-dark">
+                                            <input type="hidden" name="category_id" value="{{i.id}}">
+                                        </div>
+                                        <div class="row px-5">
+                                            <p id="selectedRole" class="text-dark"></p>
+                                            
+                                        </div>
+
+                                        
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Edit cetegory -->
+                        <div class="modal fade"  id="edit_category{{i.pk}}" tabindex="-1" aria-labelledby="InfoModalLabel" aria-hidden="true" role="dialog">
+                            <div class="modal-dialog modal-lg" id="modalinfo" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header modal-colored-header bg-secondary text-dark">
+                                      <h5 class="modal-title text-dark" id="InfoModalLabel">Edit category</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
+                                      
+                                    </div>
+                                    <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                        <input type="hidden" name="category__id" value="{{i.id}}">
+
+                                        <div class="form-group col-md-12 mb-0">
+                                            <label>Title <span style="color: red;">*</span></label>
+                                            <textarea class="form-control" required rows="4" name="text">{{i.title}}</textarea>
+                                        </div>
+                                        <br>
+                                        <div class="form-group col-md-12 mb-0">
+                                            <label>Upload image</label>
+                                            <input type="file" class="form-control" name="img">
+                                            <a href="{{i.img.url}}" target="_blank">View image</a>
+                                        </div>
+                                        <br>
+                                        <div class="form-group col-md-12 mb-0">
+                                            <label>To be displayed?</label>
+                                            {% if i.status == True %}
+                                                <input type="checkbox" checked name="status">
+                                            {% else %}
+                                                <input type="checkbox" name="status">
+                                            {% endif %}
+                                        </div>
+                                        <div class="row px-5">
+                                            <p id="selectedRole" class="text-dark"></p>
+                                            
+                                        </div>
+
+                                        
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Edit</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>                        
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if request.GET.section == "create_category" %}
+                <ul>
+                    <div style="margin-left: 4px" class="category-section w-100 mt-5">
+                        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+
+                                <div class="form-group col-md-12 mb-0">
+                                    <label>Title <span style="color: red;">*</span></label>
+                                    <textarea class="form-control" required rows="4" name="title_"></textarea>
+                                </div>
+                                <br>
+                                <div class="form-group col-md-12 mb-0">
+                                    <label>Upload image?</label>
+                                    <input type="file" class="form-control" required name="img">
+                                </div>
+                                <br>
+                                <div class="form-group col-md-12 mb-0">
+                                    <label>To be displayed?</label>
+                                    <input type="checkbox" checked name="status">
+                                </div>
+
+
+                            
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Create</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </ul>
+                {% endif %}
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="tab-pane fade" id="pills-product" role="tabpanel" aria-labelledby="pills-product-tab">
+      <div class="container-fluid">
+        <h2 class="mb-3 font-weight-bold">Q&A</h2>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="pills-news" role="tabpanel" aria-labelledby="pills-news-tab">
+      <div class="container-fluid">
+        <h2 class="mb-3 font-weight-bold">ALL</h2>
+        </div>
+    </div>
+    
+  </div>
+</div>
+
+
+
+
+
+
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+<script>
+    const $tabsToDropdown = $(".tabs-to-dropdown");
+
+function generateDropdownMarkup(container) {
+  const $navWrapper = container.find(".nav-wrapper");
+  const $navPills = container.find(".nav-pills");
+  const firstTextLink = $navPills.find("li:first-child a").text();
+  const $items = $navPills.find("li");
+  const markup = `
+    <div class="dropdown d-md-none">
+      <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        ${firstTextLink}
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"> 
+        ${generateDropdownLinksMarkup($items)}
+      </div>
+    </div>
+  `;
+  $navWrapper.prepend(markup);
+}
+
+function generateDropdownLinksMarkup(items) {
+  let markup = "";
+  items.each(function () {
+    const textLink = $(this).find("a").text();
+    markup += `<a class="dropdown-item" href="#">${textLink}</a>`;
+  });
+
+  return markup;
+}
+
+function showDropdownHandler(e) {
+  // works also
+  //const $this = $(this);
+  const $this = $(e.target);
+  const $dropdownToggle = $this.find(".dropdown-toggle");
+  const dropdownToggleText = $dropdownToggle.text().trim();
+  const $dropdownMenuLinks = $this.find(".dropdown-menu a");
+  const dNoneClass = "d-none";
+  $dropdownMenuLinks.each(function () {
+    const $this = $(this);
+    if ($this.text() == dropdownToggleText) {
+      $this.addClass(dNoneClass);
+    } else {
+      $this.removeClass(dNoneClass);
+    }
+  });
+}
+
+function clickHandler(e) {
+  e.preventDefault();
+  const $this = $(this);
+  const index = $this.index();
+  const text = $this.text();
+  $this.closest(".dropdown").find(".dropdown-toggle").text(`${text}`);
+  $this
+    .closest($tabsToDropdown)
+    .find(`.nav-pills li:eq(${index}) a`)
+    .tab("show");
+}
+
+function shownTabsHandler(e) {
+  // works also
+  //const $this = $(this);
+  const $this = $(e.target);
+  const index = $this.parent().index();
+  const $parent = $this.closest($tabsToDropdown);
+  const $targetDropdownLink = $parent.find(".dropdown-menu a").eq(index);
+  const targetDropdownLinkText = $targetDropdownLink.text();
+  $parent.find(".dropdown-toggle").text(targetDropdownLinkText);
+}
+
+$tabsToDropdown.each(function () {
+  const $this = $(this);
+  const $pills = $this.find('a[data-toggle="pill"]');
+
+  generateDropdownMarkup($this);
+
+  const $dropdown = $this.find(".dropdown");
+  const $dropdownLinks = $this.find(".dropdown-menu a");
+
+  $dropdown.on("show.bs.dropdown", showDropdownHandler);
+  $dropdownLinks.on("click", clickHandler);
+  $pills.on("shown.bs.tab", shownTabsHandler);
+});
+
+    
+    
+    
+    
+</script>
+
+</body>
+
+</html>
+{% endblock %}

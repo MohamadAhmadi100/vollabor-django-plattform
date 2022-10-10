@@ -1,0 +1,42 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+{% block content %}
+
+
+<header class="bg-danger text-white py-2 w-100">
+    <div class="container">
+        <h1 class="px-4"><i class="far fa-edit"></i> <span>Delete article</span></h1>
+    </div>
+</header>
+<div class="col-md-8 text-center mx-auto" style="margin-top: 80px;">
+    <div class="card card-danger">
+        <div class="card-body">
+            <form method="post">{% csrf_token %}
+                <p class="py-2">
+                    Aru you sure about deleting "{{news.title}}" from "{{news.author}}" ?
+                </p>
+                <input type="submit" value="Delete" class="btn btn-danger">
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+<!--<script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>-->
+<script src="{% static 'workshop/js/workshop.js' %}"></script>
+<script src="{% static 'workshop/js/myjs.js' %}"></script>
+
+{% endblock content %}

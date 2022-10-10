@@ -1,0 +1,75 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load blog_filter %}
+
+{% block body_class %}gray-container{% endblock body_class%}
+
+{% block css %}
+<style>
+.dataTables_info{
+    display:none!important
+}
+body{background:#212429!important;}
+.card{
+    background: #2C3034;
+    box-shadow: 0px 0px 4px 0px #fff;
+}
+.card-body{color:#fff}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+{% block content %}
+
+<header id="main-header" class="py-2 bg-danger text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>
+                    <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+                    Bank information
+                </h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="blog-manager">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message|safe }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message|safe }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+            <h3 class="text-center mt-3">Compelete Bank information</h3>
+            <div class="container card mt-5 p-3">
+                <form action="{%url 'accounting:IR-bank-info-submited'%}" style="color:#fff" class=" form-group col-md-8 m-auto" method="POST">
+                    {%csrf_token%}
+                    {%for item in form %}
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">{{item.label}}</label>
+                        {{item}}               
+                    </div>
+                        {%for error in item.errors%}
+                            <span id="emailHelp" class="p-0 alert alert-danger">{{error}}</span>
+                        {%endfor%}
+                    {%endfor%}
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+            </div>
+
+</section>
+   
+
+
+
+<script>
+
+</script>
+{% endblock content %}

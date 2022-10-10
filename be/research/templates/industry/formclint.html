@@ -1,0 +1,991 @@
+{% extends "dashboard/base.html" %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% load dashboard_filter %}
+{% load crispy_forms_tags %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'ivc_website/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'ivc_website/css/project.css' %}">
+
+{% endblock css %}
+
+{% block content %}
+    <div class="container">
+        <div class="bc">
+            <h1 >Project form</h1>
+            <!--<span class="bc-icon"> / </span>
+            <span> Create_Work</span>-->
+        </div>
+        <div class="row">
+            <div class="col-lg-2 col-md-2"></div>
+            <div class="col-lg-8 col-md-8 project-box">
+                {% if user|is_member_profile %}
+                    <!--<div class="row text-end mt-3 ">-->
+                        
+                    <!--    <div class="col-12 text-end">-->
+                    <!--        <a class="btn text-info mb-1" href="{% url 'create-checkout-session' %}">Balance-->
+                        
+                    <!--        <span class="text-white"> <i class="fa fa-dollar-sign bg-dark p-2" style="border-radius: 25px;"></i>{{user.memberprofile.balance}}</span>-->
+                    <!--        </a>-->
+                            
+                    <!--    </div>-->
+                        
+                   
+
+                    <!--</div>-->
+                    <div class="col-lg-12 project-key">
+                        <i class="fa fa-file" aria-hidden="true"></i>
+                    </div> 
+                {% endif %}
+                <div class="col-lg-12 project-title " >
+                    Define a new project
+
+                </div>
+
+                <div class="col-lg-12 project-form">
+                    <div class="col-lg-12 project-form">
+                        <form method="post" enctype="multipart/form-data" id="project_form">
+                            {% csrf_token %}
+                            <div class="container">
+                                {% if messages %}
+                                    {% for message in messages %}
+                                            {% if message.tags == 'success' %}
+                                                <div class="alert alert-success"> {{ message }}</div>
+                                            {% else %}
+                                                <div class="alert alert-danger"> {{ message }}</div>
+                                            {%endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        <div class="row">
+                            
+                            <div class="form-group col-xl-12 col-md-12 col-sm-12">
+                                <label class="form-control-label">Title<span class="asteriskField">*</span></label>
+                                <textarea name="title" class="txtara form-control" id="id_title" rows="2" oninput="ClearErr('id_title')"></textarea>
+                                <div class="text-sm" style="color:darkorange;font-size: small;"><span>Total charachters: </span><span id="display_count_tit">0</span><span>/200 </span></div>
+                                <div id="id_title_error" style="color:red;font-size: small;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="form-group col-xl-8 col-md-8 col-sm-12">
+                                <label class="form-control-label">Full name<span class="asteriskField">*</span></label>
+                                <input type="text" name="name" class="form-control disInp" readonly value="{{request.user.get_full_name}}" id="id_name">
+                            </div>
+                            
+                        </div>
+
+                        
+                        
+                       
+                        <div class="row">
+                            <div class="form-group col-xl-6 col-md-6 col-sm-12">
+                                <label class="form-control-label">Suggested start date <span class="asteriskField">*</span></label>
+                                <input type="date" name="start_date" required class="date form-control disInp" min="{{date|date:'Y-m-d'}}" id="id_start_date" oninput="ClearErr('id_start_date')">
+                                <input type="hidden" id="research_strdate" value="20{{date|date:'y-m-d'}}">
+                                <div id="id_start_date_error" style="color:red;font-size: small;"></div>
+                            </div>
+                            <div class="form-group col-xl-6 col-md-6 col-sm-12">
+                                <label class="form-control-label">Suggested end date<span class="asteriskField">*</span></label>
+                                <input type="date" name="end_date" required class="date form-control disInp" min="{{date|date:'Y-m-d'}}" id="id_end_date" oninput="ClearErr('id_end_date')">
+                                <div id="id_end_date_error" style="color:red;font-size: small;"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                             <div class="col-xl-6 col-md-6 col-sm-12">
+                                {% if position == 'Supervisor' %}
+                                     <div class="form-group" id="MsupDiv">
+                                        <label class="form-control-label">Main supervisor</label>
+                                        <input type="checkbox" id="chksupervisor">
+                                         <div id="mnsp_error" style="color:darkorange;font-size: small;"></div>
+                                    </div>
+                                <div id="supervisorDiv"  class="row d-none">
+                                    <div class="form-group">
+                                        <label class="form-control-label">Proposal (Doc/PDF)<span id="proposalSpan" class="asteriskField d-none">*</span></label>
+                                        <input type="file" name="main_supervisor" id="id_main_supervisor" class="form-control-file" style="color:darkorange" oninput="CheckIndexAtt('id_main_supervisor')">
+                                        <div id="id_main_supervisor_error" style="color:red;font-size: small;"></div>
+                                    </div>
+                                
+                                </div>
+                               {% endif %}
+                                <div id="PreFileDiv"  class="row">
+                                    <div class="form-group">
+                                        <label class="form-control-label">Description (Doc/PDF)<span id="prefileSpan" class="asteriskField d-none">*</span></label>
+                                        <input type="file" name="pri_file" id="id_prefile"  class="form-control-file" style="color:darkorange" oninput="CheckIndexAtt('id_prefile')">>
+                                        <div id="id_prefile_error" style="color:red;font-size: small;"></div>
+                                    </div>
+                                
+                                </div>
+                                
+                            </div>
+                            
+                            
+                            
+                            <div class="col-xl-6 col-md-6 col-sm-12">
+                                <div class="row mb-0">
+                                    <div class="form-group">
+                                        <label class="form-control-label">Fund</label>
+                                        <input type="checkbox" checked id="chkfund">
+                                        <div id="chkfund_error" style="color:darkorange;font-size: small;"></div>
+                                    </div>
+                                </div>
+                                <div class="row mt-0 pt-0" id="fundDiv"  >
+                                    <div class="input-group" >
+                                        <div class="input-group-append" >
+                                            <span class="input-group-text" id="basic-addon2"><i class="fa fa-dollar-sign text-dark" aria-hidden="true"></i></span>
+                                        </div>                          
+                                        <input type="text" name="fund" id="id_fund" aria-describedby="basic-addon2" class="form-control pl-3" value=1500 placeholder="Please insert the fund" oninput="ClearErr('id_fund')">
+                                        
+                                    </div>
+                                    <div id="id_fund_error" style="color:red;font-size: small;"></div>
+                                </div>
+                            </div>
+                           
+                        
+                            
+                            
+                            
+                        </div>
+                        
+                        <div class="row justify-content-center my-4">
+                            <div class="form-group col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                            
+                                <label class="form-control-label">Main field<span class="asteriskField">*</span></label>
+                                <select name="main_field" class="slct form-control main_field" id="MainField" onchange="ClearErr('MainField')">
+                                    <option value="0">----------</option>
+                                        {% for i in mainfield %}
+                                            <option value="{{i.id}}">{{i.title}}</option>
+                                        {% endfor %}
+                                </select>
+                                <div id="MainField_error" style="color:red;font-size: small;"></div>
+                            
+                            </div>
+                        
+                        <div class="form-group col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                           
+                                <label class="form-control-label">Subfield<span class="asteriskField">*</span></label>
+                                <select name="sub_field" class="slct form-control sub_field" id="SubField" onchange="ClearErr('SubField')" >
+                                     <option value="-10">----------</option>
+                                        {% for i in subfield %}
+                                            <option value="{{i.id}}">{{i.title}}</option>
+                                        {% endfor %}
+                                </select>
+                                <div id="SubField_error" style="color:red;font-size: small;"></div>
+                            
+                        </div>
+                               
+                             
+                        </div>
+                            <div class="row mt-3 mb-3">
+                                <div class="px-1 d-none" id="add_field">
+                                    <div class="form-group">
+                                        <label for="usname" class="form-control-label">Add your field<span class="asteriskField">*</span></label>
+                                        <input type="text" name="add_sub_field" class="form-control" id="otherField" oninput="ClearErr('otherField')">
+                                        <div class="mb-5" id="otherField_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>
+                                <div id="otherField_error" style="color:red;font-size: small;"></div>
+                            </div>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <div class="row">
+                            <div class="form-group col-xl-12 col-md-12 col-sm-12">
+                                 <label class="form-control-label">Abstract<span class="asteriskField">*</span></label>
+                                <textarea class="txtara form-control" name="abstrack" id="id_abstrack" oninput="ClearErr('id_abstrack')"></textarea>
+                                <div class="text-sm" style="color:darkorange;font-size: small;"><span >Total charachters: </span><span id="display_count">0</span><span>/5000 </span></div> 
+                                            
+                                <div id="id_abstrack_error" style="color:red;font-size: small;"></div>
+                            </div>
+                        
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-xl-6 col-md-6 col-sm-12">
+                                <label class="form-control-label">Requirement<span id="requireSpan" class="asteriskField d-none">*</span></label>
+                                <textarea type="text" class="txtara form-control" name="requirement" id="id_requirement" oninput="ClearErr('id_requirement')"></textarea>
+                                <div class="text-sm" style="color:darkorange;font-size: small;"><span>Total charachters: </span><span id="display_count_req">0</span><span>/2500 </span></div> 
+                                <div id="id_requirement_error" style="color:red;font-size: small;"></div>
+                            </div>
+                            <div class="form-group col-xl-6 col-md-6 col-sm-12">
+                                <label class="form-control-label">Equipment<span id="equipSpan" class="asteriskField d-none">*</span></label>
+                                <textarea  type="text" class="txtara form-control" name="equipment" id="id_equipment" oninput="ClearErr('id_equipment')"></textarea>
+                                <div class="text-sm" style="color:darkorange;font-size: small;"><span>Total charachters: </span><span id="display_count_eq">0</span><span>/2500 </span></div> 
+                                 <div id="id_equipment_error" style="color:red;font-size: small;"></div>
+                            </div>
+						</div>
+                        <div class="row">
+                            <div class="form-group col-xl-12 col-md-12 col-sm-12">
+                                 <label class="form-control-label">Dataset link<span id="datasetSpan2" class="asteriskField d-none"></span></label>
+                                <!--<input type="url" class="form-control" required  name="data_set_link" id="id_data_set_link" >-->
+                                <input type="url"  placeholder="https://mydatasetlink.com/xxx.csv" class="form-control" name="data_set_link" id="id_data_set_link" oninput="ClearErr('id_data_set_link')">
+                                <p  style="color:darkorange;font-size: small;">Note: If the project needs dataset, we strongly recommend you mention the dataset link here and it decently affects the review consequence.  </p>
+                                <div id="id_data_set_link_error" style="color:red;font-size: small;"></div>
+                            </div>
+                        
+                        </div>
+                            <div class="col-lg-12 projectbttm">
+                                <div class="col-lg-6 project-btm project-text">
+                                    <!-- Error Message -->
+                                </div>
+                                <div class="col-lg-7 text-left project-btm project-button">
+                                    <!--<button type="button" class="btn btn-outline-primary" id="SveBtn" data-bs-toggle="modal" data-bs-target="#ExplainModal">OK</button>-->
+                                    <button type="button" class="btn btn-outline-success" id="SveBtn">Submit</button>
+                                    <button type="button" class="btn btn-outline-danger" onclick="document.location.href='/dashboard'" >Cancel</button>
+                                    
+                                </div>
+                            </div>
+                            
+                            <div class="modal fade" id="ExplainModal" tabindex="-1" aria-labelledby="ExplainModalLabel" aria-hidden="true" role="dialog" >
+                                <div class="modal-dialog modal-lg" >
+                                    <div class="modal-content" style="background-color: #1A2226; color:#bbb">
+                                        <div class="modal-header">
+                                          <button type="button" class="btn btn-close btn-warning"  data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <p style="color:darkorange" id="noteFinish"></p> 
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <div id="NoteForFund" style="color:darkorange;font-size:medium;"></div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-6 text-end">
+                                                    <button type="button" id="submitBtn" class=" btn btn-success" data-bs-dismiss="modal" aria-label="Submit"><i class="fa fa-check"></i> Yes</button>
+                                                </div>
+                                                <div class="col-6 text-start">
+                                                     <button type="button" class="btn btn-warning"  data-bs-dismiss="modal" ><i class="fa fa-times"></i> No</button>
+                                                </div>
+                                                
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!--=============================================================================-->
+                            
+                            <div class="modal" id="WaitModal">
+                              <div class="modal-dialog modal-sm modal-dialog-centered">
+                                <div class="modal-content">
+                            
+                                  <!-- Modal body -->
+                                  <div class="modal-body">
+                                    Please wait...
+                                  </div>
+                            
+                            
+                                </div>
+                              </div>
+                            </div>
+                            
+                            
+                            
+                            
+                            
+                            
+                            <!--==========================================================================-->
+                                                        
+                            
+                            
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.question_1|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.question_2|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.question_3|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.question_4|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.question_5|as_crispy_field }}
+                            </div>
+
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.question_6|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.question_7|as_crispy_field }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2"></div>
+            </div>
+        </div>
+
+
+
+<script src="{% static 'ivc_website/js/jquery.min.js' %}"></script>
+<script src="{% static 'ivc_website/js/bootstrap.min.js' %}"></script>
+<script>
+
+$(document).ready(function(){
+    ShowfundDiv();
+    document.getElementById("chkfund").addEventListener("click", ShowfundDiv);
+    document.getElementById("SveBtn").addEventListener("click", CheckForm);
+    //document.getElementById("ClsBtn").addEventListener("click", CheckFormclose);
+    
+    
+   
+    
+   
+    
+    $(".sub_field").change(function () {
+        const Value = $(this).val();
+        if (Value == 0){
+            $('#add_field').removeClass('d-none');
+        }
+        else {
+            $('#add_field').addClass('d-none');
+        };
+    });
+ 
+    var superChk = !!document.getElementById("MsupDiv");
+    if(superChk==true){
+        document.getElementById("chksupervisor").addEventListener("click",MakeMandatory);
+        
+    }
+    
+    
+    $('#ExplainModal').on('hide.bs.modal', function () {
+            document.getElementById('SveBtn').disabled = false;  
+        document.getElementById("submitBtn").addEventListener("click",function(){
+            document.getElementById('SveBtn').disabled = true;  
+            $('#WaitModal').modal({backdrop: 'static', keyboard: false})  
+            $('#WaitModal').modal('show');
+            document.getElementById('project_form').submit();
+            
+          
+        });
+        
+        
+        
+    
+    })
+
+ 
+ 
+
+});
+
+ 
+function ShowfundDiv(){
+    var checkBox = document.getElementById("chkfund");
+     var superChk = !!document.getElementById("MsupDiv");
+    if (checkBox.checked == true){
+        document.getElementById("fundDiv").style.display = "block";
+       
+        if(superChk==true){
+            var checkBoxsup = document.getElementById("chksupervisor");
+            if (checkBoxsup.checked == true){
+                document.getElementById("id_fund").value = 0;
+                document.getElementById("chkfund_error").innerHTML ="Note: $150 will be deducted from your balance to review. The fund will be deducted from your balance when your project is approved.";
+                document.getElementById("mnsp_error").innerHTML ="";
+            }else{
+                document.getElementById("id_fund").value = 1500;
+                document.getElementById("chkfund_error").innerHTML ="Note: $150 will be deducted from your balance to review. The fund will be deducted from your balance when your project is approved. The minimum fund to define a project is $1500.";
+                document.getElementById("mnsp_error").innerHTML ="";
+            }
+        }else{
+            
+            document.getElementById("id_fund").value = 1500;
+            document.getElementById("chkfund_error").innerHTML ="Note: $150 will be deducted from your balance to review. The fund will be deducted from your balance when your project is approved. The minimum fund to define a project is $1500.";
+            
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //document.getElementById("fundDiv").style.display = "block";
+        //document.getElementById("chkfund_error").innerHTML ="Note: The minimum fund to define a project is $1500";
+    } else {
+        document.getElementById("fundDiv").style.display = "none";
+         if(superChk==true){
+             var checkBoxsup = document.getElementById("chksupervisor");
+              if (checkBoxsup.checked == true){
+                    document.getElementById("mnsp_error").innerHTML = "Note: $150 will be deducted from your balance to review.";
+                    document.getElementById("chkfund_error").innerHTML ="";
+                    document.getElementById("id_fund").value = 0;
+              }else{
+                    document.getElementById("id_fund").value = 1500;
+                    document.getElementById("mnsp_error").innerHTML ="";
+                    document.getElementById("chkfund_error").innerHTML ="";
+              }
+         }else{
+            
+            document.getElementById("chkfund_error").innerHTML ="";
+         }
+    }
+      
+  }
+  
+function MakeMandatory(){
+        var checkBoxsup = document.getElementById("chksupervisor");
+         var checkBox = document.getElementById("chkfund");
+        if (checkBoxsup.checked == true){
+            $('#proposalSpan').removeClass('d-none');
+            $('#requireSpan').removeClass('d-none');
+            $('#equipSpan').removeClass('d-none');
+            $('#datasetSpan').removeClass('d-none');
+            $('#supervisorDiv').removeClass('d-none');
+            $('#PreFileDiv').addClass('d-none');
+            document.getElementById("id_fund").value = 0;
+            
+            
+            
+    
+            if (checkBox.checked == true){
+                
+                document.getElementById("chkfund_error").innerHTML ="Note: $150 will be deducted from your balance to review.The fund will be deducted from your balance when your project is approved. ";
+                document.getElementById("mnsp_error").innerHTML="";
+            }else{
+                document.getElementById("mnsp_error").innerHTML ="Note: $150 will be deducted from your balance to review.";
+            }
+            
+            
+        } else {
+             $('#proposalSpan').addClass('d-none');
+             $('#requireSpan').addClass('d-none');
+             $('#equipSpan').addClass('d-none');
+             $('#datasetSpan').addClass('d-none');
+              $('#supervisorDiv').addClass('d-none');
+              $('#PreFileDiv').removeClass('d-none');
+             document.getElementById("mnsp_error").innerHTML ="";
+             document.getElementById("id_fund").value = 1500;
+             if (checkBox.checked == true){
+                
+                document.getElementById("chkfund_error").innerHTML ="Note: $150 will be deducted from your balance to review. The fund will be deducted from your balance when your project is approved. The minimum fund to define a project is $1500.";
+             }
+        }
+      
+  }
+
+function CheckForm(){
+    var focus_status = false;
+    var title = document.getElementById("id_title").value;
+    if(title.length ==0){
+       // alert("title");
+       document.getElementById("id_title_error").innerHTML = "Please enter the project title.";
+       if(focus_status == false){
+            document.getElementById("id_title_error").focus();
+            focus_status = true;
+       }
+        
+    }
+     if(title.length>200){
+        
+       document.getElementById("id_title_error").innerHTML = "The number of characters entered is more than 200 characters.";
+       if(focus_status == false){
+            document.getElementById("id_title_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    
+    var start_date = document.getElementById("id_start_date").value;
+    if(start_date.length ==0){
+       // alert("title");
+       document.getElementById("id_start_date_error").innerHTML = "Please enter the suggested start date of the project.";
+       if(focus_status == false){
+            document.getElementById("id_start_date_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    var end_date = document.getElementById("id_end_date").value;
+    if(end_date.length ==0){
+       // alert("title");
+       document.getElementById("id_end_date_error").innerHTML = "Please enter the suggested end date of the project.";
+       if(focus_status == false){
+            document.getElementById("id_end_date_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    var mainfield = document.getElementById("MainField").value;
+    if(mainfield ==0){
+       // alert("title");
+       document.getElementById("MainField_error").innerHTML = "Please select the main field of the project.";
+       if(focus_status == false){
+            document.getElementById("MainField_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    var subfield = document.getElementById("SubField").value;
+    if(subfield ==-10){
+       // alert("title");
+       document.getElementById("SubField_error").innerHTML = "Please select the subfield of the project.";
+       if(focus_status == false){
+            document.getElementById("SubField_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    
+    var otherfield = document.getElementById("otherField").value;
+    if(subfield==0 && otherfield.length ==0){
+       // alert("title");
+       document.getElementById("otherField_error").innerHTML = "Please enter your desired field.";
+       if(focus_status == false){
+            document.getElementById("otherField_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    
+    var prefileDiv = !!document.getElementById("id_prefile");
+    if(prefileDiv==true){
+        var preFile = document.getElementById("id_prefile").value;
+         if(preFile.length >0){
+             if(CheckIndexAtt("id_prefile") == true){
+                 focus_status=true;
+             }
+             //focus_status = CheckIndexAtt("id_prefile");
+             
+         }
+    
+    }
+    
+    var abstract = document.getElementById("id_abstrack").value;
+    if(abstract.length==0){
+        
+       document.getElementById("id_abstrack_error").innerHTML = "Please enter the project abstract.";
+       if(focus_status == false){
+            document.getElementById("id_abstrack_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    if(abstract.length>5000){
+        
+       document.getElementById("id_abstrack_error").innerHTML = "The number of characters entered is more than 5000 characters.";
+       if(focus_status == false){
+            document.getElementById("id_abstrack_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+     
+     
+     
+    
+     
+     
+     var requirementVal = document.getElementById("id_requirement").value;
+            //alert(requirementVal.value);
+            if(requirementVal.length >2500){
+                document.getElementById("id_requirement_error").innerHTML = "The number of characters entered is more than 2500 characters.";
+               if(focus_status == false){
+                    document.getElementById("id_requirement_error").focus();
+                    focus_status = true;
+               }
+                
+                
+            }
+            
+     var equipVal = document.getElementById("id_equipment").value;
+
+    if(equipVal.length > 2500){
+        document.getElementById("id_equipment_error").innerHTML = "The number of characters entered is more than 2500 characters.";
+       if(focus_status == false){
+            document.getElementById("id_equipment_error").focus();
+            focus_status = true;
+       }
+        
+        
+    }
+    
+    
+    
+    if(start_date.length !=0 && end_date.length !=0){
+        const strt = new Date(start_date);
+        const end = new Date(end_date);
+        //alert(end);
+        if(end.getTime() < strt.getTime()){
+            document.getElementById("id_end_date_error").innerHTML = "Please select the correct end date of the project.";
+           if(focus_status == false){
+                document.getElementById("id_end_date_error").focus();
+                focus_status = true;
+           }
+           
+        }
+    
+        
+        
+    }
+    
+    var linkdata = document.getElementById("id_data_set_link").value;
+    if(linkdata.length != 0){
+        if(validURL(linkdata)){
+            
+        }else{
+            document.getElementById("id_data_set_link_error").innerHTML = "Error:The text entered is not in the link format.";
+            focus_status = true;
+        }
+    }
+    
+    
+    //========================================
+    var fund = document.getElementById("id_fund").value;
+    var superChk = !!document.getElementById("MsupDiv");
+    
+    if(superChk==true){
+        //alert("true");
+        var proposalFile = document.getElementById("id_main_supervisor").value;
+        var chksupervisor = document.getElementById("chksupervisor");
+       
+        if(chksupervisor.checked==true && proposalFile.length==0){
+           
+            document.getElementById("id_main_supervisor_error").innerHTML = "Please upload the proposal file.";
+           if(focus_status == false){
+                document.getElementById("id_main_supervisor_error").focus();
+                focus_status = true;
+           }
+            
+            
+        }
+        
+        
+        
+        if(chksupervisor.checked && proposalFile.length!=0){
+            var proposalFile = document.getElementById("id_main_supervisor").value;
+             if(proposalFile.length >0){
+                 //focus_status = CheckIndexAtt("id_main_supervisor");
+                 if(CheckIndexAtt("id_main_supervisor")==true){
+                     focus_status=true;
+                 }
+                 
+             }
+                        
+            if(fund < 0 ){
+                document.getElementById("id_fund_error").innerHTML="Please enter the fund as an integer.";
+                if(focus_status == false){
+                    document.getElementById("id_fund_error").focus();
+                    focus_status = true;
+                }
+                
+            }
+        }else if(chksupervisor.checked && proposalFile.length==0){
+              document.getElementById("id_main_supervisor_error").innerHTML = "Please upload the proposal file.";
+           if(focus_status == false){
+                document.getElementById("id_main_supervisor_error").focus();
+                focus_status = true;
+           }
+        }else{
+            if(fund < 1500 ){
+                document.getElementById("id_fund_error").innerHTML="The minimum fund without a supervisor is $1500.";
+                if(focus_status == false){
+                        document.getElementById("id_fund_error").focus();
+                        focus_status = true;
+                }
+                
+            }
+        }
+     
+        
+         if(chksupervisor.checked){
+             var requirementVal = document.getElementById("id_requirement").value;
+            //alert(requirementVal.value);
+            if(requirementVal.length==0){
+                document.getElementById("id_requirement_error").innerHTML = "Please fill in the requirement field.";
+               if(focus_status == false){
+                    document.getElementById("id_requirement_error").focus();
+                    focus_status = true;
+               }
+                
+                
+            }
+            
+             var equipVal = document.getElementById("id_equipment").value;
+        
+            if(equipVal.length==0){
+                document.getElementById("id_equipment_error").innerHTML = "Please fill in the equipment field.";
+               if(focus_status == false){
+                    document.getElementById("id_equipment_error").focus();
+                    focus_status = true;
+               }
+                
+                
+            }
+            
+             var dataset = document.getElementById("id_data_set_link").value;
+           
+            
+        
+         }
+        
+     
+        
+     
+     
+     
+     
+     
+    }
+    
+    
+    if(focus_status == true){
+        return;
+    }
+    
+   
+    
+   
+    if(focus_status == false){
+        var checkBox = document.getElementById("chkfund");
+        if(superChk==true){
+        
+            var chksupervisor = document.getElementById("chksupervisor");
+            
+            if(chksupervisor.checked==true){
+                if(checkBox.checked==true){
+                     document.getElementById("noteFinish").innerHTML = "Note: $150 will be deducted from your balance to review your request. The fund will be deducted from your balance when your project is approved." ;
+                
+                    
+                }else{
+                   document.getElementById("noteFinish").innerHTML = "Note: $150 will be deducted from your balance to review your request. The fund will be deducted from your balance when your project is approved." ;
+                    
+                }
+                
+                 
+            }else{
+                if(checkBox.checked==true){
+                     document.getElementById("noteFinish").innerHTML = "Note: $150 will be deducted from your balance to review your request. The fund will be deducted from your balance when your project is approved." ;
+                
+                    
+                }else{
+                   document.getElementById("noteFinish").innerHTML = "Note: $150 will be deducted from your balance to review your request. The fund will be deducted from your balance when your project is approved." ;
+                    
+                }
+                
+                
+                
+            }
+                
+        
+        }else{
+            
+            if(checkBox.checked == true){
+                document.getElementById("noteFinish").innerHTML = "Note: $150 will be deducted from your balance to review your request. The fund will be deducted from your balance when your project is approved." ;
+                
+                    
+            }else{
+                document.getElementById("noteFinish").innerHTML = "Note: $150 will be deducted from your balance to review your request. The fund will be deducted from your balance when your project is approved." ;
+                    
+            }
+            
+            
+        }
+        
+        document.getElementById('SveBtn').disabled = true;
+        $('#ExplainModal').modal({backdrop: 'static', keyboard: false})  
+        $('#ExplainModal').modal('show');
+    }
+    
+
+    
+
+}
+
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+    
+   /* if(id == "id_title"){
+        document.getElementById("title_error").innerHTML="";
+    }
+    if(id == "id_start_date"){
+        document.getElementById("start_error").innerHTML="";
+    }
+    if(id == "id_end_date"){
+        document.getElementById("end_error").innerHTML="";
+    }
+    if(id == "id_abstrack"){
+        document.getElementById("abstract_error").innerHTML="";
+    }
+    if(id == "id_fund"){
+        document.getElementById("fund_error").innerHTML="";
+    }*/
+    
+    focus_status = false;
+    
+    
+}
+
+
+
+ $('#ExplainModal').on('shown.bs.modal', function (e) {
+                 
+             
+            
+    })
+    
+
+function CheckIndexAtt(id){
+    var file_status = false;
+    document.getElementById(id + "_error").innerHTML = '';
+    var file_name   = document.getElementById(id).value;
+	var index_dot=file_name.lastIndexOf(".")+1;
+	var ext=file_name.substr(index_dot);
+	if(!(ext=='pdf' || ext=='doc' || ext=='docx' )) {
+		document.getElementById(id + "_error").innerHTML = '';
+		document.getElementById(id + "_error").innerHTML='file index is NOT valid (valid index: pdf, doc, docx)';
+		document.getElementById(id + "_error").style.color = "red";
+		
+		file_status = true;	
+		
+	}   
+	
+	return file_status;
+        
+}
+
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+$(".main_field").change(function () {
+    const MainFieldId = $(this).val();  // get the selected country ID from the HTML input
+    
+    $.ajax({                       // initialize an AJAX request
+        url: "{% url 'industry:main-field-ajax' %}",
+        data: {
+            'main_field': MainFieldId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+            
+            $(".sub_field").html(data);  // replace the contents of the city input with the data that came from the server
+        },
+        error: function (error) {
+            alert(error.responseText)
+            
+        }
+    });
+
+});
+
+
+
+$("#id_abstrack").on('input keyup', function(e) {
+            var total_char = document.getElementById("id_abstrack").value;
+            var max = 5000;
+            if (total_char.length > max) {
+                //e.preventDefault();
+                //return false;
+                document.getElementById("abstract_error").innerHTML = "Note: The number of characters entered is more than 5000 characters.";
+                
+            } else if (total_char.length <= max) {
+                
+                $('#display_count').text(total_char.length);
+              
+                
+            }
+          
+        });
+        
+$("#id_requirement").on('input keyup', function(e) {
+            var total_char = document.getElementById("id_requirement").value;
+            var max = 2500;
+            if (total_char.length > max) {
+                //e.preventDefault();
+                //return false;
+                document.getElementById("id_requirement_error").innerHTML = "Note: The number of characters entered is more than 2500 characters.";
+                
+            } else if (total_char.length <= max) {
+                
+                $('#display_count_req').text(total_char.length);
+              
+                
+            }
+          
+        });   
+
+$("#id_equipment").on('input keyup', function(e) {
+            var total_char = document.getElementById("id_equipment").value;
+            var max = 2500;
+            if (total_char.length > max) {
+                //e.preventDefault();
+                //return false;
+                document.getElementById("id_equipment_error").innerHTML = "Note: The number of characters entered is more than 2500 characters.";
+                
+            } else if (total_char.length <= max) {
+                
+                $('#display_count_eq').text(total_char.length);
+              
+                
+            }
+          
+        });  
+        
+$("#id_title").on('input keyup', function(e) {
+            var total_char = document.getElementById("id_title").value;
+            var max = 200;
+            if (total_char.length > max) {
+                //e.preventDefault();
+                //return false;
+                document.getElementById("id_title_error").innerHTML = "Note: The number of characters entered is more than 200 characters.";
+                
+            } else if (total_char.length <= max) {
+                
+                $('#display_count_tit').text(total_char.length);
+              
+                
+            }
+          
+        });  
+
+function validURL(str) {
+  var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+  return !!pattern.test(str);
+}
+
+
+
+</script>
+    
+
+
+{% endblock content %}

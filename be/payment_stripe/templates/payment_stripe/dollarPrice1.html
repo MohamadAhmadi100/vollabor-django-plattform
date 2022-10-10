@@ -1,0 +1,175 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+
+
+
+
+    <title>dollar price</title>
+  
+  {% block css %}
+   <link rel="preconnect" href="https://fonts.googleapis.com" />
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+ <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap">
+
+  
+  {% endblock %}
+ 
+
+ 
+
+
+
+{% block content %}
+     
+    <div class="jumbotron text-center bg-primary"  >
+        <div class="d-inline-block">
+            <h1>Dollar price</h1>
+        </div>
+    </div>
+    <div class="container" style="margin:10px 250px">
+        <form method="POST"> {% csrf_token %}
+        <div class="row">
+            
+                
+                <div class="col-md-2">
+                <div class="form-check">
+              
+                  <label class="form-check-label" for="auto">
+                      <input class="form-check-input" type="radio" name="method" id="auto" checked onchange="ShowInput();">
+                    Automatic
+                  </label>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-check">
+                 
+                  <label class="form-check-label" for="checked">
+                       <input class="form-check-input" type="radio" name="method" id="manual" onchange="ShowInput();">
+                    Manual
+                  </label>
+                </div>
+                
+            </div>
+            <div class="col-md-8 d-none" id="manDiv">
+                <div class="row">
+                    <div class="col-md-6 ">
+                
+                        <div class="mb-3 row px-0">
+                            <div class="col-md-6 px-0">
+                                <label for="price" class="form-label">Dollar price ($ USA)</label>
+                            </div>
+                            <div class="col-md-6 px-0">
+                                <input type="number" class="form-control" name="price" id="price">
+                            <div id="priceError" class="form-text"></div>
+                            </div>
+                            
+                        </div>
+                 
+                
+                    </div>
+            
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-info" id="subBtn">Submit</button>
+                        
+                    </div>
+                </div>
+                
+                
+            </div>
+            
+            
+                
+                
+            
+            
+            
+        </div>
+        </form>
+        
+        
+        <div class="row container mt-5">
+            <table class="table mx-3">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Creator</th>
+                        <th>No.</th>
+                        <th>Dollar price</th>
+                        <th>Date time</th>
+                        
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in object_list %}
+                    <tr>
+                        <td class="P-name">
+                            <p style="overflow: hidden; width: 150px">{{i.last_editor.get_full_name}}</p>
+                        </td>
+
+                        <td class="P-name">
+                            {% if i.Automatically == False %}
+                                Manual
+                            {% else %}
+                                Automatic
+                            {% endif %}
+                        </td>
+
+                        <td class="P-name">
+                            <p style="overflow: hidden; width: 150px">{{i.price}}</p>
+                        </td>
+
+                        <td class="P-name">
+                            <p style="overflow: hidden; width: 150px">{{i.created}}</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    
+                
+                    
+                </tbody>
+                
+                
+                
+                
+            </table>
+            
+            
+        </div>
+       
+        
+    </div>
+    
+
+
+
+<script type="application/javascript" src="{% static 'ivc_website/js/jquery.min.js' %}"></script>
+<script type="application/javascript" src="{% static 'ivc_website/js/bootstrap.min.js' %}"></script>
+<script>
+
+$(document).ready(function(){
+    
+    
+    
+    
+});
+
+
+
+function ShowInput(){
+    var manradio = document.getElementById("manual");
+    if (manradio.checked == true){
+        document.getElementById("manDiv").classList.remove("d-none");
+    
+    } else {
+            document.getElementById("manDiv").classList.add("d-none");
+    }
+      
+  }
+ 
+</script>     
+     
+     
+{% endblock %}
+    

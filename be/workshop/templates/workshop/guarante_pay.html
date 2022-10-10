@@ -1,0 +1,81 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en" >
+
+{% block css %}
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'workshop/css/all.min.cs' %}">
+<link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+<title>Document</title>
+{% endblock css %}
+
+{% block content %}
+
+<div class=" row justify-content-md-center ">
+    
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+        <div class="card text-white bg-dark my-5">
+            <div class="card-header" style="background-color:#606060">
+                <h3 class="workshp-title">Title: {{work.title}}</h3>
+            </div>
+           
+            <div class="card-body">
+                
+                <p class="w-75 p-1">The responsibility fee is $100 for each guarantee.</p>
+                <form action="" class="d-flex justify-content-center mt-5">
+                <button type="button"
+                    class="btn btn-success py-2 px-5 ms-3"data-bs-toggle="modal" data-bs-target="#accept">Pay</button>
+                    
+                <button type="button"
+                    class="btn py-2 px-5 ms-3" style="background-color:#606060"><a style="text-decoration:none;color:#fff" href="{% url 'my-workshop-status'%}">Close</a></button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+    <div class="modal fade" id="accept" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-8">
+                                 <p>Are you sure to pay the responsibility fee?</p>
+                            </div>
+                            
+                            <div class="col-2"> 
+                                <input type="hidden" name="status" value="Guarante_accept">
+                                <button type="submit" class="btn btn-block btn-success">Yes</button>
+                               
+                            </div>
+                            <div class="col-2">
+                               <button type="button" class="btn btn-block btn-danger" data-bs-dismiss="modal">No</button>
+                            </div>
+                       </div>
+                        
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'workshop/js/workshop.js' %}"></script>
+<script src="{% static 'workshop/js/myjs.js' %}"></script>
+<script>
+    
+    
+</script>
+
+{% endblock content %}

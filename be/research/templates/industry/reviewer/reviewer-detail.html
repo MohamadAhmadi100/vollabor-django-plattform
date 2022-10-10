@@ -1,0 +1,563 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block body_class %}gray-container{% endblock body_class%}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load dashboard_filter %}
+{% load base %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/step.css' %}">
+  <link rel="stylesheet" href="{% static '/dashboard/css/researchtheme.css' %}">
+{% endblock %}
+
+
+<header id="main-header" class="py-2 bg-color6 text-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><i class="fa fa-eye"></i> Project detail</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<section id="project-view">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success"> {{ message }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message }}</div>
+                    {%endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if user == selected_project.expert and not selected_project.expert_is_accepted %}
+    <div class="container">
+        <div class="row text-center mt-4 mx-auto">
+            <div class="col-12 my-2">
+                <h3>Do you accept to be a {% if selected_project.project_type == "Industrial" %}corresponding{% else %}project{% endif %} expert in this project?</h3>
+                <button class="btn btn-success" onclick="$('#acceptProjectConfirmationModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-check"></i> Yes
+                </button>
+                <button class="btn btn-danger" onclick="$('#expertRejectProjectModal').modal({show:true,closeOnEscape: true});">
+                    <i class="fa fa-times"></i> No
+                </button>
+            </div>
+        </div>
+    </div>
+    {% elif selected_project.project_type == "Industrial" and not selected_project.is_valid %}
+    <div class="container padding-bottom-3x mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+              <div class="step {% if selected_project.step >= 0 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-plus"></i></div>
+                </div>
+                <h4 class="step-title">Project is defined</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 1 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-user-tie"></i></div>
+                </div>
+                <h4 class="step-title">Corresponding expert is selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 2 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-users"></i></div>
+                </div>
+                <h4 class="step-title">Experts are selected</h4>
+              </div>
+              <div class="step {% if selected_project.step >= 3 %}completed{% endif %}">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-scroll"></i></div>
+                </div>
+                <h4 class="step-title">Report of evaluation sent to the technical manager</h4>
+              </div>
+              <div class="step">
+                <div class="step-icon-wrap">
+                  <div class="step-icon"><i class="fa fa-star"></i></div>
+                </div>
+                <h4 class="step-title">Project state is new</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    
+    <div class="container">
+        <div class="row">
+            {% if selected_project.is_valid %}
+                {% if user == selected_project.owner or user == selected_project.main_supervisor %}
+                <div class="col-md-3 my-1">
+                        <a href="{% url 'dashboard-edit-project-page' project_pk=selected_project.pk%}" class="btn btn-primary btn-xs mt-1"><i class="fa fa-pencil"></i> Edit </a>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    <!-- new -->
+    <main class="container-fluid px-5 ">
+        <div class="content my-4">
+            <div class="row px-4 py-2">
+                <div class="col-md-12">
+                        <div class="form-group ">
+                            <label class="form-label">Title</label>
+                            <textarea class="form-control" rows="2" disabled>{{object.object_supervisor.client_form.formclint.title}}</textarea>
+                        </div>
+                </div>
+            </div>
+            
+            <div class="row px-4 py-2">
+                
+                <div class="col-md-6">
+                    <div class="form-group ">
+                        <label class="form-label">Suggested start date</label>
+                        <input type="text" class="form-control" value="{{object.object_supervisor.client_form.formclint.start_date}}" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group ">
+                        <label class="form-label">Suggested end date</label>
+                        <input type="text" class="form-control" value="{{object.object_supervisor.client_form.formclint.end_date}}" disabled>
+                    </div>
+                </div>
+                
+            </div>
+                
+            <div class="row px-4">
+                <div class="col-10">
+                    <hr class="bg-secondary">
+                </div>
+                <div class="col-2"><a href="#" class="text-primary" id="textMore">Show more</a> <i class="fa fa-arrow-circle-down text-primary" onclick="showMore()" id="MoreBtn" style="font-size:24px;" aria-hidden="true"></i></div>
+            </div>
+        <div id="more" style="display:none">
+            <div class="row px-4 py-2">
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Fund</label>
+                        <input type="text" class="form-control" value="${{object.object_supervisor.client_form.formclint.fund}}" disabled>
+                    </div>
+                </div>
+                
+                 <div class="col-md-6">
+                    <div class="form-group ">
+                        <label class="form-label">Dataset link</label>
+                        <div class="form-control">
+                            {% if object.object_supervisor.client_form.formclint.data_set_link %}
+                            <a href="{{object.object_supervisor.client_form.formclint.data_set_link}}">Click </a>
+                            {% else %}
+                            <h6>There is no link</h6>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </div>
+                
+            
+            <div class="row px-4 py-2">
+                <div class="col-md-12">
+                    <div class="form-group ">
+                        <label class="form-label">Abstract</label>
+                        <textarea class="form-control" rows="5" disabled>{{object.object_supervisor.client_form.formclint.abstrack}}</textarea>
+                    </div>
+                </div>
+            </div>
+                
+            <div class="row px-4 py-2">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Equipment</label>
+                        <textarea class="form-control" rows="5" disabled>{{object.object_supervisor.client_form.formclint.equipment}}</textarea>
+                    </div>
+                </div>
+    
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Requirement</label>
+                        <textarea class="form-control" rows="5" disabled>{{object.object_supervisor.client_form.formclint.requirement}}</textarea>
+                    </div>
+                </div>
+                
+                
+            </div>
+                
+         </div>       
+                
+               
+    
+                
+
+                {% if object.object_supervisor.client_form.formclint.pri_file %}
+                <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12" >
+                    <div class="cardy border-primary bg-dark mb-3" style="height:170px; color: white">
+                      <div class="card-header"><h6>PRI file</h6></div>
+                      <div class="card-body text-danger">
+                        
+                        <a target="_blank" style="text-decoration:none;color:none" href="{{object.object_supervisor.client_form.formclint.pri_file.url}}">
+                            <h6 id="AddExpertBtn3" class="btn btn-outline-success m-1 text-center text-white"><i class="fa fa-check"></i> Download </h6>
+                        </a>
+
+                      </div>
+                    </div>
+                </div>
+                {% endif %} 
+                
+                <div class="col-md-12">
+                        {% if object.object_supervisor.client_form.formclint.main_supervisor %}
+                                            
+                            <a style="margin-left: 8px" class="btn btn-primary" target="_blank" href="{{object.object_supervisor.client_form.formclint.main_supervisor.url}}"><dt class="text-center">Download the proposal</dt> </a>
+                    
+                        {% else %}
+                            <a style="margin-left: 8px" target="_blank" class="btn btn-primary" href="{{object.object_supervisor.propzar.url}}"><dt class="text-center">Download the proposal</dt> </a>
+                        {% endif %}
+                </div>
+                <div class="col-md-12">
+                                       
+                    <div class="p-2 ">
+                    
+                        {% if object.status == 'a' or object.status == 'revise_by_expert' or object.status == 'revise_by_director' %}
+                            {% if object.score_2 %}
+                            <button class="btn btn-primary fw-bold " data-bs-toggle="modal" data-bs-target="#test1" id="testBtn">Subscores</button>
+                            <h6 class="mt-2">Total score: <span>{{ object | total_score }} / 700</span></h6>
+                            <hr>
+
+
+                            <form method="POST" action="{% url 'industry:proposal-send-expert' %}">{% csrf_token %}
+                                {% if object.status == 'revise_by_expert' or object.status == 'revise_by_director'  %}
+                                <label >Revision reason</label>
+                                <div class="row">
+                                    <div class="col-12"><textarea class="form-control" disabled  name="comment" rows="3">{{object.text}}</textarea></div>
+                                </div>
+                                {% endif %}
+
+                                <label class="mt-3">Comment: <span style="color: red;">*</span></label>
+                                <div class="row">
+                                    <div class="col-12"><textarea class="form-control" id="commentTxt" name="comment" oninput="ClearErr('commentTxt')" rows="3"></textarea></div>
+                                    
+                                </div>
+                                <div id="commentTxt_error" style="color:red"></div>
+                                <input type="hidden" name="id_obj" value="{{object.pk}}">
+                                
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        <button type="button" id="sendBtn" style="margin-bottom: 10px;" 
+                                             class="btn btn-success mt-3 mx-auto">
+                                            Send
+                                        </button>
+
+                                <a class="mx-auto" href="{% url 'industry:industry-reviewer-send-score' object.pk %}">
+                                <h5 class="btn btn-primary mt-3">Evaluate</h5></a>
+                                    </div>
+                                    
+                                </div>
+                                
+
+
+                                <div class="modal fade" id="deleted_supervisor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body text-dark">
+                                                <input type="hidden" name="id_supervisor" value="{{object.pk}}">
+                                                <h6>Are you sure to send the assessment to the expert?</h6>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Yes</button>
+                                                <button type="button" id="closeBtn" class="btn btn-danger" data-bs-dismiss="modal"><i class="fa fa-times"></i> No</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            {% else %}
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <a  class="mx-auto text-center" href="{% url 'industry:industry-reviewer-send-score' object.pk %}" >
+                                <h3 class="btn btn-success fw-bold">Evaluate & Score</h3></a>
+                                </div>
+                            </div>
+                                
+                            {% endif %}
+                        {% else %}
+                            {% if object.score_1 or object.status == 'cancel_by_expert' or object.status == 'r' or object.status == 'automatically_cancel' %}
+                                <a href="{% url 'industry:industry-reviewer-list' %}">
+                                <h6 style="margin-top: 8px" class="btn btn-warning">Back</h6></a>
+
+                                <!--<button type="button"  data-bs-toggle="modal"-->
+                                <!--    data-bs-target="#delete_project" class="btn btn-danger">-->
+                                <!--    Delete-->
+                                <!--</button>-->
+                            {% else %}
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <button type="button"  data-bs-toggle="modal"
+                                    data-bs-target="#accept_project" class="btn btn-success mx-auto">
+                                    Approve
+                                </button>
+                                
+                                <button type="button"  data-bs-toggle="modal"
+                                    data-bs-target="#reject_project" class="btn btn-danger mx-auto">
+                                    Decline
+                                </button>
+                                    
+                                </div>
+                            </div>
+                                
+                            {% endif %}
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="modal fade" id="delete_project" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="POST" id="delform" enctype="multipart/form-data">{% csrf_token %}
+                                    <div class="modal-body">
+                                        <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+    
+    
+                                            <div class="form-group col-md-12 mb-0">
+                                                <div id="div_id_status" class="form-group">
+                                                    <input type="hidden" name="status_delete" id="id_status_delete" value="=/" >
+                                                </div>
+                                            </div>
+                                            <h6 style="color: black">Are you sure?</h6>
+        
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" id="delBtn" class="btn btn-danger" data-bs-dismiss="modal">Yes</button>
+                                        <button type="button" id="delClsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="modal fade" id="accept_project" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="POST" id="accform" enctype="multipart/form-data">{% csrf_token %}
+                                    <div class="modal-body">
+                                        <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+    
+    
+                                            <div class="form-group col-md-12 mb-0">
+                                                <div id="div_id_status" class="form-group">
+                                                    <input type="hidden" name="status" id="id_status" value="a" >
+                                                </div>
+                                            </div>
+                                            <h6 style="color: black">Are you sure to approve the review request?</h6>
+        
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="sabmit" class="btn btn-success" data-bs-dismiss="modal"><i class="fa fa-check"></i> Yes</button>
+                                        <button type="button" id="accClsBtn" class="btn btn-danger" data-bs-dismiss="modal"><i class="fa fa-times"></i> No</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="reject_project" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <form method="POST" id="dcform" enctype="multipart/form-data">{% csrf_token %}
+                                    <div class="modal-body">
+                                       
+                                        <div style="padding-left: 8px; padding-right: 8px;" class="form-row">
+    
+    
+                                            <div class="form-group col-md-12 mb-0">
+                                                <div id="div_id_status_r" class="form-group">
+                                                    <input type="hidden" name="status_r" id="id_status_r" value="r" >
+                                                </div>
+                                            </div>
+                                            <label class="text-dark">Reason <span style="color: red;">*</span></label>
+                                            <textarea class="form-control" id="decline_reason" rows="4" required name="comment" oninput="ClearErr('decline_reason')"></textarea>
+                                            <div id="decline_reason_error" style="color:red"></div>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-danger" >Decline</button>
+                                        <button type="button" id="dcClsBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="modal fade" id="test1" tabindex="-1" aria-labelledby="test1Label" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content text-dark">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="test1Label">Subscores</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row mb-0 py-0">
+                                        <div class="col-9"><p>Understanding of the work to be performed and all its associated tasks.:</p></div>
+                                        <div class="col-3">{{object.score}}</div>
+                                    </div>
+                                
+                                    <div class="row mb-0 py-0">
+                                        <div class="col-9"><p>Understanding of the work to be performed and all its associated tasks.:</p></div>
+                                        <div class="col-3">{{object.score_1}}</div>
+                                    </div>
+                                
+                                
+                                    <div class="row mb-0 py-0">
+                                        <div class="col-9"><p>Feasibility to be done the indicated project:</p></div>
+                                        <div class="col-3">{{object.score_2}}</div>
+                                    </div>
+                                    
+                                    <div class="row mb-0 py-0">
+                                        <div class="col-9"> <p>Size of data, capability of reproducing the study, quality of data, and diversify data Number of datapoints Kinds of data accessibility Preprocessing effort. Diversity of datapoints Anticipation of setbacks:</p></div>
+                                        <div class="col-3">{{object.score_3}}</div>
+                                    </div>
+                                    
+                                    <div class="row mb-0 py-0">
+                                        <div class="col-9">  <p>Sufficient related fund to be successfully accomplished the project in the allocated time: Sufficient budget to do the project:</p></div>
+                                        <div class="col-3">{{object.score_4}}</div>
+                                    </div>
+                                    
+                                    <div class="row mb-0 py-0">
+                                        <div class="col-9"> <p>Size of data, capability of reproducing the study, quality of data, and diversify data Number of datapoints Kinds of data accessibility Preprocessing effort. Diversity of datapoints Anticipation of setbacks:</p></div>
+                                        <div class="col-3">{{object.score_5}}</div>
+                                    </div>
+                                    
+                                    <div class="row mb-0 py-0">
+                                        <div class="col-9">  <p>Sufficient related fund to be successfully accomplished the project in the allocated time: Sufficient budget to do the project:</p></div>
+                                        <div class="col-3">{{object.score_6}}</div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+    </main>
+    <!--end of table  -->
+
+</div>
+</section>
+
+
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        
+         $('#accept_project').modal({backdrop: 'static', keyboard: false}) ;
+         $('#reject_project').modal({backdrop: 'static', keyboard: false}) ;
+         $('#delete_project').modal({backdrop: 'static', keyboard: false}) ;
+         $('#deleted_supervisor').modal({backdrop: 'static', keyboard: false}) ;
+         
+         
+         
+          document.getElementById("sendBtn").addEventListener("click",function(){
+              var commentTxt = document.getElementById('commentTxt').value;
+              if(commentTxt.length == 0){
+                  document.getElementById('commentTxt_error').innerHTML = "Error: please enter the comment.";
+              }else{
+                   document.getElementById('sendBtn').disabled = true;
+                   $('#deleted_supervisor').modal('show');
+              }
+              
+          })
+         
+         
+        
+        document.getElementById("accBtn").addEventListener("click",function(){
+             document.getElementById('accform').submit();
+             document.getElementById('accBtn').disabled = true;
+             document.getElementById('accClsBtn').disabled = true;
+            
+          
+        }); 
+        
+        document.getElementById("decBtn").addEventListener("click",function(){
+            var reasonDec = document.getElementById('decline_reason').value;
+            if(reasonDec.length ==0){
+                document.getElementById('decline_reason_error').innerHTML = "Error: please enter the decline reason."
+            }else{
+             document.getElementById('dcform').submit();
+             document.getElementById('decBtn').disabled = true;  
+             document.getElementById('dcClsBtn').disabled = true; 
+            }
+          
+        });
+        
+        document.getElementById("delBtn").addEventListener("click",function(){
+             document.getElementById('delform').submit();
+             document.getElementById('delBtn').disabled = true;  
+            document.getElementById('delClsBtn').disabled = true; 
+            
+          
+        });
+        
+        
+        
+    });
+    
+function ClearErr(id){
+    
+     document.getElementById(id+"_error").innerHTML="";
+   
+}
+
+
+function showMore() {
+  var moreDiv = document.getElementById("more");
+  var moreBtn = document.getElementById("MoreBtn");
+ var textmore = document.getElementById("textMore");
+
+  if (moreDiv.style.display === "none") {
+    moreDiv.style.display = "block";
+    moreBtn.classList.remove("fa-arrow-circle-down");
+    moreBtn.classList.add("fa-arrow-circle-up");
+   // textmore.textContent="Show more";
+    $('#textMore').text('Show less');
+    
+  } else {
+    moreDiv.style.display = "none";
+    moreBtn.classList.remove("fa-arrow-circle-up");
+    moreBtn.classList.add("fa-arrow-circle-down");
+    //textmore.textContent="Show less";
+    $('#textMore').text('Show more');
+  }
+}
+
+
+</script>
+
+{% endblock script %}
+

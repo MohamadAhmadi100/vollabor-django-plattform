@@ -1,0 +1,33 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block content %}
+<!-- HEADER SECTION -->
+<header id="news-header-section">
+    <div class="dark-overlay">
+        <div class="news-header-inner">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-4">{{title}}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="news-section" class="text-dark py-5 px-3">
+  <div class="container">
+      <div class="row">
+          <div class="col-8 mx-auto">
+              <form method="post">
+                  {% csrf_token %}
+                  {{news_form.media}}
+                  {{news_form|crispy}}
+                  <button class="btn btn-success"> <i class="fa fa-check"></i> Submit</button>
+              </form>
+          </div>
+      </div>
+  </div>
+</section>
+
+{% endblock content %}
