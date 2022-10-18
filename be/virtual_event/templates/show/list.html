@@ -1,0 +1,272 @@
+{%load static%}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css'%}">
+	<link rel="stylesheet" href="{% static 'workshop/virtual_event/workshop.css'%}">
+	<link rel="stylesheet" href="{% static 'workshop/virtual_event/reset.css'%}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link href="http://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+	<link href="http://fonts.cdnfonts.com/css/archivo" rel="stylesheet">
+
+    <title>Workshop List</title>
+  </head>
+  <body>
+  
+	
+	
+		<div id="header" class="header px-5 pt-3">
+		
+			<nav class="navbar navbar-light navbar-expand-lg">
+				<div class="container-fluid">
+					<a href="#" class="navbar-brand">Vollabor</a>
+					<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarCollapse">
+						<div class="navbar-nav navbar-left">
+							<a href="#" class="nav-item nav-link active">Help</a>
+							<a href="#" class="nav-item nav-link">Project</a>
+							<a href="#" class="nav-item nav-link">Workshop</a>
+							<a href="#" class="nav-item nav-link">Course</a>
+							<a href="#" class="nav-item nav-link">Webinar</a>
+							<!--<div class="nav-item dropdown">
+								<a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Messages</a>
+								<div class="dropdown-menu">
+									<a href="#" class="dropdown-item">Inbox</a>
+									<a href="#" class="dropdown-item">Sent</a>
+									<a href="#" class="dropdown-item">Drafts</a>
+								</div>
+							</div>-->
+							<a href="#" class="nav-item nav-link" tabindex="-1">Company</a>
+						</div>
+						<div class="navbar-nav  ms-auto">
+							<a href="#" class="nav-item nav-link signin">Sign in</a>
+							<a href="#" class="nav-item nav-link join">Join now</a>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+	
+	
+	<div class="main">
+		<div id="wave" class="title_section text-center">
+			<h1 class="title_txt">Workshop List</h1>
+		</div>
+		<div class="row">
+			<div class="row filters mt-3 px-5">
+					<div class="form col-xl-2 col-lg-2 col-md-4 col-sm-12 mx-0 text-start">
+						
+						<input type="text" class="form-control form-input p-2" placeholder="Search">
+						<i class="fa fa-search"></i>
+                  	</div>
+					<div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 mx-0 px-0 text-start">
+						<select>
+							<option>test</option>
+						</select>
+					
+					</div>
+					<div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 mx-0 px-0 text-start">
+						<select>
+							<option>test</option>
+						</select>
+					
+					</div>
+				
+			</div>
+		
+		
+			<div class="col-6 py-4 px-5">
+			
+				
+				{%for ve in virtual_events%}
+				<div class="row card-container"  >
+					<div class="card-project" >
+						<div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 p-3">
+						{%if ve.start_date < today %}
+							<div class="badge bg-danger m-1">Held</div>
+						{%else%}
+							<div class="badge bg-danger m-1">New</div>
+						{%endif%}
+							<div class="card-heading"><h4 class="card-title">{{ve.title|title}}</h4></div>
+							<p class="owner">{{ve.top_user.first_name}} {{ve.top_user.last_name}}</p>
+							<div class="row px-2">
+								{%for main in ve.main_field.all%}
+								<p class="tag-item">{{main}}</p>
+								{%endfor%}										
+							</div>
+							<div class="row card-desc-container" >
+								<p class="card-description">
+									{{ve.object.description|truncatewords:30|safe}}
+								</p>
+							
+							</div>
+							
+							<div class="row card-info">
+								<div class="h-25"><span class="date-info"><i class="fa fa-calendar mx-1"></i>{{ve.start_date}}</span></div>
+								<div class="h-25"><span class="time-info"><i class="fa fa-clock-o mx-1"></i>{{ve.start_time}}</span></div>
+								<div class="h-25"><span class="price-info"><i class="fa fa-money mx-1"></i>Price: ${{ve.price}}</span></div>							
+							</div>						
+						</div>										
+					</div>											
+				</div>
+				------------------------------------</br>
+				title:{{ve.title}}</br>
+				{{ve.type|title}} ID: {{ve.unique_id}}</br>
+				Holder:{{ve.top_user.first_name}} {{ve.top_user.last_name}}</br>
+				Language:{{ve.object.language}}</br>
+				Buy for {{ve.price}} $ Link:</br>
+				Skills:</br>
+				{%for skills in ve.skills%}
+				{{skills}}</br>
+				{%endfor%}
+				Requirements:Nadarim</br>
+				Description:{{ve.object.description}}</br>
+				Speakers:</br>
+				{%for speakers in ve.speakers%}
+				{{speakers}}</br>
+				{%endfor%}
+				{%endfor%}
+				
+			
+			</div>
+			<div class="col-6 py-4 px-5">
+			
+				<div class="row ws-detail">
+					<div class="holder-info">
+						<div><i class="fa fa-times ms-auto"></i></div>
+						<hr class="sep-line"/>
+						<h3 class="title-detail">Lorem ipsum dolor sit amet</h3>
+						<p class="projectID">Project ID: P202208090001</p>
+						<p class="holder">Holder : Mohammadreza Salmanpour </p>
+						<div class="ws-info"><span class="mx-2"><i class="fa fa-language mx-1"></i>Farsi</span></div>
+						<div class="mb-3"><button class="apply-btn" type="button" >Buy for $15 </button><span class="mx-2"><i class="fa fa-star-o"></i></span><span class="mx-2"><i class="fa fa-share-alt"></i></span></div>
+					</div>
+						
+				</div>
+				
+				<div class="row ws-full">
+					<div class="holder-full">
+						<h3 class="full-header">Skills</h3>
+						<div class="row full-tags" >
+							<p class="tag-item">Lorem</p>
+							<p class="tag-item">Pharetra</p>
+							<p class="tag-item">Venenatis</p>
+						</div> 
+						<h3 class="full-header">Requirements</h3>
+						<p class="full-text" >The project will be provided with datasets including PET, CT, their Ground truth. It will be provided with a strong GPU and google Colab to make long and heavy runs. The supervisor and advisors will lead and push all members to accomplish the project. </p>
+						<h3 class="full-header">Description</h3>
+						<p class="full-text" >Objective: Multi-level multi-modality-fusion-radiomics is a promising technique with the potential for improved prognostication of cancer. We aim to use advanced fusion techniques on PET and CT images coupled with Hybrid Machine Learning Systems to achieve improved TNM Stage prediction in Lung cancer (LC). Methods: In our study, 400 LC patients were included from The Cancer-Imaging-Archive (TCIA) and VGH in a multi-center-setting. We utilized hmls to train. each image underwent min-max-normalization, and followed by 5-fold-cross-validation. We employed 20 datasets including CT, PET, and 18 image-level-fused-datasets. </p>
+						<h3 class="full-header">People on this project</h3>
+						<div class="speakers">
+							<p>Speakers</p>
+							<div class="avatars">
+								<span class="avatar">
+									<img  src="assets/img/s1.png">
+									</span>
+								<span class="avatar">
+									<img src="assets/img/s1.png">
+								</span>
+								<span class="avatar">
+									<img src="assets/img/s1.png">
+								</span>
+								<span class="avatar">
+								   <img src="assets/img/s1.png">
+								</span>
+								
+							</div>
+						
+						</div>
+					
+					</div>
+				
+				
+				</div>
+				
+			
+			</div>
+		
+		</div>
+	
+	</div>
+	
+	<div class="footer">
+		<div class="row">
+			<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+				<a href="#" class="navbar-brand">Vollabor</a>
+			
+			</div>
+			
+			<div class="col-xl-2 col-lg-2 col-md-6 col-sm-6">
+				<div class="footer-pad">
+				  <h4>Company</h4>
+				  <ul class="list-unstyled">
+					<li><a href="#" >About</a></li>
+					<li><a href="#" >News</a></li>
+					<li><a href="#" >Join us</a></li>
+				  </ul>
+				</div>
+			
+			
+			</div>
+			<div class="col-xl-2 col-lg-2 col-md-6 col-sm-6">
+				<div class="footer-pad">
+				  <h4>Learn</h4>
+				  <ul class="list-unstyled">
+					<li><a href="#" >Blog</a></li>
+					<li><a href="#" >Forum</a></li>
+					
+				  </ul>
+				</div>
+			
+			
+			</div>
+			<div class="col-xl-5 col-lg-5 col-md-12 col-sm-12">
+			
+				<div class="row">
+					<ul class="social-network social-square">
+						<li><a href="#" class="icoFacebook" title="Facebook"><i class="fa fa-facebook"></i></a></li>
+						<li><a href="#" class="icoLinkedin" title="Linkedin"><i class="fa fa-linkedin"></i></a></li>
+						<li><a href="#" class="icoTiwtter" title="Tiwtter"><i class="fa fa-twitter"></i></a></li>
+						<li><a href="#" class="icoTelegram" title="Telegram"><i class="fa fa-telegram"></i></a></li>
+						<li><a href="#" class="icoInstagram" title="Instagram"><i class="fa fa-instagram"></i></a></li>
+					</ul>
+			
+				</div>
+				<div class="row">
+					<div class="lang">
+					<label>Chose your language</label>
+					<select>
+						<option>
+							English
+						</option>
+					</select>
+					</div>
+				
+				</div>
+			
+			
+			</div>
+		
+		
+		</div>
+	
+	
+	</div>
+	
+	
+  
+  
+  
+  
+		<script src="{% static 'workshop/js/bootstrap.min.js'%}"></script>
+    	<script src="{% static 'workshop/js/jquery-3.6.0.min.js'%}"></script>
+		<script src="assets/js/multislider.min.js"></script>
+		
+    
+    
+  </body>
+</html>

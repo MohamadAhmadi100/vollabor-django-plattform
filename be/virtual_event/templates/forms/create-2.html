@@ -1,0 +1,2080 @@
+{%load static%}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="{% static 'workshop/virtual_event/reset.css'%}">
+	<!--<link rel="stylesheet" href="{% static 'workshop/virtual_event/workshop.css'%}">-->
+	<link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css'%}">
+	<link rel="stylesheet" href="{% static 'workshop/virtual_event/veventform.css'%}">
+	<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
+	<link rel="stylesheet" href="{% static 'workshop/virtual_event/all.min.css'%}">
+	<link rel="stylesheet" href="{% static 'workshop/virtual_event/intlTelInput.min.css'%}">
+	
+	<!--<link href="http://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">-->
+	<!--<link href="http://fonts.cdnfonts.com/css/archivo" rel="stylesheet">-->
+
+    <title>Define a {{type|title}} </title>
+  </head>
+  <body>
+  
+	
+	
+		<div id="header" class="header px-5 pt-3">
+		
+			<nav class="navbar navbar-light navbar-expand-lg">
+				<div class="container-fluid">
+					<a href="#" class="navbar-brand">Vollabor</a>
+					<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarCollapse">
+						<div class="navbar-nav navbar-left">
+							<a href="#" class="nav-item nav-link active">Help</a>
+							<a href="#" class="nav-item nav-link">Project</a>
+							<a href="#" class="nav-item nav-link">Workshop</a>
+							<a href="#" class="nav-item nav-link">Course</a>
+							<a href="#" class="nav-item nav-link">Webinar</a>
+							<!--<div class="nav-item dropdown">
+								<a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Messages</a>
+								<div class="dropdown-menu">
+									<a href="#" class="dropdown-item">Inbox</a>
+									<a href="#" class="dropdown-item">Sent</a>
+									<a href="#" class="dropdown-item">Drafts</a>
+								</div>
+							</div>-->
+							<a href="#" class="nav-item nav-link" tabindex="-1">Company</a>
+						</div>
+						<div class="navbar-nav  ms-auto">
+							<a href="#" class="nav-item nav-link signin">Sign in</a>
+							<a href="#" class="nav-item nav-link join">Join now</a>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+	<div class="content p-5">
+	
+		<div id="menuSidenav" class="sidenav">
+		    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+		    <div class="d-flex px-4">
+				<span class="mx-2">
+					<img  src="assets/img/s1.png" class="avatar">
+				</span>
+				<span class="mx-2 text-center py-3 avatar-name">Full name</span>
+		
+			</div>		  
+		    <a href="#"><i class="fa fa-code mx-2" ></i> Vollabor</a>
+		    <a href="#"><i class="fa fa-code mx-2" ></i> Commits</a>
+		    <a href="#"><i class="fa fa-code mx-2" ></i> Branches</a>
+		    <a href="#"><i class="fa fa-code mx-2" ></i> Pull requests</a>
+			<a href="#"><i class="fa fa-code mx-2" ></i> Pipelines</a>
+			<a href="#"><i class="fa fa-code mx-2" ></i> Deployments</a>
+			<a href="#"><i class="fa fa-code mx-2" ></i> Jira Software</a>
+			<a href="#"><i class="fa fa-code mx-2" ></i> Downloads</a>
+			<a href="#"><i class="fa fa-code mx-2" ></i> Trello</a>
+			<a href="#"><i class="fa fa-code mx-2" ></i> Settings</a>
+		</div>
+	
+	<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
+	
+		<div class="form-container">
+			<form method="POST" id="VirtualEventForm" enctype="multipart/form-data">
+				{%csrf_token%}
+				<input type="hidden" value="{{type}}" name="type">
+                            
+			<div class="px-3">
+				
+				
+				<!-- start step indicators -->
+				<div class="form-header ">
+					<div class="row text-center mt-3 mb-5"><h1 class="header-text">Define a {{type}}</h1></div>
+					<div class="form-steps d-flex">
+						<span class="stepIndicator">Presenter's information</span>
+						<span class="stepIndicator"> {{type|title}} information</span>
+						<span class="stepIndicator"> {{type|title}} detail</span>
+						<span class="stepIndicator">Confirm</span>
+					</div>
+				</div>
+				<!-- end step indicators -->
+				<div class="form-content px-5 py-3">
+				
+					<!-- step one -->
+					<div class="step px-2"  id="step1">
+						<!--<div class="form-check mb-3">
+						  <input class="form-check-input" type="checkbox"  id="fill_form_chk">
+						  <label class="form-check-label" for="fill_form_chk">
+							Fill according to my profile information
+						  </label>
+						</div>-->
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3 field-group">
+								  <label for="full_name" class="form-label">Full name</label>
+								  <input name="name" type="text" id="full_name" class="form-control" value="{{request.user.get_full_name}}">
+							</div>
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3 field-group">
+								<label for="gender" class="form-label">Gender</label>
+								<select name="gender" class="form-select" id="gender" onchange="clear_error('gender')">
+								    <option value="{{request.user.memberprofile.gender}}" selected disabled>{{request.user.memberprofile.gender}}</option>
+									<option value="Female">Female</option>
+									<option value="male">male</option>
+									
+								</select>
+								<div class="error-message">Please select your gender.</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3 field-group">
+								  <label for="birthday" class="form-label">Birthday</label>
+								  <input name="birthday" type="date" id="birthday" class="form-control" value={{request.user.memberprofile.birthday}} oninput="clear_error('birthday')">
+								  <div class="error-message">Please specify your birthday.</div>
+							</div>
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3 field-group">
+							  <label for="phone_number" class="form-label ">Phone number</label>
+							  <div class="field-group" id="numberDiv"><input name="phone" type="tel" id="phone_number" class="form-control" value="{{request.user.memberprofile.phone}}" oninput="clear_error('phone_number')">
+							  <div class="error-message">Please enter your phone number.</div>
+							  </div>
+							  
+							  
+							</div>
+							
+						</div>
+						
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3 field-group">
+								<label for="country" class="form-label">Country</label>
+								<select name="country" class="form-select" id="country" onchange="clear_error('country')">
+								    <option value="{{request.user.memberprofile.country}}" selected>{{request.user.memberprofile.country}}</option>
+								    <option value="AF">Afghanistan</option>
+                                    <option value="AX">Aland Islands</option>
+                                    <option value="AL">Albania</option>
+                                    <option value="DZ">Algeria</option>
+                                    <option value="AS">American Samoa</option>
+                                    <option value="AD">Andorra</option>
+                                    <option value="AO">Angola</option>
+                                    <option value="AI">Anguilla</option>
+                                    <option value="AQ">Antarctica</option>
+                                    <option value="AG">Antigua and Barbuda</option>
+                                    <option value="AR">Argentina</option>
+                                    <option value="AM">Armenia</option>
+                                    <option value="AW">Aruba</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="AT">Austria</option>
+                                    <option value="AZ">Azerbaijan</option>
+                                    <option value="BS">Bahamas</option>
+                                    <option value="BH">Bahrain</option>
+                                    <option value="BD">Bangladesh</option>
+                                    <option value="BB">Barbados</option>
+                                    <option value="BY">Belarus</option>
+                                    <option value="BE">Belgium</option>
+                                    <option value="BZ">Belize</option>
+                                    <option value="BJ">Benin</option>
+                                    <option value="BM">Bermuda</option>
+                                    <option value="BT">Bhutan</option>
+                                    <option value="BO">Bolivia</option>
+                                    <option value="BQ">Bonaire, Sint Eustatius and Saba</option>
+                                    <option value="BA">Bosnia and Herzegovina</option>
+                                    <option value="BW">Botswana</option>
+                                    <option value="BV">Bouvet Island</option>
+                                    <option value="BR">Brazil</option>
+                                    <option value="IO">British Indian Ocean Territory</option>
+                                    <option value="BN">Brunei Darussalam</option>
+                                    <option value="BG">Bulgaria</option>
+                                    <option value="BF">Burkina Faso</option>
+                                    <option value="BI">Burundi</option>
+                                    <option value="KH">Cambodia</option>
+                                    <option value="CM">Cameroon</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="CV">Cape Verde</option>
+                                    <option value="KY">Cayman Islands</option>
+                                    <option value="CF">Central African Republic</option>
+                                    <option value="TD">Chad</option>
+                                    <option value="CL">Chile</option>
+                                    <option value="CN">China</option>
+                                    <option value="CX">Christmas Island</option>
+                                    <option value="CC">Cocos (Keeling) Islands</option>
+                                    <option value="CO">Colombia</option>
+                                    <option value="KM">Comoros</option>
+                                    <option value="CG">Congo</option>
+                                    <option value="CD">Congo, Democratic Republic of the Congo</option>
+                                    <option value="CK">Cook Islands</option>
+                                    <option value="CR">Costa Rica</option>
+                                    <option value="CI">Cote D'Ivoire</option>
+                                    <option value="HR">Croatia</option>
+                                    <option value="CU">Cuba</option>
+                                    <option value="CW">Curacao</option>
+                                    <option value="CY">Cyprus</option>
+                                    <option value="CZ">Czech Republic</option>
+                                    <option value="DK">Denmark</option>
+                                    <option value="DJ">Djibouti</option>
+                                    <option value="DM">Dominica</option>
+                                    <option value="DO">Dominican Republic</option>
+                                    <option value="EC">Ecuador</option>
+                                    <option value="EG">Egypt</option>
+                                    <option value="SV">El Salvador</option>
+                                    <option value="GQ">Equatorial Guinea</option>
+                                    <option value="ER">Eritrea</option>
+                                    <option value="EE">Estonia</option>
+                                    <option value="ET">Ethiopia</option>
+                                    <option value="FK">Falkland Islands (Malvinas)</option>
+                                    <option value="FO">Faroe Islands</option>
+                                    <option value="FJ">Fiji</option>
+                                    <option value="FI">Finland</option>
+                                    <option value="FR">France</option>
+                                    <option value="GF">French Guiana</option>
+                                    <option value="PF">French Polynesia</option>
+                                    <option value="TF">French Southern Territories</option>
+                                    <option value="GA">Gabon</option>
+                                    <option value="GM">Gambia</option>
+                                    <option value="GE">Georgia</option>
+                                    <option value="DE">Germany</option>
+                                    <option value="GH">Ghana</option>
+                                    <option value="GI">Gibraltar</option>
+                                    <option value="GR">Greece</option>
+                                    <option value="GL">Greenland</option>
+                                    <option value="GD">Grenada</option>
+                                    <option value="GP">Guadeloupe</option>
+                                    <option value="GU">Guam</option>
+                                    <option value="GT">Guatemala</option>
+                                    <option value="GG">Guernsey</option>
+                                    <option value="GN">Guinea</option>
+                                    <option value="GW">Guinea-Bissau</option>
+                                    <option value="GY">Guyana</option>
+                                    <option value="HT">Haiti</option>
+                                    <option value="HM">Heard Island and Mcdonald Islands</option>
+                                    <option value="VA">Holy See (Vatican City State)</option>
+                                    <option value="HN">Honduras</option>
+                                    <option value="HK">Hong Kong</option>
+                                    <option value="HU">Hungary</option>
+                                    <option value="IS">Iceland</option>
+                                    <option value="IN">India</option>
+                                    <option value="ID">Indonesia</option>
+                                    <option value="IR">Iran, Islamic Republic of</option>
+                                    <option value="IQ">Iraq</option>
+                                    <option value="IE">Ireland</option>
+                                    <option value="IM">Isle of Man</option>
+                                    <option value="IL">Israel</option>
+                                    <option value="IT">Italy</option>
+                                    <option value="JM">Jamaica</option>
+                                    <option value="JP">Japan</option>
+                                    <option value="JE">Jersey</option>
+                                    <option value="JO">Jordan</option>
+                                    <option value="KZ">Kazakhstan</option>
+                                    <option value="KE">Kenya</option>
+                                    <option value="KI">Kiribati</option>
+                                    <option value="KP">Korea, Democratic People's Republic of</option>
+                                    <option value="KR">Korea, Republic of</option>
+                                    <option value="XK">Kosovo</option>
+                                    <option value="KW">Kuwait</option>
+                                    <option value="KG">Kyrgyzstan</option>
+                                    <option value="LA">Lao People's Democratic Republic</option>
+                                    <option value="LV">Latvia</option>
+                                    <option value="LB">Lebanon</option>
+                                    <option value="LS">Lesotho</option>
+                                    <option value="LR">Liberia</option>
+                                    <option value="LY">Libyan Arab Jamahiriya</option>
+                                    <option value="LI">Liechtenstein</option>
+                                    <option value="LT">Lithuania</option>
+                                    <option value="LU">Luxembourg</option>
+                                    <option value="MO">Macao</option>
+                                    <option value="MK">Macedonia, the Former Yugoslav Republic of</option>
+                                    <option value="MG">Madagascar</option>
+                                    <option value="MW">Malawi</option>
+                                    <option value="MY">Malaysia</option>
+                                    <option value="MV">Maldives</option>
+                                    <option value="ML">Mali</option>
+                                    <option value="MT">Malta</option>
+                                    <option value="MH">Marshall Islands</option>
+                                    <option value="MQ">Martinique</option>
+                                    <option value="MR">Mauritania</option>
+                                    <option value="MU">Mauritius</option>
+                                    <option value="YT">Mayotte</option>
+                                    <option value="MX">Mexico</option>
+                                    <option value="FM">Micronesia, Federated States of</option>
+                                    <option value="MD">Moldova, Republic of</option>
+                                    <option value="MC">Monaco</option>
+                                    <option value="MN">Mongolia</option>
+                                    <option value="ME">Montenegro</option>
+                                    <option value="MS">Montserrat</option>
+                                    <option value="MA">Morocco</option>
+                                    <option value="MZ">Mozambique</option>
+                                    <option value="MM">Myanmar</option>
+                                    <option value="NA">Namibia</option>
+                                    <option value="NR">Nauru</option>
+                                    <option value="NP">Nepal</option>
+                                    <option value="NL">Netherlands</option>
+                                    <option value="AN">Netherlands Antilles</option>
+                                    <option value="NC">New Caledonia</option>
+                                    <option value="NZ">New Zealand</option>
+                                    <option value="NI">Nicaragua</option>
+                                    <option value="NE">Niger</option>
+                                    <option value="NG">Nigeria</option>
+                                    <option value="NU">Niue</option>
+                                    <option value="NF">Norfolk Island</option>
+                                    <option value="MP">Northern Mariana Islands</option>
+                                    <option value="NO">Norway</option>
+                                    <option value="OM">Oman</option>
+                                    <option value="PK">Pakistan</option>
+                                    <option value="PW">Palau</option>
+                                    <option value="PS">Palestinian Territory, Occupied</option>
+                                    <option value="PA">Panama</option>
+                                    <option value="PG">Papua New Guinea</option>
+                                    <option value="PY">Paraguay</option>
+                                    <option value="PE">Peru</option>
+                                    <option value="PH">Philippines</option>
+                                    <option value="PN">Pitcairn</option>
+                                    <option value="PL">Poland</option>
+                                    <option value="PT">Portugal</option>
+                                    <option value="PR">Puerto Rico</option>
+                                    <option value="QA">Qatar</option>
+                                    <option value="RE">Reunion</option>
+                                    <option value="RO">Romania</option>
+                                    <option value="RU">Russian Federation</option>
+                                    <option value="RW">Rwanda</option>
+                                    <option value="BL">Saint Barthelemy</option>
+                                    <option value="SH">Saint Helena</option>
+                                    <option value="KN">Saint Kitts and Nevis</option>
+                                    <option value="LC">Saint Lucia</option>
+                                    <option value="MF">Saint Martin</option>
+                                    <option value="PM">Saint Pierre and Miquelon</option>
+                                    <option value="VC">Saint Vincent and the Grenadines</option>
+                                    <option value="WS">Samoa</option>
+                                    <option value="SM">San Marino</option>
+                                    <option value="ST">Sao Tome and Principe</option>
+                                    <option value="SA">Saudi Arabia</option>
+                                    <option value="SN">Senegal</option>
+                                    <option value="RS">Serbia</option>
+                                    <option value="CS">Serbia and Montenegro</option>
+                                    <option value="SC">Seychelles</option>
+                                    <option value="SL">Sierra Leone</option>
+                                    <option value="SG">Singapore</option>
+                                    <option value="SX">Sint Maarten</option>
+                                    <option value="SK">Slovakia</option>
+                                    <option value="SI">Slovenia</option>
+                                    <option value="SB">Solomon Islands</option>
+                                    <option value="SO">Somalia</option>
+                                    <option value="ZA">South Africa</option>
+                                    <option value="GS">South Georgia and the South Sandwich Islands</option>
+                                    <option value="SS">South Sudan</option>
+                                    <option value="ES">Spain</option>
+                                    <option value="LK">Sri Lanka</option>
+                                    <option value="SD">Sudan</option>
+                                    <option value="SR">Suriname</option>
+                                    <option value="SJ">Svalbard and Jan Mayen</option>
+                                    <option value="SZ">Swaziland</option>
+                                    <option value="SE">Sweden</option>
+                                    <option value="CH">Switzerland</option>
+                                    <option value="SY">Syrian Arab Republic</option>
+                                    <option value="TW">Taiwan, Province of China</option>
+                                    <option value="TJ">Tajikistan</option>
+                                    <option value="TZ">Tanzania, United Republic of</option>
+                                    <option value="TH">Thailand</option>
+                                    <option value="TL">Timor-Leste</option>
+                                    <option value="TG">Togo</option>
+                                    <option value="TK">Tokelau</option>
+                                    <option value="TO">Tonga</option>
+                                    <option value="TT">Trinidad and Tobago</option>
+                                    <option value="TN">Tunisia</option>
+                                    <option value="TR">Turkey</option>
+                                    <option value="TM">Turkmenistan</option>
+                                    <option value="TC">Turks and Caicos Islands</option>
+                                    <option value="TV">Tuvalu</option>
+                                    <option value="UG">Uganda</option>
+                                    <option value="UA">Ukraine</option>
+                                    <option value="AE">United Arab Emirates</option>
+                                    <option value="GB">United Kingdom</option>
+                                    <option value="US">United States</option>
+                                    <option value="UM">United States Minor Outlying Islands</option>
+                                    <option value="UY">Uruguay</option>
+                                    <option value="UZ">Uzbekistan</option>
+                                    <option value="VU">Vanuatu</option>
+                                    <option value="VE">Venezuela</option>
+                                    <option value="VN">Viet Nam</option>
+                                    <option value="VG">Virgin Islands, British</option>
+                                    <option value="VI">Virgin Islands, U.s.</option>
+                                    <option value="WF">Wallis and Futuna</option>
+                                    <option value="EH">Western Sahara</option>
+                                    <option value="YE">Yemen</option>
+                                    <option value="ZM">Zambia</option>
+                                    <option value="ZW">Zimbabwe</option>
+								</select>
+								<div class="error-message">Please select your country.</div>
+							</div>
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3 field-group">
+								<label for="city" class="form-label">City</label>
+								<input name="city" type="text" id="city" class="form-control" value="{{request.user.memberprofile.city}}" oninput="clear_error('city')">
+								<div class="error-message">Please enter your city.</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="mb-3">
+								  <label for="skip_id" class="form-label">Skype ID</label>
+								  <input name="skype" type="text" id="skip_id" class="form-control" value="{{request.user.memberprofile.skype}}" >
+								  <div class="form-text mt-0">Optional</div>
+							</div>
+						</div>
+						
+						<!--<div class="row mb-0">
+							<div class="col-xl-8 col-lg-8 col-md-10 col-sm-12 pt-2">		
+								<label for="ws_count_vol" class="form-label">How many {{type}} have you ever held as a presenter at Vollabor?</label>
+							</div>
+							<div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">							
+								<select name="numinpres" class="form-select col-auto text-center" id="ws_count_vol">
+								    <option value="-3">select...</option>
+								    <option value="0">0</option>
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+									<option value="5">5</option>
+									<option value=">5">>5</option>
+									
+								</select>
+								
+							</div>
+							<div class="form-text mt-0">Optional</div>
+							
+						</div>
+						
+						
+						<div class="row">
+							<div class="col-xl-8 col-lg-8 col-md-10 col-sm-12  pt-2">		
+								<label for="ws_count_other" class="form-label">How many {{type}} have you ever held as a presenter elsewhere?</label>
+							
+							</div>
+							<div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">							
+								<select name="numallpres" class="form-select col-auto text-center" id="ws_count_other">
+								    <option value="-3">select...</option>
+									<option value="0">0</option>
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+									<option value="5">5</option>
+									<option value=">5">>5</option>
+									
+								</select>
+								
+							</div>
+							<div class="form-text mt-0">Optional</div>
+							
+						</div>
+						
+						
+						<div class="row">
+							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">		
+								<label class="form-label">Previous exprience in {{type}}</label>
+							
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 form-text text-start">		
+								Optional
+							
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 form-text text-start">	
+								 Total charachters: <span id="display_count">0</span><span>/2500 </span> 
+							
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-12">
+								<textarea name="Previous_exprience" class="form-control"  id="pre_exprience" rows="5" placeholder="Text"></textarea>
+							</div>
+						
+						</div>-->
+						
+						
+						
+						
+						
+							
+							
+						
+						
+						
+						
+						
+						
+					</div>
+					<!--   step two -->
+					<div class="step px-2"  id="step2">
+						<div class="row">
+							<div class="mb-3 field-group">
+								  <label for="ws-title" class="form-label">{{type}} title</label>
+								  <input name="title" type="text" id="ws-title" class="form-control" placeholder="Write 150 characters with space" oninput="clear_error('ws-title')">
+							       <div class="error-message">Please enter the title.</div> 
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-3 field-group">
+								  <label for="location" class="form-label">Location</label>
+								  <input name="location" type="text" id="location" class="form-control" placeholder="" oninput="clear_error('location')">
+								  <div class="error-message">Please enter the location.</div> 
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-3 field-group">
+								<label for="time_zone" class="form-label">Time zone</label>
+								<select name="time_zone" class="form-select" id="time_zone" onchange="clear_error('time_zone')">
+									<option value="0" selected>select...</option>
+									<option value="Hawaii">(GMT-10:00) Hawaii</option>
+                            		<option value="Alaska">(GMT-09:00) Alaska</option>
+                            		<option value="Pacific Time (US &amp; Canada)">(GMT-08:00) Pacific Time (US &amp; Canada)</option>
+                            		<option value="Arizona">(GMT-07:00) Arizona</option>
+                            		<option value="Mountain Time (US &amp; Canada)">(GMT-07:00) Mountain Time (US &amp; Canada)</option>
+                            		<option value="Central Time (US &amp; Canada)">(GMT-06:00) Central Time (US &amp; Canada)</option>
+                            		<option value="Eastern Time (US &amp; Canada)">(GMT-05:00) Eastern Time (US &amp; Canada)</option>
+                            		<option value="Indiana (East)">(GMT-05:00) Indiana (East)</option><option value="" disabled="disabled">-------------</option>
+                            		<option value="International Date Line West">(GMT-11:00) International Date Line West</option>
+                            		<option value="Midway Island">(GMT-11:00) Midway Island</option>
+                            		<option value="Samoa">(GMT-11:00) Samoa</option>
+                            		<option value="Tijuana">(GMT-08:00) Tijuana</option>
+                            		<option value="Chihuahua">(GMT-07:00) Chihuahua</option>
+                            		<option value="Mazatlan">(GMT-07:00) Mazatlan</option>
+                            		<option value="Central America">(GMT-06:00) Central America</option>
+                            		<option value="Guadalajara">(GMT-06:00) Guadalajara</option>
+                            		<option value="Mexico City">(GMT-06:00) Mexico City</option>
+                            		<option value="Monterrey">(GMT-06:00) Monterrey</option>
+                            		<option value="Saskatchewan">(GMT-06:00) Saskatchewan</option>
+                            		<option value="Bogota">(GMT-05:00) Bogota</option>
+                            		<option value="Lima">(GMT-05:00) Lima</option>
+                            		<option value="Quito">(GMT-05:00) Quito</option>
+                            		<option value="Caracas">(GMT-04:30) Caracas</option>
+                            		<option value="Atlantic Time (Canada)">(GMT-04:00) Atlantic Time (Canada)</option>
+                            		<option value="La Paz">(GMT-04:00) La Paz</option>
+                            		<option value="Santiago">(GMT-04:00) Santiago</option>
+                            		<option value="Newfoundland">(GMT-03:30) Newfoundland</option>
+                            		<option value="Brasilia">(GMT-03:00) Brasilia</option>
+                            		<option value="Buenos Aires">(GMT-03:00) Buenos Aires</option>
+                            		<option value="Georgetown">(GMT-03:00) Georgetown</option>
+                            		<option value="Greenland">(GMT-03:00) Greenland</option>
+                            		<option value="Mid-Atlantic">(GMT-02:00) Mid-Atlantic</option>
+                            		<option value="Azores">(GMT-01:00) Azores</option>
+                            		<option value="Cape Verde Is.">(GMT-01:00) Cape Verde Is.</option>
+                            		<option value="Casablanca">(GMT) Casablanca</option>
+                            		<option value="Dublin">(GMT) Dublin</option>
+                            		<option value="Edinburgh">(GMT) Edinburgh</option>
+                            		<option value="Lisbon">(GMT) Lisbon</option>
+                            		<option value="London">(GMT) London</option>
+                            		<option value="Monrovia">(GMT) Monrovia</option>
+                            		<option value="Amsterdam">(GMT+01:00) Amsterdam</option>
+                            		<option value="Belgrade">(GMT+01:00) Belgrade</option>
+                            		<option value="Berlin">(GMT+01:00) Berlin</option>
+                            		<option value="Bern">(GMT+01:00) Bern</option>
+                            		<option value="Bratislava">(GMT+01:00) Bratislava</option>
+                            		<option value="Brussels">(GMT+01:00) Brussels</option>
+                            		<option value="Budapest">(GMT+01:00) Budapest</option>
+                            		<option value="Copenhagen">(GMT+01:00) Copenhagen</option>
+                            		<option value="Ljubljana">(GMT+01:00) Ljubljana</option>
+                            		<option value="Madrid">(GMT+01:00) Madrid</option>
+                            		<option value="Paris">(GMT+01:00) Paris</option>
+                            		<option value="Prague">(GMT+01:00) Prague</option>
+                            		<option value="Rome">(GMT+01:00) Rome</option>
+                            		<option value="Sarajevo">(GMT+01:00) Sarajevo</option>
+                            		<option value="Skopje">(GMT+01:00) Skopje</option>
+                            		<option value="Stockholm">(GMT+01:00) Stockholm</option>
+                            		<option value="Vienna">(GMT+01:00) Vienna</option>
+                            		<option value="Warsaw">(GMT+01:00) Warsaw</option>
+                            		<option value="West Central Africa">(GMT+01:00) West Central Africa</option>
+                            		<option value="Zagreb">(GMT+01:00) Zagreb</option>
+                            		<option value="Athens">(GMT+02:00) Athens</option>
+                            		<option value="Bucharest">(GMT+02:00) Bucharest</option>
+                            		<option value="Cairo">(GMT+02:00) Cairo</option>
+                            		<option value="Harare">(GMT+02:00) Harare</option>
+                            		<option value="Helsinki">(GMT+02:00) Helsinki</option>
+                            		<option value="Istanbul">(GMT+02:00) Istanbul</option>
+                            		<option value="Jerusalem">(GMT+02:00) Jerusalem</option>
+                            		<option value="Kyiv">(GMT+02:00) Kyiv</option>
+                            		<option value="Minsk">(GMT+02:00) Minsk</option>
+                            		<option value="Pretoria">(GMT+02:00) Pretoria</option>
+                            		<option value="Riga">(GMT+02:00) Riga</option>
+                            		<option value="Sofia">(GMT+02:00) Sofia</option>
+                            		<option value="Tallinn">(GMT+02:00) Tallinn</option>
+                            		<option value="Vilnius">(GMT+02:00) Vilnius</option>
+                            		<option value="Baghdad">(GMT+03:00) Baghdad</option>
+                            		<option value="Kuwait">(GMT+03:00) Kuwait</option>
+                            		<option value="Moscow">(GMT+03:00) Moscow</option>
+                            		<option value="Nairobi">(GMT+03:00) Nairobi</option>
+                            		<option value="Riyadh">(GMT+03:00) Riyadh</option>
+                            		<option value="St. Petersburg">(GMT+03:00) St. Petersburg</option>
+                            		<option value="Volgograd">(GMT+03:00) Volgograd</option>
+                            		<option value="Tehran">(GMT+03:30) Tehran</option>
+                            		<option value="Abu Dhabi">(GMT+04:00) Abu Dhabi</option>
+                            		<option value="Baku">(GMT+04:00) Baku</option>
+                            		<option value="Muscat">(GMT+04:00) Muscat</option>
+                            		<option value="Tbilisi">(GMT+04:00) Tbilisi</option>
+                            		<option value="Yerevan">(GMT+04:00) Yerevan</option>
+                            		<option value="Kabul">(GMT+04:30) Kabul</option>
+                            		<option value="Ekaterinburg">(GMT+05:00) Ekaterinburg</option>
+                            		<option value="Islamabad">(GMT+05:00) Islamabad</option>
+                            		<option value="Karachi">(GMT+05:00) Karachi</option>
+                            		<option value="Tashkent">(GMT+05:00) Tashkent</option>
+                            		<option value="Chennai">(GMT+05:30) Chennai</option>
+                            		<option value="Kolkata">(GMT+05:30) Kolkata</option>
+                            		<option value="Mumbai">(GMT+05:30) Mumbai</option>
+                            		<option value="New Delhi">(GMT+05:30) New Delhi</option>
+                            		<option value="Kathmandu">(GMT+05:45) Kathmandu</option>
+                            		<option value="Almaty">(GMT+06:00) Almaty</option>
+                            		<option value="Astana">(GMT+06:00) Astana</option>
+                            		<option value="Dhaka">(GMT+06:00) Dhaka</option>
+                            		<option value="Novosibirsk">(GMT+06:00) Novosibirsk</option>
+                            		<option value="Sri Jayawardenepura">(GMT+06:00) Sri Jayawardenepura</option>
+                            		<option value="Rangoon">(GMT+06:30) Rangoon</option>
+                            		<option value="Bangkok">(GMT+07:00) Bangkok</option>
+                            		<option value="Hanoi">(GMT+07:00) Hanoi</option>
+                            		<option value="Jakarta">(GMT+07:00) Jakarta</option>
+                            		<option value="Krasnoyarsk">(GMT+07:00) Krasnoyarsk</option>
+                            		<option value="Beijing">(GMT+08:00) Beijing</option>
+                            		<option value="Chongqing">(GMT+08:00) Chongqing</option>
+                            		<option value="Hong Kong">(GMT+08:00) Hong Kong</option>
+                            		<option value="Irkutsk">(GMT+08:00) Irkutsk</option>
+                            		<option value="Kuala Lumpur">(GMT+08:00) Kuala Lumpur</option>
+                            		<option value="Perth">(GMT+08:00) Perth</option>
+                            		<option value="Singapore">(GMT+08:00) Singapore</option>
+                            		<option value="Taipei">(GMT+08:00) Taipei</option>
+                            		<option value="Ulaan Bataar">(GMT+08:00) Ulaan Bataar</option>
+                            		<option value="Urumqi">(GMT+08:00) Urumqi</option>
+                            		<option value="Osaka">(GMT+09:00) Osaka</option>
+                            		<option value="Sapporo">(GMT+09:00) Sapporo</option>
+                            		<option value="Seoul">(GMT+09:00) Seoul</option>
+                            		<option value="Tokyo">(GMT+09:00) Tokyo</option>
+                            		<option value="Yakutsk">(GMT+09:00) Yakutsk</option>
+                            		<option value="Adelaide">(GMT+09:30) Adelaide</option>
+                            		<option value="Darwin">(GMT+09:30) Darwin</option>
+                            		<option value="Brisbane">(GMT+10:00) Brisbane</option>
+                            		<option value="Canberra">(GMT+10:00) Canberra</option>
+                            		<option value="Guam">(GMT+10:00) Guam</option>
+                            		<option value="Hobart">(GMT+10:00) Hobart</option>
+                            		<option value="Melbourne">(GMT+10:00) Melbourne</option>
+                            		<option value="Port Moresby">(GMT+10:00) Port Moresby</option>
+                            		<option value="Sydney">(GMT+10:00) Sydney</option>
+                            		<option value="Vladivostok">(GMT+10:00) Vladivostok</option>
+                            		<option value="Magadan">(GMT+11:00) Magadan</option>
+                            		<option value="New Caledonia">(GMT+11:00) New Caledonia</option>
+                            		<option value="Solomon Is.">(GMT+11:00) Solomon Is.</option>
+                            		<option value="Auckland">(GMT+12:00) Auckland</option>
+                            		<option value="Fiji">(GMT+12:00) Fiji</option>
+                            		<option value="Kamchatka">(GMT+12:00) Kamchatka</option>
+                            		<option value="Marshall Is.">(GMT+12:00) Marshall Is.</option>
+                            		<option value="Wellington">(GMT+12:00) Wellington</option>
+                            		<option value="Nuku'alofa">(GMT+13:00) Nuku'alofa</option>
+									
+									
+								</select>
+								<div class="error-message">Please select the time zone.</div> 
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-3 field-group">
+								<label for="lang" class="form-label">Language</label>
+								<select class="form-select" id="lang"  onchange="clear_error('lang')">
+									<option value="0" selected>select...</option>
+									<option>Select Language</option>
+                                    <option value="af">Afrikaans</option>
+                                    <option value="sq">Albanian - shqip</option>
+                                    <option value="am">Amharic - አማርኛ</option>
+                                    <option value="ar">Arabic - العربية</option>
+                                    <option value="an">Aragonese - aragonés</option>
+                                    <option value="hy">Armenian - հայերեն</option>
+                                    <option value="ast">Asturian - asturianu</option>
+                                    <option value="az">Azerbaijani - azərbaycan dili</option>
+                                    <option value="eu">Basque - euskara</option>
+                                    <option value="be">Belarusian - беларуская</option>
+                                    <option value="bn">Bengali - বাংলা</option>
+                                    <option value="bs">Bosnian - bosanski</option>
+                                    <option value="br">Breton - brezhoneg</option>
+                                    <option value="bg">Bulgarian - български</option>
+                                    <option value="ca">Catalan - català</option>
+                                    <option value="ckb">Central Kurdish - کوردی (دەستنوسی عەرەبی)</option>
+                                    <option value="zh">Chinese - 中文</option>
+                                    <option value="zh-HK">Chinese (Hong Kong) - 中文（香港）</option>
+                                    <option value="zh-CN">Chinese (Simplified) - 中文（简体）</option>
+                                    <option value="zh-TW">Chinese (Traditional) - 中文（繁體）</option>
+                                    <option value="co">Corsican</option>
+                                    <option value="hr">Croatian - hrvatski</option>
+                                    <option value="cs">Czech - čeština</option>
+                                    <option value="da">Danish - dansk</option>
+                                    <option value="nl">Dutch - Nederlands</option>
+                                    <option value="en">English</option>
+                                    <option value="en-AU">English (Australia)</option>
+                                    <option value="en-CA">English (Canada)</option>
+                                    <option value="en-IN">English (India)</option>
+                                    <option value="en-NZ">English (New Zealand)</option>
+                                    <option value="en-ZA">English (South Africa)</option>
+                                    <option value="en-GB">English (United Kingdom)</option>
+                                    <option value="en-US">English (United States)</option>
+                                    <option value="eo">Esperanto - esperanto</option>
+                                    <option value="et">Estonian - eesti</option>
+                                    <option value="fo">Faroese - føroyskt</option>
+                                    <option value="fil">Filipino</option>
+                                    <option value="fi">Finnish - suomi</option>
+                                    <option value="fr">French - français</option>
+                                    <option value="fr-CA">French (Canada) - français (Canada)</option>
+                                    <option value="fr-FR">French (France) - français (France)</option>
+                                    <option value="fr-CH">French (Switzerland) - français (Suisse)</option>
+                                    <option value="gl">Galician - galego</option>
+                                    <option value="ka">Georgian - ქართული</option>
+                                    <option value="de">German - Deutsch</option>
+                                    <option value="de-AT">German (Austria) - Deutsch (Österreich)</option>
+                                    <option value="de-DE">German (Germany) - Deutsch (Deutschland)</option>
+                                    <option value="de-LI">German (Liechtenstein) - Deutsch (Liechtenstein)</option>
+                                    <option value="de-CH">German (Switzerland) - Deutsch (Schweiz)</option>
+                                    <option value="el">Greek - Ελληνικά</option>
+                                    <option value="gn">Guarani</option>
+                                    <option value="gu">Gujarati - ગુજરાતી</option>
+                                    <option value="ha">Hausa</option>
+                                    <option value="haw">Hawaiian - ʻŌlelo Hawaiʻi</option>
+                                    <option value="he">Hebrew - עברית</option>
+                                    <option value="hi">Hindi - हिन्दी</option>
+                                    <option value="hu">Hungarian - magyar</option>
+                                    <option value="is">Icelandic - íslenska</option>
+                                    <option value="id">Indonesian - Indonesia</option>
+                                    <option value="ia">Interlingua</option>
+                                    <option value="ga">Irish - Gaeilge</option>
+                                    <option value="it">Italian - italiano</option>
+                                    <option value="it-IT">Italian (Italy) - italiano (Italia)</option>
+                                    <option value="it-CH">Italian (Switzerland) - italiano (Svizzera)</option>
+                                    <option value="ja">Japanese - 日本語</option>
+                                    <option value="kn">Kannada - ಕನ್ನಡ</option>
+                                    <option value="kk">Kazakh - қазақ тілі</option>
+                                    <option value="km">Khmer - ខ្មែរ</option>
+                                    <option value="ko">Korean - 한국어</option>
+                                    <option value="ku">Kurdish - Kurdî</option>
+                                    <option value="ky">Kyrgyz - кыргызча</option>
+                                    <option value="lo">Lao - ລາວ</option>
+                                    <option value="la">Latin</option>
+                                    <option value="lv">Latvian - latviešu</option>
+                                    <option value="ln">Lingala - lingála</option>
+                                    <option value="lt">Lithuanian - lietuvių</option>
+                                    <option value="mk">Macedonian - македонски</option>
+                                    <option value="ms">Malay - Bahasa Melayu</option>
+                                    <option value="ml">Malayalam - മലയാളം</option>
+                                    <option value="mt">Maltese - Malti</option>
+                                    <option value="mr">Marathi - मराठी</option>
+                                    <option value="mn">Mongolian - монгол</option>
+                                    <option value="ne">Nepali - नेपाली</option>
+                                    <option value="no">Norwegian - norsk</option>
+                                    <option value="nb">Norwegian Bokmål - norsk bokmål</option>
+                                    <option value="nn">Norwegian Nynorsk - nynorsk</option>
+                                    <option value="oc">Occitan</option>
+                                    <option value="or">Oriya - ଓଡ଼ିଆ</option>
+                                    <option value="om">Oromo - Oromoo</option>
+                                    <option value="ps">Pashto - پښتو</option>
+                                    <option value="fa">Persian - فارسی</option>
+                                    <option value="pl">Polish - polski</option>
+                                    <option value="pt">Portuguese - português</option>
+                                    <option value="pt-BR">Portuguese (Brazil) - português (Brasil)</option>
+                                    <option value="pt-PT">Portuguese (Portugal) - português (Portugal)</option>
+                                    <option value="pa">Punjabi - ਪੰਜਾਬੀ</option>
+                                    <option value="qu">Quechua</option>
+                                    <option value="ro">Romanian - română</option>
+                                    <option value="mo">Romanian (Moldova) - română (Moldova)</option>
+                                    <option value="rm">Romansh - rumantsch</option>
+                                    <option value="ru">Russian - русский</option>
+                                    <option value="gd">Scottish Gaelic</option>
+                                    <option value="sr">Serbian - српски</option>
+                                    <option value="sh">Serbo-Croatian - Srpskohrvatski</option>
+                                    <option value="sn">Shona - chiShona</option>
+                                    <option value="sd">Sindhi</option>
+                                    <option value="si">Sinhala - සිංහල</option>
+                                    <option value="sk">Slovak - slovenčina</option>
+                                    <option value="sl">Slovenian - slovenščina</option>
+                                    <option value="so">Somali - Soomaali</option>
+                                    <option value="st">Southern Sotho</option>
+                                    <option value="es">Spanish - español</option>
+                                    <option value="es-AR">Spanish (Argentina) - español (Argentina)</option>
+                                    <option value="es-419">Spanish (Latin America) - español (Latinoamérica)</option>
+                                    <option value="es-MX">Spanish (Mexico) - español (México)</option>
+                                    <option value="es-ES">Spanish (Spain) - español (España)</option>
+                                    <option value="es-US">Spanish (United States) - español (Estados Unidos)</option>
+                                    <option value="su">Sundanese</option>
+                                    <option value="sw">Swahili - Kiswahili</option>
+                                    <option value="sv">Swedish - svenska</option>
+                                    <option value="tg">Tajik - тоҷикӣ</option>
+                                    <option value="ta">Tamil - தமிழ்</option>
+                                    <option value="tt">Tatar</option>
+                                    <option value="te">Telugu - తెలుగు</option>
+                                    <option value="th">Thai - ไทย</option>
+                                    <option value="ti">Tigrinya - ትግርኛ</option>
+                                    <option value="to">Tongan - lea fakatonga</option>
+                                    <option value="tr">Turkish - Türkçe</option>
+                                    <option value="tk">Turkmen</option>
+                                    <option value="tw">Twi</option>
+                                    <option value="uk">Ukrainian - українська</option>
+                                    <option value="ur">Urdu - اردو</option>
+                                    <option value="ug">Uyghur</option>
+                                    <option value="uz">Uzbek - o‘zbek</option>
+                                    <option value="vi">Vietnamese - Tiếng Việt</option>
+                                    <option value="wa">Walloon - wa</option>
+                                    <option value="cy">Welsh - Cymraeg</option>
+                                    <option value="fy">Western Frisian</option>
+                                    <option value="xh">Xhosa</option>
+                                    <option value="yi">Yiddish</option>
+                                    <option value="yo">Yoruba - Èdè Yorùbá</option>
+                                    <option value="zu">Zulu - isiZulu</option>
+									
+									
+								</select>
+								<div class="error-message">Please select the language.</div> 
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 mb-3 field-group">
+								<label for="MainField" class="form-label">Main field</label>
+								<select class="form-select main_field" id="MainField" >
+									<option value="0">Select...</option>								-->
+									{% for field in mainfields %}
+                                        <option value="{{field.id}}">{{field}}</option>
+                                    {% endfor %}
+                                    <option value="-100">Others</option>
+								</select>
+								<div class="error-message">Please select the main field.</div> 
+							</div>
+							<div class="col-xl-5 col-lg-5 col-md-10 col-sm-10 mb-3 field-group">
+								<label for="subfield" class="form-label">Subfield</label>
+								<select class="form-select sub_field" id="SubField">
+									<option value="0">Select...</option>	
+									{% for field in subfields %}
+                                        <option value="{{field.id}}">{{field}}</option>
+                                    {% endfor %}
+									
+								</select>
+								<div class="error-message">Please select the subfield.</div> 
+							</div>
+							<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 mb-3" style="position: relative;">
+							    <a href="#" id="AddFieldtoTbl" ><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+							</div>
+							
+							
+							
+						</div>
+						
+						
+						<div class="row my-2 d-none" id="rowField">
+                                <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 field-group">
+                                        <label for="usname" class="form-label">Add your main field</label>
+                                        <input type="text" name="add_field" class="form-control" id="otherMField" oninput="clear_error('otherMField')">
+                                        <!--<div class="mb-5" id="otherMField_error" style="color:red;font-size:0.9em"></div>-->
+                                        <div class="error-message">Please enter your main field.</div> 
+                                        
+                                </div>
+                                    
+                              
+                                <div class="col-xl-5 col-lg-5 col-md-10 col-sm-10 field-group">
+                                   
+                                        <label for="usname" class="form-label">Add your subfield</label>
+                                        <input type="text" name="add_field" class="form-control" id="otherSField" oninput="clear_error('otherSField')">
+                                        <!--<div class="mb-5" id="otherSField_error" style="color:red;font-size:0.9em"></div>-->
+                                        <div class="error-message">Please enter your subfield.</div> 
+                                        
+                                </div>
+                                <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 mb-3" style="position: relative;">
+							        <a href="#" id="AddOtherFieldtoTbl" ><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+							    </div>
+                                
+                                
+                        </div>
+                            
+						
+						
+						
+						
+						<div class="row">
+							<div class="col-12 mb-3 field-group">
+								<table class="table" id="fieldtbl">
+								
+								<thead>
+									<tr>
+										<th width="40%">Main field</th>
+										<th width="40%">Subfield</th>
+										<th width="20%"></th>
+										
+									
+									
+									</tr>
+								</thead>
+								
+								<tbody>
+									<!--<tr>-->
+										<!--<td>Lorem ipsum</td>-->
+										<!--<td>Lorem ipsum</td>-->
+										<!--<td></td>-->
+									<!--</tr>-->
+								</tbody>
+								
+								
+								</table>
+								<div class="error-message" id="fields_error">Please add your main fields and subfields.</div> 
+							</div>
+						    <input type="text" name="Mfields" class="d-none" id="Mfields" >
+                            <input type="text" name="Sfields" class="d-none" id="Sfields" >
+						</div>
+						
+						<div class="row">
+							<div class="col-xl-4 col-lg-7 col-md-12 col-sm-12  pt-2">		
+								<label for="cost" class="form-label">Suggest cost per individual (USA $)</label>
+							
+							</div>
+							<div class="col-xl-3 col-lg-4 col-md-12 col-sm-12 field-group">							
+								<input name="price" class="form-select text-start" type="text" id="cost" placeholder="" onblur="checkNumber('cost')" oninput="clear_error('cost')">
+								<div class="error-message" id="cost_error">Please enter the cost.</div> 
+								
+							</div>
+						
+						</div>
+						
+						<div class="row">
+							<div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 text-start">		
+								<label>{{type}} description</label>
+							
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 form-text text-end">	
+								 Total charachters: <span id="display_count_des">0</span><span>/2500 </span>  
+							
+							</div>
+						</div>
+						
+						<div class="row mb-3">
+							<div class="col-12 field-group">
+								<textarea name="description" class="form-control" id="description" rows="5" placeholder="Text" oninput="clear_error('description')"></textarea>
+								<div id="description_error" class="error-message">Please enter the description.</div> 
+							</div>
+						
+						</div>
+						
+						
+						<div class="row">
+							<label>Background image</label>
+							<div class="col-12 field-group">
+								
+								<div class="upload-container text-center" id="upload-container">
+									<!--<input type="file" id="file-upload">-->
+								
+									    
+									  
+									  
+									<!--<p>Don`t have any?
+									  <a href="#" class="link">Use Demo</a></p> -->
+								<span class="dragBox">
+                    				Drag and Drop or
+                    				<input type="file" name="image" onChange="dragNdrop(event,'uploadImage','img_name')"
+                    				ondragover="drag()"
+                    				ondrop="drop()" 
+                    				id="uploadImage" 
+                    				>
+                    				
+                    				<label for="uploadImage" class="link">
+                    					Browse
+                    				</label>
+									<div class="icons fa-4x">
+									  <i class="fa fa-cloud-upload"></i>
+									 
+									</div>
+									<div id="img_name" class="text-center text-success"></div>
+                    				
+                    				
+                    				
+                    				
+                    			</span>	  
+			
+                    			
+									
+								  
+								</div>
+							
+						    	<div id="image_back_error" class="error-message">Please upload the background image.</div> 
+							</div>
+						
+						
+						
+						</div>
+						
+						
+					
+					</div>
+					
+					
+					<!--   step three -->
+					<div class="step px-2"  id="step3">
+					
+						<div class="row">
+							<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 mb-3 field-group">
+							   
+								  <label for="speaker" class="form-label">{{type}} speaker(s)</label>
+								  <input name="speaker" type="text" id="speaker" class="form-control me-1" placeholder="" oninput="clear_error('speaker')">
+						        <div class="error-message">Please enter the full name.</div>
+						    </div>
+						    <div class="col-xl-2 col-lg-2 col-md-10 col-sm-10 mb-3">
+							    <!--<div class="d-flex" id="speakerDiv">-->
+    								  <!--<input name="speaker" type="text" id="speaker" class="form-control me-1" placeholder="" oninput="clear_error('speakerDiv')">-->
+    								  <label for="degree_speaker" class="form-label">degree</label>
+    								  <select class="form-select me-1" id="degree_speaker">
+    								      
+    								      <option value="PhD" selected>PhD</option>
+    								      <option value="MSc">MSc</option>
+    								      <option value="BSc">BSc</option>
+    								      <option value="0">---</option>
+    								  </select>
+    								  
+							</div>
+							<div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 mb-3" style="position:relative">
+								   <a href="#" id="speakerBtn" class="add-tag"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+						    </div>
+						
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3 buttonIn field-group">
+								<label for="motivating" class="form-label">Motivating keywords</label>
+								  <input name="motivate" type="text" id="keyword" class="form-control" placeholder="" oninput="clear_error('keyword')">
+								   <a href="#" id="motivateBtn" class="add-tag" ><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+								    <div class="error-message">Please enter the motivating keyword.</div>
+							</div>
+						
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3 field-group">
+    							<div class="tags d-flex flex-column" id="speakers_list"></div>
+    							<div id="speaker_error" class="error-message">Please add speaker(s).</div> 	  
+    						</div>
+    						<input type="text" name="speaker_total" class="d-none" id="speaker_total" >
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3 field-group ">
+								<div class="tags" id="keyword_list"></div>
+								<div id="keyword_error" class="error-message">Please add keyword(s).</div> 	
+							</div>
+								<input type="text" class="d-none" id="valkey" name="keyword">
+						</div>
+						<!--<div class="row">
+							<div class="other_speaker">
+								<a href="#">Or invite speakers to your workshop</a>
+							</div>
+						</div>-->
+						<div class="row">
+							<div class="mb-3 field-group">
+								  
+								  <label for="sec_title" class="form-label">Section title</label>
+								  <input type="text" id="sec_title" class="form-control" placeholder="" oninput="clear_error('sec_title')">
+								  <div class="error-message">Please enter the section title.</div> 
+								  
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3 field-group">
+							    <label for="datetime" class="form-label">Date and time</label>
+								  <input type="datetime-local" id="datetime" class="form-control" placeholder="" oninput="clear_error('datetime')">
+								  <div class="error-message">Please enter the date and time.</div> 
+								  
+								  
+							</div>
+							<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-3 field-group">
+								<label for="price" class="form-label">Price (USA $)</label>
+								  <input type="text" id="price" class="form-control" placeholder="$ 00.00" onblur="checkNumber('price')" oninput="clear_error('price')">
+								  <div class="error-message" id="price_error">Please enter the price.</div>
+							</div>
+						</div>
+						
+						<!--<div class="row">
+							<label>Powerpoint/PDF attachment</label>
+							<div class="col-12">
+							    
+							    
+							    <div class="upload-container text-center" id="upload-container-pp">
+									<span class="dragBox">
+                    				Drag and Drop or
+                    				<input type="file" name="power" onChange="dragNdrop(event,'uploadpp','pp_name')"
+                    				ondragover="drag()"
+                    				ondrop="drop()" 
+                    				id="uploadpp" 
+                    				>
+                    				
+                    				<label for="uploadpp" class="link">
+                    					Browse
+                    				</label>
+									<div class="icons fa-4x">
+									  <i class="fa fa-cloud-upload"></i>
+									 
+									</div>
+									<div id="pp_name" class="text-center text-success"></div>
+                    				
+                    				
+                    				
+                    				
+                    			</span>	  
+			
+                    			
+									
+								  
+								</div>
+							    
+							    
+							    
+							    
+							   
+								
+							
+						
+							</div>
+						
+						
+						
+						</div>-->
+						
+						
+						<div class="row mt-4">
+							<div class="col-12">
+								<table class="table" id="timetbl">
+									<thead>
+										<tr>
+											<th style="width:20%">Section title</th>
+											<th style="width:6%">Price(USA $)</th>
+											<th style="width:5%">Status</th>
+											<th style="width:7%">Date and Time</th>
+											<th style="width:10%">Powerpoint/PDF</th>
+										    <th style="width:2%"><a href="#" id="AddSectoTbl" ><i class="fa fa-plus-circle" style="font-size:24px;color:#555" aria-hidden="true"></i></a></th>
+										
+										</tr>
+									
+									
+									</thead>
+									<tbody>
+										
+									
+									</tbody>
+								
+								
+								</table>
+							
+							
+							</div>
+						
+						
+						
+						</div>
+						
+						 <input type="text" name="tblList" class="d-none" id="tblList">
+					
+					
+					
+					</div>
+					
+					<!--   step four -->
+					<div class="step px-2"  id="step4">
+					
+					</div>
+    
+				<div class="row text-end my-4">
+					<div class="ms-auto">
+					<button class="prevBtn col-2 mx-2 ms-auto" type="button" id="prevBtn" onclick="nextPrev(-1)">Back</button>
+					<button class="nextBtn col-2" type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+					</div>
+					
+						
+				</div>
+				
+				
+			
+				</div>
+				
+			
+			
+			
+			
+			
+			</div>
+			
+			
+			</form>
+		</div>
+		
+	
+	</div>
+	<script src="{% static 'workshop/js/jquery-3.6.0.min.js'%}"></script>
+	<script src="{% static 'workshop/js/bootstrap.min.js'%}"></script>
+	<script src="{% static 'workshop/js/intlTelInput.min.js'%}"></script>
+	
+		<!--<script src="assets/js/multislider.min.js"></script>-->
+		
+    <script>
+	    table_list = [];
+    skill_list=[];
+    keyword_list=[];
+    speaker_list=[];
+    country_list=[];
+    Mfield_list=[];
+    Sfield_list=[];
+		var currentTab = 0;
+	
+		function openNav() {
+		  document.getElementById("menuSidenav").style.width = "250px";
+		}
+
+		function closeNav() {
+		  document.getElementById("menuSidenav").style.width = "0";
+		}
+		
+			
+		
+        showTab(currentTab); 
+        
+        
+        
+$(document).ready(function() {
+             
+             document.getElementById("AddFieldtoTbl").addEventListener("click",function(e){e.preventDefault();AddFields();});
+             document.getElementById("AddOtherFieldtoTbl").addEventListener("click",function(e){e.preventDefault();AddFields();});
+             document.getElementById("speakerBtn").addEventListener("click",function(e){e.preventDefault();AddSpeaker();});
+             document.getElementById("motivateBtn").addEventListener("click",function(e){e.preventDefault();AddMotivate();});
+             document.getElementById("AddSectoTbl").addEventListener("click",function(e){e.preventDefault();AddSection();});
+             
+             
+             
+        $(".main_field").change(function () {
+            const Value = $(this).val();
+            if (Value == "-100"){
+                $('#rowField').removeClass('d-none');
+                $('#add_mfield').removeClass('d-none');
+                $('#add_sfield').removeClass('d-none');
+               // $('#add_btn').removeClass('d-none');
+                document.getElementById("SubField").disabled = true;
+                //document.getElementById("AddFieldtoTbl").disabled = true;
+                $('#AddFieldtoTbl').addClass('d-none');
+                
+            }
+            else {
+                $('#rowField').addClass('d-none');
+                $('#add_mfield').addClass('d-none');
+                $('#add_sfield').addClass('d-none');
+               // $('#add_btn').addClass('d-none');
+                document.getElementById("SubField").disabled = false;
+               // document.getElementById("AddFieldtoTbl").disabled = false;
+                $('#AddFieldtoTbl').removeClass('d-none');
+            };
+        });
+        
+        
+        	$('#timetbl').on('click', 'button', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        //alert(document.getElementById('tblList').value);    
+        table_list.splice(rowNum, 1); 
+        //document.getElementById('tblList').value = table_list;
+        //alert(document.getElementById('tblList').value);  
+        $(this).closest('tr').remove();
+        var time_table = document.getElementById("timetbl");
+        var tbodyRowCount = time_table.tBodies[0].rows.length;
+        var firstcol = $("#timetbl").find("td:first-child");
+        //for(var i=0; i<=tbodyRowCount; i++){
+       //     firstcol[i].innerHTML=i+1;
+           
+      //  }
+        
+        
+    })
+        
+        
+        
+        $(".sub_field").change(function () {
+            const Value = $(this).val();
+            if (Value == 0){
+                $('#add_sfield').removeClass('d-none');
+                $('#rowField').removeClass('d-none');
+               // $('#add_btn').removeClass('d-none');
+            }
+            else {
+                $('#add_sfield').addClass('d-none');
+                $('#rowField').addClass('d-none');
+              //  $('#add_btn').addClass('d-none');
+            };
+        });
+        
+            
+            
+      /*   $("#pre_exprience").on('input keyup', function(e) {
+            var total_char = document.getElementById("pre_exprience").value;
+            var max = 2500;
+            if (total_char.length > max) {
+               
+                document.getElementById("pre_exprience_error").innerHTML = "Note: The number of characters entered is more than 2500 characters.";
+                if(focus_status == false){
+                    document.getElementById("pre_exprience_error").focus();
+                    focus_status = true;
+                }
+            
+            } else if (total_char.length <= max) {
+                
+                $('#display_count').text(total_char.length);
+              
+                
+            }
+          
+        });  */
+        
+        
+        
+       
+        
+          
+            
+            
+            $("#description").on('input keyup', function(e) {
+                var total_char = document.getElementById("description").value;
+                //var words = 0;
+                var max = 2500;
+               /* if ((this.value.match(/\S+/g)) != null) {
+                  words = this.value.match(/\S+/g).length;
+                }*/
+                 $('#display_count_des').text(total_char.length);
+                if (total_char.length > max) {
+                    //e.preventDefault();
+                    //return false;
+                    document.getElementById("description_error").innerHTML="";
+                    document.getElementById("description_error").innerHTML = "Note: The number of characters entered is more than 2500 characters.";
+                    document.getElementById("description").parentNode.classList.add("error");
+                    document.getElementById("description").focus();
+                    
+                
+                } 
+          
+            });  
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+             
+             
+         });
+        
+        
+        
+        
+        
+        function AddFields(){
+    //document.getElementById("country_total_error").innerHTML ="";
+    
+    var Mfield = document.getElementById("MainField");
+    var MfieldText = Mfield.options[Mfield.selectedIndex].text;
+    var MfieldID = document.getElementById("MainField").value;
+    
+    
+    var Sfield = document.getElementById("SubField");
+    var SfieldText = Sfield.options[Sfield.selectedIndex].text;
+    var SfieldID = document.getElementById("SubField").value;
+   
+  
+    var Maintxt="";
+    var Subtxt="";
+    
+    var Has_error = false;
+    if(MfieldID=="-100"){
+         Maintxt = document.getElementById("otherMField").value;
+         Subtxt = document.getElementById("otherSField").value;
+         
+         if(Maintxt==""){
+                document.getElementById("otherMField").parentNode.classList.add("error");
+                document.getElementById("otherMField").focus();
+             //document.getElementById("otherMField_error").innerHTML= "Error: please enter the main field.";
+             Has_error = true;
+         }
+         if(Subtxt==""){
+             document.getElementById("otherSField").parentNode.classList.add("error");
+                document.getElementById("otherSField").focus();
+            // document.getElementById("otherSField_error").innerHTML= "Error: please enter the subfield.";
+             Has_error = true;
+         }
+         
+     }else{
+         Maintxt="";
+         if(SfieldID==0){
+            Subtxt = document.getElementById("otherSField").value;
+           
+            if(Subtxt==""){
+                document.getElementById("otherSField").parentNode.classList.add("error");
+                document.getElementById("otherSField").focus();
+             //document.getElementById("otherSField_error").innerHTML= "Error: please enter the subfield.";
+             Has_error = true;
+            }
+         
+         }else{
+             Subtxt="";
+         }
+         
+     }
+  
+    if(Mfield_list.includes(MfieldID) && Sfield_list.includes(SfieldID)){
+        document.getElementById("fields_error").innerHTML = "Selected fields are duplicated.";
+        document.getElementById("fieldtbl").parentNode.classList.add("error");
+        document.getElementById("fieldtbl").focus();
+        
+        
+        
+        Has_error = true;
+    }
+  
+    if(Has_error == true) {
+        return;
+    } 
+  
+  
+  
+  
+   var main_id = "";
+   var main_title="";
+   var sub_id="";
+   var sub_title="";
+   
+   
+        jQuery.ajax({
+			type: "POST",
+			url:"{% url 'mainfield-adding' %}",
+			data:  {"main_id":MfieldID,"main_title":Maintxt,"sub_title":Subtxt,csrfmiddlewaretoken: '{{ csrf_token }}'},
+		    dataType:"JSON",
+            success: function(output){
+                if(MfieldID=="-100"){
+                    main_id = output.main_id;
+                    main_title = Maintxt;
+                    sub_id = output.sub_id;
+                    sub_title = Subtxt;
+                    
+                    document.getElementById("otherMField").value="";
+                    document.getElementById("otherSField").value="";
+                }else if(SfieldID==0){
+                    main_id = MfieldID;
+                    main_title = MfieldText;
+                    sub_id = output.sub_id;
+                    sub_title = document.getElementById("otherSField").value;
+                    document.getElementById("otherSField").value="";
+                }else{
+                    main_id = MfieldID;
+                   main_title = MfieldText;
+                   sub_id = SfieldID;
+                   sub_title = SfieldText
+                }
+                
+                
+                    var field_table = document.getElementById("fieldtbl");
+                    var tbodyRowCountKey = field_table.tBodies[0].rows.length;
+                    var field_row = field_table.tBodies[0].insertRow();
+                    //field_row.classList.add("text-center");
+                    field_row.dataset.main = main_id;
+                    field_row.dataset.sub = sub_id;
+                	var field_cell1 = field_row.insertCell();
+                	field_cell1.innerHTML = main_title;
+                	
+                	var field_cell2 = field_row.insertCell();
+                	field_cell2.innerHTML = sub_title;
+                	 var indexrow = tbodyRowCountKey+1;
+                    var field_cell3 = field_row.insertCell();
+                	field_cell3.innerHTML = "<button type='button' class='btn btn-secondary btn-sm' onclick = DelRowFields(this) >Delete</button>";
+                    document.getElementById("fieldtbl").parentNode.classList.remove("error");
+            
+                    Mfield_list.push(main_id);
+                    Sfield_list.push(sub_id);
+    
+                
+                
+            }, error: function (output){
+				
+					
+			}, complete: function(output){
+					
+			}
+					
+			
+		});
+   
+  
+}
+        
+        
+        
+        
+        
+        function showTab(n) {
+         
+          var x = document.getElementsByClassName("step");
+          var stepID = x[n].id
+          
+         $("#"+stepID).fadeIn("slow");
+         x[n].style.display = "block";
+          //... and fix the Previous/Next buttons:
+          if (n == 0) {
+            document.getElementById("prevBtn").style.display = "none";
+          } else {
+            document.getElementById("prevBtn").style.display = "inline";
+          }
+          if (n == (x.length - 1)) {
+            document.getElementById("nextBtn").innerHTML = "Submit";
+          } else {
+            document.getElementById("nextBtn").innerHTML = "Next";
+          }
+          //... and run a function that will display the correct step indicator:
+          fixStepIndicator(n)
+        }
+        
+        function nextPrev(n) {
+           var x = document.getElementsByClassName("step");
+           var has_error = "false";
+          // if (n == 1 && !validateForm()){
+           if (n == 1){
+            if(currentTab==0){
+                var birthday= document.getElementById("birthday").value;
+                if(birthday==""){
+                    document.getElementById("birthday").parentNode.classList.add("error");
+                     document.getElementById("birthday").focus();
+                     has_error="true";
+                }
+                var gender= document.getElementById("gender").value;
+                if(gender=="0"){
+                    document.getElementById("gender").parentNode.classList.add("error");
+                    document.getElementById("gender").focus();
+                     has_error="true";
+                }
+                var phone_number= document.getElementById("phone_number").value;
+                if(phone_number==""){
+                    document.getElementById("phone_number").parentNode.parentNode.classList.add("error");
+                    document.getElementById("phone_number").focus();
+                     has_error="true";
+                }
+                var country= document.getElementById("country").value;
+                if(country=="0"){
+                    document.getElementById("country").parentNode.classList.add("error");
+                    document.getElementById("country").focus();
+                     has_error="true";
+                }
+                var city= document.getElementById("city").value;
+                if(city==""){
+                    document.getElementById("city").parentNode.classList.add("error");
+                    document.getElementById("city").focus();
+                     has_error="true";
+                }
+                
+                
+                
+                
+                
+                
+                
+            }else if(currentTab==1){
+                var title= document.getElementById("ws-title").value;
+                if(title==""){
+                    document.getElementById("ws-title").parentNode.classList.add("error");
+                     document.getElementById("ws-title").focus();
+                     has_error="true";
+                }
+                var location= document.getElementById("location").value;
+                if(location==""){
+                    document.getElementById("location").parentNode.classList.add("error");
+                     document.getElementById("location").focus();
+                     has_error="true";
+                }
+                
+                var time_zone= document.getElementById("time_zone").value;
+                if(time_zone=="0"){
+                    document.getElementById("time_zone").parentNode.classList.add("error");
+                     document.getElementById("time_zone").focus();
+                     has_error="true";
+                }
+                
+                var fields_table = document.getElementById("fieldtbl");
+                var tbodyRowCountfields = fields_table.tBodies[0].rows.length;
+                if(tbodyRowCountfields==0){
+                    
+                     document.getElementById("fieldtbl").parentNode.classList.add("error");
+                     document.getElementById("fieldtbl").focus();
+                     has_error="true";
+                   
+                }
+                
+                var lang= document.getElementById("lang").value;
+                if(lang=="0"){
+                    document.getElementById("lang").parentNode.classList.add("error");
+                     document.getElementById("lang").focus();
+                     has_error="true";
+                }
+                
+                var cost= document.getElementById("cost").value;
+                if(cost==""){
+                    document.getElementById("cost").parentNode.classList.add("error");
+                     document.getElementById("cost").focus();
+                     has_error="true";
+                }
+                
+                var description= document.getElementById("description").value;
+                if(description==""){
+                    document.getElementById("description_error").innerHTML="";
+                    document.getElementById("description_error").innerHTML = "Please enter the description.";
+                    document.getElementById("description").parentNode.classList.add("error");
+                     document.getElementById("description").focus();
+                     has_error="true";
+                }
+                if(description.length > 2500){
+                    document.getElementById("description_error").innerHTML="";
+                    document.getElementById("description_error").innerHTML = "Note: The number of characters entered is more than 2500 characters.";
+                    document.getElementById("description").parentNode.classList.add("error");
+                    document.getElementById("description").focus();
+                    has_error="true";
+                }
+                
+                var image_back =document.getElementById("uploadImage").value;
+                if(image_back==""){
+                    document.getElementById("image_back_error").innerHTML="";
+                    document.getElementById("image_back_error").innerHTML = "Please upload the background picture.";
+                    document.getElementById("upload-container").parentNode.classList.add("error");
+                     document.getElementById("upload-container").focus();
+                     has_error="true";
+                }
+                
+                
+                
+            }else if(currentTab==2){
+                
+                if(speaker_count==0){
+                    document.getElementById("speakers_list").parentNode.classList.add("error");
+                     document.getElementById("speakers_list").focus();
+                     has_error="true";
+                }
+                
+                if(keyword_list.length==0){
+                    document.getElementById("keyword_list").parentNode.classList.add("error");
+                     document.getElementById("keyword_list").focus();
+                     has_error="true";
+                    
+                }
+                
+            }
+           
+           
+           
+           
+           }
+           
+           if(has_error=="true"){
+               return false;
+           }
+          // Hide the current tab:
+          x[currentTab].style.display = "none";
+          document.getElementsByClassName("stepIndicator")[currentTab].className += " finish";
+          // Increase or decrease the current tab by 1:
+          
+          currentTab = currentTab + n;
+          
+          // if you have reached the end of the form...
+          if (currentTab >= x.length) {
+            // ... the form gets submitted:
+            $('[name=tblList]').val(table_list); 
+            $('[name=keyword]').val(keyword_list); 
+            $('[name=speaker_total]').val(speaker_list); 
+            $('[name=Mfields]').val(Mfield_list);
+            $('[name=Sfields]').val(Sfield_list);
+            
+            
+            document.getElementById("VirtualEventForm").submit();
+            return false;
+          }
+          
+          // Otherwise, display the correct tab:
+          showTab(currentTab);
+        }
+        
+        function validateForm() {
+            var x, y, i, valid = true;
+			/*x = document.getElementsByClassName("step");
+			y = x[currentTab].getElementsByTagName("input");
+         
+            for (i = 0; i < y.length; i++) {
+                if (y[i].value == "") {
+                    y[i].className += " invalid";
+                    valid = false;
+				}
+			}*/
+          
+            if (valid){
+				document.getElementsByClassName("stepIndicator")[currentTab].className += " finish";
+			}
+            return valid; 
+        }
+        
+        function fixStepIndicator(n) {
+          // This function removes the "active" class of all steps...
+          var i, x = document.getElementsByClassName("stepIndicator");
+          for (i = 0; i < x.length; i++) {
+            x[i].className = x[i].className.replace(" active", "");
+            if(i>=n){
+                x[i].className = x[i].className.replace(" finish", "");
+            }
+          }
+          //... and adds the "active" class on the current step:
+          x[n].className += " active";
+        
+            
+            
+        }
+		
+		
+		
+		
+		
+		
+		
+		
+	$("#file-upload").css("opacity", "0");
+
+	$("#file-browser").click(function(e) {
+	  e.preventDefault();
+	  $("#file-upload").trigger("click");
+	});
+	
+	
+	
+	
+	
+	function DelRowFields(id)  
+{   
+    //var row = document.getElementById(rowid);
+    //row.parentNode.removeChild(row);
+    //var rowID = $(this).closest('tr').index();
+    var rowtbl = id.closest("tr");
+    var MainID = rowtbl.dataset.main;
+    var SubID =  rowtbl.dataset.sub;
+    var tableID = id.closest('table').id;
+    rowtbl.remove();
+    //alert(tableID);
+    //document.getElementById(rowid).remove();
+    const Mindex = Mfield_list.indexOf(MainID);
+    //alert(index);
+    if (Mindex > -1) { 
+      Mfield_list.splice(Mindex, 1); 
+    }
+    
+    const Sindex = Sfield_list.indexOf(SubID);
+    //alert(index);
+    if (Sindex > -1) { 
+      Sfield_list.splice(Sindex, 1); 
+    }
+}
+
+	
+	
+	function clear_error(id){
+	    
+	    if(id=="phone_number"){
+	        document.getElementById(id).parentNode.parentNode.classList.remove("error");
+	    }else{
+	        document.getElementById(id).parentNode.classList.remove("error");
+	    }
+	    
+	}
+	
+	function dragNdrop(event,id,pre_id){
+	var filename = URL.createObjectURL(event.target.files[0]); //will store file name with src
+	var preview = document.getElementById(pre_id); //the div where we will show image
+	//var previewImg = document.createElement("img"); //creating new image tag
+	//previewImg.setAttribute("src",filename); //setting attribute src of newly created "img" element to "filename"
+	preview.innerHTML = document.getElementById(id).files.item(0).name;
+	//preview.appendChild(previewImg); //finally append "img" element to parent element "preview"
+}
+
+//2. drag
+
+function drag(){
+	//while dragging it will fire this function that will add the following class
+	//document.getElementById('uploadImage').parentNode.className = "draging upload-container";
+}
+
+//3. finally the drop()
+function drop(){
+	//document.getElementById('uploadImage').parentNode.className = 'upload-container';
+}
+	
+var speaker_count =0;	
+function AddSpeaker(){
+     document.getElementById("speaker_error").innerHTML ="";
+     
+    var fullname = document.getElementById("speaker").value;
+    var degree = document.getElementById("degree_speaker").value;
+   // var degree="";
+    if(fullname.length != 0){
+        var speaker_text="";
+        speaker_count = speaker_count +1;
+        /*var speaker_table = document.getElementById("speakertbl");
+        var tbodyRowCount = speaker_table.tBodies[0].rows.length;
+        var RowNew = tbodyRowCount +1;
+        var speaker_row = speaker_table.tBodies[0].insertRow();
+        
+        var speaker_cell0 = speaker_row.insertCell();
+    	speaker_cell0.innerHTML = fullname;
+    	 var speaker_cell1 = speaker_row.insertCell();
+    	speaker_cell1.innerHTML = degree;
+        var speaker_cell2 = speaker_row.insertCell();
+    	speaker_cell2.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this,speaker_list)'/>";*/
+    	if(speaker_count > 0){
+    	    
+    	    speaker_text=" speaker"+speaker_count + ": " + fullname + "; " + degree + ",";
+    	}else{
+    	   speaker_text=" Speaker"+speaker_count + ": " + fullname + "; " + degree;
+    	}
+        
+        
+        //speaker_row.dataset.comp = speaker_text;
+        
+        var span_text ="<span class='tag-item mx-2'" + "data-comp='"+speaker_text+"'>" +  fullname + "," + degree +  " <i class='fa fa-times-circle' onclick='deltag(this,speaker_list)' ></i></span>";
+        var speakers = document.getElementById("speakers_list").innerHTML;
+        document.getElementById("speakers_list").innerHTML = speakers + span_text;
+        
+        speaker_list.push(speaker_text);
+        document.getElementById("speaker").value="";
+        //document.getElementById("degree_speaker").value="";
+    }else if(fullname.length == 0){
+        document.getElementById("speaker").parentNode.classList.add("error");
+        document.getElementById("speaker").focus();
+        //document.getElementById("speaker_error").innerHTML = "Please enter the fullname.";
+    }else if(degree.length == 0){
+        
+        //document.getElementById("speaker_error").innerHTML = "Please enter the academic degree.";
+        
+    }
+    
+    
+}
+
+
+
+function AddMotivate(){
+     document.getElementById("keyword_error").innerHTML ="";
+    var keyword = document.getElementById("keyword").value;
+    
+    if(keyword.length != 0){
+        var span_text ="<span class='tag-item mx-2'" + + "data-comp='"+keyword+"'>" + keyword + "<i class='fa fa-times-circle' onclick='deltag(this,keyword_list)' ></i></span>";
+        var keywords = document.getElementById("keyword_list").innerHTML;
+        document.getElementById("keyword_list").innerHTML = keywords + span_text;
+        
+        keyword_list.push(keyword);
+        document.getElementById("keyword").value="";
+       // document.getElementById("Sdegree").value="";
+    }else{
+         document.getElementById("keyword").parentNode.classList.add("error");
+        document.getElementById("keyword").focus();
+        //document.getElementById("speaker_error").innerHTML = "Please enter the fullname.";
+    }
+    
+    
+}
+
+
+function AddSection(){
+    var focus_status = false;
+        var title = document.getElementById("sec_title").value;
+        
+        
+        if(title.length ==0){
+            document.getElementById("sec_title").parentNode.classList.add("error");
+            if(focus_status == false){
+                document.getElementById("sec_title").focus();
+                focus_status = true;
+            }
+            
+        }
+        var datetime = document.getElementById("datetime").value;
+        if(datetime.length ==0){
+            document.getElementById("datetime").parentNode.classList.add("error");
+           
+           if(focus_status == false){
+                document.getElementById("datetime").focus();
+                focus_status = true;
+           }
+            
+        }
+    
+   
+    
+         var sectionPrice = document.getElementById('price').value;
+        if(sectionPrice==""){
+            
+           document.getElementById("price").parentNode.classList.add("error");
+           if(focus_status == false){
+                document.getElementById("price").focus();
+                focus_status = true;
+           }
+            
+        }
+        
+       
+        var time_table = document.getElementById("timetbl");
+        var tbodyRowCount = time_table.tBodies[0].rows.length;
+        
+      /*  if(tbodyRowCount >0){
+            var end_time_before=time_table.tBodies[0].rows[tbodyRowCount-1].cells.item(4).innerHTML;
+            var date_before=formatDate(time_table.tBodies[0].rows[tbodyRowCount-1].cells.item(2).innerHTML);
+            var date_new = formatDate(date);
+            var d1 = new Date(date);
+            var d2 = new Date(date_before); 
+            if(d1.getTime() < d2.getTime()){
+                document.getElementById("date_error").innerHTML = "Note:The date of the next section should not be smaller than the date of the previous section";
+                if(focus_status == false){
+                    document.getElementById("date_error").focus();
+                    focus_status = true;
+                }
+                
+                
+            }
+            
+            
+            
+            if(date_new==date_before && CompareTimes(end_time_before,start_time)!="great"){
+            
+                document.getElementById("str_time_error").innerHTML = "Note:The start time must be greater than the finish time of the previous section.";
+                if(focus_status == false){
+                    document.getElementById("str_time_error").focus();
+                    focus_status = true;
+                }
+            
+            }
+            
+        }*/
+    
+        
+        
+        
+        
+      if(focus_status==false) { 
+        
+        table_list.push([tbodyRowCount+1,title, datetime,sectionPrice])
+        var time_row = time_table.tBodies[0].insertRow();
+        var time_cell1 = time_row.insertCell();
+    	time_cell1.innerHTML = title;
+        var time_cell2 = time_row.insertCell();
+    	time_cell2.innerHTML = sectionPrice;;
+        var time_cell3 = time_row.insertCell();
+    	time_cell3.innerHTML = "ACTIVE";
+    	 var time_cell4 = time_row.insertCell();
+    	time_cell4.innerHTML = datetime;
+    	var time_cell5 = time_row.insertCell();
+    	time_cell5.innerHTML = "<input type='file' class='custom-file-input small'  name='"+title+"' /><span class='custom-file-control form-control-file'></span>";
+        var time_cell6 = time_row.insertCell();
+    	time_cell6.innerHTML = "<button type='button'><i class='fa fa-times' style='font-size:24px;color:red;background-color:transparent;border-color: transparent'></i></button>";
+      
+    	
+    	
+      
+          
+        document.getElementById("sec_title").value="";  
+        document.getElementById('datetime').value="";  
+        document.getElementById('price').value="";
+        
+      }else{
+          return;
+      }
+    	
+    
+    
+    
+}
+
+
+function deltag(id,array,name)  
+{   
+    
+    var tagitem = id.closest("span");
+    var comp = tagitem.dataset.comp;
+    tagitem.remove();
+    
+    const index = array.indexOf(comp);
+    if (index > -1) { 
+      array.splice(index, 1); 
+    }
+    
+    
+    
+   // console.log(array);
+}
+
+
+var input = document.querySelector("#phone_number");
+    window.intlTelInput(input, {
+      // allowDropdown: false,
+      // autoHideDialCode: false,
+      // autoPlaceholder: "off",
+      // dropdownContainer: document.body,
+      // excludeCountries: ["us"],
+      // formatOnDisplay: false,
+      // geoIpLookup: function(callback) {
+      //   $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+      //     var countryCode = (resp && resp.country) ? resp.country : "";
+      //     callback(countryCode);
+      //   });
+      // },
+      // hiddenInput: "full_number",
+      // initialCountry: "auto",
+      // localizedCountries: { 'de': 'Deutschland' },
+      // nationalMode: false,
+      // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+      // placeholderNumberType: "MOBILE",
+      // preferredCountries: ['cn', 'jp'],
+      // separateDialCode: true,
+      utilsScript: "/static/workshop/js/utils.js",
+    });
+
+function checkNumber(id){
+    var cost = document.getElementById(id).value;
+    
+    if(/^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/.test(cost)) {
+        const dolArr = cost.split("$");
+        const pointArr = cost.split(".");
+       
+        if(pointArr.length==1){
+            document.getElementById(id).value = document.getElementById(id).value + ".00";
+            if(cost.length==1){
+                document.getElementById(id).value ="0"+ document.getElementById(id).value;
+            }
+            
+        }else{
+            if(pointArr[1].length==0){
+             document.getElementById(id).value = document.getElementById(id).value + "00";   
+            }else if(pointArr[1].length==1){
+                document.getElementById(id).value = document.getElementById(id).value + "0"; 
+            }
+            if(pointArr[0].length==1){
+             document.getElementById(id).value = "0" +document.getElementById(id).value;     
+            }
+            
+        }
+        if(dolArr.length==1){
+            document.getElementById(id).value = "$ " + document.getElementById(id).value;
+        }
+    }else{
+        document.getElementById(id+"_error").innerHTML="Please enter only number.";
+        document.getElementById(id).value="";
+        document.getElementById(id).parentNode.classList.add("error");
+        document.getElementById(id).focus();
+        
+    }
+}
+               
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+
+	</script>
+    
+  </body>
+</html>

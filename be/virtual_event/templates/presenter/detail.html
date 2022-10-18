@@ -1,0 +1,353 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.cs' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/ws-details.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+
+
+{% block content %}
+
+
+<section class="bg-dark">
+	<div class="container py-4">
+		<h1 class="h1 text-center texh-white" id="pageHeaderTitle">Virtual event detail</h1>
+
+		<article class="postcard dark ">
+
+			<div class="postcard__text">
+				<h3 class="postcard__title text-success">{{object.type}} title</h3>
+				
+				<div class="postcard__preview-txt text-white">{{object.title}}</div>
+				
+			</div>
+		</article>
+		<div class="row">
+		    {% comment %} <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success">Presentation file</h3>
+        			
+        				<div class="postcard__preview-txt text-white">
+        				    {% if workshop.load_pdf != ""%}
+                                <a href="{{workshop.load_pdf.url}}" class="m-0">    Download file  </a>
+                            {% else %}
+                                <div><a>Workshop has no file</a></div>
+                            {% endif %}
+        				    
+        				    
+        				</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div> {% endcomment %}
+
+		    
+		    
+		    
+		</div>
+		<article class="postcard dark">
+			<div class="postcard__text">
+				<h3 class="postcard__title text-success"><a href="#">{{object.type}} Description</a></h3>
+				
+				<div class="postcard__preview-txt text-white">{{object.object.description}}</div>
+				
+			</div>
+		</article>
+		
+		<div class="row">
+		    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Main field</a></h3>
+        				{%for mainfield in object.main_field.all%}
+                            <div class="postcard__preview-txt text-white">{{mainfield}}</div>
+                        {%endfor%}
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Subfield</a></h3>
+        				
+        				{%for mainfield in object.sub_field.all%}
+                            <div class="postcard__preview-txt text-white">{{mainfield}}</div>
+                        {%endfor%}
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+
+		    
+		    
+		</div>
+		
+		<div class="row">
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Holding date</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{object.created}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Start date</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{object.start_date}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark ">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Duration</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{object.duration}} hours</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    
+		</div>
+		
+		
+		<div class="row">
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Price per individual</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white"> $ {{object.price}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Language</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{object.object.language}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+			{%if object.contract%}
+			<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark ">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Contract</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">
+                            <div><a class="btn btn-sm bt-warning" href="{{object.contract.url}}">View contract</a></div>       				    
+        				</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div> 
+			{%endif%}
+		    
+		    
+		</div>
+		<div class="row">
+				<article class="postcard dark">
+					<div class="col-12 postcard__text">
+						<h3 class="postcard__title text-success"><a href="#">Time table</a></h3>
+						
+						<div class="postcard__preview-txt">
+							<table class="table table-hover table-striped ">
+								<thead class="table-info">
+									<tr>
+										<th>Section title</th>
+										<th>Start date</th>
+										<th>Start time</th>
+										<th>End time</th>
+										<th>Duration</th>
+										<th>Price</th>
+										
+										
+									</tr>
+									
+									
+								</thead>
+								<tbody class="table-dark">
+									{% for time in object.time_table %}
+									<tr>
+										<td>{{time.title}}</td>
+										<td>{{time.start_date}}</td>
+										<td>{{time.start_time}}</td>
+										<td>{{time.end_time}}</td>
+										<td>{{time.duration}}</td>
+										<td>${{time.price}}</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+								
+								
+								
+								
+								
+							</table>
+							
+							
+							
+						</div>
+						
+					</div>
+				</article>
+		</div>
+
+		
+
+		{%if object.status == 'Reject' %}
+		<div class="row">
+			<article class="postcard dark">
+				<div class="col-12 postcard__text">
+					<h3 class="postcard__title text-success"><a href="#">Reject's comments</a></h3>
+					
+					<div class="postcard__preview-txt">
+
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-1 px-1"> 
+
+									{%for track in object.tracking%}
+										{%if track.status == 'Reject' %}
+										<p class="text-white">{{track.comment}}</p>
+										{%endif%}
+									{%endfor%}
+										
+										
+									
+								</div>
+					
+					</div>				
+				</div>
+			</article>
+		</div>
+		{%endif%}
+
+		{%if object.status == 'Revise' %}
+		<div class="row">
+			<article class="postcard dark">
+				<div class="col-12 postcard__text">
+					<h3 class="postcard__title text-success"><a href="#">Revise's comments</a></h3>
+					
+					<div class="postcard__preview-txt">
+
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-1 px-1"> 
+
+									{%for track in object.tracking%}
+										{%if track.status == 'Revise' %}
+										<p class="text-white">{{track.comment}}</p>
+										{%endif%}
+									{%endfor%}
+										
+										
+									
+								</div>
+					
+					</div>				
+				</div>
+			</article>
+		</div>
+		{%endif%}
+
+
+
+
+<!--..........................................................Opertions................................................-->
+
+
+		<div class="row">
+			<article class="postcard dark">
+				<div class="col-12 postcard__text">
+					<h3 class="postcard__title text-success"><a href="#">Opertions</a></h3>
+					
+					<div class="postcard__preview-txt">
+
+							{%if object.status == 'Revise' %}
+								<div class="col-md-6 row">
+									<a href="{%url 'edit-virtualevents' pk=object.id%}" class="btn btn-success ">Resubmit</a>
+									<form id="removeform" class="col-md-2 m-1"  method="POST" action="{% url 'change-status' %}">
+										<input type="hidden" name="decide" value=0>
+										<input type="hidden" name="id" value={{object.id}}>
+										{%csrf_token%}
+										<a  type="button" class="text-white btn btn-danger" data-toggle="modal" data-target="#removemodal" data-whatever="@mdo">Remove virtual event</a>
+									</form>
+								</div>
+							{%endif%}
+
+					
+					</div>				
+				</div>
+			</article>
+		</div>
+
+
+
+	</div>
+</section>
+
+<!--.............................................Modal...........................................-->
+
+<div class="modal fade" id="removemodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+	  <div class="modal-content">
+		  <div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<h5 style="color:#000" class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary btn-sms" data-dismiss="modal">Close</button>
+					<button id="Removesubmit" type="submit" class="btn btn-danger ">Remove</button>
+				</div>
+	  </div>
+	</div>
+  </div>
+
+
+    <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+  <script>
+	$('#Removesubmit').click(function(){
+		$('#removeform').submit()
+	})
+  </script>
+
+{% endblock content %}

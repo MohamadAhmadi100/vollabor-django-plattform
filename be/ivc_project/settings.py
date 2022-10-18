@@ -73,7 +73,8 @@ INSTALLED_APPS = [
     'request.apps.RequestConfig',
     'zarinpal.apps.ZarinpalConfig',
     'accounting',
-    'chartjs'
+    'chartjs',
+    "virtual_event"
 
 ]
 
@@ -120,9 +121,9 @@ WSGI_APPLICATION = 'ivc_project.wsgi.application'
 DATABASES = {
 'default': {
     'ENGINE': 'django.db.backends.mysql', 
-    'NAME': 'tecvicoc_db',
-    'USER': 'tecvicoc_admin',
-    'PASSWORD': 'gHgDHSXp^3PZ',
+    'NAME': 'vollabor',
+    'USER': 'root',
+    'PASSWORD': '',
     'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
     'PORT': '3306',
     'OPTIONS': {

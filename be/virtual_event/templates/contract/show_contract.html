@@ -1,0 +1,245 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.cs' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/ws-details.css' %}">
+    <title>Document</title>
+{% endblock css %}
+
+
+
+{% block content %}
+<section class="bg-dark">
+	<div class="container py-4">
+		<h1 class="h1 text-center texh-white" id="pageHeaderTitle">Virtual event detail</h1>
+
+		<article class="postcard dark ">
+
+			<div class="postcard__text">
+				<h3 class="postcard__title text-success">{{object.type}} title</h3>
+				
+				<div class="postcard__preview-txt text-white">{{object.title}}</div>
+				
+			</div>
+		</article>
+		<div class="row">		    
+		</div>
+		<article class="postcard dark">
+			<div class="postcard__text">
+				<h3 class="postcard__title text-success"><a href="#">{{object.type}} Description</a></h3>
+				
+				<div class="postcard__preview-txt text-white">{{object.object.description}}</div>
+				
+			</div>
+		</article>
+		
+		<div class="row">
+		    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Main field</a></h3>
+        				{%for mainfield in object.main_field.all%}
+                            <div class="postcard__preview-txt text-white">{{mainfield}}</div>
+                        {%endfor%}
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Subfield</a></h3>
+        				
+        				{%for mainfield in object.sub_field.all%}
+                            <div class="postcard__preview-txt text-white">{{mainfield}}</div>
+                        {%endfor%}
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		</div>
+		
+		<div class="row">
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Holding date</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{object.created}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Start date</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{object.start_date}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark ">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Duration</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{object.duration}} hours</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    
+		    
+		</div>
+		
+		
+		<div class="row">
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Price per individual</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white"> $ {{object.price}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+		        <article class="postcard dark">
+        			<div class="postcard__text">
+        				<h3 class="postcard__title text-success"><a href="#">Presentation language</a></h3>
+        				
+        				<div class="postcard__preview-txt text-white">{{object.object.language}}</div>
+        				
+        			</div>
+		        </article>
+		        
+		    </div>
+		    		    
+		</div>
+		<div class="row">
+				<article class="postcard dark">
+					<div class="col-12 postcard__text">
+						<h3 class="postcard__title text-success"><a href="#">Time table</a></h3>
+						
+						<div class="postcard__preview-txt">
+							<table class="table table-hover table-striped ">
+								<thead class="table-info">
+									<tr>
+										<th>Section title</th>
+										<th>Start date</th>
+										<th>Start time</th>
+										<th>End time</th>
+										<th>Duration</th>
+										<th>Price</th>
+										
+										
+									</tr>
+									
+									
+								</thead>
+								<tbody class="table-dark">
+									{% for time in object.time_table %}
+									<tr>
+										<td>{{time.title}}</td>
+										<td>{{time.start_date}}</td>
+										<td>{{time.start_time}}</td>
+										<td>{{time.end_time}}</td>
+										<td>{{time.duration}}</td>
+										<td>${{time.price}}</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+								
+								
+								
+								
+								
+							</table>
+							
+							
+							
+						</div>
+						
+					</div>
+				</article>
+		</div>
+
+		
+
+
+
+<section class="bg-dark">
+	<div class="container py-4">
+		<h1 class="h1 text-center texh-white" id="pageHeaderTitle">Virtual event's Contract</h1>
+
+		<article class="postcard dark ">
+
+			<div class="postcard__text">
+				<p class="text-white">
+                    Lorem ipsum dolor sit amet,
+                    consectetur adipiscing elit,
+                    sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam,
+                    quis nostrud exercitation ullamco laboris nisi ut aliquip
+                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit
+                    in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+				
+			</div>
+		</article>
+        
+        
+        <article class="postcard dark ">
+
+            <div class="postcard__text ">
+                <img src="{{object.sign}}">
+                {{object.top_user.get_full_name}}</br>
+                {{object.created}}
+			</div>
+            <div class="postcard__text m-auto">
+                <label class="text-white">Name:</label><span class="form-control">{{object.top_user.get_full_name}}</span></br>
+                <label class="text-white">Date and time:</label><span class="form-control">{{object.created}}</span></br>
+                
+			</div>
+		</article>
+        <article>
+
+               <form method="POST">
+                {%csrf_token%}
+                <input type="hidden" name="id" value="{{object.id}}">
+				{%if object.contract%}
+					The contract for the virtual event {{object.type}} has been confirmed.
+				{%else%}
+                <button type="submit" class="btn  btn-success">Confirm</button>
+				{%endif%}
+               </form>
+		</article>
+
+        
+</section>
+{%endblock%}
+
+
+
+
+
+
+

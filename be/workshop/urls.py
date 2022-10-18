@@ -14,8 +14,8 @@ urlpatterns = [
     path("expert/approve-decline/<int:pk>/", views.expert_approve_decline, name="expert-approve-decline"),
     path("expert/add_video/<int:pk>/", views.add_video_workshop, name="add-workshop-video"),
 
-    path('request/<int:pk>/', views.send_request, name='request'),
-    path('verify/', views.verify , name='verify'),
+    # path('request/<int:pk>/', views.send_request, name='request'),
+    # path('verify/', views.verify , name='verify'),
     
     path('show-workshops-to-users/',views.show_workshops_to_user, name="show-workshops-to-users"),
     path('is-accept/<int:pk>', views.is_workshop_accept, name="is-accept"),

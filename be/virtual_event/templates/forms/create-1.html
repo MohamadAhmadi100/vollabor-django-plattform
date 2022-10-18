@@ -1,0 +1,2992 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+<html lang="en">
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+     <link rel="stylesheet" href="{% static 'workshop/css/bootstrap-clockpicker.min.css' %}">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+     <link rel="stylesheet" href="{% static 'ivc_website/css/signature-pad.css' %}">
+    <title>{{type | title}}</title>
+    <style>
+        .mandStar{
+            color:#ff0909
+        }
+    </style>
+{% endblock css %}
+
+{% block content %}
+
+   
+
+    <div class="ws-content d-md-flex">
+     
+        <div class="workshop">
+            <div class="bc">
+                <h1 class="text-white">{{type | title}} form</h1>
+                <!--<span class="bc-icon"> / </span>
+                <span> Create_Work</span>-->
+            </div>
+            <div class="container">
+                
+                {% if messages %}
+                    {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success"> {{ message|safe }}</div>
+                            {% else %}
+                                <div class="alert alert-danger"> {{ message|safe }}</div>
+                            {%endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-content">
+                <div class="ws-form">
+                    <div class="row ws-form-title d-md-flex justify-content-center text-white text-center">
+                        <span><i class="far fa-edit"></i> Define a new {{type | title}}</span>
+                    </div>
+                    <div class="ws-form-info">
+                        <form method="POST" name="wsNewForm"  enctype="multipart/form-data" id="WorkshopForm" data-field-url="{% url 'virtual_event_ajax_load_fields' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{type}}" name="type">
+                            
+                            <!--<div class="row justify-content-center my-4 text-start">
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 px-1 text-start " id="questionHeld">
+                                    <p class="my-3" style="color:#fff">How will the workshop be held?</p>
+                                </div>
+                                <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 px-1 text-white" id="radioDiv">
+                                    <div class="form-check form-check-inline my-3 bgGreen" >
+                                        <input class="form-check-input bg-success" type="radio" name="is_online" id="onlineRadio" value="true" checked  onclick="HideCapacity();">
+                                        <label class="form-check-label" for="inlineRadio1">Online</label>
+                                    </div>
+                                    <div class="form-check form-check-inline my-3">
+                                        <input class="form-check-input" type="radio" name="is_online" id="inPersonRadio" value="false" onclick="displayCapacity();">
+                                        <label class="form-check-label" for="inlineRadio2">In-person</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 px-1 text-start d-none" id="capacityDiv">
+                                    <div class="ws-label-box my-3">
+                                        <label for="capacity" class="ws-label">Capacity (people)<span class="mandStar">*</span></label>
+                                        <input type="text" name="capacity" class="inputclass" id="capacity" placeholder="Number of audience (integer)" oninput="ClearErr('capacity')">
+                                        <div id="capacity_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                    
+                                </div>
+                             
+                            </div>-->
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            <div class="row justify-content-center my-3">
+                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="usname" class="ws-label mb-3">{{type | title}} title<span class="mandStar">*</span></label>
+                                        <input type="text" name="title" required class="username inputclass" id="usname" placeholder="Write 150 characters with space" oninput="ClearErr('usname')">
+                                        <div id="usname_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>
+                                
+                                <!--<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="location" class="ws-label">Workshop location<span id="locspan" class="mandStar d-none">*</span></label>
+                                        <input type="text" name="address" required class="loc location inputclass"  id="location" oninput="ClearErr('location')">
+                                        <div id="location_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>-->
+                            </div>
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            <div class="row justify-content-center my-3">
+                               <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="fullname" class="ws-label mb-3">Full name</label>
+                                        <input type="text" name="title" class="username inputclass" id="fullname"  disabled value="{{user.get_full_name}}">
+                                        
+                                    </div>
+                                </div>
+
+                               <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="price" class="ws-label mb-3">Suggest cost per individual<span> ($ USA) </span><span class="mandStar">*</span></label>
+                                        <input type="number" name="price" required class="price inputclass2" id="price" placeholder="Enter fee as an integer" oninput="ClearErr('price')" autocomplete="off">
+                                        <div id="price_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div> 
+                            </div>
+                            <!--<div class="row justify-content-center my-5">
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="date" class="ws-label">Workshop date<span> (Pacific time)</span><span class="mandStar">*</span></label>
+                                        <input type="date" name="date" required class="date inputclass" min="{{date|date:'Y-m-d'}}" id="date" oninput="ClearErr('date')">
+                                        <div id="date_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="time" class="ws-label">Start time <span> (Pacific time) </span> <span class="mandStar">*</span></label>
+                                        <input type="text" name="time_to_start" required class="time inputclass" id="time" oninput="ClearErr('time')" autocomplete="off" >
+                                        <div id="time_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="duration" class="ws-label">Duration <span class="mandStar">*</span></label>
+                                        <input type="text" name="duration" required class="duration inputclass" placeholder="eg. 05:30" id="duration" oninput="ClearErr('duration')" >
+                                        <div id="duration_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="row justify-content-center my-3">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="time_zone" class="ws-label">Time zone<span class="mandStar">*</span></label>
+                                        <select name="time_zone"  id="time_zone" class="selectField">
+                                            {% for zone in time_zone %}
+                                            <option value="{{zone}}">{{zone}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                
+                                <!--<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="uploadpdf" class="ws-label">Powerpoint/PDF attachment<i class="fas fa-upload mt-1"></i></label>
+                                        <input type="file" name="load_pdf" id="uploadpdf" onchange="CheckIndexAtt()" oninput="ClearErr('uploadpdf')" class="form-control-file inputclass" placeholder="Upload File">
+                                        <p style="color:red; font-size:0.9em" id="uploadpdf_error"></p>
+                                    </div>
+                                   
+                                </div>-->
+                                
+                                
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    
+                                    <div class="ws-label-box">
+                                        <label for="wLanguage" class="ws-label">Language<span class="mandStar">*</span></label>
+                                        <select name="language"  id="wLanguage" class="selectField language">
+                                            <option value="Akan">Akan</option>
+                                            <option value="Amharic">Amharic</option>
+                                            <option value="Arabic">Arabic</option>
+                                            <option value="Assamese">Assamese</option>
+                                            <option value="Awadhi">Awadhi</option>
+                                            <option value="Azerbaijani">Azerbaijani</option>
+                                            <option value="Balochi">Balochi</option>
+                                            <option value="Belarusian">Belarusian</option>
+                                            <option value="Bengali">Bengali</option>
+                                            <option value="Bhojpuri">Bhojpuri</option>
+                                            <option value="Burmese">Burmese</option>
+                                            <option value="Cebuano(Visayan)">Cebuano(Visayan)</option>
+                                            <option value="Chewa">Chewa</option>
+                                            <option value="Chhattisgarhi">Chhattisgarhi</option>
+                                            <option value="Chittagonian">Chittagonian</option>
+                                            <option value="Czech">Czech</option>
+                                            <option value="Deccan">Deccan</option>
+                                            <option value="Dhundhari">Dhundhari</option>
+                                            <option value="Dutch">Dutch</option>
+                                            <option value="Eastern Min(inc.Fuzhou dialect)">Eastern Min(inc.Fuzhou dialect)</option>
+                                            <option value="English" selected>English</option>
+                                            <option value="French">French</option>
+                                            <option value="Fula">Fula</option>
+                                            <option value="Gan">Gan</option>
+                                            <option value="German">German</option>
+                                            <option value="Greek">Greek</option>
+                                            <option value="Gujarati">Gujarati</option>
+                                            <option value="Haitian Creole">Haitian Creole</option>
+                                            <option value="Hakka">Hakka</option>
+                                            <option value="Haryanvi">Haryanvi</option>
+                                            <option value="Hausa">Hausa</option>
+                                            <option value="Hiligaynon/Ilonggo(Visayan)">Hiligaynon/Ilonggo(Visayan)</option>
+                                            <option value="Hindi[b]">Hindi[b]</option>
+                                            <option value="Hmong">Hmong</option>
+                                            <option value="Hungarian">Hungarian</option>
+                                            <option value="Igbo">Igbo</option>
+                                            <option value="Ilocano">Ilocano</option>
+                                            <option value="Italian">Italian</option>
+                                            <option value="Japanese">Japanese</option>
+                                            <option value="Javanese">Javanese</option>
+                                            <option value="Jin">Jin</option>
+                                            <option value="Kannada">Kannada</option>
+                                            <option value="Kazakh">Kazakh</option>
+                                            <option value="Khmer">Khmer</option>
+                                            <option value="Kinyarwanda">Kinyarwanda</option>
+                                            <option value="Kirundi">Kirundi</option>
+                                            <option value="Konkani">Konkani</option>
+                                            <option value="Korean">Korean</option>
+                                            <option value="Kurdish">Kurdish</option>
+                                            <option value="Madurese">Madurese</option>
+                                            <option value="Magahi">Magahi</option>
+                                            <option value="Maithili">Maithili</option>
+                                            <option value="Malagasy">Malagasy</option>
+                                            <option value="Malay(inc.Indonesian and Malaysian)">Malay(inc.Indonesian and Malaysian)</option>
+                                            <option value="Malayalam">Malayalam</option>
+                                            <option value="Mandarin(entire branch)">Mandarin(entire branch)</option>
+                                            <option value="Marathi">Marathi</option>
+                                            <option value="Marwari">Marwari</option>
+                                            <option value="Mossi">Mossi</option>
+                                            <option value="Nepali">Nepali</option>
+                                            <option value="Northern Min[disputed–discuss]">Northern Min[disputed–discuss]</option>
+                                            <option value="Odia(Oriya)">Odia(Oriya)</option>
+                                            <option value="Oromo">Oromo</option>
+                                            <option value="Pashto">Pashto</option>
+                                            <option value="Persian">Persian</option>
+                                            <option value="Polish">Polish</option>
+                                            <option value="Portuguese">Portuguese</option>
+                                            <option value="Punjabi">Punjabi</option>
+                                            <option value="Quechua">Quechua</option>
+                                            <option value="Romanian">Romanian</option>
+                                            <option value="Russian">Russian</option>
+                                            <option value="Saraiki">Saraiki</option>
+                                            <option value="Serbo-Croatian">Serbo-Croatian</option>
+                                            <option value="Shona">Shona</option>
+                                            <option value="Sindhi">Sindhi</option>
+                                            <option value="Sinhala">Sinhala</option>
+                                            <option value="Somali">Somali</option>
+                                            <option value="Southern Min(inc.Hokkien and Teochew)">Southern Min (inc.Hokkien and Teochew)</option>
+                                            <option value="Spanish">Spanish</option>
+                                            <option value="Sundanese">Sundanese</option>
+                                            <option value="Swedish">Swedish</option>
+                                            <option value="Sylheti">Sylheti</option>
+                                            <option value="Tagalog(Filipino)">Tagalog(Filipino)</option>
+                                            <option value="Tamil">Tamil</option>
+                                            <option value="Telugu">Telugu</option>
+                                            <option value="Thai">Thai</option>
+                                            <option value="Turkish">Turkish</option>
+                                            <option value="Turkmen">Turkmen</option>
+                                            <option value="Ukrainian">Ukrainian</option>
+                                            <option value="Urdu">Urdu</option>
+                                            <option value="Uyghur">Uyghur</option>
+                                            <option value="Uzbek">Uzbek</option>
+                                            <option value="Vietnamese">Vietnamese</option>
+                                            <option value="Wu(inc.Shanghainese)">Wu(inc.Shanghainese)</option>
+                                            <option value="Xhosa">Xhosa</option>
+                                            <option value="Xiang">Xiang</option>
+                                            <option value="Yoruba">Yoruba</option>
+                                            <option value="Yue(inc.Cantonese)">Yue(inc.Cantonese)</option>
+                                            <option value="Zhuang">Zhuang</option>
+                                            <option value="Zulu">Zulu</option>
+
+                                        </select>
+                                    </div>
+                                    
+                                </div>
+                                
+                                
+                                
+                                
+                                
+                                
+                            </div>
+                            
+                            
+                            <div class="row justify-content-center my-3">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="MainFeild" class="ws-label">Main field<span class="mandStar">*</span></label>
+                                        <select name="main_field"  id="MainField" class="selectField main_field" onchange="ClearErr('MainFeild')">
+                                            {% for field in mainfields %}
+                                            <option value="{{field.id}}">{{field}}</option>
+                                            {% endfor %}
+                                            <option value="-100">Others</option>
+                                        </select>
+                                        <div id="MainFeild_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="SubFeild" class="ws-label">Subfield<span class="mandStar">*</span></label>
+                                        <select name="sub_field"  id="SubField" class="selectField sub_field" onchange="ClearErr('SubFeild')">
+                                            {% for field in subfields %}
+                                                <option value="{{field.id}}">{{field}}</option>
+                                            {% endfor %}
+                                            
+                                        </select>
+                                        <div id="SubFeild_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                    
+                                    
+                                    
+                                    
+                                </div>
+                             
+                            </div>
+                            <div class="row my-3 d-none" id="rowField">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box d-none" id="add_mfield">
+                                        <label for="usname" class="ws-label">Add your main field<span class="mandStar">*</span></label>
+                                            <input type="text" name="add_field" class="inputclass" id="otherMField" oninput="ClearErr('otherMField')">
+                                            <div class="mb-5" id="otherMField_error" style="color:red;font-size:0.9em"></div>
+                                        
+                                        
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box d-none" id="add_sfield">
+                                        <label for="usname" class="ws-label">Add your subfield<span class="mandStar">*</span></label>
+                                            <input type="text" name="add_field" class="inputclass" id="otherSField" oninput="ClearErr('otherSField')">
+                                            <div class="mb-5" id="otherSField_error" style="color:red;font-size:0.9em"></div>
+                                        
+                                        
+                                    </div>
+                                    
+                                </div>
+                                <!--<div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box " >
+                                        <button class="btn btn-success d-none p-3" id="add_btn" >Add to list</button>
+                                        
+                                        
+                                    </div>
+                                    
+                                </div>-->
+                                
+                            </div>
+                            
+                            
+                            <div class="row my-3 ">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-3 px-1">
+                                    
+                                <table class="table table-dark" id=fieldtbl>
+                                    <thead class="table-info">
+                                        <tr>
+                                            
+                                            <th style="width:35%" class="text-center align-middle">Main field</th>
+                                            <th style="width:35%" class="text-center align-middle">Subfield</th>
+                                            <th style="width:30%" class="text-center align-middle"><button class="btn btn-success" id="AddFieldtoTbl">Add to table</button></th>
+                                        </tr>
+                                        
+                                        
+                                        
+                                    </thead>
+                                    <tbody ></tbody>
+                                    
+                                </table>
+                                 <div class="mb-5" id="fieldtbl_error" style="color:red;font-size:0.9em"></div>
+                                
+                                </div>
+                                
+                                 <input type="text" name="Mfields" required class="fields inputclass d-none" id="Mfields" >
+                                  <input type="text" name="Sfields" required class="fields inputclass d-none" id="Sfields" >
+                            </div>
+                            
+                             <div class="row mt-4">
+                                
+                                <!--<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-1 px-1">
+                                    <div class="ws-label-box mb-1">
+                                        <label for="inputFile" style="color:#fff">Background picture<span class="mandStar">*</span> </label>
+                                        <input type="file" name="image" id="inputFile" class="form-control-file inputclass"  placeholder="Upload Image" oninput="OverCHeck(this)" data-title="Drag and drop a file" >
+                                    </div>
+                                    <div class="mt-4 pt-1" style="color:red; font-size:0.9em" id="inputFile_error"></div>
+                                    
+                                    <div class="mt-1">
+                                        <a  data-bs-toggle="modal" data-bs-target="#DemoPicModal" href="#DemoPicModal" data-backdrop="static" data-keyboard="false" onclick="ClearErr('inputFile')" style="text-decoration:none;">Would you like a demo picture?</a>
+                                        <a id="demoPic" href="#" target="_blank" style="color:yellow"></a>
+                                        <div id="DelSign" style="display:none"><span class="deletesign" style="color:red"><i class="fa fa-times-circle"></i></span></div>
+                                        <input type="hidden" id="demoImgUrl" name="demoImage">
+                                    </div>
+                                    
+                                    
+                                    
+                                </div>-->
+                                
+                                
+                                
+                                
+                                
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-1 px-1">
+                                    
+                                   
+                                   <div class="ws-label-box">
+                                        <label class="ws-label">Background picture (jpeg,jpg,png )<span class="mandStar">*</span><a data-bs-toggle="modal" data-bs-target="#helpDemoModal" href="#helpDemoModal" style="text-decoration:none"><span class="text-success" style="font-size:0.9em"><i class="fa fa-question-circle"></i></span></a></label>
+                                        <div class="input-group mb-3" style="width:100%">
+                                            <input type="file" class="form-control pl-4 py-3 inputclass2" name="image" id="inputFile"  aria-describedby="demo-addon" oninput="ClearErr('skill')">
+                                            <div class="input-group-append" >
+                                                <span class="input-group-text inputclass2" id="demo-addon">
+                                                    <button type="button" class="btn btn-success btn-block py-2 my-1" id="DemoBtn" >
+                                                    <a  data-bs-toggle="modal" data-bs-target="#DemoPicModal" href="#DemoPicModal" data-backdrop="static" data-keyboard="false" onclick="ClearErr('inputFile')" style="text-decoration:none;color:#fff">Demo</a></button>
+                                                </span>
+                                            </div>
+                                
+                                        </div>
+                                    </div>
+                                   
+                                 </div>  
+                                   
+                                   
+                                   
+                                   <!-- <div class="ws-label-box mb-1">
+                                        <label for="inputFile" style="color:#fff">Background picture<span class="mandStar">*</span> </label>
+                                        <div class="input-group mb-3" style="width:100%">
+                                            <input type="file" name="image" id="inputFile" class="form-control-file inputclass"  aria-describedby="demo-addon" placeholder="Upload Image" oninput="OverCHeck(this)" data-title="Drag and drop a file" >
+                                            <div class="input-group-append" >
+                                                <span class="input-group-text inputclass2" id="demo-addon"> <button type="button" class="btn btn-success btn-block py-2 my-1" id="DemoBtn" >
+                                                    <a  data-bs-toggle="modal" data-bs-target="#DemoPicModal" href="#DemoPicModal" data-backdrop="static" data-keyboard="false" onclick="ClearErr('inputFile')" style="text-decoration:none;">Demo</a></button></span>
+                                            </div>
+                        
+                                        </div>
+                                      
+                                        <input type="file" name="image" id="inputFile" class="form-control-file inputclass"  placeholder="Upload Image" oninput="OverCHeck(this)" data-title="Drag and drop a file" >
+                                    </div>-->
+                                    
+                                    <div class="mt-1">
+                                        <a id="demoPic" href="#" target="_blank" style="color:yellow"></a>
+                                        <div id="DelSign" style="display:none"><span class="deletesign" style="color:red"><i class="fa fa-times-circle"></i></span></div>
+                                        <input type="hidden" id="demoImgUrl" name="demoImage">
+                                         <div style="color:red; font-size:0.9em" id="inputFile_error"></div>
+                                    </div>
+                                    
+                                   
+                                    
+                                    
+                                    
+                                    
+                                    
+                                </div>
+                                
+                                <!--<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-1 px-1">
+                                    <div class="ws-label-box">
+                                        <label class="ws-label" for="guaranted" style="color:#fff">Warranted by <a data-bs-toggle="modal" data-bs-target="#helpModal" href="#helpModal" style="text-decoration:none"><span class="text-success" style="font-size:0.9em"><i class="fa fa-question-circle"></i></span></a></label>
+                                        <select class="selectField" name="guaranteed" id="guaranted">
+                                        {% for guarante in workshop.guaranteed %}
+                                            {{guarante}}
+                                        {% endfor %}
+                                        </select>
+                                    </div>
+                                    
+                                </div>
+                                    
+                                 
+                            </div>-->
+                            
+                            
+                            <!--<div class="row justify-content-center">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-1 px-1">
+                                    <div class=" row  mt-3 px-2">
+                                        <div class="col-10">
+                                            <label class="" for="wsTec" style="color:#fff; font-size:0.85em">How many workshops have you ever held as a presenter at Tecvico?</label>
+                                        </div>
+                                        <div class="col-2">
+                                            <select name="work_with_us" class="form-control-sm wsNumClass workshop-number px-0 mx-0" style="display:inline-block;width:100%;min-width:45px;" id="wsTec">
+                                            <option value=0>0</option>
+                                            <option value=1>1</option>
+                                            <option value=2>2</option>
+                                            <option value=3>3</option>
+                                            <option value=4>4</option>
+                                            <option value=5>5</option>
+                                            <option value=6>>5</option>
+                                        </select>
+                                            
+                                        </div>
+                                           
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-1 px-1">
+                                    <div class=" row my-2 px-2">
+                                        <div class="col-10">
+                                            <label class="" for="wsEls" style="color:#fff; font-size:0.85em">How many workshops have you ever held as a presenter elsewhere?</label>
+                                        </div>
+                                        <div class="col-2">
+                                            <select name="work_with_others" class="form-control-sm wsNumClass workshop-number px-0 mx-0" style="display:inline-block;width:100%;min-width:45px" id="wsEls">
+                                            <option value=0>0</option>
+                                            <option value=1>1</option>
+                                            <option value=2>2</option>
+                                            <option value=3>3</option>
+                                            <option value=4>4</option>
+                                            <option value=5>5</option>
+                                            <option value=6>>5</option>
+                                        </select> 
+                                            
+                                        </div>
+                                                                              
+                                    </div>
+                                    
+                                   
+                                </div>
+                            </div>
+                                
+                            <div class="row justify-content-center">
+                                
+                                       
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-1 px-1">
+                                    <div id="proof" class="row mt-1 mb-3 px-2" style="display:none">
+                                        <label for="proofFile" style="color:#fff">Proof of documents<span class="mandStar">*</span></label>
+                                        <input type="file" name="proof_file" id="proofFile" class="form-control-file inputclass" placeholder="Upload File" oninput="ClearErr('proofFile')">
+                                        
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                                
+                            </div>-->
+                            
+                            
+                           
+                            <div class="row justify-content-center">
+                                
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 my-1 px-1">
+                                    
+                                    <div>
+                                        <div class="row pr-4">
+                                            <div class="col-6 text-start mx-0">
+                                                <label for="description" class="ws-label2" style="color:#fff">{{type | title}} description<span class="mandStar">*</span></label>
+                                            </div>
+                                            <div class="col-6 text-end px-2 mx-0 ">
+                                                <span class="text-success text-sm"><span>Total charachters: </span><span id="display_count">0</span><span>/5000 </span></span> 
+                                            </div>
+                                        </div>
+                                        <textarea name="description" id="description" required style="height:250px;" class="description" oninput="ClearErr('description')"> </textarea>
+                                        <!--<div class="text-warning">Total word count : <span id="display_count">0</span> words. Words left : <span id="display_count_left">300</span></div>-->
+                                        <div id="description_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                
+                                    
+                                    
+                                </div>
+                                
+                              <!--  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-1 px-1">
+                                   
+                                   
+                                        <div class="row px-0">
+                                            <div class="col-7 text-start mx-0 pr-0">
+                                                <label class="px-0" for="description2" style="color:#fff;font-size:1em">Previous exprience in workshops</label>
+                                            </div>
+                                            <div class="col-5 text-end mx-0 pl-0 pr-3">
+                                                 <span class="text-success text-sm" ><span>Total charachters: </span><span id="display_count_prv">0</span><span>/2500</span></span>  
+                                            </div>
+                                        </div>
+                                       
+                                        <textarea name="prev_experience" id="description2" class="description2" style="height:250px"></textarea>
+                                   
+                                </div>-->
+                                 
+                            </div>
+                            
+                            <div class="row justify-content-center my-5">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <table class="table table-sm" id="skilltbl">
+                                        <thead >
+                                            <tr class="border-dark p-0 m-0">
+                                                <th class="p-0" colspan="2">
+                                                    <div class="ws-label-box">
+                                                        <label class="ws-label">Pre-required skills<span class="mandStar">*</span></label>
+                                                        <div class="input-group mb-3" style="width:100%">
+                                                            <input type="text" class="form-control inputclass2" id="skill" placeholder="Please enter your skills" aria-describedby="skill-addon" oninput="ClearErr('skill')">
+                                                            <div class="input-group-append" >
+                                                                <span class="input-group-text inputclass2" id="skill-addon"> <button type="button" class="btn btn-success btn-block py-2 my-1" id="skillBtn" >Add</button></span>
+                                                            </div>
+                                                
+                                                        </div>
+                                                    </div>
+                                                    <div id="skill_error" style="color:red;font-size:0.9em"></div>
+                                                </th>
+                                                
+                                            </tr>
+                                            <tr class="table-info m-0">
+                                                <th class="text-center">Skill name</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-dark text-center"></tbody>
+                                    </table>
+                                     <div id="skill_total_error" style="color:red;font-size:0.9em"></div>
+                                     <input type="text" name="skills" required class="skills inputclass d-none" id="skills"  >
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <table class="table table-sm" id="keywordtbl">
+                                        <thead >
+                                            <tr class="border-dark p-0 m-0">
+                                                <th class="p-0" colspan="2">
+                                                    <div class="ws-label-box">
+                                                    <label class="ws-label">Motivating keywords<span class="mandStar">*</span></label>
+                                                    <div class="input-group mb-3" style="width:100%">
+                                                        <input type="text" class="form-control inputclass2" id="keyword" placeholder="Please enter the keyword" aria-describedby="keyword-addon" oninput="ClearErr('keyword')">
+                                                        <div class="input-group-append" >
+                                                            <span class="input-group-text inputclass2" id="keyword-addon"> <button type="button" class="btn btn-success btn-block py-2 my-1" id="keywordBtn">Add</button></span>
+                                                        </div>
+                                            
+                                                    </div>
+                                                    </div>
+                                                    <div id="keyword_error" style="color:red;font-size:0.9em"></div>
+                                                </th>
+                                                
+                                            </tr>
+                                            <tr class="table-info m-0">
+                                                <th class="text-center">Keyword</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-dark text-center"></tbody>
+                                    </table>
+                                    <div id="keyword_total_error" style="color:red;font-size:0.9em"></div>
+                                     <input type="text" class="d-none" id="valkey" name="keyword">
+                                </div>
+                                
+                            </div>
+                            
+                            
+                            
+                            
+                            
+                            
+                         <!--   <div class="row justify-content-center my-5">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    
+                                    
+                                    
+                                    
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="skills" class="ws-label">Pre-required skills<span class="mandStar">*</span></label>
+                                        <input type="text" name="skills" required class="skills inputclass" id="skills" placeholder="Skill1, Skill2, Skill3, ..." oninput="ClearErr('skills')">
+                                        <div id="skills_error" style="color:red;font-size:0.9em"></div>
+                                    
+                                    </div>
+                                </div>
+                                
+                            </div>-->
+                            <!--<div class="row justify-content-center my-5">
+                                <!--<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="onekey" class="ws-label">Motivating keyword <i class="fa fa-asterisk" style="font-size:6px;color:red"></i></label>
+                                        <input type="text" name="onekey"  class="inputclass" id="onekey" oninput="ClearErr('onekey')">
+                                        <div id="onekey_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 my-3 px-1">
+                                    <button type="button" class="btn btn-success btn-block py-2 my-1" id="AddBtn" oninput="ClearErr('AddBtn')">Add </button>
+                                        
+                                   
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="mkeywords" class="ws-label">Motivating keywords <span>(Maximum: 6 keywords)</span> <i class="fa fa-asterisk" style="font-size:6px;color:red"></i></label>
+                                        <input type="text" name="keyword2" disabled class="keywords inputclass" id="mkeywords" oninput="ClearErr('mkeywords')" placeholder="Keyword1, Keyword2, Keyword3, ...">
+                                        <input type="text" class="d-none" id="valkey" name="keyword">
+                                        <div id="mkeywords_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>--
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-2 px-1">
+                                    <div class="ws-label-box">
+                                        <label class="ws-label">Motivating keywords <span>(Maximum: 6 keywords)</span><span class="mandStar">*</span></label>
+                                        <div class="input-group mb-3" style="width:100%">
+                                            
+                                            <input type="text" class="form-control inputclass2" id="onekey" aria-describedby="basic-addon2">
+                                            
+                                            <div class="input-group-append" >
+                                                <span class="input-group-text inputclass2" id="basic-addon2"> <button type="button" class="btn btn-success btn-block py-2 my-1" id="AddBtn" oninput="ClearErr('AddBtn')">Add to list </button></span>
+                                            </div>
+                                            
+                                        </div>
+                                        <div id="onekey_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-2 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="mkeywords" class="ws-label">Keywords list</label>
+                                        <input type="text" name="keyword2" readonly class="keywords inputclass" id="mkeywords" oninput="ClearErr('mkeywords')" placeholder="Keyword1, Keyword2, Keyword3, ...">
+                                        <input type="text" class="d-none" id="valkey" name="keyword">
+                                        <div id="mkeywords_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>--
+                                
+                                
+                                
+                                
+                            </div>-->
+                            
+                            
+                            
+                            <div class="row justify-content-center my-5">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <table class="table table-sm" id="speakertbl">
+                                        <thead >
+                                            <tr class="border-dark p-0 m-0">
+                                                <th class="p-0" colspan="3">
+                                                    <div class="ws-label-box">
+                                                        <label class="ws-label">{{type | title}} Speaker<span class="mandStar">*</span></label>
+                                                        <div class="row">
+                                                            <div class="col-6 pr-0">
+                                                                <input type="text" class="form-control inputclass2" id="Sfullname" placeholder="Full name" oninput="ClearErr('speaker')">
+                                                                
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <div class="input-group mb-3" style="width:100%">
+                                                                    <input type="text" class="form-control inputclass2" id="Sdegree" aria-describedby="speaker-addon" placeholder="Academic degree" oninput="ClearErr('speaker')">
+                                                                    <div class="input-group-append" >
+                                                                        <span class="input-group-text inputclass2" id="speaker-addon"> <button type="button" class="btn btn-success btn-block py-2 my-1" id="speakerBtn" >Add</button></span>
+                                                                    </div>
+                                                
+                                                                </div>
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="speaker_error" style="color:red;font-size:0.9em"></div>
+                                                </th>
+                                                
+                                            </tr>
+                                            <tr class="table-info m-0">
+                                                <th class="text-center">Full name</th>
+                                                 <th class="text-center">Academic degree</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-dark text-center"></tbody>
+                                    </table>
+                                    <div id="speaker_total_error" style="color:red;font-size:0.9em"></div>
+                                    <input type="text" name="speaker" required class="speakers inputclass d-none" id="speaker" >
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <table class="table table-sm" id="countrytbl">
+                                        <thead >
+                                            <tr class="border-dark p-0 m-0">
+                                                <th class="p-0" colspan="2">
+                                                    <div class="ws-label-box">
+                                                     <label class="ws-label">Suggest fruitful countries<span class="mandStar">*</span></label>
+                                                    <div class="input-group mb-3" style="width:100%">
+                                                        <input type="text" class="form-control inputclass2" id="country" placeholder="Please enter the country name" aria-describedby="country-addon" oninput="ClearErr('country')">
+                                                        <div class="input-group-append" >
+                                                            <span class="input-group-text inputclass2" id="country-addon"> <button type="button" class="btn btn-success btn-block py-2 my-1" id="countryBtn">Add</button></span>
+                                                        </div>
+                                            
+                                                    </div>
+                                                    </div>
+                                                    <div id="country_error" style="color:red;font-size:0.9em"></div>
+                                                </th>
+                                                
+                                            </tr>
+                                            <tr class="table-info m-0">
+                                                <th class="text-center">Country name</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-dark text-center"></tbody>
+                                    </table>
+                                    <div id="country_total_error" style="color:red;font-size:0.9em"></div>
+                                    <input type="text" name="suggest_country" class="countries inputclass d-none" id="fcountries">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            
+                            
+                            
+                            
+                           <!-- <div class="row justify-content-center my-5">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="speaker" class="ws-label">Workshop Speaker <span> (Full name, Academic degree)</span><span class="mandStar">*</span><a data-bs-toggle="modal" data-bs-target="#SpeakerhelpModal" href="#SpeakerhelpModal" style="text-decoration:none"><span style="color:yellow;font-size:0.9em"><i class="fa fa-question-circle"></i></span></a></label>
+                                        <input type="text" name="speaker" required class="speakers inputclass" id="speaker" placeholder="Speaker1, Speaker2, Speaker3, ..." oninput="ClearErr('speaker')">
+                                        <div id="speaker_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 my-3 px-1">
+                                    <div class="ws-label-box">
+                                        <label for="fcountries" class="ws-label">Suggest fruitful countries<span class="mandStar">*</span></label>
+                                        <input type="text" name="suggest_country" required class="countries inputclass" id="fcountries" placeholder="Country1, Country2, Country3, ..." oninput="ClearErr('fcountries')">
+                                         <div id="fcountries_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                </div>
+                            </div>-->
+                            
+                        <div class="row justify-content-center">   
+                           
+                            <div class="col-12 table-info mx-2">
+                                <legend class="px-2 fw-bold ">Timetable</legend>
+                            </div>
+                           
+                            
+                                
+                                
+                           <!-- <div class="row text-success mt-3">
+                                <div class="col-6"><p>Are you ready to set the time table?</p></div>
+                                <div class="col-6 text-start">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input radiotime bg-success" type="radio" name="radiotime" id="YesChk" value="true" checked onclick="ShowRelatedDiv()">
+                                        <label class="form-check-label" for="YesChk">Yes</label>
+                                    </div>
+                                    {% comment %} <div class="form-check form-check-inline">
+                                        <input class="form-check-input radiotime" type="radio" name="radiotime" id="NoChk" value="false" onclick="ShowRelatedDiv()">
+                                        <label class="form-check-label" for="NoChk">No</label>
+                                    </div> {% endcomment %}
+                                </div>
+                                
+                            </div>-->
+                            <!--<div class="row d-none" id="timetblNote">
+                                <div class="col-12">
+                                    <p style="color:red">Note: You can complete the timetable later.Your request will not be reviewed until the timetable is completed.</p>
+                                </div>
+                            </div>-->
+                            <div class="mt-2" id="timetblDiv">
+                                <div class="row justify-content-center my-4 text-dark">
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 px-1">
+                                        <div class="ws-label-box">
+                                            <label for="date" class="ws-label">Date<span class="mandStar">*</span></label>
+                                            <input type="date" min="{{date|date:'Y-m-d'}}" class="form-control inputclass date" id="date" oninput="ClearErr('date')">
+                                            
+                                        </div>
+                                        <div id="date_error" style="color:red;font-size:0.9em"></div>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 px-1">
+                                        <div class="ws-label-box">
+                                            <label for="time" class="ws-label">Start time<span class="mandStar">*</span></label>
+                                            <input type="text" class="form-control inputclass time" id="str_time" oninput="ClearErr('str_time')">
+                                            
+                                        </div>
+                                        <div id="str_time_error" style="color:red;font-size:0.9em"></div>
+                                        
+                                    </div>
+                                    
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 px-1">
+                                        <div class="ws-label-box">
+                                            <label for="finished_at" class="ws-label">Finish time<span class="mandStar">*</span></label>
+                                            <input type="text" class="form-control inputclass time" id="end_time" oninput="ClearErr('end_time')">
+                                            
+                                        </div>
+                                        <div id="end_time_error" style="color:red;font-size:0.9em"></div>
+                                        
+                                        
+                                    </div>
+                                  
+                                  
+                                </div>   
+                                <div class="row my-5">   
+                                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 px-1">
+                                        <div class="ws-label-box">
+                                            <label for="title" class="ws-label">Section title<span class="mandStar">*</span></label>
+                                            <input type="text" class="form-control inputclass" id="title" oninput="ClearErr('title')">
+                                            <p id="title_error" style="color:red;font-size:0.9em"></p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 px-1">
+                                        <div class="ws-label-box">
+                                            <label for="section_price" class="ws-label mb-3">Section price<span> ($ USA) </span><span class="mandStar">*</span></label>
+                                            <input type="number" name="section_price" class="price sectionPrice inputclass2" id="section_price" placeholder="Enter fee as an integer" oninput="ClearErr('section_price')" autocomplete="off" style="display: none;">
+                                            {% comment %} <div class="input-group  "><button style="min-width: 2.5rem" class="btn btn-decrement btn-outline-secondary btn-minus" type="button"><strong>−</strong></button><input type="text" inputmode="decimal" style="text-align: center" class="form-control price inputclass2" required="" placeholder="Enter fee as an integer" id="price_MP_cBdLN29i2"><button style="min-width: 2.5rem" class="btn btn-increment btn-outline-secondary btn-plus" type="button"><strong>+</strong></button></div> {% endcomment %}
+                                            <div id="section_price_error" style="color:red;font-size:0.9em"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 px-1">
+                                        
+                                        <button type="button"  class="btn btn-success second" style="height:55px; width:100%" id="AddtoTbl">Add to table</button>
+                                    </div>
+                                    
+                                    
+                                   
+                                </div>
+                                 
+                                <div class="row">
+                                    <div class="col-12">
+                                        <table class="table table-striped table-hover table-dark text-center" id="timetbl">
+                                        <thead>
+                                            <tr class="table-info text-dark text-center" style="font-size:13px">
+                                                <th class="text-center" style="width:5%">No.</th>
+                                                <th class="text-center" style="width:25%">Title</th>
+                                                <th class="text-center" style="width:10%">Date</th>
+                                                <th class="text-center" style="width:10%">Start time</th>
+                                                <th class="text-center" style="width:10%">Finish time</th>
+                                                <th class="text-center" style="width:10%">Duration</th>
+                                                <th class="text-center" style="width:5%">Price($)</th>
+                                                <th class="text-center" style="width:20%">File</th>
+                                                <th class="text-center" style="width:5%">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-dark" style="font-size:13px">
+                                           
+                                        </tbody>
+                                    </table>
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                    </div>
+                                    
+                                    
+                                    
+                                    
+                                    
+                                </div>
+                                <div id="time_table_error" style="color:red;font-size:0.9em"></div>
+                            </div>   
+                                
+                                
+                                
+                           
+                            </div>
+                            
+                            
+                            <div class="row">
+                           <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 form-group">
+                                <label class="form-control-label text-secondary">Do you agree with the company rules?</label>
+                                <input type="checkbox" id="chkagree" checked>
+                               
+                            </div>
+                           
+                           
+                       </div>
+                        
+                        <div class="" id="ruleDiv">
+                            
+                            <p class="text-secondary" id="ruletxt">Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules 
+                            Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules
+                            Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules 
+                            Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules 
+                            Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules 
+                            Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules Rules </p>
+                            
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                    <input type="text" class="form-control inputclass my-2" disabled value="{{user.get_full_name}}">
+                                    
+                                    <input type="text" class="form-control inputclass my-2"  disabled value="" id="NowTime">
+                                    
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                        <div id="signature-pad" class="signature-pad" style="height:300px">
+                                            <div class="signature-pad--body" >
+                                              <canvas id="mycan"></canvas>
+                                            </div>
+                                            <div class="signature-pad--footer">
+                                              <div class="description">Sign above</div>
+                                        
+                                                  <div class="signature-pad--actions">
+                                                    <div>
+                                                      <button type="button" class="button btn btn-secondary clear" data-action="clear">Clear</button>
+                                                      
+                                            
+                                                    </div>
+                                                    
+                                                  </div>
+                                            </div>
+                                        </div>
+                                       
+                                    <input type="hidden" id='sign_image' name="sign_image" value=""> 
+                                    <div id="signature_error" style="color:red;font-size: small;"></div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                            
+                            
+                            
+                            
+                            
+                            
+                        
+                             <input type="text" name="set_now" class="d-none" id="table_status" value="true">
+                             <input type="text" name="tblList" class="d-none" id="tblList">
+                             <input type="text" name="tblSize" class="d-none" id="tblSize">
+                            <div class="row justify-content-start mt-5">
+                                <div class="col-md-12">
+                                    <button type="button" name="submit2" class="btn btn-success px-5 second2" id="btn2-notification">Submit</button>
+                                    <div class="mt-2" id="submit_error" style="color:red;font-size:0.9em"></div>
+                                </div>
+                            </div>
+                    <!--=======================================================================-->
+                    
+                    
+                            <div class="modal fade" id="WSModal" tabindex="-1" aria-labelledby="WSModalLabel" aria-hidden="true" role="dialog" >
+                                <div class="modal-dialog modal-lg" >
+                                    <div class="modal-content" style="background-color: #1A2226; color:#bbb">
+                                        
+                                        <div class="modal-body">
+                                            
+                                            <div class="row">
+                                                <p id="WSModal_text">Are you sure to submit the {{type | title}} request?</p> 
+                                               <!-- <p style="color:orange">Note: Your workshop will not be reviewed until the time table is completed.</p>-->
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6 text-end">
+                                                    <button onclick="form_submit()" type="button" name="submit_yes" class="btn" style="background-color:green;color:white" data-bs-dismiss="modal" aria-label="Submit"><i class="fa fa-check"></i> Yes</button>
+                                                </div>
+                                                <div class="col-6 text-start">
+                                                    <button type="button" name="submit_no" class="btn" style="background-color:orange;color:white"  data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i> No</button>
+                                                </div>
+                                                
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                    
+                     
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="successalert" class="alert" role="alert">
+                <span> Success fully inserted </span>
+                <i class="far fa-check-circle"></i>
+            </div>
+            <div id="eroralert" class="alert" role="alert">
+                <span> Please complete form </span>
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="footer my-4 text-center">Copyright <i class="fas fa-copyright"></i> 2021 Tecvico Group - All
+                Rights Reserved</div>
+        </div>
+    </div>
+    
+<!-- new modal -->
+  
+
+
+
+    <!-- Modal -->
+<div class="modal fade" id="DemoPicModal" tabindex="-1" aria-labelledby="DemoPicModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="DemoPicModalLabel">Demo pictures</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="demo" class="carousel slide" data-bs-ride="carousel">
+
+								  <!-- Indicators/dots -->
+								  <div class="carousel-indicators">
+									<button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
+									<button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
+									<button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
+									<button type="button" data-bs-target="#demo" data-bs-slide-to="3"></button>
+									<button type="button" data-bs-target="#demo" data-bs-slide-to="4"></button>
+									<button type="button" data-bs-target="#demo" data-bs-slide-to="5"></button>
+									<button type="button" data-bs-target="#demo" data-bs-slide-to="6"></button>
+									<button type="button" data-bs-target="#demo" data-bs-slide-to="7"></button>
+									<button type="button" data-bs-target="#demo" data-bs-slide-to="8"></button>
+									<button type="button" data-bs-target="#demo" data-bs-slide-to="9"></button>
+								
+								  </div>
+
+								  <!-- The slideshow/carousel -->
+								   <div class="carousel-inner" id="carouselDiv" >
+								        <figure class="carousel-item active" name="img1" id="fig1">
+                                            <img class="imgDemo" src="../../media/workshop/demoImage/g1.png" id="img1" alt="" title="">
+                                        </figure>
+                                        <figure class="carousel-item" name="img2" id="fig2">
+                                            <img class="imgDemo" src="../../media/workshop/demoImage/g2.png" id="img2" alt="" title="">
+                                        </figure>
+                                        <figure class="carousel-item" name="img3" id="fig3">
+                                            <img class="imgDemo" src="../../media/workshop/demoImage/g3.png" id="img3" alt="" title="">
+                                        </figure>
+                                         <figure class="carousel-item" name="img4" id="fig4">
+                                            <img class="imgDemo" src="../../media/workshop/demoImage/g4.png" id="img4" alt="" title="">
+                                        </figure>
+                                         <figure class="carousel-item" name="img5" id="fig5">
+                                            <img class="imgDemo" src="../../media/workshop/demoImage/g5.png" id="img5" alt="" title="">
+                                        </figure>
+                                        <figure class="carousel-item" name="img6" id="fig6">
+                                            <img class="imgDemo" src="../../media/workshop/demoImage/g6.png" id="img6" alt="" title="">
+                                        </figure>
+                                        <figure class="carousel-item" name="img7" id="fig7">
+                                            <img class="imgDemo" src="../../media/workshop/demoImage/g7.png" id="img7" alt="" title="">
+                                        </figure>
+                                        <figure class="carousel-item" name="img8" id="fig8">
+                                            <img class="imgDemo" src="../../media/workshop/demoImage/g8.png" id="img8" alt="" title="">
+                                        </figure>
+                                        <figure class="carousel-item" name="img9" id="fig9">
+                                            <img class="imgDemo" src="../../media/workshop/demoImage/g9.png" id="img9" alt="" title="">
+                                        </figure>
+                                        <figure class="carousel-item" name="img10" id="fig10">
+                                            <img class="imgDemo" src="../../media/workshop/demoImage/g10.png" id="img10" alt="" title="">
+                                        </figure>
+                                       
+								    </div>--
+
+								  <!-- Left and right controls/icons -->
+								  <button class="carousel-control-prev" type="button" id="prevBtn" data-bs-target="#demo" data-bs-slide="prev">
+									   <span class="carousel-control-prev-icon" style="color:darkorange"></span>
+								  </button>
+								  <button class="carousel-control-next" type="button" id="nextBtn" data-bs-target="#demo" data-bs-slide="next">
+									   <span class="carousel-control-next-icon" ></span>
+								  </button>
+					</div>
+                
+             
+               
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                   
+                    <div class="col col-12 text-center">
+                        <button type="button" id="sveBtn" class="btn btn-primary" onclick="test()">
+                              Select</button>
+                    </div>
+                
+                
+                </div>
+                
+            </div>
+           
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<div class="modal fade" id="SpeakerhelpModal" tabindex="-1" aria-labelledby="SpeakerhelpModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="SpeakerhelpModalLabel">HELP</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    If there are other speakers, please mention the full name and academic degree in the box.
+                </p>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="helpDemoModal" tabindex="-1" aria-labelledby="helpDemoModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="helpDemoModalLabel">Help</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    You can also use demo pictures as your workshop picture.
+                </p>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="helpModalLabel">Help</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    The applicant can select a member as a guarantor from the specified list. If the guarantor rejects the request, the applicant thus has to pay the responsibility fee. 
+
+                </p>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+    <!--<script src="{% static 'workshop/js/jquery-3.6.0.min.js' %}"></script>-->
+    <script src="{% static 'ivc_website/js/jquery.min.js' %}"></script>
+     <script src="{% static 'workshop/js/bootstrap.bundle.min.js' %}"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>-->
+     <script src="{% static 'workshop/js/popper.min.js' %}"></script>
+     <script src="{% static 'workshop/js/bootstrap.min.js' %}"></script>
+  
+   
+   
+    <script src="{% static 'workshop/js/workshop.js' %}"></script>
+    <script src="{% static 'workshop/js/myjs.js' %}"></script>
+    <script src="{% static 'workshop/js/bootstrap-clockpicker.min.js' %}"></script>
+    <script src="{% static 'workshop/js/bootstrap-input-spinner.js' %}"></script>
+    <script src="{% static 'workshop/js/custom-editors.js' %}"></script>
+    <script src="{% static 'ivc_website/js/signature_pad.umd.js' %}"></script>
+    <script src="{% static 'ivc_website/js/app.js' %}"></script>
+
+    
+   
+{% endblock content %}
+{% block script %}  
+    <script>
+    table_list = [];
+    skill_list=[];
+    keyword_list=[];
+    speaker_list=[];
+    country_list=[];
+    Mfield_list=[];
+    Sfield_list=[];
+    
+var focus_status = false;
+function form_submit(){
+    document.getElementById('WorkshopForm').submit()
+}
+    $(document).ready(function() {
+        
+        
+            showNowTime();
+            setInterval(showNowTime, 1000);
+        document.getElementById("chkagree").addEventListener("click", ShowRules);
+        
+        
+        
+        
+        $("input[type='number']").inputSpinner();
+         //$timeEditorInput = $("#duration")
+            //$("#duration").inputSpinner({editor:inputSpinnerCustomEditors.TimeEditor})
+    
+   
+       /* $('#time').clockpicker({
+				placement: 'top',
+				align: 'left',
+				autoclose: true,
+				
+			
+		});*/
+		
+	
+        
+        
+         
+        document.getElementById("btn2-notification").addEventListener("click", CheckForm);
+        //document.getElementById("AddBtn").addEventListener("click", AddKey);
+        document.getElementById("skillBtn").addEventListener("click",AddSkill);
+        document.getElementById("keywordBtn").addEventListener("click",AddKeyword);
+        document.getElementById("speakerBtn").addEventListener("click",AddSpeaker);
+        document.getElementById("countryBtn").addEventListener("click",AddCountry);
+        document.getElementById("AddFieldtoTbl").addEventListener("click",AddFields);
+         //document.getElementById("add_btn").addEventListener("click",ADDtoList);
+        
+        
+        
+        
+  /*  $('#onekey').bind('input', function() {
+        var c = this.selectionStart,
+            r = /[^a-z0-9 .]/gi,
+            v = $(this).val();
+        if(r.test(v)) {
+            $(this).val(v.replace(r, ''));
+            c--;
+        }
+        this.setSelectionRange(c, c);
+    });
+        */
+       
+       
+       
+        
+        
+    $('#str_time').clockpicker({
+    		placement: 'top',
+    		align: 'left',
+    		autoclose: true,
+    		afterDone: function() {
+				document.getElementById("str_time_error").innerHTML="";
+			}
+    	
+    });
+    
+    $('#end_time').clockpicker({
+    		placement: 'top',
+    		align: 'left',
+    		autoclose: true,
+    		afterDone: function() {
+				document.getElementById("end_time_error").innerHTML="";
+			}
+    		
+    	
+    }); 
+     
+     
+    $("#str_time").keypress(function(event) {
+	   event.preventDefault();
+	});
+
+	$("#end_time").keypress(function(event) {
+	   event.preventDefault();
+	});
+	
+	
+	
+	$('#timetbl').on('click', 'button', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        //alert(document.getElementById('tblList').value);    
+        table_list.splice(rowNum, 1); 
+        //document.getElementById('tblList').value = table_list;
+        //alert(document.getElementById('tblList').value);  
+        $(this).closest('tr').remove();
+        var time_table = document.getElementById("timetbl");
+        var tbodyRowCount = time_table.tBodies[0].rows.length;
+        var firstcol = $("#timetbl").find("td:first-child");
+        for(var i=0; i<=tbodyRowCount; i++){
+            firstcol[i].innerHTML=i+1;
+           
+        }
+        
+        
+    })
+    
+    
+    $('#skilltbl').on('click', 'input[type="button"]', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        skill_list.splice(rowNum, 1);
+        $(this).closest('tr').remove();
+        var skill_table = document.getElementById("skilltbl");
+        var tbodyRowCount = skill_table.tBodies[0].rows.length;
+        
+        
+        
+    })
+    
+    
+     $('#keywordtbl').on('click', 'input[type="button"]', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        keyword_list.splice(rowNum, 1);
+        $(this).closest('tr').remove();
+        var keyword_table = document.getElementById("keywordtbl");
+        var tbodyRowCount = keyword_table.tBodies[0].rows.length;
+        
+        
+        
+    })
+    
+     $('#speakertbl').on('click', 'input[type="button"]', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        speaker_list.splice(rowNum, 1);
+        $(this).closest('tr').remove();
+        var keyword_table = document.getElementById("speakertbl");
+        var tbodyRowCount = keyword_table.tBodies[0].rows.length;
+        
+        
+        
+    })
+    
+    $('#countrytbl').on('click', 'input[type="button"]', function(e){
+       
+        var rowNum =$(this).parent().parent().index();
+        country_list.splice(rowNum, 1);
+        $(this).closest('tr').remove();
+        var keyword_table = document.getElementById("countrytbl");
+        var tbodyRowCount = keyword_table.tBodies[0].rows.length;
+        
+        
+        
+    })
+	
+	
+	
+	
+     
+  //  var firstDay_format = document.getElementById('workshop_date').value;
+//    var firstDay = formatDate(firstDay_format);
+ //   document.getElementById('date').setAttribute("min", firstDay); 
+     
+     
+    const AddtoTbl = document.getElementById('AddtoTbl');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    AddtoTbl.addEventListener('click', () => {
+        var focus_status = false;
+        var title = document.getElementById("title").value;
+        if(title.length ==0){
+            document.getElementById("title_error").innerHTML = "Please enter the section title.";
+            if(focus_status == false){
+                document.getElementById("title_error").focus();
+                focus_status = true;
+            }
+            
+        }
+        var date = document.getElementById("date").value;
+        if(date.length ==0){
+           document.getElementById("date_error").innerHTML = "Please enter the date";
+           if(focus_status == false){
+                document.getElementById("date_error").focus();
+                focus_status = true;
+           }
+            
+        }
+    
+   
+    
+        var start_time = document.getElementById("str_time").value;
+        if(start_time.length==0){
+            
+           document.getElementById("str_time_error").innerHTML = "Please enter the start time of the section.";
+           if(focus_status == false){
+                document.getElementById("time_error").focus();
+                focus_status = true;
+           }
+            
+        }
+    
+        var end_time = document.getElementById("end_time").value;
+        if(end_time.length==0){
+            
+           document.getElementById("end_time_error").innerHTML = "Please enter the finish time of the section.";
+           if(focus_status == false){
+                document.getElementById("end_time_error").focus();
+                focus_status = true;
+           }
+            
+        }
+        
+        // var sectionPrice = document.getElementById('section_price_MP_cBdLN29i2').value;
+         var sectionPrice = document.getElementById('section_price').value;
+        if(sectionPrice==""){
+            
+           document.getElementById("section_price_error").innerHTML = "Please enter the price of the section.";
+           if(focus_status == false){
+                document.getElementById("section_price_error").focus();
+                focus_status = true;
+           }
+            
+        }
+        
+       
+        if(CompareTimes(start_time,end_time)!="great"){
+            
+           document.getElementById("end_time_error").innerHTML = "Note:The finish time must be greater than the start time.";
+           if(focus_status == false){
+                document.getElementById("end_time_error").focus();
+                focus_status = true;
+           }
+            
+        }
+        var time_table = document.getElementById("timetbl");
+        var tbodyRowCount = time_table.tBodies[0].rows.length;
+        
+        if(tbodyRowCount >0){
+            var end_time_before=time_table.tBodies[0].rows[tbodyRowCount-1].cells.item(4).innerHTML;
+            var date_before=formatDate(time_table.tBodies[0].rows[tbodyRowCount-1].cells.item(2).innerHTML);
+            var date_new = formatDate(date);
+            var d1 = new Date(date);
+            var d2 = new Date(date_before); 
+            if(d1.getTime() < d2.getTime()){
+                document.getElementById("date_error").innerHTML = "Note:The date of the next section should not be smaller than the date of the previous section";
+                if(focus_status == false){
+                    document.getElementById("date_error").focus();
+                    focus_status = true;
+                }
+                
+                
+            }
+            
+            
+            
+            if(date_new==date_before && CompareTimes(end_time_before,start_time)!="great"){
+            
+                document.getElementById("str_time_error").innerHTML = "Note:The start time must be greater than the finish time of the previous section.";
+                if(focus_status == false){
+                    document.getElementById("str_time_error").focus();
+                    focus_status = true;
+                }
+            
+            }
+            
+        }
+    
+        
+        
+        
+        
+      if(focus_status==false) { 
+        
+      var title = document.getElementById('title').value;
+      var date = document.getElementById('date').value;
+      var start_time = document.getElementById('str_time').value;
+      var end_time = document.getElementById('end_time').value;
+      var section_price = document.getElementById('section_price').value;
+      var duration =CalDiffTimes(start_time,end_time);
+      table_list.push([tbodyRowCount+1,title, date, start_time, end_time, duration,section_price])
+   
+      var time_table = document.getElementById("timetbl");
+      var time_row = time_table.tBodies[0].insertRow();
+       time_row.classList.add("text-center");
+      var time_cell0 = time_row.insertCell();
+    	time_cell0.innerHTML = tbodyRowCount+1;
+      var time_cell1 = time_row.insertCell();
+    	time_cell1.innerHTML = title;
+      var time_cell2 = time_row.insertCell();
+    	time_cell2.innerHTML = date;
+      var time_cell3 = time_row.insertCell();
+    	time_cell3.innerHTML = start_time;
+      var time_cell4 = time_row.insertCell();
+    	time_cell4.innerHTML = end_time;
+      var time_cell5 = time_row.insertCell();
+    	time_cell5.innerHTML = duration;
+      var time_cell6 = time_row.insertCell();
+    	time_cell6.innerHTML = section_price;
+      var time_cell7 = time_row.insertCell();
+    	time_cell7.innerHTML = "<input type='file' class='form-control small'  name='"+title+"' />";
+      var time_cell8 = time_row.insertCell();
+    	time_cell8.innerHTML = "<button type='button'><i class='bx bxs-trash' style='font-size:24px;color:red;background-color:transparent;border-color: transparent'></i></button>";
+      
+          
+        document.getElementById("title").value="";  
+        document.getElementById('date').value="";  
+        document.getElementById('str_time').value="";
+        document.getElementById('end_time').value="";
+        //const price_input = document.getElementsByClassName("sectionPrice");
+        document.getElementById('section_price_MP_cBdLN29i2').value="";
+        
+        //price_input[0].value="";
+        document.getElementById("time_table_error").innerHTML ="";
+          
+      }else{
+          return;
+      }
+    	
+    //var element = document.getElementById("timetbl");
+     // time_table.classList.add("text-center");
+      
+    }, false)
+    
+    
+  /*  submitBtn.addEventListener('click', () => {
+        var probcheck = false;
+        var time_table = document.getElementById("timetbl");
+        var tbodyRowCount = time_table.tBodies[0].rows.length;
+        arary_time = [];
+        alert("ok");
+      
+        
+        if(probcheck == false){
+            workshop_id = $('#workshop_id').val();
+            url = "{% url 'set-time-table' 0 %}".replace('0', workshop_id);
+           
+        	jQuery.ajax({
+        		type: "POST",
+        		url: url,
+        		dataType:"JSON",
+        		data: {
+                    //'json': JSON.stringify(rowdataArr),
+                    'json':table_list,
+                    'list_size': table_list.length,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                     //alert("ok");
+                    window.location.href = data.url;
+                },error:function(errors){
+                    
+                    alert(errors.responseText);
+                }
+        	});
+        }else{
+            return;
+        }
+    })*/
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+function AddKey(){
+    document.getElementById("mkeywords_error").innerHTML="";
+    var keyword = document.getElementById("onekey").value;
+    var count = 0;
+    var textKeys = "";
+    var keywords = document.getElementById("mkeywords").value;
+    var keywords_count = keywords.split(",");
+    if(keywords_count.length < 7){
+        
+        textKeys = keywords  + keyword + ", ";
+       
+        //var s2 = textKeys.substring(1);
+        document.getElementById("valkey").value ="";
+        document.getElementById("mkeywords").value = textKeys;
+        document.getElementById("valkey").value = textKeys;
+        
+        document.getElementById("onekey").value ="";
+        
+    }else if(keywords_count.length==7){
+        document.getElementById("onekey_error").innerHTML="The maximum number of keywords allowed is 6.";
+    }
+    
+    
+    
+}
+
+
+function ShowRules(){
+   var checkBox = document.getElementById("chkagree"); 
+   if (checkBox.checked == true){
+       $('#ruleDiv').removeClass('d-none');
+       document.getElementById("btn2-notification").disabled = false;
+   }else{
+       $('#ruleDiv').addClass('d-none');
+       document.getElementById("btn2-notification").disabled = true;
+       
+   }
+    
+}
+
+
+function showNowTime(){
+    var date = new Date();
+    const pst = date.toLocaleString('en-US', {
+  timeZone: 'UTC',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZoneName: 'short',
+});
+    //var currentDate = pst.toISOString().substring(0 , 10);
+    //var currentTime = pst.toISOString().substring(11 , 16);
+    document.getElementById("NowTime").value = pst;
+    
+}
+        
+/*var onekey = document.getElementById("onekey");
+onekey.addEventListener("keyup", function(event) {
+  
+  if (event.keyCode === 13) {
+       event.preventDefault();
+       document.getElementById("AddBtn").click();
+  }
+});  */    
+        
+        $(".main_field").change(function () {
+            const Value = $(this).val();
+            if (Value == "-100"){
+                $('#rowField').removeClass('d-none');
+                $('#add_mfield').removeClass('d-none');
+                $('#add_sfield').removeClass('d-none');
+               // $('#add_btn').removeClass('d-none');
+                document.getElementById("SubField").disabled = true;
+                
+                
+            }
+            else {
+                $('#rowField').addClass('d-none');
+                $('#add_mfield').addClass('d-none');
+                $('#add_sfield').addClass('d-none');
+               // $('#add_btn').addClass('d-none');
+                document.getElementById("SubField").disabled = false;
+            };
+        });
+        
+        
+        
+        
+        
+        
+        $(".sub_field").change(function () {
+            const Value = $(this).val();
+            if (Value == 0){
+                $('#add_sfield').removeClass('d-none');
+                $('#rowField').removeClass('d-none');
+               // $('#add_btn').removeClass('d-none');
+            }
+            else {
+                $('#add_sfield').addClass('d-none');
+                $('#rowField').addClass('d-none');
+              //  $('#add_btn').addClass('d-none');
+            };
+        });
+        
+        /*$('#description').on('keydown',function(event) {
+        
+            if (event.keyCode != 8 && event.keyCode != 46 && $(this).val().length >= 300) {
+                event.preventDefault();
+            }
+        });*/
+        
+        $("#description").on('input keyup', function(e) {
+            var total_char = document.getElementById("description").value;
+            //var words = 0;
+            var max = 5000;
+           /* if ((this.value.match(/\S+/g)) != null) {
+              words = this.value.match(/\S+/g).length;
+            }*/
+            
+            if (total_char.length > max) {
+                //e.preventDefault();
+                //return false;
+                document.getElementById("description_error").innerHTML = "Note: The number of characters entered is more than 5000 characters.";
+                if(focus_status == false){
+                    document.getElementById("description_error").focus();
+                    focus_status = true;
+                }
+            
+            } else if (total_char.length <= max) {
+                
+                $('#display_count').text(total_char.length);
+              
+                
+            }
+          
+        });
+        
+        
+        
+        $("#description2").on('input keyup', function(e) {
+            var total_char = document.getElementById("description2").value;
+            //var words = 0;
+            var max = 2500;
+          /*  if ((this.value.match(/\S+/g)) != null) {
+              words = this.value.match(/\S+/g).length;
+            }*/
+            
+            if (total_char.length > max) {
+                //e.preventDefault();
+                //return false;
+                document.getElementById("description2_error").innerHTML = "Note: The number of characters entered is more than 2500 characters.";
+                if(focus_status == false){
+                    document.getElementById("description2_error").focus();
+                    focus_status = true;
+                }
+            
+            } else if (total_char.length <= max) {
+                
+                $('#display_count_prv').text(total_char.length);
+             
+                
+            }
+          
+        });
+        
+         
+       
+		
+	
+
+
+
+	
+	
+
+         
+         
+         
+
+     
+            $('#upload').on('click', function () {
+
+                $('#upload').change(function (e) {
+
+                    $('.label').empty().html();
+                    var fileName = e.target.files[0].name;
+                    $('.label').html(fileName);
+                });
+
+            });
+            
+            
+             $('#wsEls').change(function () {
+                 var wsNumSel = document.getElementById("wsEls");
+                 var wsNum = wsNumSel.value;
+         
+                if (wsNum == 0) {
+              
+                    document.getElementById("proof").style.display = "none";
+                    document.getElementById("proofFile").required = false;
+                    
+                    
+                } else {
+             
+                    document.getElementById("proof").style.display = "block";
+                    document.getElementById("proofFile").required = true;
+                    
+                };
+            });
+            
+            
+       
+
+			 $('#DelSign').click(function () {
+                  $("#demoPic").text("");
+                   $("#demoPic").attr("href", "#");
+                   document.getElementById("demoImgUrl").value="0";
+                    document.getElementById("DelSign").style.display = "none";
+                    document.getElementById("inputFile").disabled = false;
+                 
+             })
+             
+             
+             
+           
+             
+    
+            
+
+    })
+    
+    
+/*================================================================================================*/
+
+function CheckForm(){
+    
+    var title = document.getElementById("usname").value;
+    if(title.length ==0){
+       // alert("title");
+       document.getElementById("usname_error").innerHTML = "Please enter the workshop title.";
+       if(focus_status == false){
+            document.getElementById("usname_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    if(title.length >150 ){
+       // alert("title");
+       document.getElementById("usname_error").innerHTML = "The maximum allowed character is 150 characters.";
+       if(focus_status == false){
+            document.getElementById("usname_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    /*
+    var price = document.getElementById("price").value;
+    if(price.length ==0){
+       // alert("title");
+       document.getElementById("price_error").innerHTML = "Please enter your suggested cost.";
+       if(focus_status == false){
+            document.getElementById("price_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+   
+  
+    if(price % 1 !=0){
+       
+       document.getElementById("price_error").innerHTML = "Please enter your suggested cost as an integer.";
+       if(focus_status == false){
+            document.getElementById("price_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    if(price < 1){
+       
+       document.getElementById("price_error").innerHTML = "The minimum cost is one dollar";
+       if(focus_status == false){
+            document.getElementById("price_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+*/
+
+    
+    
+    
+    
+    
+    
+    
+   /* var ws_date = document.getElementById("date").value;
+    if(ws_date.length ==0){
+       // alert("title");
+       document.getElementById("date_error").innerHTML = "Please enter the  date of the workshop.";
+       if(focus_status == false){
+            document.getElementById("date_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    var start_time = document.getElementById("time").value;
+    if(start_time.length==0){
+        
+       document.getElementById("time_error").innerHTML = "Please enter the start time of the workshop.";
+       if(focus_status == false){
+            document.getElementById("time_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    var duration = document.getElementById("duration").value;
+    //alert(duration);
+    if(duration.length==0){
+        
+       document.getElementById("duration_error").innerHTML = "Please enter the duration of the workshop.";
+       if(focus_status == false){
+            document.getElementById("duration_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+   
+    re = /^(\d{1,2}):(\d{2})?$/;
+
+    if(duration != '') {
+      if(regs = duration.match(re)) {
+        
+          
+        // minute value between 0 and 59
+        if(regs[2] > 59) {
+            document.getElementById("duration_error").innerHTML ="Invalid time format: " + duration;
+            if(focus_status == false){
+                document.getElementById("duration_error").focus();
+                focus_status = true;
+            }
+        }
+      } else {
+        document.getElementById("duration_error").innerHTML ="Invalid time format: " + duration;
+            if(focus_status == false){
+                document.getElementById("duration_error").focus();
+                focus_status = true;
+            }
+      }
+    }
+
+   */
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  /*  var online_status = document.getElementById("onlineRadio");
+    if(online_status.checked==false){
+        
+        var location = document.getElementById("location").value;
+        if(location.length==0){
+            
+           document.getElementById("location_error").innerHTML = "Please enter the location of the workshop.";
+           if(focus_status == false){
+                document.getElementById("location_error").focus();
+                focus_status = true;
+           }
+            
+        }
+       /* if(location.length > 250){
+            
+           document.getElementById("location_error").innerHTML = "The maximum allowed character is 250 characters.";
+           if(focus_status == false){
+                document.getElementById("location_error").focus();
+                focus_status = true;
+           }
+            
+        }
+    }*/
+   /* var file_name_pdf   = document.wsNewForm.load_pdf.value;
+    if(file_name_pdf.length==0){
+        
+       document.getElementById("uploadpdf_error").innerHTML = "Please select your workshop file.";
+       if(focus_status == false){
+            document.getElementById("uploadpdf_error").focus();
+            focus_status = true;
+       }
+        
+    }*/
+    
+    
+    
+    
+    
+/*	var index_dot=file_name_pdf.lastIndexOf(".")+1;
+	var ext=file_name_pdf.substr(index_dot);
+	if(file_name_pdf.length!=0 && !(ext=='pdf' || ext=='ppt' || ext=='pptx' )) {
+		document.getElementById('uploadpdf_error').innerHTML = '';
+		document.getElementById('uploadpdf_error').innerHTML='file index is NOT valid (valid index: pdf, pptx)';
+		document.getElementById("uploadpdf_error").style.color = "red";
+		if(focus_status == false){
+			document.getElementById("uploadpdf_error").focus();	
+			focus_status = true;
+		}
+			
+		
+	}  */
+	
+	
+
+    
+ 
+  /*  var selectMain = document.getElementById("MainFeild");
+    if(!selectMain.value){
+        document.getElementById("MainFeild_error").innerHTML = "Please select the main field of the workshop.";
+        if(focus_status == false){
+            document.getElementById("MainFeild_error").focus();
+            focus_status = true;
+        }
+    }
+    
+    
+    var selectSub = document.getElementById("SubFeild");
+    if(!selectSub.value){
+        document.getElementById("SubFeild_error").innerHTML = "Please select the subfield of the workshop.";
+        if(focus_status == false){
+            document.getElementById("SubFeild_error").focus();
+            focus_status = true;
+        }
+    }
+        
+    
+
+    var sub_field = document.getElementById("SubFeild");    
+    var other_field = document.getElementById("otherField").value;
+	if(sub_field.value && sub_field.value==0 && other_field.length==0){
+        
+       document.getElementById("otherField_error").innerHTML = "Please enter your desired field.";
+       if(focus_status == false){
+            document.getElementById("otherField_error").focus();
+            focus_status = true;
+       }
+        
+    }*/
+    
+   var file_name   = document.wsNewForm.image.value;
+   var demoImg = document.getElementById("demoImgUrl");
+    if((!demoImg.value || demoImg.value==0) && file_name.length==0){
+        
+       document.getElementById("inputFile_error").innerHTML = "Please select your desired background image.";
+       if(focus_status == false){
+            document.getElementById("inputFile_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    
+    
+    if(file_name!= ""){
+		var index_dot=file_name.lastIndexOf(".")+1;
+		var ext=file_name.substr(index_dot);
+		if(!(ext=='png' || ext=='jpg' || ext=='jpeg' || ext=='PNG' || ext=='JPG' || ext=='JPEG')) {
+			document.getElementById('inputFile_error').innerHTML = '';
+			document.getElementById('inputFile_error').innerHTML='file index is NOT valid (valid index: PNG, JPG, JPEG)';
+			document.getElementById("inputFile_error").style.color = "red";
+			if(focus_status == false){
+				document.getElementById("inputFile_error").focus();	
+				focus_status = true;
+			}
+				
+			
+		}   
+    }
+    
+    var description = document.getElementById("description").value;
+    //alert(description.length);
+	if(description.length==1){
+        
+       document.getElementById("description_error").innerHTML = "Please enter description of the workshop.";
+       if(focus_status == false){
+            document.getElementById("description_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    var skill_table = document.getElementById("skilltbl");
+    var tbodyRowCountSkill = skill_table.tBodies[0].rows.length;
+    
+    if(tbodyRowCountSkill==0){
+        
+       document.getElementById("skill_total_error").innerHTML = "Please enter pre-required skills of the workshop.";
+       if(focus_status == false){
+            document.getElementById("skill_total_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    if(tbodyRowCountSkill > 5){
+        
+       document.getElementById("skill_total_error").innerHTML = "The maximum number allowed is 5 skills.";
+       if(focus_status == false){
+            document.getElementById("skill_total_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    var keyword_table = document.getElementById("keywordtbl");
+    var tbodyRowCountKeyword = keyword_table.tBodies[0].rows.length;
+    
+    if(tbodyRowCountKeyword==0){
+        
+       document.getElementById("keyword_total_error").innerHTML = "Please enter the motivating keywords.";
+       if(focus_status == false){
+            document.getElementById("keyword_total_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    if(tbodyRowCountKeyword > 6){
+        
+       document.getElementById("keyword_total_error").innerHTML = "The maximum number allowed is 5 keywords.";
+       if(focus_status == false){
+            document.getElementById("keyword_total_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    var speaker_table = document.getElementById("speakertbl");
+    var tbodyRowCountSpeaker = speaker_table.tBodies[0].rows.length;
+    if(tbodyRowCountSpeaker==0){
+        
+       document.getElementById("speaker_total_error").innerHTML = "Please enter the speaker(s) of the workshop.";
+       if(focus_status == false){
+            document.getElementById("speaker_total_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    var country_table = document.getElementById("countrytbl");
+    var tbodyRowCountCountry = country_table.tBodies[0].rows.length;
+    if(tbodyRowCountCountry==0){
+        
+       document.getElementById("country_total_error").innerHTML = "Please enter suggested fruitful countries of the workshop.";
+       if(focus_status == false){
+            document.getElementById("country_total_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    
+    var fields_table = document.getElementById("fieldtbl");
+    var tbodyRowCountfields = fields_table.tBodies[0].rows.length;
+    if(tbodyRowCountfields==0){
+        
+       document.getElementById("fieldtbl_error").innerHTML = "Please enter main fields and subfileds of the workshop.";
+       if(focus_status == false){
+            document.getElementById("fieldtbl_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    
+    
+    if (signaturePad.isEmpty()) {
+        
+        document.getElementById("signature_error").innerHTML = "Error:please provide a signature.";
+            focus_status = true;
+    
+  } 
+    
+ /*   var skills = document.getElementById("skills").value;
+	if(skills.length==0){
+        
+       document.getElementById("skills_error").innerHTML = "Please enter pre-required skills of the workshop.";
+       if(focus_status == false){
+            document.getElementById("skills_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    
+    var countries = document.getElementById("fcountries").value;
+	if(countries.length==0){
+        
+       document.getElementById("fcountries_error").innerHTML = "Please enter suggested fruitful countries of the workshop.";
+       if(focus_status == false){
+            document.getElementById("fcountries_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+    var speaker = document.getElementById("speaker").value;
+	if(speaker.length==0){
+        
+       document.getElementById("speaker_error").innerHTML = "Please enter the workshop speaker.";
+       if(focus_status == false){
+            document.getElementById("speaker_error").focus();
+            focus_status = true;
+       }
+        
+    }
+    
+     var mkeywords = document.getElementById("mkeywords").value;
+	if(mkeywords.length==0){
+        
+       document.getElementById("mkeywords_error").innerHTML = "Please enter the motivating keywords.";
+       if(focus_status == false){
+            document.getElementById("mkeywords_error").focus();
+            focus_status = true;
+       }
+        
+    }*/
+    
+ /*   if(document.getElementById("inPersonRadio").checked==true){
+        var capacity = document.getElementById("capacity").value;
+        if(capacity.length==0){
+            document.getElementById("capacity_error").innerHTML = "Please enter the capacity of the workshop.";
+           if(focus_status == false){
+                document.getElementById("capacity_error").focus();
+                focus_status = true;
+           }
+            
+        }
+        
+        
+        if(capacity % 1 !=0){
+            document.getElementById("capacity_error").innerHTML = "Please enter capacity as an integer.";
+            if(focus_status == false){
+                document.getElementById("capacity_error").focus();
+                focus_status = true;
+            }
+             
+             
+        }
+        
+    }*/
+    
+    
+    
+    
+    
+    
+  /*  if(document.getElementById("YesChk").checked==true){
+        var Time_table_chk = document.getElementById("timetbl");
+        var tbodyRowCountTimeTbl = Time_table_chk.tBodies[0].rows.length;
+       
+        if(tbodyRowCountTimeTbl==0){
+            
+           document.getElementById("time_table_error").innerHTML = "Please complete the time table.";
+           if(focus_status == false){
+                document.getElementById("time_table_error").focus();
+                focus_status = true;
+           }
+            
+        }
+        
+    }*/
+    
+    
+     
+    if(focus_status == false){
+        document.getElementById("submit_error").innerHTML ="";
+        var time_table = document.getElementById("timetbl");
+        var tbodyRowCount = time_table.tBodies[0].rows.length;
+        document.getElementById('tblSize').value=tbodyRowCount;
+        $('[name=tblList]').val(table_list); 
+        $('[name=skills]').val(skill_list); 
+        $('[name=keyword]').val(keyword_list); 
+        $('[name=speaker]').val(speaker_list); 
+        $('[name=suggest_country]').val(country_list); 
+        $('[name=Mfields]').val(Mfield_list);
+        $('[name=Sfields]').val(Sfield_list);
+        
+        
+        
+        var imageData = signaturePad.toDataURL();
+        document.getElementsByName("sign_image")[0].setAttribute("value", imageData);
+        
+        $('#WSModal').modal('show');
+    }else{
+        
+        document.getElementById("submit_error").innerHTML = "Please fill in all the fields completely.";
+        
+    }
+    
+    
+    
+  
+    
+    
+    
+    
+
+}
+
+
+
+function ClearErr(id){
+    
+    document.getElementById(id+"_error").innerHTML="";
+    
+    
+    if(id == "uploadpdf"){
+        CheckIndexAtt();
+    }
+    if(id == "inputFile"){
+       CheckIndexImg();
+    }
+/*    if(id == "date"){
+        document.getElementById("date_error").innerHTML="";
+    }
+    if(id == "time"){
+        document.getElementById("time_error").innerHTML="";
+    }
+    if(id == "id_fund"){
+        document.getElementById("fund_error").innerHTML="";
+    }*/
+    
+    focus_status = false;
+}
+
+
+
+
+
+
+    
+    function OverCHeck(input){
+       // readUrl(input);
+        CheckIndexImg();
+        
+        
+    }
+    function CheckIndexImg(){
+        document.getElementById('inputFile_error').innerHTML = '';
+       var file_name   = document.wsNewForm.image.value;
+       if(file_name!= ""){
+			var index_dot=file_name.lastIndexOf(".")+1;
+			var ext=file_name.substr(index_dot);
+			if(!(ext=='png' || ext=='jpg' || ext=='jpeg' || ext=='PNG' || ext=='JPG' || ext=='JPEG')) {
+				document.getElementById('inputFile_error').innerHTML = '';
+				document.getElementById('inputFile_error').innerHTML='file index is NOT valid (valid index: PNG, JPG, JPEG)';
+				document.getElementById("inputFile_error").style.color = "red";
+				if(focus_status == false){
+					document.getElementById("inputFile_error").focus();	
+					focus_status = true;
+				}
+				return;	
+				
+			}   
+       }else{
+           
+            document.getElementById('inputFile_error').innerHTML = '';
+			document.getElementById('inputFile_error').innerHTML="Please select your desired background image.";
+			document.getElementById("inputFile_error").style.color = "red";
+			if(focus_status == false){
+				document.getElementById("inputFile_error").focus();	
+				focus_status = true;
+			}
+			return;	
+           
+           
+       }
+    }
+    
+    function CheckIndexAtt(){
+        document.getElementById('uploadpdf_error').innerHTML = '';
+       var file_name   = document.wsNewForm.load_pdf.value;
+			var index_dot=file_name.lastIndexOf(".")+1;
+			var ext=file_name.substr(index_dot);
+			if(!(ext=='pdf' || ext=='ppt' || ext=='pptx' )) {
+				document.getElementById('uploadpdf_error').innerHTML = '';
+				document.getElementById('uploadpdf_error').innerHTML='file index is NOT valid (valid index: pdf, pptx)';
+				document.getElementById("uploadpdf_error").style.color = "red";
+				if(focus_status == false){
+					document.getElementById("uploadpdf_error").focus();	
+					focus_status = true;
+				}
+				return;	
+				
+			}   
+        
+    }
+    $(".main_field").change(function () {
+        const url = $("#WorkshopForm").attr("data-field-url");  // get the url of the `load_cities` view
+        const MainFieldId = $(this).val();  // get the selected country ID from the HTML input
+        
+        $.ajax({                       // initialize an AJAX request
+            url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
+            data: {
+                'main_field': MainFieldId       // add the country id to the GET parameters
+            },
+            success: function (data) {   // `data` is the return of the `load_cities` view function
+                $(".sub_field").html(data);  // replace the contents of the city input with the data that came from the server
+            }
+        });
+
+    });
+    
+    $('#DemoPicModal').on('shown.bs.modal', function (e) {
+         $('#nextBtn').click(function () {
+             $('.carousel').carousel('next');
+         });
+         
+          $('#prevBtn').click(function () {
+             $('.carousel').carousel('prev');
+         });
+             
+            
+    })
+    
+    $('#DemoPicModal').on('hidden.bs.modal', function (e) {
+       	 $(".modal-backdrop").remove();
+		 $('body').removeClass('modal-open');
+		 document.getElementsByTagName("body")[0].style.overflow="auto";
+		 document.getElementsByTagName("body")[0].removeAttribute("style");
+             
+            
+    })
+    
+    function test(){
+       
+            var figures = document.getElementById('carouselDiv').querySelectorAll('figure');
+    		//$("#demoPic").text("No Picture");
+    		for (var i=0; i<figures.length;i++){
+    			var imgID = figures[i].getAttribute('name');
+    			//var FigElm = document.getElementById(FigID);
+    			//alert(imgID);
+    			if(figures[i].classList.contains('active')){
+    			    //alert("ok2");
+    		        var imgName = document.getElementById(imgID).value;
+    				var imgUrl = document.getElementById(imgID).src;
+    			//	alert(imgUrl);
+    				$("#demoPic").attr("href", imgUrl);
+    				$("#demoPic").text(imgID);
+    				document.getElementById("demoImgUrl").value=imgUrl;
+    				document.getElementById("inputFile").disabled = true;
+    				document.getElementById("DelSign").style.display = "inline-block";
+    				document.getElementById("DelSign").style.cursor = "pointer";
+    				document.getElementById('inputFile_error').innerHTML = '';
+    						$('#DemoPicModal').modal('hide');
+    					
+    						 
+                          //  if (document.getElementsByTagName("body")[0].style.removeProperty) {
+                        //        document.getElementsByTagName("body")[0].style.removeProperty('overflow');
+                         //   } else {
+                          //      document.getElementsByTagName("body")[0].style.removeAttribute('overflow');
+                        //    }
+    						 
+    						// $("body").css("overflow", "");
+    						 //$("body").removeAttr("style");
+    						 break;
+    													
+    		    }
+    		
+    		}
+    		
+    	
+        }
+        
+        
+        
+function isInt(n){
+    return Number(n) === n && n % 1 === 0;
+}
+
+function getSelectedOption(sel) {
+    var opt;
+    for ( var i = 0, len = sel.options.length; i < len; i++ ) {
+        opt = sel.options[i];
+        if ( opt.selected === true ) {
+            break;
+        }
+    }
+    return opt;
+}
+  
+function displayCapacity(){
+    var capacityEl = document.getElementById("capacityDiv");
+    capacityEl.classList.remove("d-none");
+    var radioEl = document.getElementById("radioDiv");
+    radioEl.classList.remove("col-xl-8");
+    radioEl.classList.remove("col-lg-8");
+    radioEl.classList.add("col-xl-4");
+    radioEl.classList.add("col-lg-4");
+    var locspan = document.getElementById("locspan");
+    locspan.classList.remove("d-none");
+    $('#inPersonRadio').addClass("border border-success");
+    $('#inPersonRadio').addClass("bg-success");
+    $('#onlineRadio').removeClass("bg-success"); 
+    $('#onlineRadio').removeClass("border border-success"); 
+        
+  
+    
+   
+      
+} 
+
+function HideCapacity(){
+    var element = document.getElementById("capacityDiv");
+    element.classList.add("d-none");
+    var radioEl = document.getElementById("radioDiv");
+    radioEl.classList.add("col-xl-8");
+    radioEl.classList.add("col-lg-8");
+    radioEl.classList.remove("col-xl-4");
+    radioEl.classList.remove("col-lg-4");
+    var locspan = document.getElementById("locspan");
+    locspan.classList.add("d-none");
+    $('#onlineRadio').addClass("border border-success");
+    $('#onlineRadio').addClass("bg-success");
+    $('#inPersonRadio').removeClass("bg-success");
+    $('#inPersonRadio').removeClass("border border-success");
+    
+}
+
+
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+
+function CompareTimes(start,end){
+	    //var start = document.getElementById('starttime').value;
+	   // var end = document.getElementById('endtime').value;
+	   //var compare_status = false;
+	    if(start!="" && end!=""){
+		    start = start.split(":");
+            end = end.split(":");
+         	var startDate = new Date(0, 0, 0, start[0], start[1], start[2] ? start[2] : 0, 0);
+	        var endDate = new Date(0, 0, 0, end[0], end[1], end[2] ? end[2] : 0, 0);
+
+			
+			if (endDate.getTime() > startDate.getTime()) {
+				compare_status="great";
+			}else if(endDate.getTime() < startDate.getTime()){
+			    compare_status="small";
+			}else{
+			    compare_status="equal";
+			}
+
+			
+			return compare_status;
+	    }
+}
+
+
+function CalDiffTimes(start,end){
+	    //var start = document.getElementById('starttime').value;
+	   // var end = document.getElementById('endtime').value;
+	    if(start!="" && end!=""){
+		    start = start.split(":");
+            end = end.split(":");
+         	var startDate = new Date(0, 0, 0, start[0], start[1], start[2] ? start[2] : 0, 0);
+	        var endDate = new Date(0, 0, 0, end[0], end[1], end[2] ? end[2] : 0, 0);
+
+			
+			if (endDate.getTime() < startDate.getTime()) {
+				endDate.setDate(endDate.getDate() + 1);
+			}
+
+			var diff = endDate.getTime() - startDate.getTime();
+			var hours = Math.floor(diff / 1000 / 60 / 60);
+			diff -= hours * 1000 * 60 * 60;
+			var minutes = Math.floor(diff / 1000 / 60);
+			diff -= minutes * 1000 * 60;
+			var seconds = Math.floor(diff / 1000);
+            var hourLeaveTime = (hours < 9 ? "0" : "") + hours + ":" + (minutes < 9 ? "0" : "") + minutes + ":" + (seconds < 9 ? "0" : "") + seconds;
+			//document.getElementById("durationtime").value = hourLeaveTime;
+			//DurationTimeLeave = hourLeaveTime;
+			return hourLeaveTime;
+	    }
+	}
+
+function ShowRelatedDiv(){
+    var YesRadio = document.getElementById("YesChk");
+    var NoRadio = document.getElementById("NoChk");
+    if(YesRadio.checked==true){
+        $('#timetblDiv').removeClass('d-none');
+        document.getElementById("table_status").value = YesRadio.value;
+        document.getElementById("btn2-notification").innerText="Submit";
+        document.getElementById("WSModal_text").innerHTML= "Are you sure to submit workshop request?";
+        $('#YesChk').addClass("border border-success bg-success");
+        $('#NoChk').removeClass("border border-success bg-success");
+    }else{
+	    $('#timetblDiv').addClass('d-none');
+	     $('#YesChk').removeClass("border border-success bg-success");
+        $('#NoChk').addClass("border border-success bg-success");
+	}
+	
+	if(NoRadio.checked==true){
+	    $('#timetblNote').removeClass('d-none');
+	    document.getElementById("table_status").value = NoRadio.value;
+	     document.getElementById("btn2-notification").innerText="Save";
+	     document.getElementById("WSModal_text").innerHTML= "Are you sure to save workshop request?";
+	     $('#YesChk').removeClass("border border-success bg-success");
+        $('#NoChk').addClass("border border-success bg-success");
+    }else{
+        $('#timetblNote').addClass('d-none');
+        $('#YesChk').addClass("border border-success bg-success");
+        $('#NoChk').removeClass("border border-success bg-success");
+	}
+	
+	
+    
+      
+}
+
+
+function AddSkill(){
+    document.getElementById("skill_total_error").innerHTML ="";
+    var skill = document.getElementById("skill").value;
+    if(skill.length != 0 ){
+        var skill_table = document.getElementById("skilltbl");
+        var tbodyRowCount = skill_table.tBodies[0].rows.length;
+        if(tbodyRowCount<5){
+            var skill_row = skill_table.tBodies[0].insertRow();
+             skill_row.dataset.comp = skill;
+            var skill_cell0 = skill_row.insertCell();
+        	skill_cell0.innerHTML = skill;
+            var skill_cell1 = skill_row.insertCell();
+        	skill_cell1.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this,skill_list)'/>";
+            skill_list.push(skill);
+        }else{
+            document.getElementById("skill_total_error").innerHTML ="The maximum number allowed is 5 keywords.";
+        }
+    document.getElementById("skill").value="";
+    }else{
+        
+        document.getElementById("skill_error").innerHTML = "Please enter the skill.";
+    }
+     
+    
+    
+    
+    
+    
+    
+}
+
+
+function AddKeyword(){
+    document.getElementById("keyword_total_error").innerHTML ="";
+    var keyword = document.getElementById("keyword").value;
+    if(keyword.length != 0 ){
+        var keyword_table = document.getElementById("keywordtbl");
+        var tbodyRowCountKey = keyword_table.tBodies[0].rows.length;
+         if(tbodyRowCountKey<6){
+            var keyword_row = keyword_table.tBodies[0].insertRow();
+            keyword_row.dataset.comp = keyword;
+            var keyword_cell0 = keyword_row.insertCell();
+        	keyword_cell0.innerHTML = keyword;
+            var keyword_cell1 = keyword_row.insertCell();
+        	keyword_cell1.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this,keyword_list)'/>";
+            keyword_list.push(keyword);
+         }else{
+             document.getElementById("keyword_total_error").innerHTML ="The maximum number allowed is 6 keywords.";
+         }
+    document.getElementById("keyword").value="";
+    }else{
+        
+        document.getElementById("keyword_error").innerHTML = "Please enter the keyword.";
+    }
+     
+    
+    
+    
+}
+
+function AddSpeaker(){
+     document.getElementById("speaker_total_error").innerHTML ="";
+    var fullname = document.getElementById("Sfullname").value;
+    var degree = document.getElementById("Sdegree").value;
+    
+    if(fullname.length != 0 && degree.length != 0){
+        var speaker_text="";
+        var speaker_table = document.getElementById("speakertbl");
+        var tbodyRowCount = speaker_table.tBodies[0].rows.length;
+        var RowNew = tbodyRowCount +1;
+        var speaker_row = speaker_table.tBodies[0].insertRow();
+        
+        var speaker_cell0 = speaker_row.insertCell();
+    	speaker_cell0.innerHTML = fullname;
+    	 var speaker_cell1 = speaker_row.insertCell();
+    	speaker_cell1.innerHTML = degree;
+        var speaker_cell2 = speaker_row.insertCell();
+    	speaker_cell2.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this,speaker_list)'/>";
+    	//if(tbodyRowCount > 0){
+    	  //  speaker_text=" speaker"+RowNew + ": " + fullname + "; " + degree + ",";
+    	//}else{
+    	    speaker_text=" Speaker"+RowNew + ": " + fullname + "; " + degree;
+    //	}
+        
+        speaker_row.dataset.comp = speaker_text;
+        speaker_list.push(speaker_text);
+        document.getElementById("Sfullname").value="";
+        document.getElementById("Sdegree").value="";
+    }else if(fullname.length == 0){
+        
+        document.getElementById("speaker_error").innerHTML = "Please enter the fullname.";
+    }else if(degree.length == 0){
+        
+        document.getElementById("speaker_error").innerHTML = "Please enter the academic degree.";
+        
+    }
+    
+    
+}
+
+
+
+function AddCountry(){
+    document.getElementById("country_total_error").innerHTML ="";
+    var country = document.getElementById("country").value;
+   
+    if(country.length != 0){
+        var country_table = document.getElementById("countrytbl");
+        var country_row = country_table.tBodies[0].insertRow();
+        country_row.dataset.comp = country;
+        var country_cell0 = country_row.insertCell();
+    	country_cell0.innerHTML = country;
+    	 
+        var country_cell2 = country_row.insertCell();
+    	country_cell2.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick='DelRow(this,country_list)'/>";
+    	country_list.push(country);
+        document.getElementById("country").value="";
+    }else{ 
+        
+        document.getElementById("country_error").innerHTML = "Please enter the country.";
+    }
+    
+}
+
+
+
+function AddFields(){
+    //document.getElementById("country_total_error").innerHTML ="";
+    
+    var Mfield = document.getElementById("MainField");
+    var MfieldText = Mfield.options[Mfield.selectedIndex].text;
+    var MfieldID = document.getElementById("MainField").value;
+    
+    
+    var Sfield = document.getElementById("SubField");
+    var SfieldText = Sfield.options[Sfield.selectedIndex].text;
+    var SfieldID = document.getElementById("SubField").value;
+   
+  
+    var Maintxt="";
+    var Subtxt="";
+    
+    var Has_error = false;
+    if(MfieldID=="-100"){
+         Maintxt = document.getElementById("otherMField").value;
+         Subtxt = document.getElementById("otherSField").value;
+         
+         if(Maintxt==""){
+             document.getElementById("otherMField_error").innerHTML= "Error: please enter the main field.";
+             Has_error = true;
+         }
+         if(Subtxt==""){
+             document.getElementById("otherSField_error").innerHTML= "Error: please enter the subfield.";
+             Has_error = true;
+         }
+         
+     }else{
+         Maintxt="";
+         if(SfieldID==0){
+            Subtxt = document.getElementById("otherSField").value;
+           
+            if(Subtxt==""){
+             document.getElementById("otherSField_error").innerHTML= "Error: please enter the subfield.";
+             Has_error = true;
+         }
+         
+         }else{
+             Subtxt="";
+         }
+         
+     }
+  
+  
+  
+    if(Has_error == true) {
+        return;
+    } 
+  
+  
+  
+  
+   var main_id = "";
+   var main_title="";
+   var sub_id="";
+   var sub_title="";
+   
+   
+        jQuery.ajax({
+			type: "POST",
+			url:"{% url 'mainfield-adding' %}",
+			data:  {"main_id":MfieldID,"main_title":Maintxt,"sub_title":Subtxt,csrfmiddlewaretoken: '{{ csrf_token }}'},
+		    dataType:"JSON",
+            success: function(output){
+                if(MfieldID=="-100"){
+                    main_id = output.main_id;
+                    main_title = Maintxt;
+                    sub_id = output.sub_id;
+                    sub_title = Subtxt;
+                    
+                    document.getElementById("otherMField").value="";
+                    document.getElementById("otherSField").value="";
+                }else if(SfieldID==0){
+                    main_id = MfieldID;
+                    main_title = MfieldText;
+                    sub_id = output.sub_id;
+                    sub_title = document.getElementById("otherSField").value;
+                    document.getElementById("otherSField").value="";
+                }else{
+                    main_id = MfieldID;
+                   main_title = MfieldText;
+                   sub_id = SfieldID;
+                   sub_title = SfieldText
+                }
+                
+                
+                    var field_table = document.getElementById("fieldtbl");
+                    var tbodyRowCountKey = field_table.tBodies[0].rows.length;
+                    var field_row = field_table.tBodies[0].insertRow();
+                    field_row.classList.add("text-center");
+                    field_row.dataset.main = main_id;
+                    field_row.dataset.sub = sub_id;
+                	var field_cell1 = field_row.insertCell();
+                	field_cell1.innerHTML = main_title;
+                	
+                	var field_cell2 = field_row.insertCell();
+                	field_cell2.innerHTML = sub_title;
+                	 var indexrow = tbodyRowCountKey+1;
+                    var field_cell3 = field_row.insertCell();
+                	field_cell3.innerHTML = "<input type='button' class='btn btn-danger' value='Delete' onclick = DelRowFields(this) />";
+                
+            
+                    Mfield_list.push(main_id);
+                    Sfield_list.push(sub_id);
+    
+                
+                
+            }, error: function (output){
+				
+					
+			}, complete: function(output){
+					
+			}
+					
+			
+		});
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+       
+    
+    
+}
+
+function DelRow(id,array)  
+{   
+    
+    var rowtbl = id.closest("tr");
+    var comp = rowtbl.dataset.comp;
+    rowtbl.remove();
+    
+    const index = array.indexOf(comp);
+    if (index > -1) { 
+      array.splice(index, 1); 
+    }
+    
+    console.log(array);
+}
+
+function DelRowFields(id)  
+{   
+    //var row = document.getElementById(rowid);
+    //row.parentNode.removeChild(row);
+    //var rowID = $(this).closest('tr').index();
+    var rowtbl = id.closest("tr");
+    var MainID = rowtbl.dataset.main;
+    var SubID =  rowtbl.dataset.sub;
+    var tableID = id.closest('table').id;
+    rowtbl.remove();
+    //alert(tableID);
+    //document.getElementById(rowid).remove();
+    const Mindex = Mfield_list.indexOf(MainID);
+    //alert(index);
+    if (Mindex > -1) { 
+      Mfield_list.splice(Mindex, 1); 
+    }
+    
+    const Sindex = Sfield_list.indexOf(SubID);
+    //alert(index);
+    if (Sindex > -1) { 
+      Sfield_list.splice(Sindex, 1); 
+    }
+}
+
+
+
+
+    
+    </script>
+{% endblock script %}
+</body>
+
+</html>

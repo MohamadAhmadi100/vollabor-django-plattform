@@ -1,0 +1,340 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/researchtheme.css' %}">
+    <link rel="stylesheet" href="{% static 'accounting/css/datatabels.css' %}">
+
+       <style>
+
+        body{background:#212429!important;}
+        .card{
+            background: #2C3034;
+            box-shadow: 0px 0px 4px 0px #fff;
+        }
+        .card-body{color:#fff}
+        .active_filter{
+            background:#2dcf2d
+        }
+        .active_card{
+            background: #FDBF30;
+        }
+        .filtering:hover{
+            background:#dc3545!important;
+            cursor:pointer
+        }
+       </style> 
+    <title>Virtual events presenter view</title>
+{% endblock css %}
+
+{% block content %}
+
+
+    <header class="bg-danger text-white py-2 w-100">
+        <div class="container">
+        </div>
+    </header>
+    
+    <div class="container card-page">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success">{{ message|safe }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message|safe }}</div>
+                    {%endif %}
+            {% endfor %}
+            {% endif %}
+
+
+
+
+        <div class="row justify-content-center align-items-center">
+            {% if request.GET.filter == 'All' %}
+            <div class="col gold active " id="new_workshop_btn">
+            {% else %}
+            <div style="background:#2c3034" class="col gold" id="new_workshop_btn">
+            {% endif %}
+                <a href="{%  url 'managerpanel' %}?filter=All" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">All virtual events</h4>
+                    <p class="number">{{all_count}}</p>
+                </a>
+            </div>
+            {% if request.GET.filter == 'Experts'%}
+            <div class="col gold active" id="new_workshop_btn">
+            {% else %}
+            <div class="col gold" id="new_workshop_btn">
+            {% endif %}
+                <a href="{%  url 'managerpanel' %}?filter=Experts" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Experts</h4>
+                    <p class="number">{{experts_count}}</p>
+                </a>
+            </div>
+            {% if request.GET.filter == 'Add_price'%}
+            <div class="col gold active" id="accept_reject_btn">
+            {% else %}
+            <div class="col gold" id="accept_reject_btn">
+            {% endif %}
+                <a href="{%  url 'managerpanel' %}?filter=Add_price" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Add price</h4>
+                </a>
+            </div>
+            
+        </div>
+        <div class="container-fluid">
+                {% if request.GET.filter == 'All' or request.GET.filter == None %}
+                    <div class="w-100  justify-content-md-center">
+                        <h1 style=" color: gold; margin-top: 10px;">Virtual events</h1></br>
+                        <div style="display:flex" class="col-md-12">           
+                            <a id="all"   class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class="text-white">All</p>
+                                </div>              
+                            </a>
+                            <a id="seminar"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Seminars</p>
+                                </div>              
+                            </a>
+                            <a id="course"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Courses</p>
+                                </div>              
+                            </a>
+                            <a id="workshop"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Workshops</p>
+                                </div>              
+                            </a>
+                        </div>
+                        <table id="example" class="w-100 table table-hover table-sm table-striped mt-5 ws-notif-table">
+                            <thead style="background-color:#ADD8E6 !important;color:black">
+                                <tr>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                                    <th class="text-center" style="width:30%;vertical-align:middle">Title</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Cost per individual ($ USA)</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Holding date</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Status</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Type</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center table-dark">
+                            {% for ve in virtual_events %}
+                                <tr>
+                                    <td>{{ve.unique_id}}</td>
+                                    <td>{{ve.title}}</td>
+                                    <td>${{ve.price}}</td>
+                                    <td>{{ve.created}}</td>
+                                    <td>{{ve.statuspreview}}</td>
+                                    <td>{{ve.type}}</td>
+                                    <td>
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#members_{{ve.id}}">
+                                                View members
+                                            </button>
+                                    </td>                               
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% for ve in virtual_events %}
+                                <!-- Modal -->
+                                <div id="members_{{ve.id}}" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 style="color:#000" class="modal-title" id="exampleModalLongTitle">{{ve.title}} members</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <table class="table table-sm">
+                                                <thead class="thead-dark">
+                                                <tr>
+                                                    <th scope="col">Firstname</th>
+                                                    <th scope="col">Lastname</th>
+                                                    <th scope="col">Email</th>
+                                                    <th scope="col">Phone number</th>
+                                                    <th scope="col">Section</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {%for member  in ve.members%}
+                                                            <tr>
+                                                                <td>{{member.user.first_name}}</td>
+                                                                <td>{{member.user.last_name}}</td>
+                                                                <td>{{member.user.email}}</td>
+                                                                <td>{{member.user.memberprofile.phone}}</td>
+                                                                <td>{{member.section}}</td>
+                                                            </tr>
+                                                    {%endfor%}
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                        {%endfor%}
+                    </div>
+                
+                {% elif request.GET.filter == 'Experts' %}
+                <div class="w-100  justify-content-md-center">
+                    <h1 style=" color: gold; margin-top: 10px;">Experts List</h1></br>
+                    <table id="example" class="w-100 table table-hover table-sm table-striped mt-5 ws-notif-table">
+                        <thead style="background-color:#ADD8E6 !important;color:black">
+                            <tr>
+                                <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                                <th class="text-center" style="width:30%;vertical-align:middle">Username</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Firstname</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Lastname</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Email</th>
+                                <th class="text-center" style="width:5%;vertical-align:middle">Phone number</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center table-dark">
+                        {% for expert in experts %}
+                            <tr>
+                                <td>{{expert.user.id}}</td>
+                                <td>{{expert.user.username}}</td>
+                                <td>{{expert.user.first_name}}</td>
+                                <td>{{expert.user.last_name}}</td>
+                                <td>{{expert.user.email}}</td>
+                                <td>{{expert.user.memberprofile.phone}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- all _users -->
+                <div class="w-100  justify-content-md-center">
+                    <h1 style=" color: gold; margin-top: 10px;">Users List</h1></br>
+                    <table id="example1" class="w-100 table table-hover table-sm table-striped mt-5 ws-notif-table">
+                        <thead style="background-color:#ADD8E6 !important;color:black">
+                            <tr>
+                                <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                                <th class="text-center" style="width:30%;vertical-align:middle">Username</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Firstname</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Lastname</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Email</th>
+                                <th class="text-center" style="width:5%;vertical-align:middle">Phone number</th>
+                                <th class="text-center" style="width:5%;vertical-align:middle">expert</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center table-dark">
+                        {% for user in users %}
+                            <tr>
+                                <td>{{user.id}}</td>
+                                <td>{{user.username}}</td>
+                                <td>{{user.first_name}}</td>
+                                <td>{{user.last_name}}</td>
+                                <td>{{user.email}}</td>
+                                <td>{{user.memberprofile.phone}}</td>
+                                <td>
+
+                                        <input  {% if user.ok %} checked {% endif %} class="add_expert" type="checkbox" value="{{user.id}}">
+                                        
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% elif request.GET.filter == 'Add_price' %}
+                <div class="w-100  justify-content-md-center">
+                    <h1 style=" color: gold; margin-top: 10px;">All experts</h1></br>
+                   <div class="col-md-6 m-auto">
+                    <form>
+                        {%csrf_token%}
+                        <lable class="form-control">Price</label>
+                            <input class="form-control" type="Number" name="price">
+                            <button class="btn btn-success">Submit</button>
+                       </form>
+                   </div>
+                </div>
+                {% endif %}
+    </div>
+
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'accounting/js/datatabels.js' %}"></script>
+    <script src="{% static 'accounting/js/bootstrapdatatabels.js' %}"></script>
+    
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable();
+            $('#example1').DataTable();
+            $('.filtering').click(function(){
+                $('.active_filter').removeClass('active_filter')
+                    if ($(this).hasClass('active_filter')){
+                        $(this).removeClass('active_filter')
+                
+                    }
+                    else{
+                        $(this).addClass('active_filter')
+                    }    
+                    search($(this).attr('id'))
+            })
+
+
+
+            function search(filtering){
+                var table = $('#example').DataTable();
+                if (filtering =='all') {
+                    table.column(5).search("").draw();
+                }
+                else{
+
+                        table.column(5).search("").draw();
+                        table.column(5).search(filtering).draw();
+            
+                            }
+                }
+
+                $('.add_expert').click(function(){
+                    console.log($(this).attr('value'))
+                    var action=''
+                    if ($(this)[0].checked == true){
+                       action='ok'
+                    }
+                    else{
+                        action='not'
+                    }
+                    $.ajax({
+                        type:"POST",
+                        url:"{% url 'managerpanel' %}",
+                        data:{csrfmiddlewaretoken:'{{csrf_token}}','user_id':$(this).attr('value'),'action':action},
+                        success:function(res){
+                            window.location.href = "{% url 'managerpanel' %}?filter=Experts"
+                        },
+                        error:function(res){
+                            alert(res)
+                        }
+                    })
+                })
+                       
+            })
+
+
+
+         
+    </script>
+
+{% endblock content %}

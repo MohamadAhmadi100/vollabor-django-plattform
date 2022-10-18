@@ -1,0 +1,456 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/researchtheme.css' %}">
+    <link rel="stylesheet" href="{% static 'accounting/css/datatabels.css' %}">
+
+       <style>
+
+        body{background:#212429!important;}
+        .card{
+            background: #2C3034;
+            box-shadow: 0px 0px 4px 0px #fff;
+        }
+        .card-body{color:#fff}
+        .active_filter{
+            background:#2dcf2d
+        }
+        .active_card{
+            background: #FDBF30;
+        }
+        .filtering:hover{
+            background:#dc3545!important;
+            cursor:pointer
+        }
+       </style> 
+    <title>Virtual events expert view</title>
+{% endblock css %}
+
+{% block content %}
+
+
+    <header class="bg-danger text-white py-2 w-100">
+        <div class="container">
+            <h1 class="px-4"><i class="far fa-edit"></i> <span>Virtual events expert view</span></h1>
+        </div>
+    </header>
+    
+    <div class="container card-page">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success">{{ message|safe }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message|safe }}</div>
+                    {%endif %}
+            {% endfor %}
+            {% endif %}
+
+
+
+
+        <div class="row justify-content-center align-items-center">
+            {% if request.GET.filter == 'Evaluate' or request.GET.filter is None %}
+            <div class="col gold active " id="new_workshop_btn">
+            {% else %}
+            <div style="background:#2c3034" class="col gold" id="new_workshop_btn">
+            {% endif %}
+                <a href="{%  url 'expert' %}?filter=Evaluate&type={{request.GET.type}}" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Initial evaluation</h4>
+                    <p class="number">{{evaluate_count}}</p>
+                </a>
+            </div>
+
+            {% if request.GET.filter == 'Resubmit'%}
+            <div class="col gold active" id="new_workshop_btn">
+            {% else %}
+            <div class="col gold" id="new_workshop_btn">
+            {% endif %}
+                <a href="{%  url 'expert' %}?filter=Resubmit&type={{request.GET.type}}" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Resubmit</h4>
+                    <p class="number">{{resubmit_count}}</p>
+                </a>
+            </div>
+
+            {% if request.GET.filter == 'Requests'%}
+            <div class="col gold active" id="new_workshop_btn">
+            {% else %}
+            <div class="col gold" id="new_workshop_btn">
+            {% endif %}
+                <a href="{%  url 'expert' %}?filter=Requests&type={{request.GET.type}}" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Requests</h4>
+                    <p class="number">{{request_count}}</p>
+                </a>
+            </div>
+
+
+            {% if request.GET.filter == 'History'%}
+            <div class="col gold active" id="new_workshop_btn">
+            {% else %}
+            <div class="col gold" id="new_workshop_btn">
+            {% endif %}
+                <a href="{%  url 'expert' %}?filter=History&type={{request.GET.type}}" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">History</h4>
+                    <p class="number">{{history_count}}</p>
+                </a>
+            </div>
+            <div class="m-2"></div>
+        </div>
+        <div class="container-fluid">
+                {% if request.GET.filter == 'Evaluate' or request.GET.filter is None %}
+                    <div class="w-100  justify-content-md-center">
+                        <div style="display:flex" class="col-md-12">           
+                            <a id="all"   class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class="text-white">All</p>
+                                </div>              
+                            </a>
+                            <a id="seminar"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Seminars</p>
+                                </div>              
+                            </a>
+                            <a id="course"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Courses</p>
+                                </div>              
+                            </a>
+                            <a id="workshop"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Workshops</p>
+                                </div>              
+                            </a>
+                        </div>
+                        <table id="example" class="w-100 table table-hover table-sm table-striped mt-5 ws-notif-table">
+                            <thead style="background-color:#ADD8E6 !important;color:black">
+                                <tr>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                                    <th class="text-center" style="width:30%;vertical-align:middle">Title</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Cost per individual ($ USA)</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Created</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Status</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Type</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center table-dark">
+                            {% for ve in virtual_events %}
+                                <tr>
+                                    <td>{{ve.unique_id}}</td>
+                                    <td>{{ve.title}}</td>
+                                    <td>${{ve.price}}</td>
+                                    <td>{{ve.created}}</td>
+                                    <td>{{ve.statuspreview}}</td>
+                                    <td>{{ve.type|title}}</td>
+
+                                    <td class="text-center" style="width:5%;vertical-align:middle"><a class="btn btn-success" href="{% url 'expert-detail'  ve.id%}"><i class="far fa-eye"></i></a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                {% elif request.GET.filter == 'Resubmit' %}
+                    <div class="w-100  justify-content-md-center">
+                        <div style="display:flex" class="col-md-12">           
+                            <a id="all"   class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class="text-white">All</p>
+                                </div>              
+                            </a>
+                            <a id="seminar"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Seminars</p>
+                                </div>              
+                            </a>
+                            <a id="course"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Courses</p>
+                                </div>              
+                            </a>
+                            <a id="workshop"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Workshops</p>
+                                </div>              
+                            </a>
+                        </div>
+                        <table id="example" class="w-100 table table-hover table-sm table-striped mt-5 ws-notif-table">
+                            <thead style="background-color:#ADD8E6 !important;color:black">
+                                <tr>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                                    <th class="text-center" style="width:30%;vertical-align:middle">Title</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Cost per individual ($ USA)</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Created</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Status</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Type</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center table-dark">
+                            {% for ve in virtual_events %}
+                                <tr>
+                                    <td>{{ve.unique_id}}</td>
+                                    <td>{{ve.title}}</td>
+                                    <td>${{ve.price}}</td>
+                                    <td>{{ve.created}}</td>
+                                    <td>{{ve.statuspreview}}</td>
+                                    <td>{{ve.type|title}}</td>
+
+                                    <td class="text-center" style="width:5%;vertical-align:middle"><a class="btn btn-success" href="{% url 'expert-detail'  ve.id%}"><i class="far fa-eye"></i></a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div> 
+                
+                {% elif request.GET.filter == 'History' %}
+                    <div class="w-100  justify-content-md-center">
+                        <div style="display:flex" class="col-md-12">           
+                            <a id="all"   class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class="text-white">All</p>
+                                </div>              
+                            </a>
+                            <a id="seminar"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Seminars</p>
+                                </div>              
+                            </a>
+                            <a id="course"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Courses</p>
+                                </div>              
+                            </a>
+                            <a id="workshop"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Workshops</p>
+                                </div>              
+                            </a>
+                        </div>
+                        <table id="example" class="w-100 table table-hover table-sm table-striped mt-5 ws-notif-table">
+                            <thead style="background-color:#ADD8E6 !important;color:black">
+                                <tr>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                                    <th class="text-center" style="width:30%;vertical-align:middle">Title</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Cost per individual ($ USA)</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Created</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Status</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Type</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center table-dark">
+                            {% for ve in virtual_events %}
+                                <tr>
+                                    <td>{{ve.unique_id}}</td>
+                                    <td>{{ve.title}}</td>
+                                    <td>${{ve.price}}</td>
+                                    <td>{{ve.created}}</td>
+                                    <td>{{ve.statuspreview}}</td>
+                                    <td>{{ve.type|title}}</td>
+
+                                    <td class="text-center" style="width:5%;vertical-align:middle"><a class="btn btn-success" href="{% url 'expert-detail'  ve.id%}"><i class="far fa-eye"></i></a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>   
+                    
+                {% elif request.GET.filter == 'Requests' %}
+                    <div class="w-100  justify-content-md-center">
+                        <div style="display:flex" class="col-md-12">           
+                            <a id="all"   class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class="text-white">All</p>
+                                </div>              
+                            </a>
+                            <a id="seminar"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Seminars</p>
+                                </div>              
+                            </a>
+                            <a id="course"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Courses</p>
+                                </div>              
+                            </a>
+                            <a id="workshop"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Workshops</p>
+                                </div>              
+                            </a>
+                        </div>
+                        <table id="example" class="w-100 table table-hover table-sm table-striped mt-5 ws-notif-table">
+                            <thead style="background-color:#ADD8E6 !important;color:black">
+                                <tr>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                                    <th class="text-center" style="width:30%;vertical-align:middle">Title</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Cost per individual ($ USA)</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Created</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Status</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Type</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center table-dark">
+                            {% for ve in virtual_events %}
+                                <tr>
+                                    <td>{{ve.unique_id}}</td>
+                                    <td>{{ve.title}}</td>
+                                    <td>${{ve.price}}</td>
+                                    <td>{{ve.created}}</td>
+                                    <td>{{ve.statuspreview}}</td>
+                                    <td>{{ve.type|title}}</td>
+
+                                    <td class="text-center" style="width:5%;vertical-align:middle">
+                                        <a  type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#edit_{{ve.id}}" data-whatever="@mdo">
+                                            <i class="far fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {%endfor%}
+                            </tbody>
+                        </table>
+                        {% for ve in virtual_events %}
+                            <!--.............................................Modal...........................................-->
+                            <div id="edit_{{ve.id}}" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    
+                                    <div class="modal-content">
+                                            <div srtyle="background:#fff" class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                              </button>
+                                          </div>
+                                          <table class="table table-hover table-striped ">
+                                            <thead class="table-info thead-dark">
+                                                <tr>
+                                                    <th>Section title</th>
+                                                    <th> start date</th>
+                                                    <th> start time</th>
+                                                    <th> end time</th>    
+                                                </tr>   
+                                            </thead>
+                                            <tbody class="table-dark">
+                                                {% for time in ve.time_table %}
+                                                <tr>
+                                                    <td>{{time.title}}</td>
+                                                    <td>{{time.start_date}}</td>
+                                                    <td>{{time.start_time}}</td>
+                                                    <td>{{time.end_time}}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>   
+                                        </table> 
+                                        <table style="background:#dc3545" class="table table-hover table-striped ">
+                                            {% comment %} <thead class="table-info">
+                                                <tr>
+                                                    <th>Suggest start date</th>
+                                                    <th>Suggest start time</th>
+                                                    <th>Suggest end time</th>    
+                                                </tr>   
+                                            </thead> {% endcomment %}
+                                            <tbody>
+                                                {% for time in ve.suggest_time_table %}
+                                                <tr class="text-white">
+                                                    <td>Suggestion {{forloop.counter}}</td>
+                                                    <td>{{time.start_date}}</td>
+                                                    <td>{{time.start_time}}</td>
+                                                    <td>{{time.end_time}}</td>
+                                                </tr>
+                                            </tbody>   
+                                        </table> 
+                                        <div class="alert alert-danger col-md-8 m-auto">
+                                            <p>Presenter reason:</p></br>
+                                            <p>{{time.editrequest.reason}}</p>
+                                            {%if time.editrequest.document%}
+                                            <a href="{{time.editrequest.document.url}}" target="_blank">view Document</a>
+                                            {%endif%}
+                                        </div>
+                                            <form id="edittimeform" class="m-1"  method="POST" action="{% url 'decide-edit-time' %}">                                 
+                                                <label style="color:#000">comment:</label>
+                                                <textarea name="comment" class="form-control col-md-8 m-auto" required ></textarea>
+                                                <input  type="hidden" name="request_id" value={{time.editrequest.id}}>
+                                                <input id="decide"  type="hidden" name="decide">
+                                                <input value="expert"  type="hidden" name="decider">
+                                                {%csrf_token%}
+                                                <div class="modal-footer">
+                                                    <button id="accept"  type="button" class="decide btn btn-success ">Accept</button>
+                                                    <button id="director"  type="button" class="decide btn btn-warning ">Send to director</button>
+                                                    <button id="reject"  type="button" class="decide btn btn-danger ">Reject</button>
+                                                    <button type="button" class="btn btn-secondary btn-sms" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
+                                            {% endfor %}
+                                            
+                                    </div>                                       
+                                </div>
+                            </div>
+                        {% endfor %}                            
+                    </div>
+                {% endif %}
+        </div>
+
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'accounting/js/datatabels.js' %}"></script>
+    <script src="{% static 'accounting/js/bootstrapdatatabels.js' %}"></script>
+    
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable();
+            $('.filtering').click(function(){
+                $('.active_filter').removeClass('active_filter')
+                    if ($(this).hasClass('active_filter')){
+                        $(this).removeClass('active_filter')
+                
+                    }
+                    else{
+                        $(this).addClass('active_filter')
+                    }    
+                    search($(this).attr('id'))
+            })
+
+
+
+            function search(filtering){
+                var table = $('#example').DataTable();
+                if (filtering =='all') {
+                    table.column(5).search("").draw();
+                }
+                else{
+
+                        table.column(5).search("").draw();
+                        table.column(5).search(filtering).draw();
+            
+                            }
+                }
+
+
+                $('.decide').click(function(){
+                        var decide=$(this).attr('id')
+                        $("#decide").val(decide)
+                        $("#edittimeform").submit()
+
+                })
+                       
+            })
+
+
+
+         
+    </script>
+
+{% endblock content %}

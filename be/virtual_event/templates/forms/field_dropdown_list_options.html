@@ -1,0 +1,5 @@
+<option value="">---------</option>
+{% for field in sub_field %}
+<option value="{{ field.pk }}">{{ field.title }}</option>
+{% endfor %}
+<option value=0>Others</option>

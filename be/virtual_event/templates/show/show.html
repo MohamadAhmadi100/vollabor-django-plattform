@@ -1,0 +1,262 @@
+{% extends "ivc_website/base.html" %}
+{% load static %}
+{% block css %}
+   
+    <link rel="stylesheet" href="{% static 'workshop_view/workshop_detail/css/workshop_view.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop_view/workshop_detail/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{% endblock %}
+
+{% block content %}
+<div id="single_project" style="padding-top:50px">
+    <div class="back-dark">
+        <div class="row p-5 d-flex flex-md-row flex-column-reverse">
+            <div class="col-md-7">
+                <div class="back-link d-flex flex-md-row flex-column-reverse justify-content-start align-items-center   mt-3 mb-5">
+                    <div class="d-flex align-items-center ">
+                        <a href="{% url 'home-page' %}" class="">Home</a>
+                        <i class="fa fa-angle-right fa-2x mx-2"></i>
+                        <a href="{% url 'list-for-all' %}" class="">{{objecct.type}} page</a>
+                        <i class="fa fa-angle-right fa-2x mx-2"></i>
+                        <a href="" class="active">{{object.type}} detail </a>
+                    </div>
+                </div>
+                <div class="d-flex flex-column justify-content-start  mt-3">
+                    <h6 class=" text-white" style="text-align: justify ">{{objecct.type}} ID:
+                        {{object.unique_id}}
+                    </h6>
+                    <h5 class="fw-bold" style="text-align: justify">
+                        {{object.title}}
+                    </h5>
+                    <h6 class=" mt-3 text-warning fw-bold">
+                        {%for main in object.main_field.all%}
+                            <span class="text-white mx-2">
+                              {{main}}
+                                /
+                                {% for sub in object.sub_field.all%}
+                                    {%if sub.parent == main%}
+                                    -{{sub}}
+                                    {%endif%}
+                                {%endfor%}
+                            </br>
+                            
+                            </span>
+
+                        {%endfor%}
+                    </h6>
+                    <p class="text-white mt-3 mr-3">
+                        {{object.object.description|truncatewords:40}}</p>
+
+                    <div class="author text-white mt-3">
+                        <span class="fw-bold"></span>
+                        {% for speaker in object.object.speaker %}
+                            <div class="fw-bold">{{speaker}}</div></br>
+                        {% endfor %}
+                    </div>
+
+                    <div class="time mt-3 d-flex flex-column flex-md-row">
+                        
+
+                        <span class="me-3 mt-3 mt-md-0">
+                            <i class="fa fa-language mx-1"></i>
+                            <span class="fw-bold text-white">Language :</span>
+                            <span class="fw-bold text-white">{{object.object.language}}</span>
+                        </span>
+
+                        
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-4  d-md-block">
+                <div class="back-white">
+                    <div class="img" style="border-radius: 12px;">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="z-index:99" id="side_details">
+        <div class="img mb-3">
+            <img class="img-fluid" src="{{object.object.image.url}}" alt="">
+        </div>
+        {%if object.start_date < today%}
+        <div class="desc p-3">
+            <div class="row my-2">
+            <a  href="" class="btn btn-danger m-auto">This {{object.type}} has been held</a>
+            </div>
+        </div>
+        {%else%}
+                <div class="desc p-3">
+                    <div class="price d-flex justify-content-between align-items-center">
+                        {% if buyall %}
+                        {%else%}
+                        <h3 class="fw-bold ">${{object.price}}</h3>
+                        {%endif%}
+                    </div>
+                    <div class="col mt-3">
+                        {% if buyall %}
+                        {%else%}
+                            <div class="row">
+                                <div class="col-8 fw-bold">Section title</div>
+                                <div class="col-4 fw-bold">Buy</div>
+                            </div>
+                            <hr>
+                        {%endif%}
+                        {% for time in timtables %}
+                        <div class="row my-2">
+                            <div class="col-8">{{time.title}}</div>   
+                            <div class="col-4">
+                            {% if user.is_authenticated %}
+                                {% if buyall %}
+                                {%else%}
+                                        {%if time.buy%}
+                                            
+                                            <a class="btn btn-success">Bought</a>
+                                        {%else%}
+                                            <a class="btn btn-success" href="{% url 'virtualevents-buy' pk=object.id %}?action={{time.title}}">Buy (${{time.price}})</a>
+                                        {%endif%}
+                                {%endif%}
+                            
+                            {%else%}
+                            <a class="btn btn-success" href="{% url 'simple-register' %}?next=../../virtualevents/buy/{{object.id}}?action={{time.title}}">Buy (${{time.price}})</a>
+                            {%endif%}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        
+                        
+                    </div>
+                    <div class="but my-3">
+                        {% if user.is_authenticated %}
+                            {% if buyall %}
+                                <a class="btn btn-success">You are a member of this workshop</a>
+                            {%else%}
+                                <a href="{% url 'virtualevents-buy' pk=object.id %}?action=All" class="btn">Buy all sections (${{object.price}})</a>
+                            {%endif%}
+                        {%else%}
+                            <a href="{% url 'simple-register' %}?next=../../virtualevents/buy/{{object.id}}?action=All" class="btn">Buy all sections (${{object.price}})</a>
+                        {%endif%}
+                    </div>
+                    <hr>
+        {%endif%}
+            
+            <div>
+                <h6 class="fw-bold">This {{object.type}} includes:</h6>
+                <p>
+                <i class="fa fa-clock-o mx-2" ></i>
+              {{object.duration}} hours
+                </p>
+                <p>
+                    <i class="fa fa-calendar-check-o mx-2"></i>
+                    {{object.start_date}}
+                </p>
+                
+                <p>
+                    <i class="fa fa-cloud-download mx-2"></i>
+                    Downloadable resources
+                </p>
+                <p>
+                    <i class="fa fa-trophy mx-2"></i>
+                    Certificate of completion
+                </p>
+            </div>
+            <hr>
+            <div class="more">
+                {% comment %} <a href="#" class="btn video">
+                    <i class="fa fa-play"></i>
+                    Video
+                </a> {% endcomment %}
+                <a href="#" class="btn forum">
+                    <i class="fa fa-comment"></i>
+                    Forum
+                </a>
+            </div>
+            <hr>
+
+        </div>
+    </div>
+    <div class="row single-view">
+        <div class="col-md-8">
+            <div class="container-fluid p-5">
+                <div class="description">
+                    <div class="time_table table-responsive">
+                        <h6 class="fw-bold d-flex justify-content-between align-items-center">
+                            <span>Timetable :</span>
+                        </h6>
+                        <table class="table table-hover my-4">
+                            <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Start time</th>
+                                <th scope="col">End time</th>
+                                <th scope="col">Duration</th>
+                                {%if object.start_date < today%}
+                                    <th scope="col">Video</th>
+                                {%endif%}
+
+
+                                
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for time in timtables %}
+                            <tr>
+                                <th scope="row">{{time.title}}</th>
+                                <td>{{time.start_date}}</td>
+				                <td>{{time.start_time}}</td>
+				                <td>{{time.end_time}}</td>
+				                <td>{{time.duration}}</td>
+                                {%if object.start_date < today%}
+                                    {%if time.video_link%}
+                                        {%if buyall%}
+                                            <td><a class="btn btn-primary" target='_blank' href="{{time.video_link}}"><i class="fa-solid fa-play"></i></a></td>
+                                        {%else%}
+                                            {%if time.buy%}
+                                                <td><a class="btn btn-primary" target='_blank' href="{{time.video_link}}"><i class="fa-solid fa-play"></i></a></td>
+                                            {%else%}
+                                                <td><a class="btn btn-danger"><i class="fa-solid fas  fa-lock"></i></a></td>
+                                            {%endif%}
+                                        {%endif%}                                       
+                                    {%else%}
+                                        <td style="margin:auto;color:red" class="badge ">Video to be uploaded soon</td>
+                                    {%endif%}
+                                {%endif%}
+                          </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                    <div class="req">
+                        <h5 class="fw-bold">Requirements :</h5>
+                        <p style="text-align: justify">
+                            {{object.object.skills}}
+                        </p>
+                    </div>
+                    <hr>
+                    <hr>
+                    <div class="desc">
+                        <h5 class="fw-bold"> Description :</h5>
+                        <p style="text-align: justify">
+                        <p>
+                            {{object.object.description}}
+                        </p>
+                    </div>
+                     {% comment %} <a href="{% url 'workshop:view-workshop-persian' %}">test</a> {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="{% static 'workshop_view/workshop_detail/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'workshop_view/workshop_detail/js/main.js' %}"></script>
+
+{% endblock %}
