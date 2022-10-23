@@ -17,7 +17,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.shortcuts import redirect
 from seo.models import UserFootprint
-from suds import Client
+# from suds import Client
 from django.core.paginator import Paginator
 from django.utils import timezone
 from users.models import Role
@@ -36,82 +36,82 @@ import mimetypes
 
 
 ###############pay
-MERCHANT = '123456788-1234-1234-1234-123456789101'
-client = Client('https://www.zarinpal.com/pg/services/WebGate/wsdl')
+# MERCHANT = '123456788-1234-1234-1234-123456789101'
+# client = Client('https://www.zarinpal.com/pg/services/WebGate/wsdl')
 
-def strtime_to_seconds(str_time):
-    date=datetime.strptime(str_time.strip(), '%H:%M:%S')
-    h,m,s=str(date.time()).split(':')
-    h=int(h)*3600
-    m=int(m)*60
-    seconds=h+m+int(s)
-    return seconds
-def  seconds_to_time(seconds):
-    m,s=divmod(seconds,60)
-    h,m=divmod(m,60)
-    return '%d:%02d'%(h,m)
+# def strtime_to_seconds(str_time):
+#     date=datetime.strptime(str_time.strip(), '%H:%M:%S')
+#     h,m,s=str(date.time()).split(':')
+#     h=int(h)*3600
+#     m=int(m)*60
+#     seconds=h+m+int(s)
+#     return seconds
+# def  seconds_to_time(seconds):
+#     m,s=divmod(seconds,60)
+#     h,m=divmod(m,60)
+#     return '%d:%02d'%(h,m)
 
-def check_role(request):
-    is_manager=Role.objects.filter(user=request.user,position='workshop manager').first()
-    is_expert=Role.objects.filter(user=request.user,position='workshop expert').first()
-    if is_manager:
-        manager=True
-    else:
-        manager=False
-    if is_expert:
-        expert=True
-    else:
-        expert=False
-    return manager,expert
+# def check_role(request):
+#     is_manager=Role.objects.filter(user=request.user,position='workshop manager').first()
+#     is_expert=Role.objects.filter(user=request.user,position='workshop expert').first()
+#     if is_manager:
+#         manager=True
+#     else:
+#         manager=False
+#     if is_expert:
+#         expert=True
+#     else:
+#         expert=False
+#     return manager,expert
 
-def download_file(request,path,filename):
-    fl = open(path, 'rb').read()
-    mime_type, _ = mimetypes.guess_type(path)
-    response = HttpResponse(fl, content_type=mime_type)
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
-def send_request(request, pk):
-    Users_Workshops(user=request.user, workshop_id=pk).save()  # creates a new order which is not verified (is_verified = False)
-    workshop = Workshop.objects.get(pk=pk)
-    user_email = request.user.email
-    user_phone = request.user.memberprofile.phone
-    description = "توضیحات مربوط به تراکنش را در این قسمت وارد کنید"
-    callback_URL = f"{request.get_host()}/workshop/verify/"
-    # callback_URL = "http://127.0.0.1:8000/workshop/verify/"
-    result = client.service.PaymentRequest(MERCHANT,
-                                           workshop.price,
-                                           description,
-                                           user_email,
-                                           user_phone,
-                                           callback_URL)
-    if result.Status == 100:
-        return redirect('https://www.zarinpal.com/pg/StartPay/' + str(result.Authority))
-    else:
-        print(result.Status)
-        return HttpResponse('Error code: ' + str(result.Status))
+# def download_file(request,path,filename):
+#     fl = open(path, 'rb').read()
+#     mime_type, _ = mimetypes.guess_type(path)
+#     response = HttpResponse(fl, content_type=mime_type)
+#     response['Content-Disposition'] = "attachment; filename=%s" % filename
+#     return response
 
 
-def verify(request):
-    if request.GET.get('Status') == 'OK':
-        last_order = Users_Workshops.objects.filter(user=request.user).last()
-        last_order_workshop = Workshop.objects.get(pk=last_order.workshop_id)
-        result = client.service.PaymentVerification(MERCHANT,
-                                                    request.GET['Authority'],
-                                                    last_order_workshop.price)
-        if result.Status == 100:
-            last_order.is_paid = True
-            last_order.save()
-            redir = reverse("add-workshop-for-user", args=[workshop.id])
-            return HttpResponseRedirect(redir)
-            return HttpResponse('Transaction success')
-        elif result.Status == 101:
-            return HttpResponse('Transaction submitted : ' + str(result.Status))
-        else:
-            return HttpResponse('Transaction failed' + str(result.Status))
-    else:
-        return HttpResponse('Transaction failed or canceled by user')
+# def send_request(request, pk):
+#     Users_Workshops(user=request.user, workshop_id=pk).save()  # creates a new order which is not verified (is_verified = False)
+#     workshop = Workshop.objects.get(pk=pk)
+#     user_email = request.user.email
+#     user_phone = request.user.memberprofile.phone
+#     description = "توضیحات مربوط به تراکنش را در این قسمت وارد کنید"
+#     callback_URL = f"{request.get_host()}/workshop/verify/"
+#     # callback_URL = "http://127.0.0.1:8000/workshop/verify/"
+#     result = client.service.PaymentRequest(MERCHANT,
+#                                            workshop.price,
+#                                            description,
+#                                            user_email,
+#                                            user_phone,
+#                                            callback_URL)
+#     if result.Status == 100:
+#         return redirect('https://www.zarinpal.com/pg/StartPay/' + str(result.Authority))
+#     else:
+#         print(result.Status)
+#         return HttpResponse('Error code: ' + str(result.Status))
+
+
+# def verify(request):
+#     if request.GET.get('Status') == 'OK':
+#         last_order = Users_Workshops.objects.filter(user=request.user).last()
+#         last_order_workshop = Workshop.objects.get(pk=last_order.workshop_id)
+#         result = client.service.PaymentVerification(MERCHANT,
+#                                                     request.GET['Authority'],
+#                                                     last_order_workshop.price)
+#         if result.Status == 100:
+#             last_order.is_paid = True
+#             last_order.save()
+#             redir = reverse("add-workshop-for-user", args=[workshop.id])
+#             return HttpResponseRedirect(redir)
+#             return HttpResponse('Transaction success')
+#         elif result.Status == 101:
+#             return HttpResponse('Transaction submitted : ' + str(result.Status))
+#         else:
+#             return HttpResponse('Transaction failed' + str(result.Status))
+#     else:
+#         return HttpResponse('Transaction failed or canceled by user')
 ###############end pay
 @login_required
 def checked_list(request):

@@ -1,0 +1,306 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+<html lang="en">
+
+{% block css %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'workshop/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/workshop.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop/css/researchtheme.css' %}">
+    <link rel="stylesheet" href="{% static 'accounting/css/datatabels.css' %}">
+
+       <style>
+
+        body{background:#212429!important;}
+        .card{
+            background: #2C3034;
+            box-shadow: 0px 0px 4px 0px #fff;
+        }
+        .card-body{color:#fff}
+        .active_filter{
+            background:#2dcf2d
+        }
+        .active_card{
+            background: #FDBF30;
+        }
+        .filtering:hover{
+            background:#dc3545!important;
+            cursor:pointer
+        }
+       </style> 
+    <title>Virtual events presenter view</title>
+{% endblock css %}
+
+{% block content %}
+
+
+    <header class="bg-danger text-white py-2 w-100">
+        <div class="container">
+        </div>
+    </header>
+    
+    <div class="container card-page">
+        {% if messages %}
+            {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success">{{ message|safe }}</div>
+                    {% else %}
+                        <div class="alert alert-danger"> {{ message|safe }}</div>
+                    {%endif %}
+            {% endfor %}
+            {% endif %}
+
+
+
+
+        <div class="row justify-content-center align-items-center">
+            {% if request.GET.filter == 'All' %}
+            <div class="col gold active " id="new_workshop_btn">
+            {% else %}
+            <div style="background:#2c3034" class="col gold" id="new_workshop_btn">
+            {% endif %}
+                <a href="{%  url 'show-virtualevents-to-users' %}?filter=All" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">All virtual events</h4>
+                    <p class="number">{{all_count}}</p>
+                </a>
+            </div>
+            {% if request.GET.filter == 'My-virtual-events'%}
+            <div class="col gold active" id="new_workshop_btn">
+            {% else %}
+            <div class="col gold" id="new_workshop_btn">
+            {% endif %}
+                <a href="{%  url 'show-virtualevents-to-users' %}?filter=My-virtual-events" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">My virtual events</h4>
+                    <p class="number">{{mylist_count}}</p>
+                </a>
+            </div>
+            {% if request.GET.filter == 'Unpaid'%}
+            <div class="col gold active" id="accept_reject_btn">
+            {% else %}
+            <div class="col gold" id="accept_reject_btn">
+            {% endif %}
+                <a href="{%  url 'show-virtualevents-to-users' %}?filter=Unpaid" class="text-center text-white">
+                    <i class="fa fa-check-circle"></i>
+                    <h4 class="text-white">Unpaid</h4>
+                    <p class="number">{{Unpaid_count}}</p>
+                </a>
+            </div>
+            
+        </div>
+        <div class="container-fluid">
+                {% if request.GET.filter == 'All' %}
+                    <div class="w-100  justify-content-md-center">
+                        <h1 style=" color: gold; margin-top: 10px;">Virtual events</h1></br>
+                        <div style="display:flex" class="col-md-12">           
+                            <a id="all"   class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class="text-white">All</p>
+                                </div>              
+                            </a>
+                            <a id="seminar"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Seminars</p>
+                                </div>              
+                            </a>
+                            <a id="course"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Courses</p>
+                                </div>              
+                            </a>
+                            <a id="workshop"  class="filtering m-1 card col-md-2 text-center">
+                                <div class="text-center card-body">
+                                    <p class=" text-white">Workshops</p>
+                                </div>              
+                            </a>
+                        </div>
+                        <table id="example" class="w-100 table table-hover table-sm table-striped mt-5 ws-notif-table">
+                            <thead style="background-color:#ADD8E6 !important;color:black">
+                                <tr>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                                    <th class="text-center" style="width:30%;vertical-align:middle">Title</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Cost per individual ($ USA)</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Holding date</th>
+                                    <th class="text-center" style="width:10%;vertical-align:middle">Status</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Type</th>
+                                    <th class="text-center" style="width:5%;vertical-align:middle">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center table-dark">
+                            {% for ve in virtual_events %}
+                                <tr>
+                                    <td>{{ve.unique_id}}</td>
+                                    <td>{{ve.title}}</td>
+                                    <td>${{ve.price}}</td>
+                                    <td>{{ve.created}}</td>
+                                    <td>{{ve.statuspreview}}</td>
+                                    <td>{{ve.type}}</td>
+
+                                    <td class="text-center" style="width:5%;vertical-align:middle"><a class="btn btn-success" href="{% url 'show-virtual_event'  ve.id%}">View</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                
+                {% elif request.GET.filter == 'My-virtual-events' %}
+                <div class="w-100  justify-content-md-center">
+                    <h1 style=" color: gold; margin-top: 10px;">Virtual events</h1></br>
+                    <div style="display:flex" class="col-md-12">           
+                        <a id="all"   class="filtering m-1 card col-md-2 text-center">
+                            <div class="text-center card-body">
+                                <p class="text-white">All</p>
+                            </div>              
+                        </a>
+                        <a id="seminar"  class="filtering m-1 card col-md-2 text-center">
+                            <div class="text-center card-body">
+                                <p class=" text-white">Seminars</p>
+                            </div>              
+                        </a>
+                        <a id="course"  class="filtering m-1 card col-md-2 text-center">
+                            <div class="text-center card-body">
+                                <p class=" text-white">Courses</p>
+                            </div>              
+                        </a>
+                        <a id="workshop"  class="filtering m-1 card col-md-2 text-center">
+                            <div class="text-center card-body">
+                                <p class=" text-white">Workshops</p>
+                            </div>              
+                        </a>
+                    </div>
+                    <table id="example" class="w-100 table table-hover table-sm table-striped mt-5 ws-notif-table">
+                        <thead style="background-color:#ADD8E6 !important;color:black">
+                            <tr>
+                                <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                                <th class="text-center" style="width:30%;vertical-align:middle">Title</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Cost per individual ($ USA)</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Holding date</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Status</th>
+                                <th class="text-center" style="width:5%;vertical-align:middle">Type</th>
+                                <th class="text-center" style="width:5%;vertical-align:middle">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center table-dark">
+                        {% for ve in virtual_events %}
+                            <tr>
+                                <td>{{ve.virtual_event.unique_id}}</td>
+                                <td>{{ve.virtual_event.title}}</td>
+                                <td>${{ve.virtual_event.price}}</td>
+                                <td>{{ve.virtual_event.created}}</td>
+                                <td>{{ve.virtual_event.statuspreview}}</td>
+                                <td>{{ve.virtual_event.type}}</td>
+                                <td class="text-center" style="width:2.5%;vertical-align:middle">
+                                {%if ve.certificate%}
+                                    <a class="btn btn-warning btn-sm" href="../../../media/{{ve.certificate}}">Certificate</a>
+                                {%endif%}
+                               <a class="btn btn-success btn-sm" href="{% url 'show-virtual_event'  ve.virtual_event.id%}">View</a>
+                            </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% elif request.GET.filter == 'Unpaid' %}
+                <div class="w-100  justify-content-md-center">
+                    <h1 style=" color: gold; margin-top: 10px;">Virtual events</h1></br>
+                    <div style="display:flex" class="col-md-12">           
+                        <a id="all"   class="filtering m-1 card col-md-2 text-center">
+                            <div class="text-center card-body">
+                                <p class="text-white">All</p>
+                            </div>              
+                        </a>
+                        <a id="seminar"  class="filtering m-1 card col-md-2 text-center">
+                            <div class="text-center card-body">
+                                <p class=" text-white">Seminars</p>
+                            </div>              
+                        </a>
+                        <a id="course"  class="filtering m-1 card col-md-2 text-center">
+                            <div class="text-center card-body">
+                                <p class=" text-white">Courses</p>
+                            </div>              
+                        </a>
+                        <a id="workshop"  class="filtering m-1 card col-md-2 text-center">
+                            <div class="text-center card-body">
+                                <p class=" text-white">Workshops</p>
+                            </div>              
+                        </a>
+                    </div>
+                    <table id="example" class="w-100 table table-hover table-sm table-striped mt-5 ws-notif-table">
+                        <thead style="background-color:#ADD8E6 !important;color:black">
+                            <tr>
+                                <th class="text-center" style="width:5%;vertical-align:middle">ID</th>
+                                <th class="text-center" style="width:30%;vertical-align:middle">Title</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Cost per individual ($ USA)</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Holding date</th>
+                                <th class="text-center" style="width:10%;vertical-align:middle">Status</th>
+                                <th class="text-center" style="width:5%;vertical-align:middle">Type</th>
+                                <th class="text-center" style="width:5%;vertical-align:middle">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center table-dark">
+                        {% for ve in virtual_events %}
+                            <tr>
+                                <td>{{ve.virtual_event.unique_id}}</td>
+                                <td>{{ve.virtual_event.title}}</td>
+                                <td>${{ve.virtual_event.price}}</td>
+                                <td>{{ve.virtual_event.created}}</td>
+                                <td>{{ve.virtual_event.statuspreview}}</td>
+                                <td>{{ve.virtual_event.type}}</td>
+
+                                <td class="text-center" style="width:5%;vertical-align:middle"><a class="btn btn-success" href="{% url 'accounting:invoice-detail'  pk=ve.invoice.id%}">Pay</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+    </div>
+
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'accounting/js/datatabels.js' %}"></script>
+    <script src="{% static 'accounting/js/bootstrapdatatabels.js' %}"></script>
+    
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable();
+            $('.filtering').click(function(){
+                $('.active_filter').removeClass('active_filter')
+                    if ($(this).hasClass('active_filter')){
+                        $(this).removeClass('active_filter')
+                
+                    }
+                    else{
+                        $(this).addClass('active_filter')
+                    }    
+                    search($(this).attr('id'))
+            })
+
+
+
+            function search(filtering){
+                var table = $('#example').DataTable();
+                if (filtering =='all') {
+                    table.column(5).search("").draw();
+                }
+                else{
+
+                        table.column(5).search("").draw();
+                        table.column(5).search(filtering).draw();
+            
+                            }
+                }
+                       
+            })
+
+
+
+         
+    </script>
+
+{% endblock content %}
